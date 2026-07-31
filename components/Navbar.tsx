@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/src/i18n/navigation";
 import { Wind, Menu, X } from "lucide-react";
-import { getNavItems } from "@/data/navigation";
+import { getNavItems, getRouteNavItems } from "@/data/navigation";
 import LocaleSwitcher from "./LocaleSwitcher";
 
 const MENU_ID = "primary-mobile-menu";
@@ -17,6 +17,7 @@ export default function Navbar() {
   const navRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const navItems = getNavItems();
+  const routeItems = getRouteNavItems();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -25,12 +26,10 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close on locale switch, otherwise the panel survives the navigation.
   useEffect(() => {
     setMenuOpen(false);
   }, [locale]);
 
-  // Escape to dismiss (returning focus to the toggle) and click-outside.
   useEffect(() => {
     if (!menuOpen) return;
 
@@ -73,15 +72,25 @@ export default function Navbar() {
           <span>{t("site.name")}</span>
         </Link>
 
-        <ul className="hidden lg:flex gap-8 list-none m-0 p-0">
+        <ul className="hidden lg:flex gap-6 list-none m-0 p-0">
           {navItems.map((item) => (
             <li key={item.key}>
               <a
                 href={item.href}
-                className="text-base font-semibold text-content-secondary no-underline transition-colors hover:text-accent min-h-11 flex items-center whitespace-nowrap rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="text-sm font-semibold text-content-secondary no-underline transition-colors hover:text-accent min-h-11 flex items-center whitespace-nowrap rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 {t(`nav.${item.key}`)}
               </a>
+            </li>
+          ))}
+          {routeItems.map((item) => (
+            <li key={item.key}>
+              <Link
+                href={item.href}
+                className="text-sm font-semibold text-content-secondary no-underline transition-colors hover:text-accent min-h-11 flex items-center whitespace-nowrap rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              >
+                {t(`nav.${item.key}`)}
+              </Link>
             </li>
           ))}
         </ul>
@@ -123,6 +132,16 @@ export default function Navbar() {
               >
                 {t(`nav.${item.key}`)}
               </a>
+            ))}
+            {routeItems.map((item) => (
+              <Link
+                key={item.key}
+                href={item.href}
+                className="p-3 min-h-11 flex items-center justify-center rounded-control text-accent no-underline hover:bg-surface-tertiary font-semibold w-full text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                onClick={() => setMenuOpen(false)}
+              >
+                {t(`nav.${item.key}`)}
+              </Link>
             ))}
           </div>
         )}

@@ -3,7 +3,8 @@
 import { useTranslations, useLocale } from "next-intl";
 import { Wind } from "lucide-react";
 import { clinic } from "@/data/clinic";
-import { navigationKeys } from "@/data/navigation";
+import { navigationKeys, routeNavigationKeys } from "@/data/navigation";
+import { Link } from "@/src/i18n/navigation";
 
 const linkClass =
   "text-footer-muted text-sm no-underline hover:text-gold transition-colors inline-flex items-center min-h-11 rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold";
@@ -12,7 +13,6 @@ export default function Footer() {
   const t = useTranslations();
   const locale = useLocale();
 
-  // The Persian site shows the Jalali year (۱۴۰۵), not the Gregorian one.
   const year = new Intl.DateTimeFormat(locale, { year: "numeric" }).format(
     new Date(),
   );
@@ -48,6 +48,13 @@ export default function Footer() {
                     </a>
                   </li>
                 ))}
+              {routeNavigationKeys.map((key) => (
+                <li key={key}>
+                  <Link href={`/${key}`} className={linkClass}>
+                    {t(`nav.${key}`)}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </nav>
 

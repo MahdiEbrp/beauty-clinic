@@ -20,6 +20,9 @@
     "about": "About",
     "gallery": "Gallery",
     "contact": "Contact",
+    "pricing": "Pricing",
+    "care": "Care Guide",
+    "rules": "Rules",
     "bookNow": "Book Now",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
@@ -147,5 +150,222 @@
   },
   "jsonLd": {
     "description": "Nafas Aesthetic Clinic offering specialized facials, laser treatments, anti-aging therapy, body contouring, and wellness services."
+  },
+  "common": {
+    "currency": "Toman",
+    "priceNote": "All prices are in Toman.",
+    "empty": "No data available.",
+    "error": "Failed to load data.",
+    "retry": "Try again",
+    "back": "Go back"
+  },
+  "pricing": {
+    "meta": {
+      "title": "Service Pricing | Nafas Beauty Clinic",
+      "description": "Complete price list for Nafas Clinic beauty services including filler, botox, mesotherapy and laser with top brands"
+    },
+    "heading": "Service Pricing",
+    "description": "Pricing for all Nafas Clinic beauty services with the best available brands",
+    "tabs": {
+      "facial_filler": "Facial Filler",
+      "under_eye_filler": "Under-eye Filler",
+      "filler_packs": "10cc Packs",
+      "botox": "Botox",
+      "enzyme": "Enzyme",
+      "body_filler": "Body Filler",
+      "mesotherapy": "Mesotherapy",
+      "laser": "Laser"
+    },
+    "categories": {
+      "facial_filler": "Filler for lips, chin, angles, cheeks & smile lines",
+      "facial_filler_desc": "Various filler brands for different facial areas",
+      "under_eye_filler": "Filler for under-eye, nose, temples & forehead",
+      "under_eye_filler_desc": "Specialized brands for sensitive facial areas",
+      "filler_packs": "10cc Volume Packs",
+      "filler_packs_desc": "Volume packs for professional injection",
+      "filler_packs_note": "We do not recommend 10cc pack brands for lip injection.",
+      "botox": "Msport Botox",
+      "botox_desc": "Botox injection for various face and body areas",
+      "enzyme": "Enzyme",
+      "enzyme_desc": "Korean and English enzyme treatments",
+      "body_filler": "Body Filler (bikini & buttocks)",
+      "body_filler_desc": "Body filler per cc",
+      "mesotherapy": "Mesotherapy & Rejuvenation",
+      "mesotherapy_desc": "Mesogel, microneedling, PRP and Jalpro",
+      "laser": "Soprano Titanium 2025 Laser",
+      "laser_desc": "Advanced technology hair removal laser"
+    },
+    "table": {
+      "brand": "Brand / Service",
+      "price": "Price"
+    },
+    "brands": {
+      "juvederm": "Juvederm",
+      "aliance": "Aliance",
+      "stylish": "Stylish",
+      "rebylgel": "Rebylgel",
+      "perfecta": "Perfecta",
+      "ruofilmPlus": "Ruofilm Plus",
+      "bella": "Bella",
+      "innocence": "Innocence",
+      "fiorg": "Fiorg",
+      "deMe": "De Me",
+      "noramis": "Noramis",
+      "dermArgin": "Derm Argin",
+      "abtq": "A.B.T.Q",
+      "rachel": "Rachel",
+      "danyBe": "Dany Be",
+      "ruofil": "Ruofil",
+      "oridrey": "Oridrey",
+      "fullFace": "Botox Full Face",
+      "catEye": "Botox Cat Eye",
+      "underarm": "Underarm",
+      "korean": "Korean Enzyme",
+      "english": "English Enzyme",
+      "perCc": "Body Filler per cc",
+      "kiaraMesogel": "Kiara Mesogel",
+      "royalMesogel": "Royal Mesogel",
+      "faceMeso": "Face Meso",
+      "hairMeso": "Hair Meso",
+      "doubleChin": "Double Chin Meso",
+      "underEye": "Under-eye Meso",
+      "microneedling": "Microneedling",
+      "prp": "PRP",
+      "hairFiller": "Hair Filler",
+      "pink": "Jalpro Pink",
+      "eyeClassic": "Jalpro Eye Classic",
+      "superHydro": "Jalpro Super Hydro",
+      "youngEye": "Jalpro Young Eye",
+      "profhilo": "Profhilo",
+      "face": "Face",
+      "upperLip": "Upper Lip",
+      "chin": "Chin",
+      "doubleChinLaser": "Double Chin",
+      "functional": "Functional (calf, forearm, bikini, underarm)",
+      "fullFunctional": "Full Functional (arms + legs, bikini, underarm)",
+      "fullBody": "Full Body (forehead to toe)",
+      "calf": "Calf",
+      "fullArm": "Full Arm",
+      "abdomen": "Abdomen",
+      "back": "Back",
+      "bikini": "Bikini",
+      "lowerLeg": "Lower Leg",
+      "fullLeg": "Full Leg",
+      "goggles": "Goggles",
+      "cap": "Cap",
+      "towel": "Towel",
+      "mat": "Mat"
+    },
+    "disclaimer": "Please consult with a specialist before any treatment."
+  },
+  "servicesPage": {
+    "meta": {
+      "title": "Specialized Services | Nafas Beauty Clinic",
+      "description": "Complete range of specialized beauty and medical services at Nafas Clinic"
+    },
+    "heading": "Our Specialized Services",
+    "description": "Nafas Beauty Clinic offers a complete range of specialized skin and beauty services",
+    "services": {
+      "gelBotox": {
+        "title": "Filler & Botox Injection",
+        "description": "Specialized filler and botox injection for face and body with top brands"
+      },
+      "facial": {
+        "title": "Specialized Facial",
+        "description": "Medical-grade facial with pharmaceutical serums for deep hydration and rejuvenation"
+      },
+      "rejuvenation": {
+        "title": "Rejuvenation & Lift",
+        "description": "Advanced non-surgical face rejuvenation and lifting methods"
+      },
+      "bodyFiller": {
+        "title": "Body Filler",
+        "description": "Body shaping and volumizing with specialized fillers"
+      },
+      "hifu": {
+        "title": "HIFU Therapy",
+        "description": "Face lifting and skin tightening with focused ultrasound waves"
+      },
+      "microneedling": {
+        "title": "Microneedling",
+        "description": "Natural collagen stimulation with fine needles"
+      }
+    }
+  },
+  "care": {
+    "meta": {
+      "title": "Care Guide | Nafas Beauty Clinic",
+      "description": "Complete guide to pre and post care for filler and botox treatments"
+    },
+    "heading": "Care Guide",
+    "description": "Following these instructions will improve your treatment results",
+    "preCare": {
+      "heading": "Pre-Injection Instructions",
+      "description": "Important tips before visiting for filler, botox and other beauty services",
+      "noAlcohol": "Avoid Alcohol",
+      "noAlcoholDesc": "Avoid consuming alcohol at least 24 to 48 hours before your visit.",
+      "noBloodThinners": "Avoid Blood Thinners",
+      "noBloodThinnersDesc": "Avoid medications like aspirin, ibuprofen, naproxen, Vitamin E, omega-3 and some herbal supplements for 3 to 7 days before.",
+      "noHeavyExercise": "Avoid Heavy Exercise",
+      "noHeavyExerciseDesc": "On the day of your visit, avoid heavy exercise, sauna and hot baths.",
+      "noMakeup": "No Heavy Makeup",
+      "noMakeupDesc": "Please come without heavy makeup.",
+      "discloseConditions": "Disclose Medical Conditions",
+      "discloseConditionsDesc": "If you have active cold sores, infection, pregnancy, nursing, drug allergies or specific conditions, please inform the clinic before treatment.",
+      "drinkWater": "Drink Plenty of Water",
+      "drinkWaterDesc": "Drinking plenty of water from one day before injection is recommended, especially for filler injection."
+    },
+    "postCare": {
+      "heading": "Post-Filler Care",
+      "description": "Important tips after filler injection to maintain results and prevent complications",
+      "noHeat": "Avoid Extreme Heat",
+      "noHeatDesc": "Avoid exposing the treatment area to extreme heat such as solarium or sauna.",
+      "noMakeup48h": "No Makeup for 48 Hours",
+      "noMakeup48hDesc": "Avoid applying makeup for 48 hours.",
+      "noAlcoholWeek": "No Alcohol for One Week",
+      "noAlcoholWeekDesc": "Strictly avoid alcoholic beverages for one week.",
+      "noSmokingWeek": "No Smoking for One Week",
+      "noSmokingWeekDesc": "Avoid smoking for one week.",
+      "noHeavyExercise48h": "No Heavy Exercise for 48 Hours",
+      "noHeavyExercise48hDesc": "Avoid heavy exercises for the first 48 hours.",
+      "takeCephalexin": "Take Cephalexin",
+      "takeCephalexinDesc": "Take Cephalexin every 8 hours for three days.",
+      "vitaminC": "Take Vitamin C & Water",
+      "vitaminCDesc": "Take Vitamin C and water for one week.",
+      "contactDoctor": "Contact Your Doctor",
+      "contactDoctorDesc": "If you experience severe pain or bruising in the first hours, inform your doctor immediately."
+    },
+    "durability": {
+      "heading": "Filler Durability",
+      "description": "Important notes about filler longevity",
+      "bodyCompatibility": "Body Compatibility with Brand",
+      "bodyCompatibilityDesc": "Each brand is different. If someone had good results with a brand, it doesn't guarantee the same for you.",
+      "areaDurability": "Durability by Facial Area",
+      "areaDurabilityDesc": "High-use areas like lips have less durability than chin, and smile line durability is less than angle filler.",
+      "aftercareImportance": "Importance of Aftercare",
+      "aftercareImportanceDesc": "Durability depends on your care and following post-injection instructions.",
+      "firstTimerNote": "Important Note for First-Timers",
+      "firstTimerNoteDesc": "First-time patients need a 20-day adaptation period for the gel to adjust. Gel absorption is natural and you need at least two sessions for desired results."
+    }
+  },
+  "rules": {
+    "meta": {
+      "title": "Clinic Rules | Nafas Beauty Clinic",
+      "description": "Clinic rules and regulations for better service at Nafas Beauty Clinic"
+    },
+    "heading": "Clinic Rules",
+    "description": "To provide better services, please follow these guidelines.",
+    "respectAppointments": "Respect Appointments",
+    "respectAppointmentsDesc": "Please cooperate in maintaining the cleanliness of hallways, elevators and shared building spaces.",
+    "keepClean": "Keep Environment Clean",
+    "keepCleanDesc": "Please avoid parking in the alley, in front of neighbors' doors and causing inconvenience to residents.",
+    "parkingRules": "Parking Rules",
+    "parkingRulesDesc": "Please avoid parking in the alley, in front of neighbors' doors and causing inconvenience to residents.",
+    "noUnnecessaryCompanions": "Companion Policy",
+    "noUnnecessaryCompanionsDesc": "To maintain a peaceful environment and comfort of other patients, please avoid bringing unnecessary companions, especially children.",
+    "waitTime": "Wait Time",
+    "waitTimeDesc": "Due to the time-consuming nature of some services, wait times may be up to 3 hours. Please plan accordingly.",
+    "cancellationPolicy": "Cancellation Policy",
+    "cancellationPolicyDesc": "If you cannot attend, please inform us at least 24 hours in advance for cancellation or rescheduling."
   }
 }
