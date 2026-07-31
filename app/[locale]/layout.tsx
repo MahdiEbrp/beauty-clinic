@@ -60,7 +60,7 @@ export default async function LocaleLayout({
         <JsonLd />
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:start-4 focus:z-100 focus:inline-flex focus:items-center focus:min-h-11 focus:px-6 focus:rounded-pill focus:bg-accent focus:text-content-contrast focus:font-bold focus:shadow-elevation-3"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:inset-s-4 focus:z-100 focus:inline-flex focus:items-center focus:min-h-11 focus:px-6 focus:rounded-pill focus:bg-accent focus:text-content-contrast focus:font-bold focus:shadow-elevation-3"
         >
           {t("skipToContent")}
         </a>

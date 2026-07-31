@@ -80,7 +80,7 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 start-1/2 z-100 grid w-full max-w-[calc(100%-2rem)] -translate-y-1/2 gap-4 rounded-panel border border-border-primary bg-surface-secondary p-6 shadow-elevation-4 outline-none data-[state=open]:animate-slide-up sm:max-w-lg",
+          "fixed top-1/2 inset-s-1/2 z-100 grid w-full max-w-[calc(100%-2rem)] -translate-y-1/2 gap-4 rounded-panel border border-border-primary bg-surface-secondary p-6 shadow-elevation-4 outline-none data-[state=open]:animate-slide-up sm:max-w-lg",
           // `start-1/2` resolves to left in LTR and right in RTL, so the
           // centring translate has to flip sign with the writing direction.
           "rtl:translate-x-1/2 ltr:-translate-x-1/2",
@@ -92,7 +92,7 @@ function DialogContent({
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
-            className="absolute top-4 end-4 inline-flex items-center justify-center w-11 h-11 rounded-pill border border-transparent bg-transparent text-accent transition-all duration-200 hover:bg-surface-tertiary hover:border-border-interactive focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none"
+            className="absolute top-4 inset-e-4 inline-flex items-center justify-center w-11 h-11 rounded-pill border border-transparent bg-transparent text-accent transition-all duration-200 hover:bg-surface-tertiary hover:border-border-interactive focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none"
           >
             <XIcon className="w-5 h-5" strokeWidth={2} aria-hidden="true" />
             <span className="sr-only">{closeLabel}</span>

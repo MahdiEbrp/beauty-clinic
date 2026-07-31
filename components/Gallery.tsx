@@ -88,7 +88,7 @@ export default function Gallery() {
           <button
             type="button"
             onClick={() => scroll("start")}
-            className="absolute top-1/2 -translate-y-1/2 -start-3 z-10 w-11 h-11 rounded-pill bg-surface-secondary/90 backdrop-blur-sm border border-border-interactive shadow-elevation-2 flex items-center justify-center text-accent transition-all duration-200 hover:bg-surface-secondary hover:shadow-elevation-3 hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="absolute top-1/2 -translate-y-1/2 -inset-s-3 z-10 w-11 h-11 rounded-pill bg-surface-secondary/90 backdrop-blur-sm border border-border-interactive shadow-elevation-2 flex items-center justify-center text-accent transition-all duration-200 hover:bg-surface-secondary hover:shadow-elevation-3 hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             aria-label={t("gallery.previous")}
           >
             <ChevronLeft
@@ -113,14 +113,14 @@ export default function Gallery() {
                     setLightboxIndex(index);
                   }}
                   aria-label={t("gallery.viewImage", { title })}
-                  className="relative rounded-panel overflow-hidden aspect-[3/4] group border-4 border-surface-secondary shadow-elevation-1 snap-start shrink-0 w-[clamp(260px,80vw,320px)] p-0 bg-transparent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  className="relative rounded-panel overflow-hidden aspect-3/4 group border-4 border-surface-secondary shadow-elevation-1 snap-start shrink-0 w-[clamp(260px,80vw,320px)] p-0 bg-transparent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 >
                   <Image
                     src={item.image}
                     alt={title}
                     fill
                     sizes="(max-width: 640px) 80vw, 320px"
-                    className="object-cover transition-transform duration-[600ms] group-hover:scale-105"
+                    className="object-cover transition-transform duration-600 group-hover:scale-105"
                   />
                 </button>
               );
@@ -130,7 +130,7 @@ export default function Gallery() {
           <button
             type="button"
             onClick={() => scroll("end")}
-            className="absolute top-1/2 -translate-y-1/2 -end-3 z-10 w-11 h-11 rounded-pill bg-surface-secondary/90 backdrop-blur-sm border border-border-interactive shadow-elevation-2 flex items-center justify-center text-accent transition-all duration-200 hover:bg-surface-secondary hover:shadow-elevation-3 hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="absolute top-1/2 -translate-y-1/2 -inset-e-3 z-10 w-11 h-11 rounded-pill bg-surface-secondary/90 backdrop-blur-sm border border-border-interactive shadow-elevation-2 flex items-center justify-center text-accent transition-all duration-200 hover:bg-surface-secondary hover:shadow-elevation-3 hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             aria-label={t("gallery.next")}
           >
             <ChevronRight
