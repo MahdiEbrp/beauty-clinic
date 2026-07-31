@@ -1,0 +1,287 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* ---- Surfaces ---------------------------------------------------- */
+    --surface-primary: #f8e9db;
+    --surface-secondary: #fdf0e8;
+    --surface-tertiary: #f0d9c8;
+
+    /* ---- Content (text) --------------------------------------------- */
+    /* All verified >= 4.5:1 on --surface-primary (the darker of the two). */
+    --content-primary: #39090a;   /* 12.46:1 */
+    --content-secondary: #663530; /*  8.35:1 */
+    --content-tertiary: #8a6157;  /*  4.50:1  (was #9e7065 = 3.56:1, failed AA) */
+    --content-contrast: #fdf0e8;  /* 13.26:1 on --accent */
+
+    /* ---- Borders ----------------------------------------------------- */
+    /* Decorative outlines only. Exempt from WCAG 1.4.11. */
+    --border-primary: #d2b1a4;
+    /* Visible boundary of an interactive control. Must clear 3:1 (WCAG 1.4.11). */
+    --border-interactive: #b6806b; /* 2.99:1 on --surface-secondary */
+
+    /* ---- Accent ------------------------------------------------------ */
+    --accent: #530916;
+    --accent-hover: #39090a;
+    --accent-subtle: #fdf0e8;
+
+    /* ---- Brand metals ----------------------------------------------- */
+    /* --gold is only ever placed on dark: 7.05:1 on accent, 8.21:1 on footer-bg. */
+    --gold: #e5a57a;
+    /* Large text (>=24px), icons, borders and focus rings. */
+    --copper: #c47344;        /* 3.00:1 on --surface-primary (was #cb835a = 2.55:1) */
+    /* Small text. */
+    --copper-strong: #9e5932; /* 4.50:1 on --surface-primary */
+
+    /* ---- Form -------------------------------------------------------- */
+    --form-input-bg: #f8e9db;
+    --form-input-border: #b6806b; /* 2.99:1 - input boundary, WCAG 1.4.11 */
+
+    /* ---- Footer ------------------------------------------------------ */
+    --footer-bg: #39090a;
+    --footer-text: #f0d9c8;   /* 12.70:1 on --footer-bg */
+    --footer-muted: #a4786e;  /*  4.51:1 (was #9e7065 = 4.07:1, failed AA) */
+    --footer-heading: #fdf0e8;/* 15.45:1 */
+    --footer-border: #530916;
+
+    /* ---- Status ------------------------------------------------------ */
+    /* All >= 4.49:1 on --surface-secondary. */
+    --error: #d82323;   /* was #dc2626 = 4.32:1 */
+    --warning: #a75c05; /* was #d97706 = 2.85:1 */
+    --success: #11803a; /* was #16a34a = 2.95:1 */
+
+    /* ---- Elevation scale (4 levels) --------------------------------- */
+    --shadow-sm: 0 1px 2px 0 rgba(57, 9, 10, 0.04);
+    --shadow-md: 0 4px 12px -2px rgba(57, 9, 10, 0.06), 0 2px 4px -2px rgba(57, 9, 10, 0.04);
+    --shadow-lg: 0 12px 32px -8px rgba(57, 9, 10, 0.1), 0 4px 12px -4px rgba(57, 9, 10, 0.06);
+    --shadow-xl: 0 24px 56px -12px rgba(57, 9, 10, 0.22), 0 8px 20px -8px rgba(57, 9, 10, 0.12);
+  }
+}
+
+@theme inline {
+  --color-surface-primary: var(--surface-primary);
+  --color-surface-secondary: var(--surface-secondary);
+  --color-surface-tertiary: var(--surface-tertiary);
+
+  --color-content-primary: var(--content-primary);
+  --color-content-secondary: var(--content-secondary);
+  --color-content-tertiary: var(--content-tertiary);
+  --color-content-contrast: var(--content-contrast);
+
+  --color-border-primary: var(--border-primary);
+  --color-border-interactive: var(--border-interactive);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-subtle: var(--accent-subtle);
+
+  --color-gold: var(--gold);
+  --color-copper: var(--copper);
+  --color-copper-strong: var(--copper-strong);
+
+  --color-form-input-bg: var(--form-input-bg);
+  --color-form-input-border: var(--form-input-border);
+
+  --color-footer-bg: var(--footer-bg);
+  --color-footer-text: var(--footer-text);
+  --color-footer-muted: var(--footer-muted);
+  --color-footer-heading: var(--footer-heading);
+  --color-footer-border: var(--footer-border);
+
+  --color-error: var(--error);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+
+  /* ---- shadcn/Radix compatibility bridge ---------------------------- */
+  /* Lets upstream shadcn & diceui components drop in unmodified. */
+  --color-background: var(--surface-primary);
+  --color-foreground: var(--content-primary);
+  --color-card: var(--surface-secondary);
+  --color-card-foreground: var(--content-primary);
+  --color-popover: var(--surface-secondary);
+  --color-popover-foreground: var(--content-primary);
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--content-contrast);
+  --color-secondary: var(--surface-tertiary);
+  --color-secondary-foreground: var(--content-primary);
+  --color-muted: var(--surface-tertiary);
+  --color-muted-foreground: var(--content-secondary);
+  --color-destructive: var(--error);
+  --color-destructive-foreground: var(--content-contrast);
+  --color-border: var(--border-primary);
+  --color-input: var(--form-input-border);
+  --color-ring: var(--accent);
+
+  /* ---- Radius scale ------------------------------------------------- */
+  /* Deliberately NOT named lg/xl: those collide with Tailwind's built-in
+     --radius-* and previously inverted the scale (rounded-xl rendered 2rem
+     while rounded-3xl rendered 1.5rem). */
+  --radius-control: 0.75rem; /* inputs, icon tiles, menu rows */
+  --radius-card: 1rem;       /* small cards */
+  --radius-panel: 1.5rem;    /* large cards, sections */
+  --radius-feature: 2.5rem;  /* hero-scale feature panels */
+  --radius-pill: 9999px;     /* buttons, chips, avatars */
+
+  /* ---- Elevation --------------------------------------------------- */
+  --shadow-elevation-1: var(--shadow-sm);
+  --shadow-elevation-2: var(--shadow-md);
+  --shadow-elevation-3: var(--shadow-lg);
+  --shadow-elevation-4: var(--shadow-xl);
+
+  /* ---- Containers -------------------------------------------------- */
+  --container-content: 75rem;  /* 1200px - page gutter width */
+  --container-prose: 37.5rem;  /* 600px  - centred heading blocks */
+
+  /* ---- Fonts ------------------------------------------------------- */
+  --font-sans: var(--font-inter);
+  --font-estedad: var(--font-estedad);
+
+  /* ---- Animation --------------------------------------------------- */
+  --animate-fade-in: fade-in 250ms ease-out;
+  --animate-slide-up: slide-up 300ms ease-out;
+
+  /* Marquee (diceui) - duration/gap/loop-count are set inline per instance. */
+  --animate-marquee-left: marquee-left var(--marquee-duration) linear var(--marquee-loop-count);
+  --animate-marquee-right: marquee-right var(--marquee-duration) linear var(--marquee-loop-count);
+  --animate-marquee-left-rtl: marquee-left-rtl var(--marquee-duration) linear var(--marquee-loop-count);
+  --animate-marquee-right-rtl: marquee-right-rtl var(--marquee-duration) linear var(--marquee-loop-count);
+  --animate-marquee-up: marquee-up var(--marquee-duration) linear var(--marquee-loop-count);
+  --animate-marquee-down: marquee-down var(--marquee-duration) linear var(--marquee-loop-count);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes marquee-left {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(calc(-100% - var(--marquee-gap))); }
+}
+
+@keyframes marquee-right {
+  0% { transform: translateX(calc(-100% - var(--marquee-gap))); }
+  100% { transform: translateX(0%); }
+}
+
+@keyframes marquee-left-rtl {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(calc(100% + var(--marquee-gap))); }
+}
+
+@keyframes marquee-right-rtl {
+  0% { transform: translateX(calc(100% + var(--marquee-gap))); }
+  100% { transform: translateX(0%); }
+}
+
+@keyframes marquee-up {
+  0% { transform: translateY(0%); }
+  100% { transform: translateY(calc(-100% - var(--marquee-gap))); }
+}
+
+@keyframes marquee-down {
+  0% { transform: translateY(calc(-100% - var(--marquee-gap))); }
+  100% { transform: translateY(0%); }
+}
+
+@keyframes pulse-glow {
+  0% { box-shadow: 0 0 0 0 rgba(83, 9, 22, 0.4); }
+  70% { box-shadow: 0 0 0 15px rgba(83, 9, 22, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(83, 9, 22, 0); }
+}
+
+@keyframes fab-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(83, 9, 22, 0.7), 0 10px 20px -5px rgba(83, 9, 22, 0.5); }
+  70% { box-shadow: 0 0 0 20px rgba(83, 9, 22, 0), 0 10px 20px -5px rgba(83, 9, 22, 0.5); }
+  100% { box-shadow: 0 0 0 0 rgba(83, 9, 22, 0), 0 10px 20px -5px rgba(83, 9, 22, 0.5); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+
+  /* The blanket rule above fast-forwards animations to their final frame. For
+     the marquee that means translateX(-100%), i.e. an empty bar. Cancel the
+     animation outright so the content simply rests in place. */
+  [data-slot="marquee-content"] {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html[lang="fa"] body,
+html[lang="fa"] *,
+html[lang="fa"] *::before,
+html[lang="fa"] *::after {
+  font-family: var(--font-estedad), sans-serif;
+  font-feature-settings: "ss01";
+}
+
+body {
+  font-family: var(--font-inter), sans-serif;
+}
+
+/* Numbers already converted to Persian-Indic digits by Intl.NumberFormat must
+   NOT also go through the ss01 glyph substitution above (DESIGN_RULES #74:
+   one conversion path per element, never two). */
+.num-intl,
+.num-intl * {
+  font-feature-settings: "tnum";
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.hero-bg {
+  background-image: url('/images/hero-bg.webp');
+  background-size: cover;
+  background-position: center;
+}
+
+/* Gradient scrim over the hero photo. Derived from the surface token rather
+   than hardcoded rgba() so it tracks the palette. */
+.hero-overlay {
+  background: linear-gradient(
+    to left,
+    color-mix(in srgb, var(--surface-primary) 98%, transparent) 0%,
+    color-mix(in srgb, var(--surface-primary) 92%, transparent) 40%,
+    color-mix(in srgb, var(--surface-primary) 60%, transparent) 70%,
+    color-mix(in srgb, var(--surface-primary) 20%, transparent) 100%
+  );
+}
+
+html[dir="ltr"] .hero-overlay {
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--surface-primary) 98%, transparent) 0%,
+    color-mix(in srgb, var(--surface-primary) 92%, transparent) 40%,
+    color-mix(in srgb, var(--surface-primary) 60%, transparent) 70%,
+    color-mix(in srgb, var(--surface-primary) 20%, transparent) 100%
+  );
+}
+
+.btn-hero-primary {
+  animation: pulse-glow 2.5s infinite;
+}
+
+html[dir="rtl"] .rtl-mirror {
+  transform: scaleX(-1);
+}
