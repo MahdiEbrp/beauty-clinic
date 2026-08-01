@@ -11,7 +11,7 @@ export default function Services() {
     <section id="services" className="py-24 relative bg-surface-primary">
       <div className="relative max-w-content mx-auto px-6">
         <div className="mb-16 max-w-prose">
-          <h2 className="text-[var(--text-heading-1)] mb-4 text-accent">
+          <h2 className="text-heading-1 mb-4 text-accent">
             {t("services.heading")}
           </h2>
           <p className="text-content-secondary">{t("services.description")}</p>
@@ -34,7 +34,7 @@ export default function Services() {
                   <div className="w-14 h-14 bg-surface-primary text-copper rounded-control flex items-center justify-center transition-all duration-300 shrink-0 group-hover:bg-accent group-hover:text-content-contrast group-hover:scale-110 group-hover:-rotate-12">
                     <Icon className="w-6 h-6" strokeWidth={2} aria-hidden="true" />
                   </div>
-                  <h3 className="text-[var(--text-heading-3)] font-bold m-0 text-accent">
+                  <h3 className="text-heading-3 font-bold m-0 text-accent">
                     {t(`${service.tKey}.title`)}
                   </h3>
                 </div>

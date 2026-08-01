@@ -24,7 +24,7 @@ export default function PricingAccordion() {
         >
           <AccordionTrigger className="min-h-14 py-4 text-start hover:no-underline">
             <span className="flex items-center gap-3">
-              <span className="font-bold text-accent text-[var(--text-heading-3)]">
+              <span className="font-bold text-accent text-heading-3">
                 {t(`pricing.tabs.${category.key}`)}
               </span>
               <span className="text-caption text-content-tertiary">

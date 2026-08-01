@@ -31,7 +31,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
         className="max-w-2xl rounded-feature p-8 md:p-12 max-h-[90dvh] overflow-y-auto"
       >
         <DialogHeader className="text-center sm:text-center mb-8">
-          <DialogTitle className="text-[var(--text-heading-2)] leading-tight text-accent mb-2">
+          <DialogTitle className="text-heading-2 leading-tight text-accent mb-2">
             {t("booking.title")}
           </DialogTitle>
           <DialogDescription className="text-body text-content-secondary">

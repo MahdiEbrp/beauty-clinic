@@ -17,7 +17,7 @@ export default function PricingTable({ items, namespace }: PricingTableProps) {
         <div
           key={item.nameKey}
           role="listitem"
-          className="flex items-center justify-between gap-4 min-w-[200px] flex-1 basis-[calc(50%-0.375rem)] sm:basis-[calc(50%-0.375rem)] md:basis-auto bg-surface-primary border border-border-primary rounded-control px-4 py-3 transition-all duration-200 hover:border-border-interactive hover:shadow-elevation-1"
+          className="flex items-center justify-between gap-4 min-w-50 flex-1 basis-[calc(50%-0.375rem)] sm:basis-[calc(50%-0.375rem)] md:basis-auto bg-surface-primary border border-border-primary rounded-control px-4 py-3 transition-all duration-200 hover:border-border-interactive hover:shadow-elevation-1"
         >
           <span className="font-medium text-content-primary text-body-sm">
             {t(`${namespace}.${item.nameKey}`)}

@@ -18,7 +18,7 @@ export default function CareContent() {
     <section className="py-24 bg-surface-primary">
       <div className="max-w-content mx-auto px-6">
         <div className="mb-16 max-w-prose">
-          <h1 className="text-[var(--text-heading-1)] mb-4 text-accent">
+          <h1 className="text-heading-1 mb-4 text-accent">
             {t("care.heading")}
           </h1>
           <p className="text-content-secondary">
@@ -37,7 +37,7 @@ export default function CareContent() {
                 />
               </div>
               <div>
-                <h2 className="text-[var(--text-heading-2)] font-bold text-accent">
+                <h2 className="text-heading-2 font-bold text-accent">
                   {t("care.preCare.heading")}
                 </h2>
                 <p className="text-body-sm text-content-secondary">
@@ -63,7 +63,7 @@ export default function CareContent() {
                 />
               </div>
               <div>
-                <h2 className="text-[var(--text-heading-2)] font-bold text-accent">
+                <h2 className="text-heading-2 font-bold text-accent">
                   {t("care.postCare.heading")}
                 </h2>
                 <p className="text-body-sm text-content-secondary">
@@ -89,7 +89,7 @@ export default function CareContent() {
                 />
               </div>
               <div>
-                <h2 className="text-[var(--text-heading-2)] font-bold text-accent">
+                <h2 className="text-heading-2 font-bold text-accent">
                   {t("care.durability.heading")}
                 </h2>
                 <p className="text-body-sm text-content-secondary">

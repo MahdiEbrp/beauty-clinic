@@ -22,7 +22,7 @@ export default function Hero() {
             <span>{t("hero.tagline")}</span>
           </div>
 
-          <h1 className="text-[var(--text-display)] font-extralight mb-6 leading-[1.1] tracking-tight text-accent">
+          <h1 className="text-display font-extralight mb-6 leading-[1.1] tracking-tight text-accent">
             {t("hero.heading1")}
             <br />
             <b className="bg-linear-to-br from-accent to-copper bg-clip-text text-transparent">
@@ -30,7 +30,7 @@ export default function Hero() {
             </b>
           </h1>
 
-          <p className="text-[var(--text-body-lead)] max-w-lg mb-12 leading-normal text-content-secondary">
+          <p className="text-body-lead max-w-lg mb-12 leading-normal text-content-secondary">
             {t("hero.description")}
           </p>
 

@@ -79,7 +79,7 @@ export default function Gallery() {
     <section id="gallery" className="py-24 relative bg-surface-primary">
       <div className="relative max-w-content mx-auto px-6">
         <div className="mb-16 text-center mx-auto max-w-prose">
-          <h2 className="text-[var(--text-heading-1)] text-accent">
+          <h2 className="text-heading-1 text-accent">
             {t("gallery.heading")}
           </h2>
         </div>

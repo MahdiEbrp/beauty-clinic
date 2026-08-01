@@ -33,7 +33,7 @@ export default function Contact({ onOpenBooking }: ContactProps) {
     <section id="contact" className="py-24 relative bg-surface-primary">
       <div className="relative max-w-content mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-[var(--text-heading-1)] text-accent mb-4">
+          <h2 className="text-heading-1 text-accent mb-4">
             {t("contact.heading1")} {t("contact.heading2")}
           </h2>
           <p className="text-content-secondary">{t("contact.description")}</p>

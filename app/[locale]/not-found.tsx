@@ -18,7 +18,7 @@ export default function NotFoundPage() {
         <p className="text-[clamp(3rem,8vw,4rem)] font-bold text-accent mb-2">
           404
         </p>
-        <h1 className="text-[var(--text-heading-3)] font-bold text-accent mb-3">
+        <h1 className="text-heading-3 font-bold text-accent mb-3">
           {t("notFound.title")}
         </h1>
         <p className="text-content-secondary text-body-sm leading-relaxed mb-8 max-w-sm mx-auto">
