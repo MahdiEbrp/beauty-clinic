@@ -77,7 +77,7 @@ export default function Navbar() {
             <li key={item.key}>
               <a
                 href={item.href}
-                className="text-sm font-semibold text-content-secondary no-underline transition-colors hover:text-accent min-h-11 flex items-center whitespace-nowrap rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="text-body-sm font-semibold text-content-secondary no-underline transition-colors hover:text-accent min-h-11 flex items-center whitespace-nowrap rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 {t(`nav.${item.key}`)}
               </a>
@@ -87,7 +87,7 @@ export default function Navbar() {
             <li key={item.key}>
               <Link
                 href={item.href}
-                className="text-sm font-semibold text-content-secondary no-underline transition-colors hover:text-accent min-h-11 flex items-center whitespace-nowrap rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="text-body-sm font-semibold text-content-secondary no-underline transition-colors hover:text-accent min-h-11 flex items-center whitespace-nowrap rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 {t(`nav.${item.key}`)}
               </Link>
@@ -127,7 +127,7 @@ export default function Navbar() {
               <a
                 key={item.key}
                 href={item.href}
-                className="p-3 min-h-11 flex items-center justify-center rounded-control text-accent no-underline hover:bg-surface-tertiary font-semibold w-full text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="p-3 min-h-11 flex items-center justify-center rounded-control text-accent no-underline hover:bg-surface-tertiary font-semibold text-body-sm w-full text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 onClick={() => setMenuOpen(false)}
               >
                 {t(`nav.${item.key}`)}
@@ -137,7 +137,7 @@ export default function Navbar() {
               <Link
                 key={item.key}
                 href={item.href}
-                className="p-3 min-h-11 flex items-center justify-center rounded-control text-accent no-underline hover:bg-surface-tertiary font-semibold w-full text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="p-3 min-h-11 flex items-center justify-center rounded-control text-accent no-underline hover:bg-surface-tertiary font-semibold text-body-sm w-full text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 onClick={() => setMenuOpen(false)}
               >
                 {t(`nav.${item.key}`)}

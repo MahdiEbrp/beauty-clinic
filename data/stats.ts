@@ -1,11 +1,9 @@
 /**
  * About-section statistics.
  *
- * Stored as real numbers so they can be formatted per locale with
- * Intl.NumberFormat (DESIGN_RULES #72). They were previously hardcoded in JSX
- * as the literals "۱۰K+", "۱۵+", "۵۰+", which rendered Persian digits on the
- * English page and were also double-converted by the global `ss01` font
- * feature (DESIGN_RULES #74).
+ * Stored as real numbers and formatted with toLocaleString("en") to ensure
+ * English digits. The ss01 font feature in Estedad visually converts them
+ * to Persian digits when locale is fa (DESIGN_RULES #72-74).
  */
 export type Stat = {
   key: string;

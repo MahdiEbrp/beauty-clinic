@@ -30,7 +30,7 @@ export default function LocaleSwitcher() {
     <button
       type="button"
       onClick={handleSwitch}
-      className="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-11 bg-transparent border border-border-interactive text-accent rounded-pill transition-all duration-200 hover:bg-surface-tertiary hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent text-sm font-semibold"
+      className="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-11 bg-transparent border border-border-interactive text-accent rounded-pill transition-all duration-200 hover:bg-surface-tertiary hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent text-body-sm font-semibold"
       aria-label={t("localeSwitcher.switchTo", { language: targetName })}
     >
       <Globe className="w-4 h-4" strokeWidth={2} aria-hidden="true" />

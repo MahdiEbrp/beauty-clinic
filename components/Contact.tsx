@@ -16,7 +16,7 @@ interface ContactProps {
 }
 
 const socialPill =
-  "inline-flex items-center gap-2 px-4 py-2 min-h-11 bg-accent text-content-contrast rounded-pill text-sm font-bold hover:bg-accent-hover transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+  "inline-flex items-center gap-2 px-4 py-2 min-h-11 bg-accent text-content-contrast rounded-pill text-body-sm font-bold hover:bg-accent-hover transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 
 const mapTile =
   "bg-surface-secondary border border-border-interactive rounded-panel p-6 flex flex-col items-center justify-center text-center hover:bg-surface-tertiary transition-all group shadow-elevation-1 aspect-square focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
@@ -33,7 +33,7 @@ export default function Contact({ onOpenBooking }: ContactProps) {
     <section id="contact" className="py-24 relative bg-surface-primary">
       <div className="relative max-w-content mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-[clamp(2rem,6vw,3.5rem)] text-accent mb-4">
+          <h2 className="text-[var(--text-heading-1)] text-accent mb-4">
             {t("contact.heading1")} {t("contact.heading2")}
           </h2>
           <p className="text-content-secondary">{t("contact.description")}</p>
@@ -46,7 +46,7 @@ export default function Contact({ onOpenBooking }: ContactProps) {
                 <MapPin className="w-6 h-6" strokeWidth={2} aria-hidden="true" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-accent mb-2">
+                <h3 className="text-body-lg font-bold text-accent mb-2">
                   {t("contact.addressTitle")}
                 </h3>
                 <p className="text-content-secondary leading-relaxed">
@@ -64,7 +64,7 @@ export default function Contact({ onOpenBooking }: ContactProps) {
                 />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-accent mb-3">
+                <h3 className="text-body-lg font-bold text-accent mb-3">
                   {t("contact.socialTitle")}
                 </h3>
                 <div className="flex flex-wrap gap-3">
@@ -98,7 +98,7 @@ export default function Contact({ onOpenBooking }: ContactProps) {
             <button
               type="button"
               onClick={onOpenBooking}
-              className="inline-flex items-center justify-center gap-3 px-10 py-5 text-lg min-h-15 bg-accent text-content-contrast rounded-pill font-bold border border-copper transition-all duration-300 hover:bg-accent-hover hover:-translate-y-0.5 hover:shadow-elevation-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-95 w-full mt-4"
+              className="inline-flex items-center justify-center gap-3 px-10 py-5 text-body-lg min-h-15 bg-accent text-content-contrast rounded-pill font-bold border border-copper transition-all duration-300 hover:bg-accent-hover hover:-translate-y-0.5 hover:shadow-elevation-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-95 w-full mt-4"
             >
               <CalendarPlus className="w-6 h-6" strokeWidth={2} aria-hidden="true" />
               {t("contact.bookingTitle")}
@@ -117,7 +117,7 @@ export default function Contact({ onOpenBooking }: ContactProps) {
                 strokeWidth={1.5}
                 aria-hidden="true"
               />
-              <h3 className="text-accent font-bold mb-2 text-lg">
+              <h3 className="text-accent font-bold mb-2 text-body-lg">
                 {t("contact.neshanMap")}
               </h3>
               <p className="text-xs text-content-secondary">
@@ -135,7 +135,7 @@ export default function Contact({ onOpenBooking }: ContactProps) {
                 strokeWidth={1.5}
                 aria-hidden="true"
               />
-              <h3 className="text-accent font-bold mb-2 text-lg">
+              <h3 className="text-accent font-bold mb-2 text-body-lg">
                 {t("contact.googleMap")}
               </h3>
               <p className="text-xs text-content-secondary">
@@ -153,7 +153,7 @@ export default function Contact({ onOpenBooking }: ContactProps) {
                 <h3 className="text-content-contrast font-bold text-xl mb-2">
                   {t("contact.clinicName")}
                 </h3>
-                <p className="text-content-contrast/80 text-sm">
+                <p className="text-content-contrast/80 text-body-sm">
                   {t("contact.clinicAddress")}
                 </p>
               </div>

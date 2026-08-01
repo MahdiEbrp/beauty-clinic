@@ -39,7 +39,7 @@ export default function MarqueeBanner() {
             <MarqueeItem
               key={item.key}
               aria-hidden="true"
-              className="flex items-center gap-4 text-[clamp(1.25rem,4vw,1.5rem)] font-semibold tracking-wide"
+              className="flex items-center gap-4 text-[var(--text-body-lead)] font-semibold tracking-wide"
             >
               <Icon className="w-5 h-5 text-gold shrink-0" strokeWidth={2} />
               <span>{t(`marqueeItems.${item.key}`)}</span>

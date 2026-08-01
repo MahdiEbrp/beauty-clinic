@@ -15,7 +15,7 @@ export default function EmptyState() {
           aria-hidden="true"
         />
       </div>
-      <p className="text-content-secondary text-lg">
+      <p className="text-content-secondary text-body-lg">
         {t("common.empty")}
       </p>
     </div>

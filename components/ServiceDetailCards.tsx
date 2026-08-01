@@ -46,11 +46,11 @@ export default function ServiceDetailCards() {
               <div className="w-14 h-14 bg-surface-primary text-copper rounded-control flex items-center justify-center transition-all duration-300 shrink-0 group-hover:bg-accent group-hover:text-content-contrast group-hover:scale-110 group-hover:-rotate-12">
                 <Icon className="w-6 h-6" strokeWidth={2} aria-hidden="true" />
               </div>
-              <h3 className="text-[clamp(1.25rem,4vw,1.5rem)] font-bold m-0 text-accent">
+              <h3 className="text-[var(--text-heading-3)] font-bold m-0 text-accent">
                 {t(`servicesPage.services.${key}.title`)}
               </h3>
             </div>
-            <p className="mt-auto text-sm text-content-secondary leading-relaxed">
+            <p className="mt-auto text-body-sm text-content-secondary leading-relaxed">
               {t(`servicesPage.services.${key}.description`)}
             </p>
           </article>

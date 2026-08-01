@@ -24,17 +24,17 @@ export default function PricingAccordion() {
         >
           <AccordionTrigger className="min-h-14 py-4 text-start hover:no-underline">
             <span className="flex items-center gap-3">
-              <span className="font-bold text-accent text-[clamp(1rem,3vw,1.25rem)]">
+              <span className="font-bold text-accent text-[var(--text-heading-3)]">
                 {t(`pricing.tabs.${category.key}`)}
               </span>
-              <span className="text-xs text-content-tertiary">
+              <span className="text-caption text-content-tertiary">
                 ({category.items.length})
               </span>
             </span>
           </AccordionTrigger>
           <AccordionContent className="pb-6">
             <div className="mb-4">
-              <p className="text-sm text-content-secondary">
+              <p className="text-body-sm text-content-secondary">
                 {t(`pricing.categories.${category.key}_desc`)}
               </p>
               {category.noteKey && (

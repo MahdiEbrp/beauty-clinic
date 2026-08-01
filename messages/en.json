@@ -366,6 +366,8 @@
     "waitTime": "Wait Time",
     "waitTimeDesc": "Due to the time-consuming nature of some services, wait times may be up to 3 hours. Please plan accordingly.",
     "cancellationPolicy": "Cancellation Policy",
-    "cancellationPolicyDesc": "If you cannot attend, please inform us at least 24 hours in advance for cancellation or rescheduling."
+    "cancellationPolicyDesc": "If you cannot attend, please inform us at least 24 hours in advance for cancellation or rescheduling.",
+    "quickContact": "Have a question?",
+    "callUs": "Call us"
   }
 }

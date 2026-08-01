@@ -9,16 +9,21 @@
 
     /* ---- Content (text) --------------------------------------------- */
     /* All verified >= 4.5:1 on --surface-primary (the darker of the two). */
-    --content-primary: #39090a;   /* 12.46:1 */
-    --content-secondary: #663530; /*  8.35:1 */
-    --content-tertiary: #8a6157;  /*  4.50:1  (was #9e7065 = 3.56:1, failed AA) */
-    --content-contrast: #fdf0e8;  /* 13.26:1 on --accent */
+    --content-primary: #39090a;
+    /* 12.46:1 */
+    --content-secondary: #663530;
+    /*  8.35:1 */
+    --content-tertiary: #8a6157;
+    /*  4.50:1  (was #9e7065 = 3.56:1, failed AA) */
+    --content-contrast: #fdf0e8;
+    /* 13.26:1 on --accent */
 
     /* ---- Borders ----------------------------------------------------- */
     /* Decorative outlines only. Exempt from WCAG 1.4.11. */
     --border-primary: #d2b1a4;
     /* Visible boundary of an interactive control. Must clear 3:1 (WCAG 1.4.11). */
-    --border-interactive: #b6806b; /* 2.99:1 on --surface-secondary */
+    --border-interactive: #b6806b;
+    /* 2.99:1 on --surface-secondary */
 
     /* ---- Accent ------------------------------------------------------ */
     --accent: #530916;
@@ -29,32 +34,85 @@
     /* --gold is only ever placed on dark: 7.05:1 on accent, 8.21:1 on footer-bg. */
     --gold: #e5a57a;
     /* Large text (>=24px), icons, borders and focus rings. */
-    --copper: #c47344;        /* 3.00:1 on --surface-primary (was #cb835a = 2.55:1) */
+    --copper: #c47344;
+    /* 3.00:1 on --surface-primary (was #cb835a = 2.55:1) */
     /* Small text. */
-    --copper-strong: #9e5932; /* 4.50:1 on --surface-primary */
+    --copper-strong: #9e5932;
+    /* 4.50:1 on --surface-primary */
 
     /* ---- Form -------------------------------------------------------- */
     --form-input-bg: #f8e9db;
-    --form-input-border: #b6806b; /* 2.99:1 - input boundary, WCAG 1.4.11 */
+    --form-input-border: #b6806b;
+    /* 2.99:1 - input boundary, WCAG 1.4.11 */
 
     /* ---- Footer ------------------------------------------------------ */
     --footer-bg: #39090a;
-    --footer-text: #f0d9c8;   /* 12.70:1 on --footer-bg */
-    --footer-muted: #a4786e;  /*  4.51:1 (was #9e7065 = 4.07:1, failed AA) */
-    --footer-heading: #fdf0e8;/* 15.45:1 */
+    --footer-text: #f0d9c8;
+    /* 12.70:1 on --footer-bg */
+    --footer-muted: #a4786e;
+    /*  4.51:1 (was #9e7065 = 4.07:1, failed AA) */
+    --footer-heading: #fdf0e8;
+    /* 15.45:1 */
     --footer-border: #530916;
 
     /* ---- Status ------------------------------------------------------ */
     /* All >= 4.49:1 on --surface-secondary. */
-    --error: #d82323;   /* was #dc2626 = 4.32:1 */
-    --warning: #a75c05; /* was #d97706 = 2.85:1 */
-    --success: #11803a; /* was #16a34a = 2.95:1 */
+    --error: #d82323;
+    /* was #dc2626 = 4.32:1 */
+    --warning: #a75c05;
+    /* was #d97706 = 2.85:1 */
+    --success: #11803a;
+    /* was #16a34a = 2.95:1 */
 
     /* ---- Elevation scale (4 levels) --------------------------------- */
     --shadow-sm: 0 1px 2px 0 rgba(57, 9, 10, 0.04);
     --shadow-md: 0 4px 12px -2px rgba(57, 9, 10, 0.06), 0 2px 4px -2px rgba(57, 9, 10, 0.04);
     --shadow-lg: 0 12px 32px -8px rgba(57, 9, 10, 0.1), 0 4px 12px -4px rgba(57, 9, 10, 0.06);
     --shadow-xl: 0 24px 56px -12px rgba(57, 9, 10, 0.22), 0 8px 20px -8px rgba(57, 9, 10, 0.12);
+    /* ---- Type Scale (fully fluid) ------------------------------------- */
+    /* All sizes now scale with viewport width, clamped between a min and max */
+
+    /* Fluid display/heading sizes — unchanged, already correct */
+    --text-display: clamp(2.5rem, 10vw, 5.5rem);
+    /* 40-88px - hero */
+    --text-heading-1: clamp(2rem, 6vw, 3.5rem);
+    /* 32-56px - page titles */
+    --text-heading-2: clamp(1.5rem, 4vw, 2.25rem);
+    /* 24-36px - section headings */
+    --text-heading-3: clamp(1.25rem, 4vw, 1.5rem);
+    /* 20-24px - card headings */
+    --text-body-lead: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+    /* 20-24px - lead paragraphs (was broken: min=max, now actually fluid) */
+
+    /* Fluid body/UI sizes — converted from fixed rem to gentle clamp() */
+    --text-xs: clamp(0.75rem, 0.72rem + 0.1vw, 0.8125rem);
+    /* 12-13px - labels, captions, badges */
+    --text-sm: clamp(0.875rem, 0.84rem + 0.15vw, 0.9375rem);
+    /* 14-15px - body text, descriptions, nav */
+    --text-base: clamp(1rem, 0.95rem + 0.2vw, 1.125rem);
+    /* 16-18px - default body, form inputs */
+    --text-lg: clamp(1.125rem, 1.05rem + 0.3vw, 1.3125rem);
+    /* 18-21px - sub-headings, buttons */
+    --text-xl: clamp(1.25rem, 1.15rem + 0.4vw, 1.5rem);
+    /* 20-24px - logo, card titles */
+    --text-2xl: clamp(1.5rem, 1.35rem + 0.6vw, 1.875rem);
+    /* 24-30px - section h2 */
+    --text-3xl: clamp(2rem, 1.75rem + 1vw, 2.5rem);
+    /* 32-40px - page h1 */
+    --text-4xl: clamp(2.5rem, 2.1rem + 1.5vw, 3.25rem);
+    /* 40-52px - hero h1 min */
+    --text-5xl: clamp(3.5rem, 2.9rem + 2.2vw, 4.5rem);
+    /* 56-72px - hero h1 max */
+
+    /* Fluid body copy sizes — converted from fixed rem to gentle clamp() */
+    --text-body-lg: clamp(1.125rem, 1.05rem + 0.3vw, 1.3125rem);
+    /* 18-21px - large body */
+    --text-body: clamp(1rem, 0.95rem + 0.2vw, 1.125rem);
+    /* 16-18px - default body */
+    --text-body-sm: clamp(0.875rem, 0.84rem + 0.15vw, 0.9375rem);
+    /* 14-15px - small body */
+    --text-caption: clamp(0.75rem, 0.72rem + 0.1vw, 0.8125rem);
+    /* 12-13px - labels, captions */
   }
 }
 
@@ -116,11 +174,16 @@
   /* Deliberately NOT named lg/xl: those collide with Tailwind's built-in
      --radius-* and previously inverted the scale (rounded-xl rendered 2rem
      while rounded-3xl rendered 1.5rem). */
-  --radius-control: 0.75rem; /* inputs, icon tiles, menu rows */
-  --radius-card: 1rem;       /* small cards */
-  --radius-panel: 1.5rem;    /* large cards, sections */
-  --radius-feature: 2.5rem;  /* hero-scale feature panels */
-  --radius-pill: 9999px;     /* buttons, chips, avatars */
+  --radius-control: 0.75rem;
+  /* inputs, icon tiles, menu rows */
+  --radius-card: 1rem;
+  /* small cards */
+  --radius-panel: 1.5rem;
+  /* large cards, sections */
+  --radius-feature: 2.5rem;
+  /* hero-scale feature panels */
+  --radius-pill: 9999px;
+  /* buttons, chips, avatars */
 
   /* ---- Elevation --------------------------------------------------- */
   --shadow-elevation-1: var(--shadow-sm);
@@ -129,12 +192,24 @@
   --shadow-elevation-4: var(--shadow-xl);
 
   /* ---- Containers -------------------------------------------------- */
-  --container-content: 75rem;  /* 1200px - page gutter width */
-  --container-prose: 37.5rem;  /* 600px  - centred heading blocks */
+  --container-content: 75rem;
+  /* 1200px - page gutter width */
+  --container-prose: 37.5rem;
+  /* 600px  - centred heading blocks */
 
   /* ---- Fonts ------------------------------------------------------- */
-  --font-sans: var(--font-inter);
-  --font-estedad: var(--font-estedad);
+  --font-sans: var(--font-estedad);
+
+  /* ---- Font Sizes -------------------------------------------------- */
+  --text-xs: var(--text-xs);
+  --text-sm: var(--text-sm);
+  --text-base: var(--text-base);
+  --text-lg: var(--text-lg);
+  --text-xl: var(--text-xl);
+  --text-2xl: var(--text-2xl);
+  --text-3xl: var(--text-3xl);
+  --text-4xl: var(--text-4xl);
+  --text-5xl: var(--text-5xl);
 
   /* ---- Animation --------------------------------------------------- */
   --animate-fade-in: fade-in 250ms ease-out;
@@ -150,64 +225,128 @@
 }
 
 @keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slide-up {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes marquee-left {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(calc(-100% - var(--marquee-gap))); }
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(calc(-100% - var(--marquee-gap)));
+  }
 }
 
 @keyframes marquee-right {
-  0% { transform: translateX(calc(-100% - var(--marquee-gap))); }
-  100% { transform: translateX(0%); }
+  0% {
+    transform: translateX(calc(-100% - var(--marquee-gap)));
+  }
+
+  100% {
+    transform: translateX(0%);
+  }
 }
 
 @keyframes marquee-left-rtl {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(calc(100% + var(--marquee-gap))); }
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(calc(100% + var(--marquee-gap)));
+  }
 }
 
 @keyframes marquee-right-rtl {
-  0% { transform: translateX(calc(100% + var(--marquee-gap))); }
-  100% { transform: translateX(0%); }
+  0% {
+    transform: translateX(calc(100% + var(--marquee-gap)));
+  }
+
+  100% {
+    transform: translateX(0%);
+  }
 }
 
 @keyframes marquee-up {
-  0% { transform: translateY(0%); }
-  100% { transform: translateY(calc(-100% - var(--marquee-gap))); }
+  0% {
+    transform: translateY(0%);
+  }
+
+  100% {
+    transform: translateY(calc(-100% - var(--marquee-gap)));
+  }
 }
 
 @keyframes marquee-down {
-  0% { transform: translateY(calc(-100% - var(--marquee-gap))); }
-  100% { transform: translateY(0%); }
+  0% {
+    transform: translateY(calc(-100% - var(--marquee-gap)));
+  }
+
+  100% {
+    transform: translateY(0%);
+  }
 }
 
 @keyframes pulse-glow {
-  0% { box-shadow: 0 0 0 0 rgba(83, 9, 22, 0.4); }
-  70% { box-shadow: 0 0 0 15px rgba(83, 9, 22, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(83, 9, 22, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(83, 9, 22, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 15px rgba(83, 9, 22, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(83, 9, 22, 0);
+  }
 }
 
 @keyframes fab-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(83, 9, 22, 0.7), 0 10px 20px -5px rgba(83, 9, 22, 0.5); }
-  70% { box-shadow: 0 0 0 20px rgba(83, 9, 22, 0), 0 10px 20px -5px rgba(83, 9, 22, 0.5); }
-  100% { box-shadow: 0 0 0 0 rgba(83, 9, 22, 0), 0 10px 20px -5px rgba(83, 9, 22, 0.5); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(83, 9, 22, 0.7), 0 10px 20px -5px rgba(83, 9, 22, 0.5);
+  }
+
+  70% {
+    box-shadow: 0 0 0 20px rgba(83, 9, 22, 0), 0 10px 20px -5px rgba(83, 9, 22, 0.5);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(83, 9, 22, 0), 0 10px 20px -5px rgba(83, 9, 22, 0.5);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  html { scroll-behavior: auto; }
+
+  html {
+    scroll-behavior: auto;
+  }
 
   /* The blanket rule above fast-forwards animations to their final frame. For
      the marquee that means translateX(-100%), i.e. an empty bar. Cancel the
@@ -227,25 +366,18 @@ html[lang="fa"] *,
 html[lang="fa"] *::before,
 html[lang="fa"] *::after {
   font-family: var(--font-estedad), sans-serif;
-  font-feature-settings: "ss01";
+  font-feature-settings: 'ss01' off, 'ss02' off, 'ss03' off, 'ss10' off, 'ss11' off, 'ss12' off, 'ss20' on;
 }
 
 body {
-  font-family: var(--font-inter), sans-serif;
-}
-
-/* Numbers already converted to Persian-Indic digits by Intl.NumberFormat must
-   NOT also go through the ss01 glyph substitution above (DESIGN_RULES #74:
-   one conversion path per element, never two). */
-.num-intl,
-.num-intl * {
-  font-feature-settings: "tnum";
+  font-family: var(--font-estedad), sans-serif;
 }
 
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
@@ -259,23 +391,19 @@ body {
 /* Gradient scrim over the hero photo. Derived from the surface token rather
    than hardcoded rgba() so it tracks the palette. */
 .hero-overlay {
-  background: linear-gradient(
-    to left,
-    color-mix(in srgb, var(--surface-primary) 98%, transparent) 0%,
-    color-mix(in srgb, var(--surface-primary) 92%, transparent) 40%,
-    color-mix(in srgb, var(--surface-primary) 60%, transparent) 70%,
-    color-mix(in srgb, var(--surface-primary) 20%, transparent) 100%
-  );
+  background: linear-gradient(to left,
+      color-mix(in srgb, var(--surface-primary) 98%, transparent) 0%,
+      color-mix(in srgb, var(--surface-primary) 92%, transparent) 40%,
+      color-mix(in srgb, var(--surface-primary) 60%, transparent) 70%,
+      color-mix(in srgb, var(--surface-primary) 20%, transparent) 100%);
 }
 
 html[dir="ltr"] .hero-overlay {
-  background: linear-gradient(
-    to right,
-    color-mix(in srgb, var(--surface-primary) 98%, transparent) 0%,
-    color-mix(in srgb, var(--surface-primary) 92%, transparent) 40%,
-    color-mix(in srgb, var(--surface-primary) 60%, transparent) 70%,
-    color-mix(in srgb, var(--surface-primary) 20%, transparent) 100%
-  );
+  background: linear-gradient(to right,
+      color-mix(in srgb, var(--surface-primary) 98%, transparent) 0%,
+      color-mix(in srgb, var(--surface-primary) 92%, transparent) 40%,
+      color-mix(in srgb, var(--surface-primary) 60%, transparent) 70%,
+      color-mix(in srgb, var(--surface-primary) 20%, transparent) 100%);
 }
 
 .btn-hero-primary {

@@ -1,21 +1,16 @@
 "use client";
 
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Wind } from "lucide-react";
 import { clinic } from "@/data/clinic";
 import { navigationKeys, routeNavigationKeys } from "@/data/navigation";
 import { Link } from "@/src/i18n/navigation";
 
 const linkClass =
-  "text-footer-muted text-sm no-underline hover:text-gold transition-colors inline-flex items-center min-h-11 rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold";
+  "text-footer-muted text-body-sm no-underline hover:text-gold transition-colors inline-flex items-center min-h-11 rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold";
 
 export default function Footer() {
   const t = useTranslations();
-  const locale = useLocale();
-
-  const year = new Intl.DateTimeFormat(locale, { year: "numeric" }).format(
-    new Date(),
-  );
 
   const socials = [
     { key: "rubika", href: clinic.social.rubika },
@@ -35,7 +30,7 @@ export default function Footer() {
           </div>
 
           <nav aria-label={t("footer.quickAccessNav")}>
-            <h3 className="mb-6 text-base text-footer-heading">
+            <h3 className="mb-6 text-body text-footer-heading">
               {t("footer.quickAccess")}
             </h3>
             <ul className="list-none flex flex-col">
@@ -59,7 +54,7 @@ export default function Footer() {
           </nav>
 
           <nav aria-label={t("footer.socialNav")}>
-            <h3 className="mb-6 text-base text-footer-heading">
+            <h3 className="mb-6 text-body text-footer-heading">
               {t("footer.socialHeading")}
             </h3>
             <ul className="list-none flex flex-col">
@@ -83,9 +78,9 @@ export default function Footer() {
           </nav>
         </div>
 
-        <div className="border-t border-footer-border mt-12 py-8 flex justify-between items-center text-sm text-footer-muted flex-wrap gap-4">
+        <div className="border-t border-footer-border mt-12 py-8 flex justify-between items-center text-body-sm text-footer-muted flex-wrap gap-4">
           <span>
-            © <span className="num-intl">{year}</span> {t("site.name")}.{" "}
+            © <span>{new Date().getFullYear()}</span> {t("site.name")}.{" "}
             {t("site.rights")}
           </span>
         </div>

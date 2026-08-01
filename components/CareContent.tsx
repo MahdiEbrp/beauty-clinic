@@ -18,7 +18,7 @@ export default function CareContent() {
     <section className="py-24 bg-surface-primary">
       <div className="max-w-content mx-auto px-6">
         <div className="mb-16 max-w-prose">
-          <h1 className="text-[clamp(2rem,6vw,3.5rem)] mb-4 text-accent">
+          <h1 className="text-[var(--text-heading-1)] mb-4 text-accent">
             {t("care.heading")}
           </h1>
           <p className="text-content-secondary">
@@ -37,10 +37,10 @@ export default function CareContent() {
                 />
               </div>
               <div>
-                <h2 className="text-[clamp(1.25rem,4vw,1.75rem)] font-bold text-accent">
+                <h2 className="text-[var(--text-heading-2)] font-bold text-accent">
                   {t("care.preCare.heading")}
                 </h2>
-                <p className="text-sm text-content-secondary">
+                <p className="text-body-sm text-content-secondary">
                   {t("care.preCare.description")}
                 </p>
               </div>
@@ -63,10 +63,10 @@ export default function CareContent() {
                 />
               </div>
               <div>
-                <h2 className="text-[clamp(1.25rem,4vw,1.75rem)] font-bold text-accent">
+                <h2 className="text-[var(--text-heading-2)] font-bold text-accent">
                   {t("care.postCare.heading")}
                 </h2>
-                <p className="text-sm text-content-secondary">
+                <p className="text-body-sm text-content-secondary">
                   {t("care.postCare.description")}
                 </p>
               </div>
@@ -89,10 +89,10 @@ export default function CareContent() {
                 />
               </div>
               <div>
-                <h2 className="text-[clamp(1.25rem,4vw,1.75rem)] font-bold text-accent">
+                <h2 className="text-[var(--text-heading-2)] font-bold text-accent">
                   {t("care.durability.heading")}
                 </h2>
-                <p className="text-sm text-content-secondary">
+                <p className="text-body-sm text-content-secondary">
                   {t("care.durability.description")}
                 </p>
               </div>
@@ -113,7 +113,7 @@ export default function CareContent() {
                       {t(`care.durability.${point.titleKey}`)}
                     </h3>
                   </div>
-                  <p className="text-sm text-content-secondary leading-relaxed">
+                  <p className="text-body-sm text-content-secondary leading-relaxed">
                     {t(`care.durability.${point.descriptionKey}`)}
                   </p>
                 </div>

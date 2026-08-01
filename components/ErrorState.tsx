@@ -19,7 +19,7 @@ export default function ErrorState({ onRetry }: ErrorStateProps) {
           aria-hidden="true"
         />
       </div>
-      <p className="text-content-secondary text-lg mb-4">
+      <p className="text-content-secondary text-body-lg mb-4">
         {t("common.error")}
       </p>
       {onRetry && (
