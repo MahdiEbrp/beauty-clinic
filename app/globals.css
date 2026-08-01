@@ -381,3 +381,108 @@ html[dir="ltr"] .hero-overlay {
 html[dir="rtl"] .rtl-mirror {
   transform: scaleX(-1);
 }
+
+/* ───────────────────────────────────────────────────────────────────
+   Premium textural enhancements.
+   No new colors or font sizes are introduced here — every value is
+   derived from an existing token via color-mix(), and textures are
+   rendered in tokens only. These are decorative layers that lift the
+   flat surfaces into something tactile.
+   ─────────────────────────────────────────────────────────────────── */
+
+/* Fine film grain. Inline SVG noise, tinted with the content token so it
+   reads on light surfaces and inverts naturally on the dark footer. Kept
+   at ~4% opacity so it never hurts WCAG contrast. */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px;
+}
+
+/* Soft directional glow used behind hero copy and feature cards. Built from
+   the accent/copper tokens so it stays on-brand. */
+.glow-accent {
+  background: radial-gradient(closest-side,
+    color-mix(in srgb, var(--copper) 38%, transparent),
+    transparent 70%);
+  filter: blur(48px);
+}
+
+.glow-gold {
+  background: radial-gradient(closest-side,
+    color-mix(in srgb, var(--gold) 30%, transparent),
+    transparent 70%);
+  filter: blur(56px);
+}
+
+/* Floating orb keyframes — slow, ambient, reduced-motion safe (the blanket
+   rule at the top of this file fast-forwards them to a static frame). */
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-22px) scale(1.04);
+  }
+}
+
+@keyframes float-slower {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(18px) scale(0.96);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 11s ease-in-out infinite;
+}
+
+.animate-float-slower {
+  animation: float-slower 15s ease-in-out infinite;
+}
+
+/* Marquee edge fades — mask the scrolling banner's hard cutoffs at both ends.
+   Uses the surface token so it matches whichever palette is active. */
+.marquee-fade {
+  -webkit-mask-image: linear-gradient(to right,
+    transparent 0%,
+    var(--surface-primary) 8%,
+    var(--surface-primary) 92%,
+    transparent 100%);
+  mask-image: linear-gradient(to right,
+    transparent 0%,
+    var(--surface-primary) 8%,
+    var(--surface-primary) 92%,
+    transparent 100%);
+}
+
+/* Shimmering gradient text used for accent words. Colours are tokens. */
+.text-shimmer {
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 6s linear infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* Hairline gradient divider — a single-pixel rule drawn from tokens that
+   adds a luxurious break between sections. */
+.rule-gradient {
+  height: 1px;
+  background: linear-gradient(to right,
+    transparent,
+    color-mix(in srgb, var(--copper) 45%, transparent),
+    transparent);
+}

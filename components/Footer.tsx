@@ -1,16 +1,23 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Wind } from "lucide-react";
 import { clinic } from "@/data/clinic";
 import { navigationKeys, routeNavigationKeys } from "@/data/navigation";
-import { Link } from "@/src/i18n/navigation";
+import { Link, usePathname } from "@/src/i18n/navigation";
 
 const linkClass =
   "text-footer-muted text-body-sm no-underline hover:text-gold transition-colors inline-flex items-center min-h-11 rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold";
 
 export default function Footer() {
   const t = useTranslations();
+  const locale = useLocale();
+  const pathname = usePathname();
+  const isHomePage = pathname === "/" || pathname === `/${locale}`;
+
+  const getAnchorHref = (anchor: string) => {
+    return isHomePage ? anchor : `/${anchor}`;
+  };
 
   const socials = [
     { key: "rubika", href: clinic.social.rubika },
@@ -38,9 +45,9 @@ export default function Footer() {
                 .filter((key) => key !== "gallery")
                 .map((key) => (
                   <li key={key}>
-                    <a href={`#${key}`} className={linkClass}>
+                    <Link href={getAnchorHref(`#${key}`)} className={linkClass}>
                       {t(`nav.${key}`)}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               {routeNavigationKeys.map((key) => (

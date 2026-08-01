@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { Link } from "@/src/i18n/navigation";
+import { Link, usePathname } from "@/src/i18n/navigation";
 import { Wind, Menu, X } from "lucide-react";
 import { getNavItems, getRouteNavItems } from "@/data/navigation";
 import LocaleSwitcher from "./LocaleSwitcher";
@@ -12,12 +12,20 @@ const MENU_ID = "primary-mobile-menu";
 export default function Navbar() {
   const t = useTranslations();
   const locale = useLocale();
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const prevLocaleRef = useRef(locale);
   const navItems = getNavItems();
   const routeItems = getRouteNavItems();
+
+  const isHomePage = pathname === "/" || pathname === `/${locale}`;
+
+  const getAnchorHref = (anchor: string) => {
+    return isHomePage ? anchor : `/${anchor}`;
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -27,7 +35,10 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    setMenuOpen(false);
+    if (prevLocaleRef.current !== locale) {
+      prevLocaleRef.current = locale;
+      setMenuOpen(false);
+    }
   }, [locale]);
 
   useEffect(() => {
@@ -75,12 +86,12 @@ export default function Navbar() {
         <ul className="hidden lg:flex gap-6 list-none m-0 p-0">
           {navItems.map((item) => (
             <li key={item.key}>
-              <a
-                href={item.href}
+              <Link
+                href={getAnchorHref(item.href)}
                 className="text-body-sm font-semibold text-content-secondary no-underline transition-colors hover:text-accent min-h-11 flex items-center whitespace-nowrap rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 {t(`nav.${item.key}`)}
-              </a>
+              </Link>
             </li>
           ))}
           {routeItems.map((item) => (
@@ -121,17 +132,17 @@ export default function Navbar() {
         {menuOpen && (
           <div
             id={MENU_ID}
-            className="lg:hidden absolute top-[70px] inset-x-0 bg-surface-secondary border border-border-primary rounded-panel shadow-elevation-3 p-4 flex flex-col gap-2 items-center overflow-hidden animate-fade-in"
+            className="lg:hidden absolute top-17.5 inset-x-0 bg-surface-secondary border border-border-primary rounded-panel shadow-elevation-3 p-4 flex flex-col gap-2 items-center overflow-hidden animate-fade-in"
           >
             {navItems.map((item) => (
-              <a
+              <Link
                 key={item.key}
-                href={item.href}
+                href={getAnchorHref(item.href)}
                 className="p-3 min-h-11 flex items-center justify-center rounded-control text-accent no-underline hover:bg-surface-tertiary font-semibold text-body-sm w-full text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 onClick={() => setMenuOpen(false)}
               >
                 {t(`nav.${item.key}`)}
-              </a>
+              </Link>
             ))}
             {routeItems.map((item) => (
               <Link

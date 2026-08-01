@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { AlertTriangle } from "lucide-react";
 import { routing } from "@/src/i18n/routing";
+import Link from "next/link";
 
 /**
  * Root 404: reached for paths outside any locale segment, so there is no request
@@ -29,12 +30,12 @@ export default async function RootNotFound() {
         <p className="text-content-secondary text-body-sm leading-relaxed mb-8 max-w-sm mx-auto">
           {t("notFound.description")}
         </p>
-        <a
+        <Link
           href="/"
           className="inline-flex items-center justify-center min-h-11 px-8 py-3 bg-accent text-content-contrast rounded-pill text-body-sm uppercase tracking-wider hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-95 transition-all duration-200 font-medium"
         >
           {t("notFound.goHome")}
-        </a>
+        </Link>
       </div>
     </div>
   );
