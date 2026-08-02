@@ -1,0 +1,18 @@
+import { z } from "zod";
+
+const envSchema = z.object({
+  DATABASE_URL: z.url(),
+  DIRECT_URL: z.url(),
+  AUTH_SECRET: z.string().min(32),
+  ENCRYPTION_KEY: z.string().regex(/^[0-9a-f]{64}$/),
+  NEXT_PUBLIC_SITE_URL: z.url(),
+});
+
+const parsed = envSchema.safeParse(process.env);
+
+if (!parsed.success) {
+  const issues = parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`);
+  throw new Error(`Invalid environment variables:\n${issues.join("\n")}`);
+}
+
+export const env = parsed.data;

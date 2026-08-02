@@ -31,3 +31,14 @@ export function canonicalUrl(locale: string): string {
 export function dirForLocale(locale: string): "rtl" | "ltr" {
   return locale === "fa" ? "rtl" : "ltr";
 }
+
+/**
+ * Locale-prefixed href for an app path under `localePrefix: "as-needed"`.
+ * The default locale is served at "/" without a prefix.
+ */
+export function localizedHref(locale: string, path: string): string {
+  if (!path.startsWith("/")) path = `/${path}`;
+  const base = localePath(locale);
+  if (path === "/") return base;
+  return base === "/" ? path : `${base}${path}`;
+}

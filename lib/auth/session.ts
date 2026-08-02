@@ -1,0 +1,61 @@
+import "server-only";
+
+import { createHash, randomBytes } from "node:crypto";
+
+import { eq } from "drizzle-orm";
+import { cookies } from "next/headers";
+
+import { db } from "@/src/db";
+import { sessions } from "@/src/db/schema";
+import { decryptSession, encryptSession, sessionExpiresAt, SESSION_COOKIE } from "./jwt";
+
+function sha256Hex(input: string): string {
+  return createHash("sha256").update(input).digest("hex");
+}
+
+export async function createSession(
+  userId: string,
+  userAgent?: string,
+  ip?: string,
+): Promise<void> {
+  const token = randomBytes(32).toString("base64url");
+  const tokenHash = sha256Hex(token);
+  const expiresAt = sessionExpiresAt();
+
+  const [inserted] = await db
+    .insert(sessions)
+    .values({ userId, tokenHash, expiresAt, userAgent, ip })
+    .returning({ id: sessions.id });
+
+  if (!inserted) {
+    throw new Error("Failed to create session");
+  }
+
+  const jwt = await encryptSession({
+    sessionId: inserted.id,
+    userId,
+    tokenHash,
+  });
+
+  const cookieStore = await cookies();
+  cookieStore.set(SESSION_COOKIE, jwt, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    expires: expiresAt,
+    path: "/",
+  });
+}
+
+export async function destroySession(): Promise<void> {
+  const cookieStore = await cookies();
+  const claims = await decryptSession(cookieStore.get(SESSION_COOKIE)?.value);
+  if (claims) {
+    await db.delete(sessions).where(eq(sessions.id, claims.sessionId));
+  }
+  cookieStore.delete(SESSION_COOKIE);
+}
+
+export async function revokeSession(sessionId: string): Promise<void> {
+  await db.delete(sessions).where(eq(sessions.id, sessionId));
+}
