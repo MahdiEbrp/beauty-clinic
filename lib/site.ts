@@ -6,7 +6,7 @@ import { routing } from "@/src/i18n/routing";
  * deployment so previews and local dev still emit absolute URLs.
  */
 export const siteUrl = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://beauty-clinic-swart.vercel.app"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://beauty-clinic-puce-five.vercel.app"
 ).replace(/\/+$/, "");
 
 export type Locale = (typeof routing.locales)[number];
