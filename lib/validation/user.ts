@@ -13,19 +13,23 @@ export const passwordSchema = z
 
 export const phoneSchema = z.string().trim().regex(/^\+?[0-9]{7,15}$/);
 
-export const signupSchema = z.object({
-  fullName: z.string().trim().min(2).max(100),
-  email: emailSchema,
-  phone: z
-    .union([phoneSchema, z.literal("")])
-    .transform((value) => (value === "" ? null : value)),
-  password: passwordSchema,
-});
+export const signupSchema = z
+  .object({
+    fullName: z.string().trim().min(2).max(100),
+    email: emailSchema,
+    phone: z
+      .union([phoneSchema, z.literal("")])
+      .transform((value) => (value === "" ? null : value)),
+    password: passwordSchema,
+  })
+  .strict();
 
-export const loginSchema = z.object({
-  email: emailSchema,
-  password: z.string().min(1).max(128),
-});
+export const loginSchema = z
+  .object({
+    email: emailSchema,
+    password: z.string().min(1).max(128),
+  })
+  .strict();
 
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;

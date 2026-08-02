@@ -1,20 +1,18 @@
 "use server";
 
-import { and, eq, isNull } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/src/db";
 import { roles, userRoles, users } from "@/src/db/schema";
-import { hashPassword, verifyPassword } from "@/lib/auth/password";
+import { hashPassword } from "@/lib/auth/password";
 import { createSession, destroySession } from "@/lib/auth/session";
+import { loginUser } from "@/lib/auth/service";
 import { loginSchema, signupSchema } from "@/lib/validation/user";
 import { getLocale } from "next-intl/server";
 import { localizedHref } from "@/lib/site";
-
-const MAX_FAILED_LOGIN_ATTEMPTS = 5;
-const LOGIN_LOCKOUT_MS = 15 * 60 * 1000;
 
 export type AuthFormState = {
   error?: string;
@@ -110,38 +108,11 @@ export async function login(
   }
 
   const { email, password } = parsed.data;
-  const genericError: AuthFormState = { error: "Invalid email or password." };
+  const ok = await loginUser(email, password, await requestMeta());
 
-  const user = await db.query.users.findFirst({
-    where: and(eq(users.email, email), isNull(users.deletedAt)),
-  });
-
-  if (!user) return genericError;
-  if (!user.isActive || user.isBanned) return genericError;
-  if (user.lockedUntil && user.lockedUntil.getTime() > Date.now()) return genericError;
-
-  const valid = await verifyPassword(user.passwordHash, password);
-  if (!valid) {
-    const attempts = user.failedLoginAttempts + 1;
-    const now = Date.now();
-    const lockedUntil =
-      attempts >= MAX_FAILED_LOGIN_ATTEMPTS
-        ? new Date(now + LOGIN_LOCKOUT_MS)
-        : user.lockedUntil;
-    await db
-      .update(users)
-      .set({ failedLoginAttempts: attempts, lockedUntil })
-      .where(eq(users.id, user.id));
-    return genericError;
+  if (!ok) {
+    return { error: "Invalid email or password." };
   }
-
-  await db
-    .update(users)
-    .set({ failedLoginAttempts: 0, lockedUntil: null, lastLoginAt: new Date() })
-    .where(eq(users.id, user.id));
-
-  const { userAgent, ip } = await requestMeta();
-  await createSession(user.id, userAgent, ip);
 
   revalidatePath("/");
   await redirectHome();

@@ -39,6 +39,11 @@ describe("signupSchema", () => {
     const result = signupSchema.safeParse({ ...validSignup, password: "CorrectHorse1" });
     expect(result.success).toBe(false);
   });
+
+  it("rejects unknown fields (mass-assignment protection)", () => {
+    const result = signupSchema.safeParse({ ...validSignup, role: "admin" });
+    expect(result.success).toBe(false);
+  });
 });
 
 describe("loginSchema", () => {
@@ -49,6 +54,15 @@ describe("loginSchema", () => {
 
   it("rejects a missing password", () => {
     const result = loginSchema.safeParse({ email: "jane@example.com", password: "" });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects unknown fields", () => {
+    const result = loginSchema.safeParse({
+      email: "jane@example.com",
+      password: "x".repeat(12),
+      isAdmin: true,
+    });
     expect(result.success).toBe(false);
   });
 });
