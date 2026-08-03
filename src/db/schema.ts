@@ -163,9 +163,8 @@ export const settings = pgTable(
   "settings",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: uuid("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+    scope: text("scope").notNull().default("user"),
+    userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
     key: text("key").notNull(),
     value: jsonb("value").notNull(),
     type: text("type"),
@@ -173,7 +172,12 @@ export const settings = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
-    uniqueIndex("settings_user_key_idx").on(table.userId, table.key),
+    uniqueIndex("settings_user_key_idx")
+      .on(table.userId, table.key)
+      .where(sql`${table.scope} = 'user'`),
+    uniqueIndex("settings_system_key_idx")
+      .on(table.key)
+      .where(sql`${table.scope} = 'system'`),
     index("settings_user_id_idx").on(table.userId),
   ],
 );

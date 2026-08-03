@@ -1,61 +1,81 @@
-/**
- * Clinic facts used by structured data (JSON-LD) and the contact section.
- *
- * ── EDIT THIS FILE ONCE THE REAL DETAILS ARE CONFIRMED ──────────────────────
- *
- * `telephone` is intentionally `null`, not a placeholder. A fake number such as
- * "+98-XX-XXXXXXXXXX" in schema.org markup is worse than no number at all:
- * Google flags it as invalid and may distrust the whole entity. When the real
- * number is known, set it in E.164 format, e.g. "+982146000000", and it will be
- * picked up by JSON-LD automatically.
- */
-export const clinic = {
-  /** E.164, e.g. "+982146000000". Omitted from JSON-LD while null. */
-  telephone: null as string | null,
+import "server-only";
 
+import { loadSystemSettingsMap } from "@/lib/settings/loader";
+
+export type ClinicData = {
+  telephone: string | null;
   address: {
-    /** Kept in Persian: this is the legal/postal address, not UI copy. */
+    streetAddress: string;
+    addressLocality: string;
+    addressRegion: string;
+    addressCountry: string;
+  };
+  openingHours: readonly {
+    readonly days: readonly string[];
+    readonly opens: string;
+    readonly closes: string;
+  }[];
+  social: {
+    rubika: string;
+    bale: string;
+  };
+  maps: {
+    neshan: string;
+    google: string;
+  };
+};
+
+const DEFAULT_CLINIC: ClinicData = {
+  telephone: null,
+  address: {
     streetAddress:
       "اندیشه فاز دو - میدان مادر - ابتدای بلوار نیلوفر نبش بنفشه هفتم - پلاک ۳۹ - طبقه دو",
     addressLocality: "اندیشه",
     addressRegion: "تهران",
     addressCountry: "IR",
   },
-
-  /**
-   * Iranian working week: Saturday–Wednesday full days, Thursday half day,
-   * Friday closed. The previous values listed Friday as open and omitted
-   * Sunday, which inverted the week.
-   *
-   * VERIFY THESE before launch.
-   */
   openingHours: [
     {
-      days: [
-        "Saturday",
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-      ] as const,
+      days: ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday"],
       opens: "09:00",
       closes: "19:00",
     },
-    {
-      days: ["Thursday"] as const,
-      opens: "09:00",
-      closes: "14:00",
-    },
-    // Friday: closed — represented by omission, per schema.org convention.
+    { days: ["Thursday"], opens: "09:00", closes: "14:00" },
   ],
-
   social: {
     rubika: "https://rubika.ir/nafasclinic",
     bale: "https://ble.ir/nafasclinic",
   },
-
   maps: {
     neshan: "https://nshn.ir/rbvg0k2xLMq4",
     google: "https://www.google.com/maps/search/?api=1&query=Andisheh+Phase+2",
   },
-} as const;
+};
+
+export async function getClinicData(): Promise<ClinicData> {
+  const settings = await loadSystemSettingsMap();
+
+  const s = (key: string, fallback: string) =>
+    typeof settings.get(key) === "string" ? (settings.get(key) as string) : fallback;
+
+  return {
+    telephone: typeof settings.get("contact.phone") === "string"
+      ? (settings.get("contact.phone") as string)
+      : null,
+    address: {
+      streetAddress: s("contact.address_full", DEFAULT_CLINIC.address.streetAddress),
+      addressLocality: s("contact.city", DEFAULT_CLINIC.address.addressLocality),
+      addressRegion: s("contact.province", DEFAULT_CLINIC.address.addressRegion),
+      addressCountry: s("contact.country", DEFAULT_CLINIC.address.addressCountry),
+    },
+    openingHours: DEFAULT_CLINIC.openingHours,
+    social: {
+      rubika: s("social.rubika", DEFAULT_CLINIC.social.rubika),
+      bale: s("social.bale", DEFAULT_CLINIC.social.bale),
+    },
+    maps: {
+      neshan: s("contact.map_neshan", DEFAULT_CLINIC.maps.neshan),
+      google: s("contact.map_google", DEFAULT_CLINIC.maps.google),
+    },
+  };
+}

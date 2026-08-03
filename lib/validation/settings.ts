@@ -10,15 +10,20 @@ export const settingKeySchema = z
 export const SUPPORTED_TYPES = ["string", "number", "boolean", "object", "array"] as const;
 export type ValueType = (typeof SUPPORTED_TYPES)[number];
 
+export const SCOPE_VALUES = ["user", "system"] as const;
+export type Scope = (typeof SCOPE_VALUES)[number];
+
 const jsonValueSchema: z.ZodType<unknown> = z.union([
   z.string(),
   z.number(),
   z.boolean(),
+  z.null(),
   z.array(z.unknown()),
   z.record(z.string(), z.unknown()),
 ]);
 
 function inferType(value: unknown): ValueType {
+  if (value === null) return "object";
   if (Array.isArray(value)) return "array";
   if (value !== null && typeof value === "object") return "object";
   if (typeof value === "string") return "string";
@@ -32,6 +37,7 @@ function typeMatches(type: ValueType, value: unknown): boolean {
 
 export const upsertSettingSchema = z
   .object({
+    scope: z.enum(SCOPE_VALUES).optional(),
     key: settingKeySchema,
     value: jsonValueSchema.refine(
       (v) => JSON.stringify(v).length <= 10_000,
@@ -51,6 +57,7 @@ export const upsertSettingSchema = z
 
 export const settingsQuerySchema = z
   .object({
+    scope: z.enum(SCOPE_VALUES).optional(),
     page: z
       .string()
       .optional()
@@ -71,6 +78,7 @@ export const settingsQuerySchema = z
 
 export const deleteSettingsQuerySchema = z
   .object({
+    scope: z.enum(SCOPE_VALUES).optional(),
     key: settingKeySchema,
     userId: z.string().uuid().optional(),
   })

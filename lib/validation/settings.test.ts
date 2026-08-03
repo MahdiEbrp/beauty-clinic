@@ -26,6 +26,16 @@ describe("upsertSettingSchema", () => {
     expect(result.success).toBe(true);
   });
 
+  it("accepts scope field", () => {
+    const result = upsertSettingSchema.safeParse({ ...valid, scope: "system" });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects invalid scope", () => {
+    const result = upsertSettingSchema.safeParse({ ...valid, scope: "global" });
+    expect(result.success).toBe(false);
+  });
+
   it("rejects a key with uppercase first letter", () => {
     const result = upsertSettingSchema.safeParse({ ...valid, key: "Theme.Color" });
     expect(result.success).toBe(false);
@@ -46,9 +56,9 @@ describe("upsertSettingSchema", () => {
     expect(result.success).toBe(false);
   });
 
-  it("rejects null value", () => {
+  it("accepts null value", () => {
     const result = upsertSettingSchema.safeParse({ ...valid, value: null });
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
   });
 
   it("rejects a string value > 10 KB", () => {
@@ -134,6 +144,11 @@ describe("settingsQuerySchema", () => {
     expect(result.success).toBe(true);
   });
 
+  it("accepts scope param", () => {
+    const result = settingsQuerySchema.safeParse({ scope: "system" });
+    expect(result.success).toBe(true);
+  });
+
   it("rejects invalid userId format", () => {
     const result = settingsQuerySchema.safeParse({ userId: "not-a-uuid" });
     expect(result.success).toBe(false);
@@ -156,6 +171,11 @@ describe("deleteSettingsQuerySchema", () => {
       key: "ui.theme",
       userId: "550e8400-e29b-41d4-a716-446655440001",
     });
+    expect(result.success).toBe(true);
+  });
+
+  it("accepts scope param", () => {
+    const result = deleteSettingsQuerySchema.safeParse({ key: "ui.theme", scope: "system" });
     expect(result.success).toBe(true);
   });
 });

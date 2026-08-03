@@ -2,14 +2,23 @@
 
 import { useTranslations, useLocale } from "next-intl";
 import { Wind } from "lucide-react";
-import { clinic } from "@/data/clinic";
 import { navigationKeys, routeNavigationKeys } from "@/data/navigation";
 import { Link, usePathname } from "@/src/i18n/navigation";
+import type { ClinicData } from "@/data/clinic";
+
+interface FooterProps {
+  clinic?: ClinicData;
+}
 
 const linkClass =
   "text-footer-muted text-body-sm no-underline hover:text-gold transition-colors inline-flex items-center min-h-11 rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold";
 
-export default function Footer() {
+const DEFAULT_SOCIAL = {
+  rubika: "https://rubika.ir/nafasclinic",
+  bale: "https://ble.ir/nafasclinic",
+} as const;
+
+export default function Footer({ clinic }: FooterProps) {
   const t = useTranslations();
   const locale = useLocale();
   const pathname = usePathname();
@@ -20,8 +29,8 @@ export default function Footer() {
   };
 
   const socials = [
-    { key: "rubika", href: clinic.social.rubika },
-    { key: "bale", href: clinic.social.bale },
+    { key: "rubika", href: clinic?.social.rubika ?? DEFAULT_SOCIAL.rubika },
+    { key: "bale", href: clinic?.social.bale ?? DEFAULT_SOCIAL.bale },
   ] as const;
 
   return (

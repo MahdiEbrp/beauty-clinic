@@ -6,6 +6,7 @@ const envSchema = z.object({
   AUTH_SECRET: z.string().min(32),
   ENCRYPTION_KEY: z.string().regex(/^[0-9a-f]{64}$/),
   NEXT_PUBLIC_SITE_URL: z.url(),
+  CORS_ORIGINS: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

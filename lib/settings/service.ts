@@ -11,27 +11,53 @@ export type PaginatedResponse = {
   totalPages: number;
 };
 
+function inferType(value: unknown): string {
+  if (value === null) return "object";
+  if (Array.isArray(value)) return "array";
+  if (value !== null && typeof value === "object") return "object";
+  if (typeof value === "string") return "string";
+  if (typeof value === "number") return "number";
+  return "boolean";
+}
+
 export async function upsertSetting(
-  userId: string,
   key: string,
   value: unknown,
-  type?: string,
+  options?: {
+    userId?: string;
+    type?: string;
+    scope?: string;
+  },
 ): Promise<Setting> {
-  const resolvedType =
-    type ??
-    ((v: unknown) => {
-      if (Array.isArray(v)) return "array";
-      if (v !== null && typeof v === "object") return "object";
-      if (typeof v === "string") return "string";
-      if (typeof v === "number") return "number";
-      return "boolean";
-    })(value);
+  const resolvedType = options?.type ?? inferType(value);
+  const scope = options?.scope ?? "user";
 
+  if (scope === "system") {
+    const [row] = await db
+      .insert(settings)
+      .values({ scope: "system", key, value, type: resolvedType })
+      .onConflictDoUpdate({
+        target: [settings.key],
+        targetWhere: eq(settings.scope, "system"),
+        set: { value, type: resolvedType, updatedAt: new Date() },
+      })
+      .returning();
+    return row;
+  }
+
+  const userId = options?.userId;
   const [row] = await db
     .insert(settings)
-    .values({ userId, key, value, type: resolvedType })
+    .values({
+      scope: "user",
+      userId: userId ?? undefined,
+      key,
+      value,
+      type: resolvedType,
+    })
     .onConflictDoUpdate({
       target: [settings.userId, settings.key],
+      targetWhere: eq(settings.scope, "user"),
       set: { value, type: resolvedType, updatedAt: new Date() },
     })
     .returning();
@@ -43,17 +69,36 @@ export async function getUserSettings(userId: string): Promise<Setting[]> {
   return db
     .select()
     .from(settings)
-    .where(eq(settings.userId, userId))
+    .where(and(eq(settings.userId, userId), eq(settings.scope, "user")))
+    .orderBy(settings.key);
+}
+
+export async function getSystemSettings(): Promise<Setting[]> {
+  return db
+    .select()
+    .from(settings)
+    .where(eq(settings.scope, "system"))
     .orderBy(settings.key);
 }
 
 export async function getAllSettings(
   page: number,
   limit: number,
-  userId?: string,
+  opts?: { userId?: string; scope?: string },
 ): Promise<PaginatedResponse> {
   const offset = (page - 1) * limit;
-  const conditions = userId ? and(eq(settings.userId, userId)) : undefined;
+
+  const filters: ReturnType<typeof eq>[] = [];
+
+  if (opts?.scope) {
+    filters.push(eq(settings.scope, opts.scope));
+  }
+
+  if (opts?.userId) {
+    filters.push(eq(settings.userId, opts.userId));
+  }
+
+  const conditions = filters.length > 0 ? and(...filters) : undefined;
 
   const [countResult] = await db
     .select({ count: sql<number>`count(*)` })
@@ -66,7 +111,7 @@ export async function getAllSettings(
     .select()
     .from(settings)
     .where(conditions)
-    .orderBy(settings.userId, settings.key)
+    .orderBy(settings.scope, settings.userId, settings.key)
     .limit(limit)
     .offset(offset);
 
@@ -79,8 +124,27 @@ export async function getAllSettings(
   };
 }
 
-export async function deleteSetting(userId: string, key: string): Promise<void> {
-  await db
-    .delete(settings)
-    .where(and(eq(settings.userId, userId), eq(settings.key, key)));
+export async function deleteSetting(
+  key: string,
+  opts?: { userId?: string; scope?: string },
+): Promise<void> {
+  const scope = opts?.scope ?? "user";
+
+  if (scope === "system") {
+    await db
+      .delete(settings)
+      .where(and(eq(settings.scope, "system"), eq(settings.key, key)));
+  } else {
+    const userId = opts?.userId;
+    if (!userId) throw new Error("userId is required for user-scoped delete");
+    await db
+      .delete(settings)
+      .where(
+        and(
+          eq(settings.scope, "user"),
+          eq(settings.userId, userId),
+          eq(settings.key, key),
+        ),
+      );
+  }
 }

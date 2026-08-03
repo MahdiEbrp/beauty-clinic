@@ -9,10 +9,11 @@ import {
   Wind,
   CalendarPlus,
 } from "lucide-react";
-import { clinic } from "@/data/clinic";
+import type { ClinicData } from "@/data/clinic";
 
 interface ContactProps {
   onOpenBooking: () => void;
+  clinic?: ClinicData;
 }
 
 const socialPill =
@@ -21,12 +22,22 @@ const socialPill =
 const mapTile =
   "bg-surface-secondary border border-border-interactive rounded-panel p-6 flex flex-col items-center justify-center text-center hover:bg-surface-tertiary transition-all group shadow-elevation-1 aspect-square focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 
-export default function Contact({ onOpenBooking }: ContactProps) {
+const DEFAULT_SOCIAL = {
+  rubika: "https://rubika.ir/nafasclinic",
+  bale: "https://ble.ir/nafasclinic",
+} as const;
+
+const DEFAULT_MAPS = {
+  neshan: "https://nshn.ir/rbvg0k2xLMq4",
+  google: "https://www.google.com/maps/search/?api=1&query=Andisheh+Phase+2",
+} as const;
+
+export default function Contact({ onOpenBooking, clinic }: ContactProps) {
   const t = useTranslations();
 
   const socials = [
-    { key: "rubika", href: clinic.social.rubika },
-    { key: "bale", href: clinic.social.bale },
+    { key: "rubika", href: clinic?.social.rubika ?? DEFAULT_SOCIAL.rubika },
+    { key: "bale", href: clinic?.social.bale ?? DEFAULT_SOCIAL.bale },
   ] as const;
 
   return (
@@ -92,9 +103,6 @@ export default function Contact({ onOpenBooking }: ContactProps) {
               </div>
             </div>
 
-            {/* Was <a href="#booking">, but no element with that id has ever
-                existed, so the primary contact CTA did nothing. It now opens the
-                same booking dialog as the floating button. */}
             <button
               type="button"
               onClick={onOpenBooking}
@@ -107,7 +115,7 @@ export default function Contact({ onOpenBooking }: ContactProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <a
-              href={clinic.maps.neshan}
+              href={clinic?.maps.neshan ?? DEFAULT_MAPS.neshan}
               target="_blank"
               rel="noopener noreferrer"
               className={mapTile}
@@ -125,7 +133,7 @@ export default function Contact({ onOpenBooking }: ContactProps) {
               </p>
             </a>
             <a
-              href={clinic.maps.google}
+              href={clinic?.maps.google ?? DEFAULT_MAPS.google}
               target="_blank"
               rel="noopener noreferrer"
               className={mapTile}

@@ -1,8 +1,6 @@
-import { jsonError, jsonOk, withApiHandler } from "@/lib/api/errors";
-import { readJsonBody } from "@/lib/api/request";
-import { getSession } from "@/lib/auth/dal";
+import { withSecurity, jsonOk } from "@/lib/api/security";
 import { resolveTarget } from "@/lib/settings/guard";
-import { deleteSetting, getAllSettings, getUserSettings, upsertSetting } from "@/lib/settings/service";
+import { deleteSetting, getAllSettings, getSystemSettings, getUserSettings, upsertSetting } from "@/lib/settings/service";
 import {
   upsertSettingSchema,
   deleteSettingsQuerySchema,
@@ -11,79 +9,69 @@ import {
 
 export const runtime = "nodejs";
 
-export const GET = withApiHandler(async (request) => {
-  const session = await getSession();
-  if (!session) return jsonError("UNAUTHORIZED", "Not authenticated.", 401);
+export const GET = withSecurity(
+  {
+    auth: "required",
+    validate: { query: settingsQuerySchema },
+  },
+  async (_request, ctx) => {
+    const session = ctx.session!;
+    const { scope, page, limit, userId } = ctx.query!;
+    const guard = resolveTarget(session, scope, userId);
+    if (guard.status === "error") return guard.response;
 
-  const url = new URL(request.url);
-  const parsed = settingsQuerySchema.safeParse(
-    Object.fromEntries(url.searchParams),
-  );
-  if (!parsed.success) {
-    return jsonError(
-      "VALIDATION_ERROR",
-      "Invalid query parameters.",
-      400,
-      parsed.error.flatten().fieldErrors,
-    );
-  }
+    if (guard.scope === "system") {
+      const items = await getSystemSettings();
+      return jsonOk({ items });
+    }
 
-  const { page, limit, userId } = parsed.data;
-  const guard = resolveTarget(session, userId);
-  if (guard.status === "error") return guard.response;
+    if (guard.isAdmin) {
+      const result = await getAllSettings(page, limit, { userId, scope });
+      return jsonOk(result);
+    }
 
-  if (guard.isAdmin) {
-    const result = await getAllSettings(page, limit, userId);
-    return jsonOk(result);
-  }
+    const items = await getUserSettings(guard.targetUserId!);
+    return jsonOk({ items });
+  },
+);
 
-  const items = await getUserSettings(guard.targetUserId);
-  return jsonOk({ items });
-});
+export const POST = withSecurity(
+  {
+    auth: "required",
+    validate: { body: upsertSettingSchema },
+    audit: true,
+  },
+  async (_request, ctx) => {
+    const session = ctx.session!;
+    const { scope, key, value, type, userId } = ctx.body!;
+    const guard = resolveTarget(session, scope, userId);
+    if (guard.status === "error") return guard.response;
 
-export const POST = withApiHandler(async (request) => {
-  const session = await getSession();
-  if (!session) return jsonError("UNAUTHORIZED", "Not authenticated.", 401);
+    const setting = await upsertSetting(key, value, {
+      scope: guard.scope,
+      userId: guard.targetUserId ?? undefined,
+      type,
+    });
+    return jsonOk({ setting });
+  },
+);
 
-  const body = await readJsonBody(request);
-  const parsed = upsertSettingSchema.safeParse(body);
-  if (!parsed.success) {
-    return jsonError(
-      "VALIDATION_ERROR",
-      "Invalid setting data.",
-      400,
-      parsed.error.flatten().fieldErrors,
-    );
-  }
+export const DELETE = withSecurity(
+  {
+    auth: "required",
+    validate: { query: deleteSettingsQuerySchema },
+    audit: true,
+  },
+  async (_request, ctx) => {
+    const session = ctx.session!;
+    const { scope, key, userId } = ctx.query!;
+    const guard = resolveTarget(session, scope, userId);
+    if (guard.status === "error") return guard.response;
 
-  const { key, value, type, userId } = parsed.data;
-  const guard = resolveTarget(session, userId);
-  if (guard.status === "error") return guard.response;
-
-  const setting = await upsertSetting(guard.targetUserId, key, value, type);
-  return jsonOk({ setting });
-});
-
-export const DELETE = withApiHandler(async (request) => {
-  const session = await getSession();
-  if (!session) return jsonError("UNAUTHORIZED", "Not authenticated.", 401);
-
-  const url = new URL(request.url);
-  const parsed = deleteSettingsQuerySchema.safeParse(
-    Object.fromEntries(url.searchParams),
-  );
-  if (!parsed.success) {
-    return jsonError(
-      "VALIDATION_ERROR",
-      "Invalid query parameters.",
-      400,
-      parsed.error.flatten().fieldErrors,
-    );
-  }
-
-  const guard = resolveTarget(session, parsed.data.userId);
-  if (guard.status === "error") return guard.response;
-
-  await deleteSetting(guard.targetUserId, parsed.data.key);
-  return jsonOk({ deleted: true });
-});
+    await deleteSetting(key, {
+      scope: guard.scope,
+      userId: guard.targetUserId ?? undefined,
+    });
+    return jsonOk({ deleted: true });
+  },
+);

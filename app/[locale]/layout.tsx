@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { Direction as DirectionPrimitive } from "radix-ui";
 import { routing } from "@/src/i18n/routing";
 import { canonicalUrl, dirForLocale } from "@/lib/site";
+import { getClinicData } from "@/data/clinic";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
@@ -52,6 +53,7 @@ export default async function LocaleLayout({
 
   const messages = await getMessages({ locale });
   const t = await getTranslations({ locale, namespace: "a11y" });
+  const clinicData = await getClinicData();
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
@@ -68,7 +70,7 @@ export default async function LocaleLayout({
         <main id="main" className="flex-1">
           {children}
         </main>
-        <Footer />
+        <Footer clinic={clinicData} />
       </DirectionPrimitive.DirectionProvider>
     </NextIntlClientProvider>
   );

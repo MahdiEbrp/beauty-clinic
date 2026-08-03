@@ -1,14 +1,7 @@
-import { jsonError, jsonOk, withApiHandler } from "@/lib/api/errors";
-import { getSession } from "@/lib/auth/dal";
+import { withSecurity, jsonOk } from "@/lib/api/security";
 
 export const runtime = "nodejs";
 
-export const GET = withApiHandler(async () => {
-  const session = await getSession();
-
-  if (!session) {
-    return jsonError("UNAUTHORIZED", "Not authenticated.", 401);
-  }
-
-  return jsonOk({ user: session.user });
+export const GET = withSecurity({ auth: "required" }, async (_request, ctx) => {
+  return jsonOk({ user: ctx.session!.user });
 });

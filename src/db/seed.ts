@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 
 import { hashPassword } from "@/lib/auth/password";
 import { db } from "./index";
-import { permissions, roles, rolePermissions, userRoles, users } from "./schema";
+import { permissions, roles, rolePermissions, settings, userRoles, users } from "./schema";
 
 const ROLE_DEFS = [
   { key: "admin", name: "Admin", description: "Full platform access" },
@@ -103,6 +103,27 @@ async function seed(): Promise<void> {
   } else {
     console.warn("SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD not set — skipping superadmin creation.");
   }
+
+  const SYSTEM_SETTINGS = [
+    { key: "contact.phone", value: null, type: "string" },
+    { key: "contact.address_full", value: "اندیشه فاز دو - میدان مادر - ابتدای بلوار نیلوفر نبش بنفشه هفتم - پلاک ۳۹ - طبقه دو", type: "string" },
+    { key: "contact.city", value: "اندیشه", type: "string" },
+    { key: "contact.province", value: "تهران", type: "string" },
+    { key: "contact.country", value: "IR", type: "string" },
+    { key: "contact.map_neshan", value: "https://nshn.ir/rbvg0k2xLMq4", type: "string" },
+    { key: "contact.map_google", value: "https://www.google.com/maps/search/?api=1&query=Andisheh+Phase+2", type: "string" },
+    { key: "social.rubika", value: "https://rubika.ir/nafasclinic", type: "string" },
+    { key: "social.bale", value: "https://ble.ir/nafasclinic", type: "string" },
+  ] as const;
+
+  for (const def of SYSTEM_SETTINGS) {
+    await db
+      .insert(settings)
+      .values({ scope: "system", key: def.key, value: def.value, type: def.type })
+      .onConflictDoNothing({ target: [settings.key] });
+  }
+
+  console.log("System settings seeded.");
 
   console.log("Seed complete.");
 }
