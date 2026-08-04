@@ -21,7 +21,9 @@ export const POST = withSecurity(
     audit: true,
   },
   async (request, ctx) => {
-    const ip = clientIp(request) ?? "unknown";
+    // `sessions.ip` is an `inet` column: pass undefined (→ NULL) when no
+    // trusted header exists, never a placeholder like "unknown".
+    const ip = clientIp(request);
     const userAgent = request.headers.get("user-agent") ?? undefined;
 
     const result = await registerUser(ctx.body!, { userAgent, ip });

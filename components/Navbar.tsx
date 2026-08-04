@@ -10,6 +10,15 @@ import LocaleSwitcher from "./LocaleSwitcher";
 
 const MENU_ID = "primary-mobile-menu";
 
+function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]!.toUpperCase())
+    .join("");
+}
+
 export default function Navbar({ user }: { user: AuthUser | null }) {
   const t = useTranslations();
   const locale = useLocale();
@@ -28,6 +37,18 @@ export default function Navbar({ user }: { user: AuthUser | null }) {
   const getAnchorHref = (anchor: string) => {
     return isHomePage ? anchor : `/${anchor}`;
   };
+
+  const routeLinkClass = (href: string) =>
+    `text-body-sm font-semibold no-underline transition-colors min-h-11 flex items-center whitespace-nowrap rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+      pathname === href ? "text-accent" : "text-content-secondary hover:text-accent"
+    }`;
+
+  const drawerRouteClass = (href: string) =>
+    `p-3 min-h-11 flex items-center justify-center rounded-control font-semibold text-body-sm w-full text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent no-underline ${
+      pathname === href
+        ? "bg-accent-subtle text-accent"
+        : "text-accent hover:bg-surface-tertiary"
+    }`;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -82,26 +103,28 @@ export default function Navbar({ user }: { user: AuthUser | null }) {
   const renderAuthLinks = () => {
     if (user) {
       return (
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-2 bg-surface-tertiary rounded-pill">
-            <User className="w-5 h-5 text-copper" strokeWidth={2} aria-hidden="true" />
-            <span className="text-body-sm font-semibold text-accent max-w-40 truncate">
-              {user.fullName}
-            </span>
-          </div>
+        <div className="flex items-center gap-2">
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-1.5 px-4 py-2 min-h-11 bg-accent text-content-contrast rounded-pill font-bold text-body-sm transition-all duration-300 hover:bg-accent-hover hover:-translate-y-0.5 hover:shadow-elevation-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-95"
+            className="inline-flex items-center gap-2.5 ps-2 pe-4 py-1.5 min-h-11 bg-surface-tertiary hover:bg-surface-primary border border-border-primary rounded-pill text-body-sm font-semibold text-accent no-underline transition-all duration-200 hover:border-border-interactive focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
-            <span>{t("nav.dashboard")}</span>
+            <span
+              className="w-8 h-8 shrink-0 rounded-pill bg-copper text-content-contrast flex items-center justify-center text-caption font-bold"
+              aria-hidden="true"
+            >
+              {initials(user.fullName)}
+            </span>
+            <span className="max-w-32 truncate">{user.fullName}</span>
           </Link>
           <button
             type="button"
             onClick={handleLogout}
-            className="inline-flex items-center gap-1.5 px-4 py-2 min-h-11 bg-transparent border border-border-interactive text-accent rounded-pill font-bold text-body-sm transition-all duration-200 hover:bg-surface-tertiary hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            aria-label={t("nav.logout")}
+            title={t("nav.logout")}
+            className="inline-flex items-center justify-center w-11 h-11 bg-transparent border border-border-interactive text-accent rounded-pill transition-all duration-200 hover:bg-surface-tertiary hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             <LogOut className="w-4 h-4 rtl-mirror" strokeWidth={2} aria-hidden="true" />
-            <span>{t("nav.logout")}</span>
+            <span className="sr-only">{t("nav.logout")}</span>
           </button>
         </div>
       );
@@ -153,7 +176,8 @@ export default function Navbar({ user }: { user: AuthUser | null }) {
             <li key={item.key}>
               <Link
                 href={item.href}
-                className="text-body-sm font-semibold text-content-secondary no-underline transition-colors hover:text-accent min-h-11 flex items-center whitespace-nowrap rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                aria-current={pathname === item.href ? "page" : undefined}
+                className={routeLinkClass(item.href)}
               >
                 {t(`nav.${item.key}`)}
               </Link>
@@ -168,7 +192,20 @@ export default function Navbar({ user }: { user: AuthUser | null }) {
 
         <div className="lg:hidden flex items-center gap-1">
           <LocaleSwitcher />
-          {renderAuthLinks()}
+          {user && (
+            <Link
+              href="/dashboard"
+              aria-label={t("nav.dashboard")}
+              className="inline-flex items-center justify-center w-11 h-11 rounded-pill no-underline transition-colors hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              <span
+                className="w-8 h-8 rounded-pill bg-copper text-content-contrast flex items-center justify-center text-caption font-bold"
+                aria-hidden="true"
+              >
+                {initials(user.fullName)}
+              </span>
+            </Link>
+          )}
           <button
             ref={toggleRef}
             type="button"
@@ -205,7 +242,8 @@ export default function Navbar({ user }: { user: AuthUser | null }) {
               <Link
                 key={item.key}
                 href={item.href}
-                className="p-3 min-h-11 flex items-center justify-center rounded-control text-accent no-underline hover:bg-surface-tertiary font-semibold text-body-sm w-full text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                aria-current={pathname === item.href ? "page" : undefined}
+                className={drawerRouteClass(item.href)}
                 onClick={() => setMenuOpen(false)}
               >
                 {t(`nav.${item.key}`)}

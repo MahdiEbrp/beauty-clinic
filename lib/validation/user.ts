@@ -31,5 +31,30 @@ export const loginSchema = z
   })
   .strict();
 
+/** Admin user listing query (search, status filter, pagination). */
+export const listUsersQuerySchema = z
+  .object({
+    page: z.coerce.number().int().min(1).max(100000).default(1),
+    perPage: z.coerce.number().int().min(1).max(50).default(10),
+    search: z.string().trim().max(100).optional(),
+    status: z.enum(["all", "active", "inactive", "banned"]).default("all"),
+  })
+  .strict();
+
+/** Admin mutation of a user's account state. */
+export const updateUserStatusSchema = z
+  .object({
+    isActive: z.boolean().optional(),
+    isBanned: z.boolean().optional(),
+    banReason: z.string().trim().max(500).nullish(),
+  })
+  .strict()
+  .refine((data) => data.isActive !== undefined || data.isBanned !== undefined, {
+    message: "Nothing to update.",
+  });
+
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
+export type ListUsersQuery = z.infer<typeof listUsersQuerySchema>;
+export type UpdateUserStatusInput = z.infer<typeof updateUserStatusSchema>;
+export type UserStatusFilter = NonNullable<ListUsersQuery["status"]>;

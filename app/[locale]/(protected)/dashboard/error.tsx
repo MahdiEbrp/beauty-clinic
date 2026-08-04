@@ -9,10 +9,8 @@ export default function DashboardError({
   reset: () => void;
 }) {
   return (
-    <section className="py-24 bg-surface-primary">
-      <div className="max-w-content mx-auto px-6">
-        <ErrorState onRetry={reset} />
-      </div>
-    </section>
+    <div className="bg-surface-secondary border border-border-primary rounded-panel">
+      <ErrorState onRetry={reset} />
+    </div>
   );
 }

@@ -182,6 +182,13 @@
   /* ---- Animation --------------------------------------------------- */
   --animate-fade-in: fade-in 250ms ease-out;
   --animate-slide-up: slide-up 300ms ease-out;
+  /* Sidebar drawer — physical, direction-aware variants applied via rtl:/ltr: */
+  --animate-drawer-in: drawer-in 250ms ease-out;
+  --animate-drawer-in-rtl: drawer-in-rtl 250ms ease-out;
+
+  /* Breath — the clinic's signature pulse, used once on the dashboard welcome
+     mark. Reduced-motion is handled by the blanket rule below. */
+  --animate-breath: breath 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 
   /* Marquee (diceui) - duration/gap/loop-count are set inline per instance. */
   --animate-marquee-left: marquee-left var(--marquee-duration) linear var(--marquee-loop-count);
@@ -211,6 +218,43 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes drawer-in {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes drawer-in-rtl {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes breath {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.6;
+  }
+
+  65% {
+    transform: scale(1.22);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1.22);
+    opacity: 0;
   }
 }
 

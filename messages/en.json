@@ -443,6 +443,7 @@
     },
     "welcome": "Welcome",
     "hello": "Hello, {name}",
+    "eyebrow": "Your Account",
     "logout": "Log Out",
     "loggingOut": "Logging out...",
     "sessions": {
@@ -461,6 +462,93 @@
       "confirm": "Sign out",
       "revokeError": "Couldn't sign out other devices. Please try again.",
       "noOthers": "You are only signed in on this device."
+    },
+    "sidebar": {
+      "navLabel": "Dashboard navigation",
+      "overview": "Overview",
+      "users": "Users",
+      "viewSite": "View Website",
+      "logout": "Log Out",
+      "loggingOut": "Logging out...",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "collapse": "Collapse sidebar",
+      "expand": "Expand sidebar"
     }
+  },
+  "users": {
+    "meta": {
+      "title": "Users | Nafas Beauty Clinic",
+      "description": "Manage user accounts, their status and roles."
+    },
+    "heading": "Users",
+    "description": "Manage registered accounts, their status and access.",
+    "search": "Search users",
+    "searchPlaceholder": "Search by name, email or phone...",
+    "status": "Status",
+    "statusAll": "All",
+    "statusActive": "Active",
+    "statusInactive": "Inactive",
+    "statusBanned": "Banned",
+    "error": "Couldn't load users. Please try again.",
+    "retry": "Retry",
+    "loading": "Loading users...",
+    "self": "You",
+    "noRoles": "No roles",
+    "never": "Never",
+    "empty": "No users found.",
+    "emptySearch": "No users match your search.",
+    "table": {
+      "user": "User",
+      "roles": "Roles",
+      "status": "Status",
+      "lastLogin": "Last Login",
+      "actions": "Actions"
+    },
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "banned": "Banned"
+    },
+    "roles": {
+      "admin": "Admin",
+      "customer": "Customer"
+    },
+    "actions": {
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "ban": "Ban",
+      "unban": "Unban"
+    },
+    "banDialog": {
+      "title": "Ban {name}?",
+      "description": "The account will be locked and the user signed out everywhere. This can be reversed later.",
+      "reason": "Reason (optional)",
+      "reasonPlaceholder": "e.g. Spam, abusive behavior..."
+    },
+    "deactivateDialog": {
+      "title": "Deactivate {name}?",
+      "description": "The account will be temporarily disabled. It can be reactivated anytime."
+    },
+    "dialog": {
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    },
+    "pagination": {
+      "showing": "Showing {from}–{to} of {total}",
+      "previous": "Previous",
+      "next": "Next",
+      "pageInfo": "Page {page} of {totalPages}"
+    },
+    "errors": {
+      "action": "The action failed. Please try again.",
+      "selfLockout": "You cannot deactivate or ban your own account."
+    }
+  },
+  "forbidden": {
+    "title": "Access Denied",
+    "description": "You don't have permission to view this page. Contact an administrator if you believe this is a mistake.",
+    "backToDashboard": "Back to Dashboard",
+    "goHome": "Go Home"
   }
 }

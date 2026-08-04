@@ -8,8 +8,7 @@ import { routing } from "@/src/i18n/routing";
 import { canonicalUrl, dirForLocale } from "@/lib/site";
 import { getClinicData } from "@/data/clinic";
 import { getSession } from "@/lib/auth/dal";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import AppChrome from "@/components/AppChrome";
 import JsonLd from "@/components/JsonLd";
 import DirSetter from "@/components/DirSetter";
 
@@ -62,17 +61,9 @@ export default async function LocaleLayout({
       <DirectionPrimitive.DirectionProvider dir={dirForLocale(locale)}>
         <DirSetter />
         <JsonLd />
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:inset-s-4 focus:z-100 focus:inline-flex focus:items-center focus:min-h-11 focus:px-6 focus:rounded-pill focus:bg-accent focus:text-content-contrast focus:font-bold focus:shadow-elevation-3"
-        >
-          {t("skipToContent")}
-        </a>
-        <Navbar user={session?.user ?? null} />
-        <main id="main" className="flex-1">
+        <AppChrome user={session?.user ?? null} clinic={clinicData} skipLabel={t("skipToContent")}>
           {children}
-        </main>
-        <Footer clinic={clinicData} />
+        </AppChrome>
       </DirectionPrimitive.DirectionProvider>
     </NextIntlClientProvider>
   );

@@ -6,7 +6,14 @@ import { Globe } from "lucide-react";
 import { routing } from "@/src/i18n/routing";
 import { localeMeta, isLocaleMetaKey } from "@/data/locales";
 
-export default function LocaleSwitcher() {
+export default function LocaleSwitcher({
+  compact = false,
+  className = "",
+}: {
+  /** Icon-only variant for narrow rails (collapsed sidebar). */
+  compact?: boolean;
+  className?: string;
+}) {
   const locale = useLocale();
   const t = useTranslations();
   const router = useRouter();
@@ -30,14 +37,21 @@ export default function LocaleSwitcher() {
     <button
       type="button"
       onClick={handleSwitch}
-      className="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-11 bg-transparent border border-border-interactive text-accent rounded-pill transition-all duration-200 hover:bg-surface-tertiary hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent text-body-sm font-semibold"
+      title={compact ? t("localeSwitcher.switchTo", { language: targetName }) : undefined}
+      className={`bg-transparent border border-border-interactive text-accent rounded-pill transition-all duration-200 hover:bg-surface-tertiary hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+        compact
+          ? "inline-flex items-center justify-center w-11 h-11 shrink-0"
+          : `inline-flex items-center gap-1.5 px-3.5 py-2 min-h-11 text-body-sm font-semibold ${className}`
+      }`}
       aria-label={t("localeSwitcher.switchTo", { language: targetName })}
     >
       <Globe className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
       {/* The chip reads in the target language, so it carries its own lang. */}
-      <span lang={target}>
-        {isLocaleMetaKey(target) ? localeMeta[target].short : target}
-      </span>
+      {!compact && (
+        <span lang={target}>
+          {isLocaleMetaKey(target) ? localeMeta[target].short : target}
+        </span>
+      )}
     </button>
   );
 }

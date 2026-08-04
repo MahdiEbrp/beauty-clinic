@@ -33,6 +33,8 @@ export type ApiContext<Body = unknown, Query = unknown> = {
   session?: AuthSession;
   body?: Body;
   query?: Query;
+  /** Resolved dynamic route params (e.g. `[id]`), when the route has them. */
+  params?: Record<string, string>;
 };
 
 type SecurityHandler<Body, Query> = (
@@ -56,7 +58,10 @@ export function withSecurity<Body = unknown, Query = unknown>(
   config: SecurityConfig<Body, Query>,
   handler: SecurityHandler<Body, Query>,
 ) {
-  return async (request: Request): Promise<NextResponse> => {
+  return async (
+    request: Request,
+    routeContext?: { params?: Promise<Record<string, string>> },
+  ): Promise<NextResponse> => {
     const requestId = crypto.randomUUID();
     const reply = (response: NextResponse) => {
       response.headers.set("x-request-id", requestId);
@@ -94,6 +99,9 @@ export function withSecurity<Body = unknown, Query = unknown>(
       }
 
       const ctx: ApiContext<Body, Query> = { requestId };
+      if (routeContext?.params) {
+        ctx.params = await routeContext.params;
+      }
 
       if (config.auth === "required") {
         const session = await getSession();

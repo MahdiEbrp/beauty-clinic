@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createHash, randomBytes } from "node:crypto";
+import { isIP } from "node:net";
 
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
@@ -22,9 +23,14 @@ export async function createSession(
   const tokenHash = sha256Hex(token);
   const expiresAt = sessionExpiresAt();
 
+  // `sessions.ip` is an `inet` column: only real IP addresses are valid, so a
+  // non-IP value (e.g. a placeholder like "unknown") becomes NULL instead of
+  // surfacing as a wrapped Postgres error.
+  const storedIp = ip && isIP(ip) ? ip : undefined;
+
   const [inserted] = await db
     .insert(sessions)
-    .values({ userId, tokenHash, expiresAt, userAgent, ip })
+    .values({ userId, tokenHash, expiresAt, userAgent, ip: storedIp })
     .returning({ id: sessions.id });
 
   if (!inserted) {
