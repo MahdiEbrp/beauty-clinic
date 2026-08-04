@@ -136,7 +136,7 @@ export default function LoginForm() {
                     placeholder={t("login.emailPlaceholder")}
                     aria-invalid={Boolean(errors.email)}
                     aria-describedby={errors.email ? "login-email-error" : undefined}
-                    className={`${fieldClass} ps-12 text-end`}
+                    className={`${fieldClass} ps-12 text-center`}
                   />
                 </div>
                 {errors.email && (
@@ -169,7 +169,7 @@ export default function LoginForm() {
                     aria-describedby={
                       errors.password ? "login-password-error" : undefined
                     }
-                    className={`${fieldClass} ps-12 pe-12 text-end`}
+                    className={`${fieldClass} ps-12 pe-12 text-center`}
                   />
                   <button
                     type="button"

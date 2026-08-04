@@ -22,7 +22,15 @@ export function encryptSecret(plain: string): string {
 
 export function decryptSecret(payload: string): string {
   const [version, ivB64, tagB64, dataB64] = payload.split(".");
-  if (version !== VERSION) {
+  if (
+    version !== VERSION ||
+    !ivB64 ||
+    !tagB64 ||
+    !dataB64 ||
+    !isCanonicalBase64Url(ivB64) ||
+    !isCanonicalBase64Url(tagB64) ||
+    !isCanonicalBase64Url(dataB64)
+  ) {
     throw new Error("Unsupported encryption version");
   }
   const decipher = createDecipheriv(ALGORITHM, key, Buffer.from(ivB64, "base64url"));
@@ -31,4 +39,8 @@ export function decryptSecret(payload: string): string {
     decipher.update(Buffer.from(dataB64, "base64url")),
     decipher.final(),
   ]).toString("utf8");
+}
+
+function isCanonicalBase64Url(value: string): boolean {
+  return Buffer.from(value, "base64url").toString("base64url") === value;
 }
