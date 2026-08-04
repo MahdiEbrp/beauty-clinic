@@ -90,10 +90,33 @@ export function isSameOrigin(request: Request): boolean {
   return false;
 }
 
+/**
+ * The real client IP, used for rate-limit keys and session metadata.
+ *
+ * Only headers written by the platform/edge we run behind are trusted:
+ * `x-vercel-forwarded-for` (Vercel), `cf-connecting-ip` (Cloudflare) and
+ * `x-real-ip` (nginx, Bun, etc.). A caller-supplied `x-forwarded-for` is
+ * ignored unless the deployment explicitly opts in via `TRUST_PROXY=1` — its
+ * first entry can be forged to rotate rate-limit buckets and poison session
+ * audit data. Returns `undefined` when no trusted header exists (e.g. plain
+ * local dev), which callers map to a shared "unknown" bucket.
+ */
 export function clientIp(request: Request): string | undefined {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) {
-    return forwarded.split(",")[0]?.trim() || undefined;
+  const firstIp = (value: string | null) => value?.split(",")[0]?.trim() || undefined;
+
+  const vercelForwarded = request.headers.get("x-vercel-forwarded-for");
+  if (vercelForwarded) return firstIp(vercelForwarded);
+
+  const cfConnectingIp = request.headers.get("cf-connecting-ip");
+  if (cfConnectingIp) return firstIp(cfConnectingIp);
+
+  const realIp = request.headers.get("x-real-ip");
+  if (realIp) return firstIp(realIp);
+
+  if (process.env.TRUST_PROXY === "1") {
+    const forwarded = request.headers.get("x-forwarded-for");
+    if (forwarded) return firstIp(forwarded);
   }
-  return request.headers.get("x-real-ip") ?? undefined;
+
+  return undefined;
 }

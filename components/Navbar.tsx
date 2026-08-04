@@ -2,17 +2,19 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { Link, usePathname } from "@/src/i18n/navigation";
-import { Wind, Menu, X } from "lucide-react";
+import { Link, usePathname, useRouter } from "@/src/i18n/navigation";
+import { Wind, Menu, X, User, LogOut } from "lucide-react";
 import { getNavItems, getRouteNavItems } from "@/data/navigation";
+import type { AuthUser } from "@/lib/auth/dal";
 import LocaleSwitcher from "./LocaleSwitcher";
 
 const MENU_ID = "primary-mobile-menu";
 
-export default function Navbar() {
+export default function Navbar({ user }: { user: AuthUser | null }) {
   const t = useTranslations();
   const locale = useLocale();
   const pathname = usePathname();
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
@@ -62,6 +64,59 @@ export default function Navbar() {
     };
   }, [menuOpen]);
 
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/v1/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (response.ok) {
+        router.replace("/login");
+        router.refresh();
+      }
+    } catch {
+      // Ignore
+    }
+  };
+
+  const renderAuthLinks = () => {
+    if (user) {
+      return (
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-2 bg-surface-tertiary rounded-pill">
+            <User className="w-5 h-5 text-copper" strokeWidth={2} aria-hidden="true" />
+            <span className="text-body-sm font-semibold text-accent max-w-40 truncate">
+              {user.fullName}
+            </span>
+          </div>
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-1.5 px-4 py-2 min-h-11 bg-accent text-content-contrast rounded-pill font-bold text-body-sm transition-all duration-300 hover:bg-accent-hover hover:-translate-y-0.5 hover:shadow-elevation-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-95"
+          >
+            <span>{t("nav.dashboard")}</span>
+          </Link>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="inline-flex items-center gap-1.5 px-4 py-2 min-h-11 bg-transparent border border-border-interactive text-accent rounded-pill font-bold text-body-sm transition-all duration-200 hover:bg-surface-tertiary hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            <LogOut className="w-4 h-4 rtl-mirror" strokeWidth={2} aria-hidden="true" />
+            <span>{t("nav.logout")}</span>
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <Link
+        href="/login"
+        className="inline-flex items-center gap-1.5 px-4 py-2 min-h-11 bg-accent text-content-contrast rounded-pill font-bold text-body-sm transition-all duration-300 hover:bg-accent-hover hover:-translate-y-0.5 hover:shadow-elevation-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-95"
+      >
+        <span>{t("nav.login")}</span>
+      </Link>
+    );
+  };
+
   return (
     <header
       className={`fixed top-4 inset-x-4 z-50 rounded-pill shadow-elevation-1 transition-all duration-300 ${
@@ -108,10 +163,12 @@ export default function Navbar() {
 
         <div className="hidden lg:flex items-center gap-3">
           <LocaleSwitcher />
+          {renderAuthLinks()}
         </div>
 
         <div className="lg:hidden flex items-center gap-1">
           <LocaleSwitcher />
+          {renderAuthLinks()}
           <button
             ref={toggleRef}
             type="button"
@@ -154,6 +211,41 @@ export default function Navbar() {
                 {t(`nav.${item.key}`)}
               </Link>
             ))}
+            <div className="w-full h-px bg-border-primary my-1" aria-hidden="true" />
+            {user ? (
+              <>
+                <span className="w-full flex items-center justify-center gap-2 p-3 min-h-11 text-body-sm font-bold text-accent">
+                  <User className="w-5 h-5 text-copper" strokeWidth={2} aria-hidden="true" />
+                  <span className="truncate max-w-55">{user.fullName}</span>
+                </span>
+                <Link
+                  href="/dashboard"
+                  className="p-3 min-h-11 flex items-center justify-center rounded-control text-accent no-underline hover:bg-surface-tertiary font-semibold text-body-sm w-full text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent bg-accent-subtle"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {t("nav.dashboard")}
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    handleLogout();
+                  }}
+                  className="p-3 min-h-11 flex items-center justify-center gap-2 rounded-control text-accent font-semibold text-body-sm w-full text-center border border-border-interactive focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent hover:bg-surface-tertiary"
+                >
+                  <LogOut className="w-5 h-5 rtl-mirror" strokeWidth={2} aria-hidden="true" />
+                  {t("nav.logout")}
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                className="p-3 min-h-11 flex items-center justify-center rounded-pill text-content-contrast no-underline bg-accent hover:bg-accent-hover font-bold text-body-sm w-full text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                onClick={() => setMenuOpen(false)}
+              >
+                {t("nav.login")}
+              </Link>
+            )}
           </div>
         )}
       </nav>

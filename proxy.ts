@@ -19,6 +19,17 @@ const MUTATION_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 // limits live in the route pipeline (withSecurity) as defense in depth.
 const MUTATION_RATE = { limit: 60, windowMs: 15 * 60 * 1000 };
 
+function stripLocale(pathname: string): string {
+  const parts = pathname.split("/");
+  if (
+    parts.length > 1 &&
+    (routing.locales as readonly string[]).includes(parts[1])
+  ) {
+    return `/${parts.slice(2).join("/")}`;
+  }
+  return pathname;
+}
+
 function jsonBlock(
   request: NextRequest,
   code: string,
@@ -47,7 +58,7 @@ export default async function proxy(request: NextRequest) {
     }
 
     const ip = clientIp(request) ?? "unknown";
-    if (!proxyRateLimit(`proxy:${ip}`, MUTATION_RATE.limit, MUTATION_RATE.windowMs)) {
+    if (!(await proxyRateLimit(`proxy:${ip}`, MUTATION_RATE.limit, MUTATION_RATE.windowMs))) {
       return jsonBlock(
         request,
         "RATE_LIMITED",
@@ -60,7 +71,7 @@ export default async function proxy(request: NextRequest) {
   // API routes bypass i18n middleware entirely; page routes go through it.
   const response = isApi ? NextResponse.next() : handleI18n(request);
 
-  if (!isApi && PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {
+  if (!isApi && PROTECTED_PREFIXES.some((prefix) => stripLocale(pathname).startsWith(prefix))) {
     const claims = await decryptSession(request.cookies.get(SESSION_COOKIE)?.value);
     if (!claims) {
       const locale = pathname.split("/")[1];

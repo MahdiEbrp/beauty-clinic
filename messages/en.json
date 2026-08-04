@@ -26,7 +26,10 @@
     "bookNow": "Book Now",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "mainNav": "Main navigation"
+    "mainNav": "Main navigation",
+    "login": "Login",
+    "logout": "Log Out",
+    "dashboard": "Dashboard"
   },
   "localeSwitcher": {
     "switchTo": "Switch to {language}"
@@ -369,5 +372,95 @@
     "cancellationPolicyDesc": "If you cannot attend, please inform us at least 24 hours in advance for cancellation or rescheduling.",
     "quickContact": "Have a question?",
     "callUs": "Call us"
+  },
+  "login": {
+    "meta": {
+      "title": "Sign In | Nafas Beauty Clinic",
+      "description": "Sign in to your account to access your dashboard."
+    },
+    "heading": "Welcome back",
+    "description": "Sign in to your account to continue.",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "——————",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "submit": "Sign In",
+    "loggingIn": "Signing in...",
+    "createAccountPrompt": "New to Nafas Clinic?",
+    "createAccount": "Create an account",
+    "errors": {
+      "invalidEmail": "Please enter a valid email address.",
+      "requiredPassword": "Please enter your password.",
+      "invalidCredentials": "Invalid email or password.",
+      "rateLimited": "Too many attempts. Please try again later.",
+      "validation": "The information you entered is invalid. Please check and try again.",
+      "csrf": "The request was blocked. Please try again.",
+      "generic": "Something went wrong. Please try again later.",
+      "network": "Unable to reach the server. Check your connection and try again."
+    }
+  },
+  "register": {
+    "meta": {
+      "title": "Create Account | Nafas Beauty Clinic",
+      "description": "Create an account to access your dashboard and book appointments."
+    },
+    "heading": "Create your account",
+    "description": "Join Nafas Clinic to manage your bookings.",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "e.g. Maryam Ahmadi",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "phone": "Phone Number (Optional)",
+    "phonePlaceholder": "09120000000",
+    "password": "Password",
+    "passwordPlaceholder": "——————",
+    "passwordHint": "At least 8 characters with upper & lower case letters, a number and a special character.",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "submit": "Create Account",
+    "registering": "Creating account...",
+    "errors": {
+      "invalidName": "Please enter your full name (at least 2 characters).",
+      "invalidEmail": "Please enter a valid email address.",
+      "invalidPhone": "Please enter a valid phone number.",
+      "invalidPassword": "Password must be at least 8 characters with upper & lower case letters, a number and a special character.",
+      "emailTaken": "An account with this email already exists.",
+      "rateLimited": "Too many attempts. Please try again later.",
+      "validation": "The information you entered is invalid. Please check and try again.",
+      "csrf": "The request was blocked. Please try again.",
+      "generic": "Something went wrong. Please try again later.",
+      "network": "Unable to reach the server. Check your connection and try again."
+    },
+    "loginPrompt": "Already have an account?",
+    "loginLink": "Sign in"
+  },
+  "dashboard": {
+    "meta": {
+      "title": "Dashboard | Nafas Beauty Clinic",
+      "description": "Your Nafas Clinic account dashboard."
+    },
+    "welcome": "Welcome",
+    "hello": "Hello, {name}",
+    "logout": "Log Out",
+    "loggingOut": "Logging out...",
+    "sessions": {
+      "heading": "Active Sessions",
+      "description": "Devices currently signed in to your account.",
+      "thisDevice": "This device",
+      "ipLabel": "IP: {ip}",
+      "lastSeen": "Last seen {date}",
+      "signedIn": "Signed in {date}",
+      "unknownDevice": "Unknown device",
+      "revokeOthers": "Sign out of all other devices",
+      "revokingOthers": "Signing out other devices...",
+      "revokeTitle": "Sign out of other devices?",
+      "revokeDescription": "You will stay signed in on this device. Other devices will need to sign in again.",
+      "cancel": "Cancel",
+      "confirm": "Sign out",
+      "revokeError": "Couldn't sign out other devices. Please try again.",
+      "noOthers": "You are only signed in on this device."
+    }
   }
 }

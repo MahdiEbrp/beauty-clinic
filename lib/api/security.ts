@@ -77,10 +77,19 @@ export function withSecurity<Body = unknown, Query = unknown>(
 
       if (config.rateLimit) {
         const key = config.rateLimit.key(request);
-        const result = rateLimit(key, config.rateLimit.limit, config.rateLimit.windowMs);
+        const result = await rateLimit(key, config.rateLimit.limit, config.rateLimit.windowMs);
         if (!result.allowed) {
           logError("api.rate_limited", { requestId, key });
-          return reply(jsonError("RATE_LIMITED", "Too many attempts. Please try again later.", 429));
+          const response = jsonError(
+            "RATE_LIMITED",
+            "Too many attempts. Please try again later.",
+            429,
+          );
+          response.headers.set(
+            "retry-after",
+            String(Math.max(1, Math.ceil(result.retryAfterMs / 1000))),
+          );
+          return reply(response);
         }
       }
 

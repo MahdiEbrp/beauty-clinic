@@ -1,7 +1,7 @@
 import "server-only";
 
 import { cache } from "react";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, gt, isNull } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -10,7 +10,12 @@ import { permissions, rolePermissions, roles, sessions, userRoles, users } from 
 import { getLocale } from "next-intl/server";
 import { localizedHref } from "@/lib/site";
 import { decryptSession, SESSION_COOKIE } from "./jwt";
+import { describeDevice, type DeviceKind } from "./device";
 import { hasPermission, hasRole, type RoleKey } from "./rbac";
+
+// Only write the activity heartbeat when the last write is at least this old,
+// so a busy user doesn't turn every page load into a DB write.
+const LAST_SEEN_THROTTLE_MS = 5 * 60 * 1000;
 
 export type AuthUser = {
   id: string;
@@ -21,8 +26,18 @@ export type AuthUser = {
 };
 
 export type AuthSession = {
+  sessionId: string;
   userId: string;
   user: AuthUser;
+};
+
+export type ActiveSession = {
+  id: string;
+  deviceKind: DeviceKind;
+  device: string;
+  ip: string | null;
+  lastSeenAt: Date;
+  createdAt: Date;
 };
 
 async function authRedirect(path: "/login" | "/forbidden"): Promise<never> {
@@ -56,6 +71,13 @@ export const getSession = cache(async (): Promise<AuthSession | null> => {
   if (session.userId !== claims.userId || session.tokenHash !== claims.tokenHash) {
     await clearInvalidSession();
     return null;
+  }
+
+  if (session.lastSeenAt.getTime() < Date.now() - LAST_SEEN_THROTTLE_MS) {
+    await db
+      .update(sessions)
+      .set({ lastSeenAt: new Date() })
+      .where(eq(sessions.id, session.id));
   }
 
   const user = await db.query.users.findFirst({
@@ -99,6 +121,7 @@ export const getSession = cache(async (): Promise<AuthSession | null> => {
   }
 
   return {
+    sessionId: session.id,
     userId: user.id,
     user: {
       id: user.id,
@@ -109,6 +132,40 @@ export const getSession = cache(async (): Promise<AuthSession | null> => {
     },
   };
 });
+
+/**
+ * The user's non-expired, non-revoked sessions, most recently active first,
+ * shaped for the dashboard sessions list.
+ */
+export async function getActiveSessions(userId: string): Promise<ActiveSession[]> {
+  const rows = await db.query.sessions.findMany({
+    where: and(
+      eq(sessions.userId, userId),
+      isNull(sessions.revokedAt),
+      gt(sessions.expiresAt, new Date()),
+    ),
+    orderBy: desc(sessions.lastSeenAt),
+    columns: {
+      id: true,
+      userAgent: true,
+      ip: true,
+      lastSeenAt: true,
+      createdAt: true,
+    },
+  });
+
+  return rows.map((row) => {
+    const { kind, label } = describeDevice(row.userAgent);
+    return {
+      id: row.id,
+      deviceKind: kind,
+      device: label,
+      ip: row.ip,
+      lastSeenAt: row.lastSeenAt,
+      createdAt: row.createdAt,
+    };
+  });
+}
 
 export const requireAuth = cache(async (): Promise<AuthSession> => {
   const session = await getSession();

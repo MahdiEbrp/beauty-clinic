@@ -4,6 +4,7 @@ import { resolveTarget } from "./guard";
 import type { AuthSession } from "@/lib/auth/dal";
 
 const REGULAR_USER: AuthSession = {
+  sessionId: "550e8400-e29b-41d4-a716-4466554400aa",
   userId: "550e8400-e29b-41d4-a716-446655440001",
   user: {
     id: "550e8400-e29b-41d4-a716-446655440001",
@@ -15,6 +16,7 @@ const REGULAR_USER: AuthSession = {
 };
 
 const ADMIN_USER: AuthSession = {
+  sessionId: "550e8400-e29b-41d4-a716-4466554400bb",
   userId: "550e8400-e29b-41d4-a716-446655440002",
   user: {
     id: "550e8400-e29b-41d4-a716-446655440002",
