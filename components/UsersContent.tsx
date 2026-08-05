@@ -4,6 +4,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations, useFormatter } from "next-intl";
 import {
   Search,
+  SearchX,
+  UserPlus,
+  MoreVertical,
+  X,
   Loader2,
   Ban,
   ShieldCheck,
@@ -27,6 +31,7 @@ import {
 } from "@/components/ui/dialog";
 
 type StatusFilter = "all" | "active" | "inactive" | "banned";
+type RoleFilter = "all" | "admin" | "doctor" | "receptionist" | "customer";
 type ConfirmAction = "ban" | "deactivate";
 
 function initials(name: string): string {
@@ -50,6 +55,7 @@ export default function UsersContent({
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [status, setStatus] = useState<StatusFilter>("all");
+  const [role, setRole] = useState<RoleFilter>("all");
   const [page, setPage] = useState(1);
   const [data, setData] = useState<ListUsersResult>(initialData);
   const [loading, setLoading] = useState(false);
@@ -58,12 +64,17 @@ export default function UsersContent({
   const [actionError, setActionError] = useState<string | null>(null);
   const [confirm, setConfirm] = useState<{ user: AdminUser; action: ConfirmAction } | null>(null);
   const [banReason, setBanReason] = useState("");
+  const [addOpen, setAddOpen] = useState(false);
+  const [addBusy, setAddBusy] = useState(false);
+  const [addError, setAddError] = useState<string | null>(null);
+  const [newUser, setNewUser] = useState({ fullName: "", email: "", phone: "", password: "", roleKey: "customer" });
   const firstRun = useRef(true);
 
   const canManage = currentUser.permissions.includes("users.manage");
+  const canWrite = currentUser.permissions.includes("users.write");
 
   const load = useCallback(
-    async (params: { search: string; status: StatusFilter; page: number }) => {
+    async (params: { search: string; status: StatusFilter; role: RoleFilter; page: number }) => {
       setLoading(true);
       setLoadFailed(false);
       try {
@@ -72,6 +83,7 @@ export default function UsersContent({
           perPage: "10",
           status: params.status,
         });
+        if (params.role !== "all") qs.set("role", params.role);
         if (params.search) qs.set("search", params.search);
         const response = await fetch(`/api/v1/users?${qs.toString()}`, {
           credentials: "include",
@@ -100,8 +112,8 @@ export default function UsersContent({
       firstRun.current = false;
       return;
     }
-    load({ search: debouncedSearch, status, page });
-  }, [debouncedSearch, status, page, load]);
+    load({ search: debouncedSearch, status, role, page });
+  }, [debouncedSearch, status, role, page, load]);
 
   const runAction = async (
     target: AdminUser,
@@ -124,7 +136,7 @@ export default function UsersContent({
       }
       setConfirm(null);
       setBanReason("");
-      await load({ search: debouncedSearch, status, page });
+      await load({ search: debouncedSearch, status, role, page });
     } catch (error) {
       setActionError(
         t(
@@ -135,6 +147,29 @@ export default function UsersContent({
       );
     } finally {
       setBusyId(null);
+    }
+  };
+
+  const createUser = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setAddBusy(true);
+    setAddError(null);
+    try {
+      const response = await fetch("/api/v1/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(newUser),
+      });
+      if (!response.ok) throw new Error("create_failed");
+      setAddOpen(false);
+      setNewUser({ fullName: "", email: "", phone: "", password: "", roleKey: "customer" });
+      await load({ search: debouncedSearch, status, role, page: 1 });
+      setPage(1);
+    } catch {
+      setAddError(t("users.errors.create"));
+    } finally {
+      setAddBusy(false);
     }
   };
 
@@ -181,31 +216,30 @@ export default function UsersContent({
       });
     }
 
-    return buttons.map((button) => (
-      <button
-        key={button.key}
-        type="button"
-        disabled={busyId === row.id}
-        onClick={button.onClick}
-        className={`inline-flex items-center gap-1.5 px-3 py-1.5 min-h-9 rounded-pill text-caption font-bold border transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50 disabled:pointer-events-none ${
-          button.danger
-            ? "bg-error/10 text-error border-error/30 hover:bg-error/20"
-            : "bg-transparent text-accent border-border-interactive hover:bg-surface-tertiary"
-        }`}
-      >
-        {button.key === "ban" && <Ban className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />}
-        {button.key === "unban" && (
-          <ShieldCheck className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
-        )}
-        {button.key === "deactivate" && (
-          <UserX className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
-        )}
-        {button.key === "activate" && (
-          <UserCheck className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
-        )}
-        <span>{t(button.labelKey)}</span>
-      </button>
-    ));
+    return (
+      <details className="relative">
+        <summary className="flex size-11 cursor-pointer list-none items-center justify-center rounded-pill border border-border-interactive text-accent transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden" aria-label={t("users.actions.menu")}>
+          <MoreVertical className="size-5" aria-hidden="true" />
+        </summary>
+        <div className="absolute end-0 top-12 z-20 grid min-w-44 gap-1 rounded-card border border-border-primary bg-surface-secondary p-2 shadow-elevation-3">
+          {buttons.map((button) => (
+            <button
+              key={button.key}
+              type="button"
+              disabled={busyId === row.id}
+              onClick={button.onClick}
+              className={`flex min-h-11 items-center gap-2 rounded-control px-3 text-start text-caption font-bold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50 ${button.danger ? "text-error hover:bg-error/10" : "text-accent hover:bg-surface-tertiary"}`}
+            >
+              {button.key === "ban" && <Ban className="size-4" aria-hidden="true" />}
+              {button.key === "unban" && <ShieldCheck className="size-4" aria-hidden="true" />}
+              {button.key === "deactivate" && <UserX className="size-4" aria-hidden="true" />}
+              {button.key === "activate" && <UserCheck className="size-4" aria-hidden="true" />}
+              <span>{t(button.labelKey)}</span>
+            </button>
+          ))}
+        </div>
+      </details>
+    );
   };
 
   const totalPages = data.totalPages;
@@ -238,8 +272,18 @@ export default function UsersContent({
               {data.total}
             </span>
           </div>
-          <p className="text-body-sm text-content-secondary">{t("users.description")}</p>
+            <p className="text-body-sm text-content-secondary">{t("users.description")}</p>
         </div>
+        {canWrite && (
+          <button
+            type="button"
+            onClick={() => { setAddError(null); setAddOpen(true); }}
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill bg-accent px-5 py-3 text-body-sm font-bold text-content-contrast shadow-elevation-2 transition hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            <UserPlus className="size-4" aria-hidden="true" />
+            {t("users.add")}
+          </button>
+        )}
       </div>
 
       {/* Filters */}
@@ -278,6 +322,28 @@ export default function UsersContent({
             <option value="banned">{t("users.statusBanned")}</option>
           </select>
         </label>
+        <label className="flex items-center gap-2 text-body-sm text-content-secondary">
+          <span className="whitespace-nowrap">{t("users.role")}</span>
+          <select
+            value={role}
+            onChange={(e) => { setRole(e.target.value as RoleFilter); setPage(1); }}
+            className="bg-form-input-bg border border-form-input-border rounded-control py-3 px-4 text-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            <option value="all">{t("users.roleAll")}</option>
+            {(["admin", "doctor", "receptionist", "customer"] as const).map((key) => (
+              <option key={key} value={key}>{roleLabel(key)}</option>
+            ))}
+          </select>
+        </label>
+        {(status !== "all" || role !== "all" || search) && (
+          <button
+            type="button"
+            onClick={() => { setSearch(""); setStatus("all"); setRole("all"); setPage(1); }}
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill px-4 text-body-sm font-bold text-accent transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            <X className="size-4" aria-hidden="true" /> {t("users.clearFilters")}
+          </button>
+        )}
       </div>
 
       {/* Error banner */}
@@ -289,7 +355,7 @@ export default function UsersContent({
           <p className="text-body-sm text-error font-medium">{t("users.error")}</p>
           <button
             type="button"
-            onClick={() => load({ search: debouncedSearch, status, page })}
+            onClick={() => load({ search: debouncedSearch, status, role, page })}
             className="inline-flex items-center gap-2 px-4 py-2 min-h-9 rounded-pill text-body-sm font-bold text-error border border-error/40 hover:bg-error/20 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error"
           >
             <RotateCcw className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
@@ -309,7 +375,35 @@ export default function UsersContent({
 
       {/* Table */}
       <div className="bg-surface-secondary border border-border-primary rounded-panel shadow-elevation-1 overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="grid gap-3 p-4 md:hidden">
+          {data.items.map((row) => {
+            const state = statusOf(row);
+            const isSelf = row.id === currentUser.id;
+            return (
+              <article key={row.id} className="rounded-card border border-border-primary bg-surface-primary p-4 shadow-elevation-1">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="flex size-11 shrink-0 items-center justify-center rounded-pill border border-border-primary bg-surface-tertiary text-body-sm font-bold text-copper-strong" aria-hidden="true">{initials(row.fullName)}</span>
+                    <div className="min-w-0">
+                      <p className="truncate text-body font-bold text-accent">{row.fullName}</p>
+                      <p className="truncate text-caption text-content-tertiary" dir="ltr">{row.email}</p>
+                    </div>
+                  </div>
+                  {canManage && !isSelf && <div className="shrink-0">{rowActions(row)}</div>}
+                </div>
+                <div className="mt-4 flex flex-wrap items-center gap-2">
+                  <span className={`inline-flex items-center rounded-pill border px-2.5 py-1 text-caption font-bold ${statusClass[state]}`}>{t(`users.statuses.${state}`)}</span>
+                  {row.roles.map((item) => <span key={item} className="inline-flex items-center rounded-pill bg-surface-tertiary px-2.5 py-1 text-caption font-medium text-content-secondary">{roleLabel(item)}</span>)}
+                </div>
+                <dl className="mt-4 grid grid-cols-2 gap-3 border-t border-border-primary pt-3 text-caption">
+                  <div><dt className="text-content-tertiary">{t("users.table.lastLogin")}</dt><dd className="mt-1 text-content-secondary">{row.lastLoginAt ? format.relativeTime(row.lastLoginAt, new Date()) : t("users.never")}</dd></div>
+                  <div><dt className="text-content-tertiary">{t("users.table.phone")}</dt><dd className="mt-1 text-content-secondary" dir="ltr">{row.phone ?? "—"}</dd></div>
+                </dl>
+              </article>
+            );
+          })}
+        </div>
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-[560px] text-start">
             <thead>
               <tr className="border-b border-border-primary text-caption text-content-tertiary">
@@ -423,14 +517,16 @@ export default function UsersContent({
         {data.items.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 text-center px-6">
             <div className="w-16 h-16 bg-surface-tertiary rounded-control flex items-center justify-center mb-6">
-              <UsersIcon
+              {(debouncedSearch || status !== "all" || role !== "all") ? (
+                <SearchX className="w-8 h-8 text-content-tertiary" strokeWidth={1.5} aria-hidden="true" />
+              ) : <UsersIcon
                 className="w-8 h-8 text-content-tertiary"
                 strokeWidth={1.5}
                 aria-hidden="true"
-              />
+              />}
             </div>
             <p className="text-content-secondary text-body">
-              {debouncedSearch || status !== "all"
+              {debouncedSearch || status !== "all" || role !== "all"
                 ? t("users.emptySearch")
                 : t("users.empty")}
             </p>
@@ -545,6 +641,42 @@ export default function UsersContent({
               <span>{t("users.dialog.confirm")}</span>
             </button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={addOpen} onOpenChange={setAddOpen}>
+        <DialogContent closeLabel={t("users.dialog.cancel")} className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-accent">{t("users.addTitle")}</DialogTitle>
+            <DialogDescription>{t("users.addDescription")}</DialogDescription>
+          </DialogHeader>
+          <form className="grid gap-4" onSubmit={createUser}>
+            {(["fullName", "email", "phone", "password"] as const).map((field) => (
+              <label key={field} className="grid gap-2 text-caption font-bold text-content-secondary">
+                <span>{t(`users.form.${field}`)}</span>
+                <input
+                  required={field !== "phone"}
+                  type={field === "password" ? "password" : field === "email" ? "email" : "text"}
+                  value={newUser[field]}
+                  onChange={(event) => setNewUser((value) => ({ ...value, [field]: event.target.value }))}
+                  className="min-h-11 rounded-control border border-form-input-border bg-form-input-bg px-4 text-body text-accent outline-none transition focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                />
+              </label>
+            ))}
+            <label className="grid gap-2 text-caption font-bold text-content-secondary">
+              <span>{t("users.form.role")}</span>
+              <select value={newUser.roleKey} onChange={(event) => setNewUser((value) => ({ ...value, roleKey: event.target.value }))} className="min-h-11 rounded-control border border-form-input-border bg-form-input-bg px-4 text-body text-accent outline-none focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+                {(["admin", "doctor", "receptionist", "customer"] as const).map((key) => <option key={key} value={key}>{roleLabel(key)}</option>)}
+              </select>
+            </label>
+            {addError && <p role="alert" className="text-body-sm font-medium text-error">{addError}</p>}
+            <DialogFooter>
+              <DialogClose type="button" className="inline-flex min-h-11 items-center justify-center rounded-pill bg-surface-tertiary px-5 text-body-sm font-bold text-accent">{t("users.dialog.cancel")}</DialogClose>
+              <button type="submit" disabled={addBusy} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill bg-accent px-5 text-body-sm font-bold text-content-contrast disabled:opacity-60">
+                {addBusy && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}{t("users.addSubmit")}
+              </button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </div>

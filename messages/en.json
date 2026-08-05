@@ -483,6 +483,10 @@
     },
     "heading": "Users",
     "description": "Manage registered accounts, their status and access.",
+    "add": "Add new user",
+    "addTitle": "Add a new user",
+    "addDescription": "Create an account and assign its initial role.",
+    "addSubmit": "Create user",
     "search": "Search users",
     "searchPlaceholder": "Search by name, email or phone...",
     "status": "Status",
@@ -490,6 +494,9 @@
     "statusActive": "Active",
     "statusInactive": "Inactive",
     "statusBanned": "Banned",
+    "role": "Role",
+    "roleAll": "All roles",
+    "clearFilters": "Clear filters",
     "error": "Couldn't load users. Please try again.",
     "retry": "Retry",
     "loading": "Loading users...",
@@ -504,6 +511,7 @@
       "status": "Status",
       "lastLogin": "Last Login",
       "actions": "Actions"
+      ,"phone": "Phone"
     },
     "statuses": {
       "active": "Active",
@@ -519,6 +527,7 @@
       "deactivate": "Deactivate",
       "ban": "Ban",
       "unban": "Unban"
+      ,"menu": "Open user actions"
     },
     "banDialog": {
       "title": "Ban {name}?",
@@ -542,7 +551,15 @@
     },
     "errors": {
       "action": "The action failed. Please try again.",
-      "selfLockout": "You cannot deactivate or ban your own account."
+      "selfLockout": "You cannot deactivate or ban your own account.",
+      "create": "The user could not be created. Please check the details and try again."
+    },
+    "form": {
+      "fullName": "Full name",
+      "email": "Email",
+      "phone": "Phone (optional)",
+      "password": "Initial password",
+      "role": "Initial role"
     }
   },
   "forbidden": {

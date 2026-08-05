@@ -5,6 +5,7 @@ import {
   loginSchema,
   signupSchema,
   updateUserStatusSchema,
+  createUserSchema,
 } from "./user";
 
 const validSignup = {
@@ -96,6 +97,12 @@ describe("listUsersQuerySchema", () => {
     if (result.success) expect(result.data.search).toBe("jane");
   });
 
+  it("accepts an optional role filter", () => {
+    const result = listUsersQuerySchema.safeParse({ role: "admin" });
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.role).toBe("admin");
+  });
+
   it("accepts every status filter", () => {
     for (const status of ["all", "active", "inactive", "banned"]) {
       expect(listUsersQuerySchema.safeParse({ status }).success).toBe(true);
@@ -150,5 +157,33 @@ describe("updateUserStatusSchema", () => {
       banReason: "x".repeat(501),
     });
     expect(result.success).toBe(false);
+  });
+});
+
+describe("createUserSchema", () => {
+  it("accepts a complete admin-created user", () => {
+    const result = createUserSchema.safeParse({
+      fullName: "Jane Doe",
+      email: "Jane@Example.COM",
+      phone: "",
+      password: "Correct-Horse-1!",
+      roleKey: "customer",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.email).toBe("jane@example.com");
+      expect(result.data.phone).toBeNull();
+    }
+  });
+
+  it("rejects weak passwords and mass-assigned fields", () => {
+    expect(createUserSchema.safeParse({
+      fullName: "Jane Doe",
+      email: "jane@example.com",
+      phone: "",
+      password: "weak",
+      roleKey: "customer",
+      isAdmin: true,
+    }).success).toBe(false);
   });
 });

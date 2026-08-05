@@ -1,6 +1,6 @@
 import { withSecurity, jsonOk } from "@/lib/api/security";
-import { listUsers } from "@/lib/users/service";
-import { listUsersQuerySchema } from "@/lib/validation/user";
+import { createUser, listUsers } from "@/lib/users/service";
+import { createUserSchema, listUsersQuerySchema } from "@/lib/validation/user";
 
 export const runtime = "nodejs";
 
@@ -11,8 +11,21 @@ export const GET = withSecurity(
     validate: { query: listUsersQuerySchema },
   },
   async (_request, ctx) => {
-    const { page, perPage, search, status } = ctx.query!;
-    const result = await listUsers({ page, perPage, search, status });
+    const { page, perPage, search, status, role } = ctx.query!;
+    const result = await listUsers({ page, perPage, search, status, role });
     return jsonOk(result);
+  },
+);
+
+export const POST = withSecurity(
+  {
+    auth: "required",
+    permissions: "users.write",
+    validate: { body: createUserSchema },
+    audit: true,
+  },
+  async (_request, ctx) => {
+    const user = await createUser(ctx.body!);
+    return jsonOk(user, 201);
   },
 );

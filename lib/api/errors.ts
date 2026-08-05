@@ -14,8 +14,8 @@ export class ApiError extends Error {
   }
 }
 
-export function jsonOk(data: unknown): NextResponse {
-  return NextResponse.json({ data });
+export function jsonOk(data: unknown, status = 200): NextResponse {
+  return NextResponse.json({ data }, { status });
 }
 
 export function jsonError(

@@ -1,6 +1,7 @@
-import { and, count, desc, eq, ilike, inArray, isNull, or, type SQL } from "drizzle-orm";
+import { and, count, desc, eq, ilike, inArray, isNull, or, sql, type SQL } from "drizzle-orm";
 
 import { ApiError } from "@/lib/api/errors";
+import { hashPassword } from "@/lib/auth/password";
 import { db } from "@/src/db";
 import { roles, sessions, userRoles, users } from "@/src/db/schema";
 import type { UserStatusFilter } from "@/lib/validation/user";
@@ -27,6 +28,40 @@ export type ListUsersResult = {
   totalPages: number;
 };
 
+export async function createUser(input: {
+  fullName: string;
+  email: string;
+  phone: string | null;
+  password: string;
+  roleKey: string;
+}): Promise<{ id: string }> {
+  const role = await db.query.roles.findFirst({ where: eq(roles.key, input.roleKey) });
+  if (!role) throw new ApiError(400, "INVALID_ROLE", "The selected role does not exist.");
+
+  try {
+    return await db.transaction(async (tx) => {
+      const [user] = await tx
+        .insert(users)
+        .values({
+          fullName: input.fullName,
+          email: input.email,
+          phone: input.phone,
+          passwordHash: await hashPassword(input.password),
+        })
+        .returning({ id: users.id });
+      if (!user) throw new ApiError(500, "USER_CREATE_FAILED", "Could not create user.");
+      await tx.insert(userRoles).values({ userId: user.id, roleId: role.id });
+      return { id: user.id };
+    });
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    if (typeof error === "object" && error !== null && "code" in error && error.code === "23505") {
+      throw new ApiError(409, "EMAIL_TAKEN", "A user with this email already exists.");
+    }
+    throw error;
+  }
+}
+
 /**
  * Paginated, filterable list of non-deleted users with their role keys,
  * newest accounts first. Used by the dashboard user management screen.
@@ -36,8 +71,9 @@ export async function listUsers(opts: {
   perPage: number;
   search?: string;
   status?: UserStatusFilter;
+  role?: string;
 }): Promise<ListUsersResult> {
-  const { page, perPage, search, status = "all" } = opts;
+  const { page, perPage, search, status = "all", role } = opts;
   const offset = (page - 1) * perPage;
 
   // `or()`/`and()` return `SQL | undefined`, so the list is typed accordingly
@@ -55,6 +91,16 @@ export async function listUsers(opts: {
     conditions.push(eq(users.isActive, false));
   } else if (status === "banned") {
     conditions.push(eq(users.isBanned, true));
+  }
+
+  if (role) {
+    conditions.push(
+      sql`exists (
+        select 1 from ${userRoles}
+        inner join ${roles} on ${eq(userRoles.roleId, roles.id)}
+        where ${eq(userRoles.userId, users.id)} and ${eq(roles.key, role)}
+      )`,
+    );
   }
 
   const where = and(...conditions);

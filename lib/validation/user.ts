@@ -38,6 +38,7 @@ export const listUsersQuerySchema = z
     perPage: z.coerce.number().int().min(1).max(50).default(10),
     search: z.string().trim().max(100).optional(),
     status: z.enum(["all", "active", "inactive", "banned"]).default("all"),
+    role: z.string().trim().min(1).max(50).optional(),
   })
   .strict();
 
@@ -53,8 +54,19 @@ export const updateUserStatusSchema = z
     message: "Nothing to update.",
   });
 
+export const createUserSchema = z
+  .object({
+    fullName: z.string().trim().min(2).max(100),
+    email: emailSchema,
+    phone: z.union([phoneSchema, z.literal("")]).transform((value) => (value === "" ? null : value)),
+    password: passwordSchema,
+    roleKey: z.string().trim().min(1).max(50),
+  })
+  .strict();
+
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type ListUsersQuery = z.infer<typeof listUsersQuerySchema>;
 export type UpdateUserStatusInput = z.infer<typeof updateUserStatusSchema>;
+export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type UserStatusFilter = NonNullable<ListUsersQuery["status"]>;
