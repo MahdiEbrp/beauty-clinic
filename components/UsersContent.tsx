@@ -269,7 +269,7 @@ export default function UsersContent({
       aria-expanded={actionMenu?.row.id === row.id}
       aria-haspopup="menu"
       aria-label={t("users.actions.menu")}
-      className="inline-flex size-11 shrink-0 items-center justify-center rounded-pill border border-border-interactive p-0 text-accent transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+      className="inline-flex size-11 shrink-0 items-center justify-center rounded-pill border border-border-interactive bg-surface-secondary p-0 text-accent shadow-elevation-1 transition hover:bg-surface-tertiary hover:shadow-elevation-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
     >
       <MoreVertical className="size-5" aria-hidden="true" />
     </button>
@@ -339,7 +339,7 @@ export default function UsersContent({
           <h2 id="user-filters-heading" className="text-body-sm font-bold text-accent">{t("users.filterLabel")}</h2>
           {loading && <Loader2 className="size-4 animate-spin text-copper" aria-label={t("users.loading")} />}
         </div>
-        <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_11rem_11rem_auto] md:items-end">
+        <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_11rem_11rem_auto] md:items-end md:gap-4">
           <div className="relative flex-1 min-w-0">
             <Search
               className="w-5 h-5 text-content-tertiary absolute top-1/2 -translate-y-1/2 inset-s-4 pointer-events-none"
@@ -358,7 +358,7 @@ export default function UsersContent({
               className="w-full bg-form-input-bg border border-form-input-border rounded-control py-3 ps-12 pe-4 text-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             />
           </div>
-          <label className="grid gap-1.5 text-caption font-bold text-content-secondary">
+          <label className="grid gap-1 text-caption font-bold text-content-secondary">
             <span className="whitespace-nowrap">{t("users.status")}</span>
             <span className="relative block w-full">
               <select
@@ -374,10 +374,10 @@ export default function UsersContent({
                 <option value="inactive">{t("users.statusInactive")}</option>
                 <option value="banned">{t("users.statusBanned")}</option>
               </select>
-              <ChevronDown className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-content-tertiary" aria-hidden="true" />
+              <ChevronDown className="pointer-events-none absolute inset-e-3 top-1/2 size-4 -translate-y-1/2 text-content-tertiary" aria-hidden="true" />
             </span>
           </label>
-          <label className="grid gap-1.5 text-caption font-bold text-content-secondary">
+          <label className="grid gap-1 text-caption font-bold text-content-secondary">
             <span className="whitespace-nowrap">{t("users.role")}</span>
             <span className="relative block w-full">
               <select
@@ -390,7 +390,7 @@ export default function UsersContent({
                   <option key={key} value={key}>{roleLabel(key)}</option>
                 ))}
               </select>
-              <ChevronDown className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-content-tertiary" aria-hidden="true" />
+              <ChevronDown className="pointer-events-none absolute inset-e-3 top-1/2 size-4 -translate-y-1/2 text-content-tertiary" aria-hidden="true" />
             </span>
           </label>
           {(status !== "all" || role !== "all" || search) && (
@@ -433,7 +433,7 @@ export default function UsersContent({
       )}
 
       {/* Table */}
-      <section className="overflow-hidden rounded-none border-0 bg-transparent shadow-none md:rounded-panel md:border md:border-border-primary md:bg-surface-secondary md:shadow-elevation-2" aria-label={t("users.heading")}>
+      <section className="overflow-hidden rounded-panel border border-border-primary bg-surface-secondary shadow-elevation-2" aria-label={t("users.heading")}>
         <div className="flex items-center justify-between gap-4 border-b border-border-primary bg-surface-secondary px-4 py-4 md:bg-surface-tertiary/20 md:px-6">
           <div>
             <p className="text-body-sm font-bold text-accent">{t("users.heading")}</p>
@@ -461,9 +461,9 @@ export default function UsersContent({
                     <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
                     {t(`users.statuses.${state}`)}
                   </span>
-                  {row.roles.map((item) => <span key={item} className="inline-flex items-center rounded-pill bg-surface-tertiary px-2.5 py-1 text-caption font-medium text-content-secondary">{roleLabel(item)}</span>)}
+                  {row.roles.map((item) => <span key={item} className="inline-flex items-center rounded-control bg-surface-tertiary px-2 py-0.5 text-caption font-medium text-content-secondary">{roleLabel(item)}</span>)}
                 </div>
-                <dl className="mt-4 grid grid-cols-2 gap-3 border-t border-border-primary pt-3 text-caption">
+                <dl className="mt-4 grid grid-cols-2 gap-3 border-t border-border-primary pt-4 text-caption">
                   <div><dt className="text-content-tertiary">{t("users.table.lastLogin")}</dt><dd className="mt-1 text-content-secondary">{row.lastLoginAt ? format.relativeTime(row.lastLoginAt, new Date()) : t("users.never")}</dd></div>
                   <div><dt className="text-content-tertiary">{t("users.table.phone")}</dt><dd className={`mt-1 ${row.phone ? "text-content-secondary" : "text-content-tertiary"}`} dir="ltr">{row.phone ?? "—"}</dd></div>
                 </dl>
@@ -472,7 +472,7 @@ export default function UsersContent({
           })}
         </div>
         <div className="hidden overflow-x-auto md:block">
-          <table className="w-full min-w-[620px] table-fixed text-start">
+          <table className="w-full min-w-155 table-fixed text-start">
             <thead>
               <tr className="border-b border-border-primary bg-surface-tertiary/30 text-caption text-content-secondary">
                 <th scope="col" className="w-[55%] px-6 py-4 text-start font-bold xl:w-[38%]">
@@ -535,7 +535,7 @@ export default function UsersContent({
                           row.roles.map((role) => (
                             <span
                               key={role}
-                              className="inline-flex items-center px-2 py-0.5 bg-surface-tertiary text-content-secondary rounded-pill text-caption font-medium"
+                              className="inline-flex items-center rounded-control bg-surface-tertiary px-2 py-0.5 text-caption font-medium text-content-secondary"
                             >
                               {roleLabel(role)}
                             </span>

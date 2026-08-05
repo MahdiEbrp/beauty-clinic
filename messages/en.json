@@ -1,6 +1,7 @@
 {
   "site": {
     "name": "Nafas Clinic",
+    "shortName": "Nafas",
     "title": "Nafas Beauty Clinic | Art of Beauty",
     "description": "Specialized skin and beauty treatments tailored to your unique features. Experience the art of transformation in a calm, luxurious environment.",
     "rights": "All rights reserved.",
@@ -477,6 +478,18 @@
       "closeMenu": "Close menu",
       "collapse": "Collapse sidebar",
       "expand": "Expand sidebar"
+    },
+    "topbar": {
+      "breadcrumbLabel": "Dashboard breadcrumb",
+      "access": "Access management",
+      "dashboard": "Dashboard",
+      "openProfile": "Open profile menu",
+      "notifications": "Notifications",
+      "noNotifications": "No new notifications",
+      "search": "Search dashboard",
+      "searchPlaceholder": "Search dashboard sections...",
+      "searchResults": "Search results",
+      "noSearchResults": "No results found"
     }
   },
   "users": {
