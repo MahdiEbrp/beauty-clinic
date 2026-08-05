@@ -541,6 +541,8 @@
     },
     "roles": {
       "admin": "Admin",
+      "doctor": "Doctor",
+      "receptionist": "Receptionist",
       "customer": "Customer"
     },
     "actions": {
@@ -578,10 +580,36 @@
     },
     "form": {
       "fullName": "Full name",
+      "fullNamePlaceholder": "e.g. Sara Ahmadi",
       "email": "Email",
       "phone": "Phone (optional)",
+      "phoneHint": "Include the country code, for example +98.",
       "password": "Initial password",
-      "role": "Initial role"
+      "passwordHint": "Choose a strong password for this account.",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "creating": "Creating user...",
+      "created": "User created successfully.",
+      "requiredHint": "Fields marked with an asterisk are required",
+      "role": "Initial role",
+      "rolePlaceholder": "Select a role",
+      "passwordRules": {
+        "length": "At least 8 characters",
+        "number": "Contains a number",
+        "uppercase": "Contains an uppercase letter",
+        "special": "Contains a special character"
+      },
+      "errors": {
+        "fullName": "Name must be at least 2 characters.",
+        "email": "Enter a valid email address.",
+        "emailTaken": "This email is already registered.",
+        "phone": "Enter a valid phone number.",
+        "password": "Use 8 characters with a number, uppercase letter and special character.",
+        "role": "Select a role."
+      },
+      "discardTitle": "Discard unsaved changes?",
+      "discardDescription": "The information you entered will be lost. Do you want to leave?",
+      "discardConfirm": "Leave without saving"
     }
   },
   "forbidden": {

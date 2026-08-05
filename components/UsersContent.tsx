@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { AdminUser, ListUsersResult } from "@/lib/users/service";
+import AddUserModal from "@/components/AddUserModal";
 import {
   Dialog,
   DialogClose,
@@ -67,9 +68,8 @@ export default function UsersContent({
   const [confirm, setConfirm] = useState<{ user: AdminUser; action: ConfirmAction; } | null>(null);
   const [banReason, setBanReason] = useState("");
   const [addOpen, setAddOpen] = useState(false);
-  const [addBusy, setAddBusy] = useState(false);
   const [addError, setAddError] = useState<string | null>(null);
-  const [newUser, setNewUser] = useState({ fullName: "", email: "", phone: "", password: "", roleKey: "customer" });
+  const [addSuccess, setAddSuccess] = useState(false);
   const [actionMenu, setActionMenu] = useState<{ row: AdminUser; top: number; left: number; } | null>(null);
   const actionMenuRef = useRef<HTMLDivElement>(null);
   const firstRun = useRef(true);
@@ -170,26 +170,27 @@ export default function UsersContent({
     }
   };
 
-  const createUser = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setAddBusy(true);
+  const createUser = async (values: { fullName: string; email: string; phone: string; password: string; roleKey: string; }) => {
     setAddError(null);
+    setAddSuccess(false);
     try {
       const response = await fetch("/api/v1/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(newUser),
+        body: JSON.stringify({ ...values, phone: values.phone.trim() }),
       });
-      if (!response.ok) throw new Error("create_failed");
-      setAddOpen(false);
-      setNewUser({ fullName: "", email: "", phone: "", password: "", roleKey: "customer" });
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null) as { error?: { code?: string } } | null;
+        throw new Error(payload?.error?.code === "EMAIL_TAKEN" ? "email_taken" : "create_failed");
+      }
       await load({ search: debouncedSearch, status, role, page: 1 });
       setPage(1);
-    } catch {
-      setAddError(t("users.errors.create"));
-    } finally {
-      setAddBusy(false);
+      setAddSuccess(true);
+      window.setTimeout(() => setAddSuccess(false), 4200);
+    } catch (error) {
+      setAddError(t(error instanceof Error && error.message === "email_taken" ? "users.form.errors.emailTaken" : "users.errors.create"));
+      throw error;
     }
   };
 
@@ -322,7 +323,7 @@ export default function UsersContent({
             {canWrite && (
               <button
                 type="button"
-                onClick={() => { setAddError(null); setAddOpen(true); }}
+                onClick={() => { setAddError(null); setAddSuccess(false); setAddOpen(true); }}
                 className="mt-3 inline-flex min-h-11 items-center justify-center gap-2 rounded-pill bg-accent px-5 py-3 text-body-sm font-bold text-content-contrast shadow-elevation-1 transition hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <UserPlus className="size-4" aria-hidden="true" />
@@ -748,41 +749,8 @@ export default function UsersContent({
         </DialogContent>
       </Dialog>
 
-      <Dialog open={addOpen} onOpenChange={setAddOpen}>
-        <DialogContent closeLabel={t("users.dialog.cancel")} className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="text-accent">{t("users.addTitle")}</DialogTitle>
-            <DialogDescription>{t("users.addDescription")}</DialogDescription>
-          </DialogHeader>
-          <form className="grid gap-4" onSubmit={createUser}>
-            {(["fullName", "email", "phone", "password"] as const).map((field) => (
-              <label key={field} className="grid gap-2 text-caption font-bold text-content-secondary">
-                <span>{t(`users.form.${field}`)}</span>
-                <input
-                  required={field !== "phone"}
-                  type={field === "password" ? "password" : field === "email" ? "email" : "text"}
-                  value={newUser[field]}
-                  onChange={(event) => setNewUser((value) => ({ ...value, [field]: event.target.value }))}
-                  className="min-h-11 rounded-control border border-form-input-border bg-form-input-bg px-4 text-body text-accent outline-none transition focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                />
-              </label>
-            ))}
-            <label className="grid gap-2 text-caption font-bold text-content-secondary">
-              <span>{t("users.form.role")}</span>
-              <select value={newUser.roleKey} onChange={(event) => setNewUser((value) => ({ ...value, roleKey: event.target.value }))} className="min-h-11 rounded-control border border-form-input-border bg-form-input-bg px-4 text-body text-accent outline-none focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
-                {(["admin", "doctor", "receptionist", "customer"] as const).map((key) => <option key={key} value={key}>{roleLabel(key)}</option>)}
-              </select>
-            </label>
-            {addError && <p role="alert" className="text-body-sm font-medium text-error">{addError}</p>}
-            <DialogFooter>
-              <DialogClose type="button" className="inline-flex min-h-11 items-center justify-center rounded-pill bg-surface-tertiary px-5 text-body-sm font-bold text-accent">{t("users.dialog.cancel")}</DialogClose>
-              <button type="submit" disabled={addBusy} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill bg-accent px-5 text-body-sm font-bold text-content-contrast disabled:opacity-60">
-                {addBusy && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}{t("users.addSubmit")}
-              </button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <AddUserModal open={addOpen} onOpenChange={(open) => { setAddOpen(open); if (!open) setAddError(null); }} onSubmit={createUser} serverError={addError} />
+      {addSuccess && <div role="status" className="fixed bottom-5 inset-s-5 z-[110] max-w-md rounded-control border border-success/30 bg-surface-secondary p-4 text-body-sm font-bold text-success shadow-elevation-3">{t("users.form.created")}</div>}
     </div>
   );
 }
