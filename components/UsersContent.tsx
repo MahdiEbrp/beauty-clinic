@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTranslations, useFormatter } from "next-intl";
 import {
   Search,
   SearchX,
+  ChevronDown,
   UserPlus,
   MoreVertical,
   X,
@@ -62,19 +64,21 @@ export default function UsersContent({
   const [loadFailed, setLoadFailed] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
-  const [confirm, setConfirm] = useState<{ user: AdminUser; action: ConfirmAction } | null>(null);
+  const [confirm, setConfirm] = useState<{ user: AdminUser; action: ConfirmAction; } | null>(null);
   const [banReason, setBanReason] = useState("");
   const [addOpen, setAddOpen] = useState(false);
   const [addBusy, setAddBusy] = useState(false);
   const [addError, setAddError] = useState<string | null>(null);
   const [newUser, setNewUser] = useState({ fullName: "", email: "", phone: "", password: "", roleKey: "customer" });
+  const [actionMenu, setActionMenu] = useState<{ row: AdminUser; top: number; left: number; } | null>(null);
+  const actionMenuRef = useRef<HTMLDivElement>(null);
   const firstRun = useRef(true);
 
   const canManage = currentUser.permissions.includes("users.manage");
   const canWrite = currentUser.permissions.includes("users.write");
 
   const load = useCallback(
-    async (params: { search: string; status: StatusFilter; role: RoleFilter; page: number }) => {
+    async (params: { search: string; status: StatusFilter; role: RoleFilter; page: number; }) => {
       setLoading(true);
       setLoadFailed(false);
       try {
@@ -89,7 +93,7 @@ export default function UsersContent({
           credentials: "include",
         });
         if (!response.ok) throw new Error("load_failed");
-        const payload = (await response.json()) as { data: ListUsersResult };
+        const payload = (await response.json()) as { data: ListUsersResult; };
         setData(payload.data);
       } catch {
         setLoadFailed(true);
@@ -115,9 +119,25 @@ export default function UsersContent({
     load({ search: debouncedSearch, status, role, page });
   }, [debouncedSearch, status, role, page, load]);
 
+  useEffect(() => {
+    if (!actionMenu) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setActionMenu(null);
+    };
+    const closeOnViewportChange = () => setActionMenu(null);
+    document.addEventListener("keydown", closeOnEscape);
+    window.addEventListener("resize", closeOnViewportChange);
+    window.addEventListener("scroll", closeOnViewportChange, true);
+    return () => {
+      document.removeEventListener("keydown", closeOnEscape);
+      window.removeEventListener("resize", closeOnViewportChange);
+      window.removeEventListener("scroll", closeOnViewportChange, true);
+    };
+  }, [actionMenu]);
+
   const runAction = async (
     target: AdminUser,
-    patch: { isActive?: boolean; isBanned?: boolean; banReason?: string | null },
+    patch: { isActive?: boolean; isBanned?: boolean; banReason?: string | null; },
   ) => {
     setBusyId(target.id);
     setActionError(null);
@@ -187,13 +207,24 @@ export default function UsersContent({
     banned: "bg-error/10 text-error border-error/30",
   };
 
-  const rowActions = (row: AdminUser) => {
+  const statusTextClass: Record<"active" | "inactive" | "banned", string> = {
+    active: "text-success",
+    inactive: "text-content-secondary",
+    banned: "text-error",
+  };
+
+  const rowActionButtons = (row: AdminUser) => {
     const state = statusOf(row);
     const isSelf = row.id === currentUser.id;
-    if (isSelf) return null;
 
-    const buttons: { key: string; labelKey: string; onClick: () => void; danger?: boolean }[] = [];
-    if (state === "banned") {
+    const buttons: { key: string; labelKey: string; onClick: () => void; danger?: boolean; }[] = [];
+    if (isSelf) {
+      buttons.push({
+        key: "self",
+        labelKey: "users.actions.selfNotice",
+        onClick: () => undefined,
+      });
+    } else if (state === "banned") {
       buttons.push({
         key: "unban",
         labelKey: "users.actions.unban",
@@ -216,135 +247,163 @@ export default function UsersContent({
       });
     }
 
-    return (
-      <details className="relative">
-        <summary className="flex size-11 cursor-pointer list-none items-center justify-center rounded-pill border border-border-interactive text-accent transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden" aria-label={t("users.actions.menu")}>
-          <MoreVertical className="size-5" aria-hidden="true" />
-        </summary>
-        <div className="absolute end-0 top-12 z-20 grid min-w-44 gap-1 rounded-card border border-border-primary bg-surface-secondary p-2 shadow-elevation-3">
-          {buttons.map((button) => (
-            <button
-              key={button.key}
-              type="button"
-              disabled={busyId === row.id}
-              onClick={button.onClick}
-              className={`flex min-h-11 items-center gap-2 rounded-control px-3 text-start text-caption font-bold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50 ${button.danger ? "text-error hover:bg-error/10" : "text-accent hover:bg-surface-tertiary"}`}
-            >
-              {button.key === "ban" && <Ban className="size-4" aria-hidden="true" />}
-              {button.key === "unban" && <ShieldCheck className="size-4" aria-hidden="true" />}
-              {button.key === "deactivate" && <UserX className="size-4" aria-hidden="true" />}
-              {button.key === "activate" && <UserCheck className="size-4" aria-hidden="true" />}
-              <span>{t(button.labelKey)}</span>
-            </button>
-          ))}
-        </div>
-      </details>
-    );
+    return buttons;
   };
+
+  const rowActions = (row: AdminUser) => (
+    <button
+      type="button"
+      onClick={(event) => {
+        const rect = event.currentTarget.getBoundingClientRect();
+        const menuWidth = 208;
+        setActionMenu((current) =>
+          current?.row.id === row.id
+            ? null
+            : {
+              row,
+              top: Math.min(rect.bottom + 8, window.innerHeight - 16),
+              left: Math.max(16, Math.min(rect.right - menuWidth, window.innerWidth - menuWidth - 16)),
+            },
+        );
+      }}
+      aria-expanded={actionMenu?.row.id === row.id}
+      aria-haspopup="menu"
+      aria-label={t("users.actions.menu")}
+      className="inline-flex size-11 shrink-0 items-center justify-center rounded-pill border border-border-interactive p-0 text-accent transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+    >
+      <MoreVertical className="size-5" aria-hidden="true" />
+    </button>
+  );
 
   const totalPages = data.totalPages;
   const from = data.total === 0 ? 0 : (page - 1) * data.perPage + 1;
   const to = Math.min(page * data.perPage, data.total);
+  const statusSummary = status === "all"
+    ? t("users.statusAll")
+    : t(`users.status${status.charAt(0).toUpperCase()}${status.slice(1)}`);
 
   // Dialog only renders while `confirm` is set; this narrows the union so the
   // title/description don't need repeated `confirm?` guards.
   const dialog = confirm
     ? confirm.action === "ban"
       ? {
-          title: t("users.banDialog.title", { name: confirm.user.fullName }),
-          description: t("users.banDialog.description"),
-        }
+        title: t("users.banDialog.title", { name: confirm.user.fullName }),
+        description: t("users.banDialog.description"),
+      }
       : {
-          title: t("users.deactivateDialog.title", { name: confirm.user.fullName }),
-          description: t("users.deactivateDialog.description"),
-        }
+        title: t("users.deactivateDialog.title", { name: confirm.user.fullName }),
+        description: t("users.deactivateDialog.description"),
+      }
     : null;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="space-y-6 sm:space-y-7">
+      <header className="grid gap-5 rounded-panel border border-border-primary bg-surface-secondary p-6 shadow-elevation-2 sm:p-7 lg:grid-cols-[1fr_auto] lg:items-end">
         <div>
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-heading-2 font-bold text-accent">
-              {t("users.heading")}
-            </h1>
-            <span className="inline-flex items-center px-2.5 py-1 bg-surface-tertiary text-content-secondary rounded-pill text-caption font-bold border border-border-primary">
-              {data.total}
+          <div className="mb-3 flex items-center gap-3 text-caption font-bold uppercase tracking-[0.14em] text-copper-strong">
+            <span className="size-2 rounded-full bg-copper" aria-hidden="true" />
+            <span>{t("users.eyebrow")}</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-heading-2 font-bold tracking-tight text-accent">{t("users.heading")}</h1>
+            <span className="inline-flex items-center rounded-pill border border-border-primary bg-surface-tertiary px-3 py-1 text-caption font-bold text-content-secondary">
+              {data.total} {t("users.resultsLabel")}
             </span>
           </div>
-            <p className="text-body-sm text-content-secondary">{t("users.description")}</p>
+          <p className="mt-2 max-w-2xl text-body-sm text-content-secondary">{t("users.description")}</p>
         </div>
-        {canWrite && (
-          <button
-            type="button"
-            onClick={() => { setAddError(null); setAddOpen(true); }}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill bg-accent px-5 py-3 text-body-sm font-bold text-content-contrast shadow-elevation-2 transition hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            <UserPlus className="size-4" aria-hidden="true" />
-            {t("users.add")}
-          </button>
-        )}
-      </div>
+        <div className="flex items-center justify-between gap-6 border-t border-border-primary pt-5 lg:border-s-2 lg:border-t-0 lg:ps-7 lg:pt-0">
+          <div>
+            <p className="text-heading-3 font-bold text-accent">{data.items.filter((item) => item.isActive && !item.isBanned).length}</p>
+            <p className="text-caption text-content-tertiary">{t("users.activeCount")}</p>
+          </div>
+          <div className="text-end">
+            <p className="text-caption font-semibold text-copper-strong">{t("users.syncStatus")}</p>
+            {canWrite && (
+              <button
+                type="button"
+                onClick={() => { setAddError(null); setAddOpen(true); }}
+                className="mt-3 inline-flex min-h-11 items-center justify-center gap-2 rounded-pill bg-accent px-5 py-3 text-body-sm font-bold text-content-contrast shadow-elevation-1 transition hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              >
+                <UserPlus className="size-4" aria-hidden="true" />
+                {t("users.add")}
+              </button>
+            )}
+          </div>
+        </div>
+      </header>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1 min-w-0">
-          <Search
-            className="w-5 h-5 text-content-tertiary absolute top-1/2 -translate-y-1/2 inset-s-4 pointer-events-none"
-            strokeWidth={2}
-            aria-hidden="true"
-          />
-          <input
-            type="search"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            placeholder={t("users.searchPlaceholder")}
-            aria-label={t("users.search")}
-            className="w-full bg-form-input-bg border border-form-input-border rounded-control py-3 ps-12 pe-4 text-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          />
+      <section aria-labelledby="user-filters-heading" className="rounded-card border border-border-primary bg-surface-secondary/60 p-4 sm:p-5">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h2 id="user-filters-heading" className="text-body-sm font-bold text-accent">{t("users.filterLabel")}</h2>
+          {loading && <Loader2 className="size-4 animate-spin text-copper" aria-label={t("users.loading")} />}
         </div>
-        <label className="flex items-center gap-2 text-body-sm text-content-secondary">
-          <span className="whitespace-nowrap">{t("users.status")}</span>
-          <select
-            value={status}
-            onChange={(e) => {
-              setStatus(e.target.value as StatusFilter);
-              setPage(1);
-            }}
-            className="bg-form-input-bg border border-form-input-border rounded-control py-3 px-4 text-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            <option value="all">{t("users.statusAll")}</option>
-            <option value="active">{t("users.statusActive")}</option>
-            <option value="inactive">{t("users.statusInactive")}</option>
-            <option value="banned">{t("users.statusBanned")}</option>
-          </select>
-        </label>
-        <label className="flex items-center gap-2 text-body-sm text-content-secondary">
-          <span className="whitespace-nowrap">{t("users.role")}</span>
-          <select
-            value={role}
-            onChange={(e) => { setRole(e.target.value as RoleFilter); setPage(1); }}
-            className="bg-form-input-bg border border-form-input-border rounded-control py-3 px-4 text-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            <option value="all">{t("users.roleAll")}</option>
-            {(["admin", "doctor", "receptionist", "customer"] as const).map((key) => (
-              <option key={key} value={key}>{roleLabel(key)}</option>
-            ))}
-          </select>
-        </label>
-        {(status !== "all" || role !== "all" || search) && (
-          <button
-            type="button"
-            onClick={() => { setSearch(""); setStatus("all"); setRole("all"); setPage(1); }}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill px-4 text-body-sm font-bold text-accent transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            <X className="size-4" aria-hidden="true" /> {t("users.clearFilters")}
-          </button>
-        )}
-      </div>
+        <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_11rem_11rem_auto] md:items-end">
+          <div className="relative flex-1 min-w-0">
+            <Search
+              className="w-5 h-5 text-content-tertiary absolute top-1/2 -translate-y-1/2 inset-s-4 pointer-events-none"
+              strokeWidth={2}
+              aria-hidden="true"
+            />
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              placeholder={t("users.searchPlaceholder")}
+              aria-label={t("users.search")}
+              className="w-full bg-form-input-bg border border-form-input-border rounded-control py-3 ps-12 pe-4 text-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            />
+          </div>
+          <label className="grid gap-1.5 text-caption font-bold text-content-secondary">
+            <span className="whitespace-nowrap">{t("users.status")}</span>
+            <span className="relative block w-full">
+              <select
+                value={status}
+                onChange={(e) => {
+                  setStatus(e.target.value as StatusFilter);
+                  setPage(1);
+                }}
+                className="min-h-11 w-full appearance-none rounded-control border border-form-input-border bg-form-input-bg py-2.5 ps-4 pe-10 text-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              >
+                <option value="all">{t("users.statusAll")}</option>
+                <option value="active">{t("users.statusActive")}</option>
+                <option value="inactive">{t("users.statusInactive")}</option>
+                <option value="banned">{t("users.statusBanned")}</option>
+              </select>
+              <ChevronDown className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-content-tertiary" aria-hidden="true" />
+            </span>
+          </label>
+          <label className="grid gap-1.5 text-caption font-bold text-content-secondary">
+            <span className="whitespace-nowrap">{t("users.role")}</span>
+            <span className="relative block w-full">
+              <select
+                value={role}
+                onChange={(e) => { setRole(e.target.value as RoleFilter); setPage(1); }}
+                className="min-h-11 w-full appearance-none rounded-control border border-form-input-border bg-form-input-bg py-2.5 ps-4 pe-10 text-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              >
+                <option value="all">{t("users.roleAll")}</option>
+                {(["admin", "doctor", "receptionist", "customer"] as const).map((key) => (
+                  <option key={key} value={key}>{roleLabel(key)}</option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-content-tertiary" aria-hidden="true" />
+            </span>
+          </label>
+          {(status !== "all" || role !== "all" || search) && (
+            <button
+              type="button"
+              onClick={() => { setSearch(""); setStatus("all"); setRole("all"); setPage(1); }}
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-control px-4 text-body-sm font-bold text-accent transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              <X className="size-4" aria-hidden="true" /> {t("users.clearFilters")}
+            </button>
+          )}
+        </div>
+      </section>
 
       {/* Error banner */}
       {loadFailed && (
@@ -374,13 +433,19 @@ export default function UsersContent({
       )}
 
       {/* Table */}
-      <div className="bg-surface-secondary border border-border-primary rounded-panel shadow-elevation-1 overflow-hidden">
-        <div className="grid gap-3 p-4 md:hidden">
+      <section className="overflow-hidden rounded-none border-0 bg-transparent shadow-none md:rounded-panel md:border md:border-border-primary md:bg-surface-secondary md:shadow-elevation-2" aria-label={t("users.heading")}>
+        <div className="flex items-center justify-between gap-4 border-b border-border-primary bg-surface-secondary px-4 py-4 md:bg-surface-tertiary/20 md:px-6">
+          <div>
+            <p className="text-body-sm font-bold text-accent">{t("users.heading")}</p>
+            <p className="mt-1 text-caption text-content-tertiary">{from}–{to} / {data.total}</p>
+          </div>
+          <span className="border-s border-border-interactive ps-3 text-caption font-bold text-content-secondary">{statusSummary}</span>
+        </div>
+        <div className="grid gap-3 py-3 md:hidden">
           {data.items.map((row) => {
             const state = statusOf(row);
-            const isSelf = row.id === currentUser.id;
             return (
-              <article key={row.id} className="rounded-card border border-border-primary bg-surface-primary p-4 shadow-elevation-1">
+              <article key={row.id} className="rounded-card border border-border-primary bg-surface-secondary p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-3">
                     <span className="flex size-11 shrink-0 items-center justify-center rounded-pill border border-border-primary bg-surface-tertiary text-body-sm font-bold text-copper-strong" aria-hidden="true">{initials(row.fullName)}</span>
@@ -389,38 +454,41 @@ export default function UsersContent({
                       <p className="truncate text-caption text-content-tertiary" dir="ltr">{row.email}</p>
                     </div>
                   </div>
-                  {canManage && !isSelf && <div className="shrink-0">{rowActions(row)}</div>}
+                  {canManage && <div className="shrink-0">{rowActions(row)}</div>}
                 </div>
                 <div className="mt-4 flex flex-wrap items-center gap-2">
-                  <span className={`inline-flex items-center rounded-pill border px-2.5 py-1 text-caption font-bold ${statusClass[state]}`}>{t(`users.statuses.${state}`)}</span>
+                  <span className={`inline-flex items-center gap-1.5 rounded-pill border px-2.5 py-1 text-caption font-bold ${statusClass[state]}`}>
+                    <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
+                    {t(`users.statuses.${state}`)}
+                  </span>
                   {row.roles.map((item) => <span key={item} className="inline-flex items-center rounded-pill bg-surface-tertiary px-2.5 py-1 text-caption font-medium text-content-secondary">{roleLabel(item)}</span>)}
                 </div>
                 <dl className="mt-4 grid grid-cols-2 gap-3 border-t border-border-primary pt-3 text-caption">
                   <div><dt className="text-content-tertiary">{t("users.table.lastLogin")}</dt><dd className="mt-1 text-content-secondary">{row.lastLoginAt ? format.relativeTime(row.lastLoginAt, new Date()) : t("users.never")}</dd></div>
-                  <div><dt className="text-content-tertiary">{t("users.table.phone")}</dt><dd className="mt-1 text-content-secondary" dir="ltr">{row.phone ?? "—"}</dd></div>
+                  <div><dt className="text-content-tertiary">{t("users.table.phone")}</dt><dd className={`mt-1 ${row.phone ? "text-content-secondary" : "text-content-tertiary"}`} dir="ltr">{row.phone ?? "—"}</dd></div>
                 </dl>
               </article>
             );
           })}
         </div>
         <div className="hidden overflow-x-auto md:block">
-          <table className="w-full min-w-[560px] text-start">
+          <table className="w-full min-w-[620px] table-fixed text-start">
             <thead>
-              <tr className="border-b border-border-primary text-caption text-content-tertiary">
-                <th scope="col" className="text-start font-medium px-6 py-4">
+              <tr className="border-b border-border-primary bg-surface-tertiary/30 text-caption text-content-secondary">
+                <th scope="col" className="w-[55%] px-6 py-4 text-start font-bold xl:w-[38%]">
                   {t("users.table.user")}
                 </th>
-                <th scope="col" className="text-start font-medium px-4 py-4 hidden sm:table-cell">
+                <th scope="col" className="hidden w-[18%] px-4 py-4 text-start font-bold xl:table-cell">
                   {t("users.table.roles")}
                 </th>
-                <th scope="col" className="text-start font-medium px-4 py-4">
+                <th scope="col" className="w-[24%] px-4 py-4 text-start font-bold xl:w-[16%]">
                   {t("users.table.status")}
                 </th>
-                <th scope="col" className="text-start font-medium px-4 py-4 hidden md:table-cell">
+                <th scope="col" className="hidden w-[20%] px-4 py-4 text-start font-bold xl:table-cell">
                   {t("users.table.lastLogin")}
                 </th>
                 {canManage && (
-                  <th scope="col" className="text-end font-medium px-6 py-4">
+                  <th scope="col" className="w-16 px-2 py-4 text-end font-bold">
                     {t("users.table.actions")}
                   </th>
                 )}
@@ -431,11 +499,11 @@ export default function UsersContent({
                 const state = statusOf(row);
                 const isSelf = row.id === currentUser.id;
                 return (
-                  <tr key={row.id} className="hover:bg-surface-primary/60 transition-colors">
-                    <td className="px-6 py-4">
+                  <tr key={row.id} className="transition-colors hover:bg-surface-primary/60">
+                    <td className="px-6 py-5">
                       <div className="flex items-center gap-3 min-w-0">
                         <span
-                          className="w-10 h-10 shrink-0 rounded-pill bg-surface-tertiary text-copper-strong flex items-center justify-center text-body-sm font-bold border border-border-primary"
+                          className="flex size-12 shrink-0 items-center justify-center rounded-pill border border-border-primary bg-surface-tertiary text-body-sm font-bold text-copper-strong"
                           aria-hidden="true"
                         >
                           {initials(row.fullName)}
@@ -461,7 +529,7 @@ export default function UsersContent({
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-4 hidden sm:table-cell">
+                    <td className="hidden px-4 py-5 xl:table-cell">
                       <div className="flex flex-wrap gap-1.5">
                         {row.roles.length > 0 ? (
                           row.roles.map((role) => (
@@ -479,14 +547,15 @@ export default function UsersContent({
                         )}
                       </div>
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-4 py-5">
                       <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-pill text-caption font-bold border whitespace-nowrap ${statusClass[state]}`}
+                        className={`inline-flex items-center gap-1.5 px-0 py-0.5 text-caption font-bold whitespace-nowrap ${statusTextClass[state]}`}
                       >
+                        <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
                         {t(`users.statuses.${state}`)}
                       </span>
                     </td>
-                    <td className="px-4 py-4 hidden md:table-cell">
+                    <td className="hidden px-4 py-5 xl:table-cell">
                       <p className="text-body-sm text-content-secondary whitespace-nowrap">
                         {row.lastLoginAt
                           ? format.relativeTime(row.lastLoginAt, new Date())
@@ -494,7 +563,7 @@ export default function UsersContent({
                       </p>
                     </td>
                     {canManage && (
-                      <td className="px-6 py-4">
+                      <td className="w-16 px-2 py-5">
                         <div className="flex items-center justify-end gap-2 flex-wrap">
                           {busyId === row.id && (
                             <Loader2
@@ -564,7 +633,42 @@ export default function UsersContent({
             </div>
           </div>
         )}
-      </div>
+      </section>
+
+      {typeof document !== "undefined" && actionMenu && createPortal(
+        <div className="fixed inset-0 z-80" onMouseDown={() => setActionMenu(null)}>
+          <div
+            ref={actionMenuRef}
+            role="menu"
+            aria-label={t("users.actions.menu")}
+            onMouseDown={(event) => event.stopPropagation()}
+            className="fixed grid min-w-52 gap-1 rounded-card border border-border-primary bg-surface-secondary p-2 shadow-elevation-4"
+            style={{ top: actionMenu.top, left: actionMenu.left }}
+          >
+            {rowActionButtons(actionMenu.row).map((button) => (
+              <button
+                key={button.key}
+                type="button"
+                role="menuitem"
+                disabled={busyId === actionMenu.row.id || button.key === "self"}
+                onClick={() => {
+                  setActionMenu(null);
+                  button.onClick();
+                }}
+                className={`flex min-h-11 items-center gap-2 rounded-control px-3 text-start text-caption font-bold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50 ${button.danger ? "text-error hover:bg-error/10" : "text-accent hover:bg-surface-tertiary"}`}
+              >
+                {button.key === "ban" && <Ban className="size-4" aria-hidden="true" />}
+                {button.key === "unban" && <ShieldCheck className="size-4" aria-hidden="true" />}
+                {button.key === "deactivate" && <UserX className="size-4" aria-hidden="true" />}
+                {button.key === "activate" && <UserCheck className="size-4" aria-hidden="true" />}
+                {button.key === "self" && <ShieldCheck className="size-4" aria-hidden="true" />}
+                <span>{t(button.labelKey)}</span>
+              </button>
+            ))}
+          </div>
+        </div>,
+        document.body,
+      )}
 
       {loading && (
         <p className="sr-only" role="status">

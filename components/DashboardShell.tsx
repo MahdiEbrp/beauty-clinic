@@ -12,8 +12,6 @@ import {
   X,
   Loader2,
   ExternalLink,
-  PanelLeftClose,
-  PanelLeftOpen,
 } from "lucide-react";
 import type { AuthUser } from "@/lib/auth/dal";
 import LocaleSwitcher from "./LocaleSwitcher";
@@ -98,11 +96,11 @@ export default function DashboardShell({
     href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(href);
 
   const navLinkClass = (href: string) =>
-    `group flex items-center gap-3 min-h-11 rounded-pill text-body-sm font-semibold no-underline transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+    `group flex items-center gap-3 min-h-11 rounded-control text-body-sm font-semibold no-underline transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
       collapsed ? "justify-center px-0 mx-1" : "px-4"
     } ${
       isActive(href)
-        ? "bg-accent-subtle text-accent"
+        ? "border-s-2 border-accent bg-accent-subtle text-accent shadow-elevation-1"
         : "text-content-secondary hover:bg-surface-tertiary hover:text-accent"
     }`;
 
@@ -111,6 +109,11 @@ export default function DashboardShell({
       className="flex-1 overflow-y-auto px-3 py-4"
       aria-label={t("dashboard.sidebar.navLabel")}
     >
+      {!collapsed && (
+        <p className="px-4 pb-3 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-content-tertiary">
+          {t("dashboard.sidebar.navigation")}
+        </p>
+      )}
       <div className="space-y-1">
         {navItems.map((item) => {
           const label = t(`dashboard.sidebar.${item.key}`);
@@ -131,11 +134,16 @@ export default function DashboardShell({
         })}
       </div>
 
-      <div className="mt-6 pt-6 border-t border-border-primary space-y-1">
+      <div className="mt-6 border-t border-border-primary pt-5">
+        {!collapsed && (
+          <p className="px-4 pb-3 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-content-tertiary">
+            {t("dashboard.sidebar.workspace")}
+          </p>
+        )}
         <Link
           href="/"
           onClick={() => setMenuOpen(false)}
-          className={`group flex items-center gap-3 min-h-11 rounded-pill text-body-sm font-semibold no-underline transition-all duration-200 text-content-secondary hover:bg-surface-tertiary hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+          className={`group flex items-center gap-3 min-h-11 rounded-control text-body-sm font-semibold no-underline transition-all duration-200 text-content-secondary hover:bg-surface-tertiary hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
             collapsed ? "justify-center px-0 mx-1" : "px-4"
           }`}
           aria-label={collapsed ? t("dashboard.sidebar.viewSite") : undefined}
@@ -153,7 +161,12 @@ export default function DashboardShell({
   );
 
   const userSection = (
-    <div className="shrink-0 border-t border-border-primary p-3 space-y-2">
+    <div className="m-3 shrink-0 rounded-card border border-border-primary bg-surface-tertiary/30 p-3 pt-4">
+      {!collapsed && (
+        <p className="px-2 pb-3 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-content-tertiary">
+          {t("dashboard.sidebar.account")}
+        </p>
+      )}
       <div
         className={`flex items-center gap-3 px-2 py-2 ${collapsed ? "justify-center px-0" : ""}`}
       >
@@ -179,7 +192,7 @@ export default function DashboardShell({
         aria-busy={loggingOut}
         aria-label={collapsed ? t("dashboard.sidebar.logout") : undefined}
         title={collapsed ? t("dashboard.sidebar.logout") : undefined}
-        className={`flex items-center gap-2 w-full min-h-11 px-4 py-2 rounded-pill text-body-sm font-bold text-accent border border-border-interactive bg-transparent transition-all duration-200 hover:bg-surface-tertiary hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60 ${
+          className={`mt-2 flex items-center gap-2 w-full min-h-11 px-4 py-2 rounded-control text-body-sm font-bold text-accent border border-border-interactive bg-transparent transition-all duration-200 hover:bg-surface-tertiary hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60 ${
           collapsed ? "justify-center px-0" : ""
         }`}
       >
@@ -220,27 +233,27 @@ export default function DashboardShell({
     >
       {brandLink}
       {navSection}
-      <div className="shrink-0 border-t border-border-primary p-3 space-y-2">
-        <button
-          type="button"
-          onClick={() => setCollapsed((value) => !value)}
-          aria-label={collapsed ? t("dashboard.sidebar.expand") : t("dashboard.sidebar.collapse")}
-          title={collapsed ? t("dashboard.sidebar.expand") : t("dashboard.sidebar.collapse")}
-          className={`flex items-center gap-2 w-full min-h-11 rounded-pill text-body-sm font-semibold text-content-secondary border border-border-interactive bg-transparent transition-all duration-200 hover:bg-surface-tertiary hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
-            collapsed ? "justify-center px-0" : "px-4"
-          }`}
-        >
-          {collapsed ? (
-            <PanelLeftOpen className="w-4 h-4 rtl-mirror" strokeWidth={2} aria-hidden="true" />
-          ) : (
-            <PanelLeftClose className="w-4 h-4 rtl-mirror" strokeWidth={2} aria-hidden="true" />
-          )}
-          {!collapsed && <span className="truncate">{t("dashboard.sidebar.collapse")}</span>}
-        </button>
-        <LocaleSwitcher compact={collapsed} className="justify-center" />
-      </div>
       {userSection}
     </aside>
+  );
+
+  const desktopToolbar = (
+    <div className="hidden h-16 items-center justify-end gap-2 border-b border-border-primary bg-surface-primary/90 px-8 backdrop-blur-md lg:flex xl:px-10">
+      <LocaleSwitcher />
+      <button
+        type="button"
+        onClick={() => setCollapsed((value) => !value)}
+        aria-label={collapsed ? t("dashboard.sidebar.expand") : t("dashboard.sidebar.collapse")}
+        title={collapsed ? t("dashboard.sidebar.expand") : t("dashboard.sidebar.collapse")}
+        className="inline-flex size-11 items-center justify-center rounded-pill border border-border-interactive bg-transparent text-accent transition-all duration-200 hover:bg-surface-tertiary hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+      >
+        {collapsed ? (
+          <Menu className="size-5" strokeWidth={2} aria-hidden="true" />
+        ) : (
+          <X className="size-5" strokeWidth={2} aria-hidden="true" />
+        )}
+      </button>
+    </div>
   );
 
   const mobileHeader = (
@@ -329,7 +342,8 @@ export default function DashboardShell({
         id="main"
         className={`transition-[padding] duration-300 ease-out ${collapsed ? "lg:ps-20" : "lg:ps-64"}`}
       >
-        <div className="mx-auto w-full max-w-6xl px-4 sm:px-8 py-8 sm:py-10">
+        {desktopToolbar}
+        <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-8 sm:py-8 xl:px-10">
           {children}
         </div>
       </main>

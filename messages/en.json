@@ -465,6 +465,9 @@
     },
     "sidebar": {
       "navLabel": "Dashboard navigation",
+      "navigation": "Main navigation",
+      "workspace": "Workspace",
+      "account": "Account",
       "overview": "Overview",
       "users": "Users",
       "viewSite": "View Website",
@@ -483,6 +486,11 @@
     },
     "heading": "Users",
     "description": "Manage registered accounts, their status and access.",
+    "eyebrow": "Access management",
+    "activeCount": "active users",
+    "syncStatus": "Last synced just now",
+    "filterLabel": "Filter users",
+    "resultsLabel": "results",
     "add": "Add new user",
     "addTitle": "Add a new user",
     "addDescription": "Create an account and assign its initial role.",
@@ -526,7 +534,8 @@
       "activate": "Activate",
       "deactivate": "Deactivate",
       "ban": "Ban",
-      "unban": "Unban"
+      "unban": "Unban",
+      "selfNotice": "This is your account; status changes are unavailable"
       ,"menu": "Open user actions"
     },
     "banDialog": {
