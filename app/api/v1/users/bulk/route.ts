@@ -8,9 +8,9 @@ export const POST = withSecurity(
   { auth: "required", permissions: "users.manage", validate: { body: bulkUsersSchema }, audit: true },
   async (_request, ctx) => {
     const input = ctx.body!;
-    const ids = input.scope === "filtered"
+    const ids = (input.scope === "filtered"
       ? await findUserIds({ search: input.filters?.search, status: input.filters?.status, role: input.filters?.role })
-      : [...new Set(input.ids ?? [])];
+      : [...new Set(input.ids ?? [])]).filter((id) => id !== ctx.session?.user.id);
     const failures: Array<{ id: string; code: string }> = [];
     const temporaryPasswords: Array<{ id: string; password: string }> = [];
 

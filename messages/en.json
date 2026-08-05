@@ -644,18 +644,30 @@
       "selectFiltered": "Select all {count} filtered results",
       "selectUser": "Select {name}",
       "selectPage": "Select users on this page",
+      "selfNotSelectable": "Your account cannot be selected",
       "confirm": {
         "ban": "Ban the selected users?",
         "delete": "Soft-delete the selected users?",
         "reset-password": "Generate temporary passwords for the selected users?"
       },
       "error": "The bulk action failed.",
+      "confirmDescription": "This action will be applied to the selected accounts and may change their access.",
       "resultTitle": "Bulk action result",
       "resultDescription": "Temporary passwords are shown only at this step.",
       "temporaryPassword": "Temporary password",
       "copy": "Copy passwords",
       "download": "Download passwords",
       "failureCount": "{count} operations failed."
+    },
+    "toast": {
+      "syncing": "Syncing changes...",
+      "success": "User status updated successfully.",
+      "deleted": "User deleted successfully.",
+      "roleSuccess": "User role changed successfully.",
+      "passwordSuccess": "Password changed successfully.",
+      "userCreated": "User created successfully.",
+      "bulkSuccess": "Bulk action completed successfully.",
+      "error": "The action failed. Please try again."
     }
   },
   "resetPassword": {

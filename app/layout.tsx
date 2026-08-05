@@ -2,6 +2,7 @@ import { getLocale } from "next-intl/server";
 import localFont from "next/font/local";
 import { dirForLocale } from "@/lib/site";
 import "./globals.css";
+import ToastProvider from "@/components/ui/toaster";
 
 const estedad = localFont({
   src: "../public/fonts/Estedad.woff2",
@@ -26,6 +27,7 @@ export default async function RootLayout({
     >
       <body className="min-h-dvh flex flex-col bg-surface-primary text-content-primary">
         {children}
+        <ToastProvider dir={dir} />
       </body>
     </html>
   );

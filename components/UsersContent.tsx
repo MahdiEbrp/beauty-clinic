@@ -1,8 +1,8 @@
 "use client";
 
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import { useTranslations, useFormatter } from "next-intl";
+import { toast } from "sonner";
 import {
   Search,
   SearchX,
@@ -31,6 +31,8 @@ import type { AuthUser } from "@/lib/auth/dal";
 import type { AdminUser, ListUsersResult } from "@/lib/users/service";
 import AddUserModal from "@/components/AddUserModal";
 import ChangePasswordDialog from "@/components/ChangePasswordDialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import {
   Dialog,
   DialogClose,
@@ -43,8 +45,9 @@ import {
 
 type StatusFilter = "all" | "active" | "inactive" | "banned";
 type RoleFilter = "all" | "admin" | "doctor" | "receptionist" | "customer";
-type ConfirmAction = "ban" | "deactivate";
+type ConfirmAction = "ban" | "deactivate" | "delete";
 type BulkAction = "activate" | "deactivate" | "ban" | "unban" | "change-role" | "delete" | "reset-password";
+type DestructiveConfirm = { kind: "row"; user: AdminUser; action: ConfirmAction } | { kind: "bulk"; action: BulkAction };
 
 function initials(name: string): string {
   return name
@@ -55,10 +58,10 @@ function initials(name: string): string {
     .join("");
 }
 
-const SelectionCheckbox = forwardRef<HTMLInputElement, { checked: boolean; indeterminate?: boolean; onChange: () => void; label: string }>(function SelectionCheckbox({ checked, indeterminate = false, onChange, label }, ref) {
+const SelectionCheckbox = forwardRef<HTMLInputElement, { checked: boolean; indeterminate?: boolean; disabled?: boolean; onChange: () => void; label: string }>(function SelectionCheckbox({ checked, indeterminate = false, disabled = false, onChange, label }, ref) {
   return (
-    <label className="relative inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-control focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent">
-      <input ref={ref} type="checkbox" checked={checked} onChange={onChange} aria-label={label} className="peer absolute inset-0 z-10 cursor-pointer opacity-0" />
+    <label className={`relative inline-flex size-5 shrink-0 items-center justify-center rounded-control focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent ${disabled ? "cursor-not-allowed opacity-40" : "cursor-pointer"}`} title={disabled ? label : undefined}>
+      <input ref={ref} type="checkbox" checked={checked} disabled={disabled} onChange={onChange} aria-label={label} className="peer absolute inset-0 z-10 cursor-pointer opacity-0 disabled:cursor-not-allowed" />
       <span className={`inline-flex size-4 items-center justify-center rounded-[0.3rem] border transition-colors ${checked || indeterminate ? "border-accent bg-accent text-content-contrast" : "border-border-interactive bg-surface-secondary text-transparent"}`} aria-hidden="true">
         {checked ? <Check className="size-3" strokeWidth={3} /> : indeterminate ? <Minus className="size-3" strokeWidth={3} /> : null}
       </span>
@@ -84,12 +87,10 @@ export default function UsersContent({
   const [loading, setLoading] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
-  const [actionError, setActionError] = useState<string | null>(null);
-  const [confirm, setConfirm] = useState<{ user: AdminUser; action: ConfirmAction; } | null>(null);
+  const [confirm, setConfirm] = useState<DestructiveConfirm | null>(null);
   const [banReason, setBanReason] = useState("");
   const [addOpen, setAddOpen] = useState(false);
   const [addError, setAddError] = useState<string | null>(null);
-  const [addSuccess, setAddSuccess] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectionScope, setSelectionScope] = useState<"page" | "filtered">("page");
   const [bulkAction, setBulkAction] = useState<BulkAction>("activate");
@@ -98,15 +99,14 @@ export default function UsersContent({
   const [passwordTarget, setPasswordTarget] = useState<AdminUser | null>(null);
   const [roleTarget, setRoleTarget] = useState<AdminUser | null>(null);
   const [roleValue, setRoleValue] = useState("");
+  const [syncingIds, setSyncingIds] = useState<Set<string>>(new Set());
   const selectAllRef = useRef<HTMLInputElement>(null);
-  const [actionMenu, setActionMenu] = useState<{ row: AdminUser; top: number; left: number; } | null>(null);
-  const actionMenuRef = useRef<HTMLDivElement>(null);
   const firstRun = useRef(true);
 
   const canManage = currentUser.permissions.includes("users.manage");
   const canWrite = currentUser.permissions.includes("users.write");
 
-  const visibleIds = data.items.map((item) => item.id);
+  const visibleIds = data.items.filter((item) => item.id !== currentUser.id).map((item) => item.id);
   const selectedVisibleCount = visibleIds.filter((id) => selectedIds.includes(id)).length;
   const allVisibleSelected = visibleIds.length > 0 && selectedVisibleCount === visibleIds.length;
 
@@ -157,28 +157,22 @@ export default function UsersContent({
     load({ search: debouncedSearch, status, role, page });
   }, [debouncedSearch, status, role, page, load]);
 
-  useEffect(() => {
-    if (!actionMenu) return;
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setActionMenu(null);
-    };
-    const closeOnViewportChange = () => setActionMenu(null);
-    document.addEventListener("keydown", closeOnEscape);
-    window.addEventListener("resize", closeOnViewportChange);
-    window.addEventListener("scroll", closeOnViewportChange, true);
-    return () => {
-      document.removeEventListener("keydown", closeOnEscape);
-      window.removeEventListener("resize", closeOnViewportChange);
-      window.removeEventListener("scroll", closeOnViewportChange, true);
-    };
-  }, [actionMenu]);
+  const setSyncing = (id: string, syncing: boolean) => {
+    setSyncingIds((current) => {
+      const next = new Set(current);
+      if (syncing) next.add(id); else next.delete(id);
+      return next;
+    });
+  };
 
   const runAction = async (
     target: AdminUser,
     patch: { isActive?: boolean; isBanned?: boolean; banReason?: string | null; },
   ) => {
+    setConfirm(null);
     setBusyId(target.id);
-    setActionError(null);
+    setSyncing(target.id, true);
+    const pendingToast = toast.loading(t("users.toast.syncing"));
     try {
       const response = await fetch(`/api/v1/users/${target.id}`, {
         method: "PATCH",
@@ -192,25 +186,56 @@ export default function UsersContent({
         if (code === "SELF_LOCKOUT") throw new Error("self_lockout");
         throw new Error("action_failed");
       }
-      setConfirm(null);
       setBanReason("");
       await load({ search: debouncedSearch, status, role, page });
+      toast.success(t("users.toast.success"), { id: pendingToast });
     } catch (error) {
-      setActionError(
-        t(
-          error instanceof Error && error.message === "self_lockout"
-            ? "users.errors.selfLockout"
-            : "users.errors.action",
-        ),
-      );
+      toast.error(t(error instanceof Error && error.message === "self_lockout" ? "users.errors.selfLockout" : "users.toast.error"), { id: pendingToast });
     } finally {
+      setSyncing(target.id, false);
+      setBusyId(null);
+    }
+  };
+
+  const deleteUser = async (row: AdminUser) => {
+    setConfirm(null);
+    setBusyId(row.id);
+    setSyncing(row.id, true);
+    const pendingToast = toast.loading(t("users.toast.syncing"));
+    try {
+      const response = await fetch(`/api/v1/users/${row.id}`, { method: "DELETE", credentials: "include" });
+      if (!response.ok) throw new Error("delete_failed");
+      await load({ search: debouncedSearch, status, role, page });
+      toast.success(t("users.toast.deleted"), { id: pendingToast });
+    } catch {
+      toast.error(t("users.toast.error"), { id: pendingToast });
+    } finally {
+      setSyncing(row.id, false);
+      setBusyId(null);
+    }
+  };
+
+  const saveRole = async (target: AdminUser, nextRole: string) => {
+    setRoleTarget(null);
+    setBusyId(target.id);
+    setSyncing(target.id, true);
+    const pendingToast = toast.loading(t("users.toast.syncing"));
+    try {
+      const response = await fetch(`/api/v1/users/${target.id}/role`, { method: "PATCH", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ roleKey: nextRole }) });
+      if (!response.ok) throw new Error("role_failed");
+      await load({ search: debouncedSearch, status, role, page });
+      toast.success(t("users.toast.roleSuccess"), { id: pendingToast });
+    } catch {
+      toast.error(t("users.toast.error"), { id: pendingToast });
+    } finally {
+      setSyncing(target.id, false);
       setBusyId(null);
     }
   };
 
   const createUser = async (values: { fullName: string; email: string; phone: string; password: string; roleKey: string; }) => {
     setAddError(null);
-    setAddSuccess(false);
+    const pendingToast = toast.loading(t("users.toast.syncing"));
     try {
       const response = await fetch("/api/v1/users", {
         method: "POST",
@@ -224,10 +249,10 @@ export default function UsersContent({
       }
       await load({ search: debouncedSearch, status, role, page: 1 });
       setPage(1);
-      setAddSuccess(true);
-      window.setTimeout(() => setAddSuccess(false), 4200);
+      toast.success(t("users.toast.userCreated"), { id: pendingToast });
     } catch (error) {
       setAddError(t(error instanceof Error && error.message === "email_taken" ? "users.form.errors.emailTaken" : "users.errors.create"));
+      toast.error(t("users.toast.error"), { id: pendingToast });
       throw error;
     }
   };
@@ -243,6 +268,7 @@ export default function UsersContent({
   };
 
   const toggleUserSelection = (id: string) => {
+    if (id === currentUser.id || syncingIds.has(id)) return;
     setSelectionScope("page");
     setSelectedIds((current) => current.includes(id) ? current.filter((value) => value !== id) : [...current, id]);
   };
@@ -278,12 +304,14 @@ export default function UsersContent({
     URL.revokeObjectURL(url);
   };
 
-  const runBulkAction = async () => {
+  const executeBulkAction = async () => {
     if (!selectedIds.length && selectionScope === "page") return;
     if (bulkAction === "change-role" && !bulkRole) return;
-    if (["ban", "delete", "reset-password"].includes(bulkAction) && !window.confirm(t(`users.bulk.confirm.${bulkAction}`))) return;
+    setConfirm(null);
     setBusyId("bulk");
-    setActionError(null);
+    const pendingToast = toast.loading(t("users.toast.syncing"));
+    const targetIds = selectionScope === "page" ? selectedIds : visibleIds;
+    targetIds.forEach((id) => setSyncing(id, true));
     try {
       const response = await fetch("/api/v1/users/bulk", {
         method: "POST",
@@ -302,11 +330,21 @@ export default function UsersContent({
       setBulkResult(payload.data.temporaryPasswords.length || payload.data.failures.length ? payload.data : null);
       clearSelection();
       await load({ search: debouncedSearch, status, role, page });
+      toast.success(t("users.toast.bulkSuccess"), { id: pendingToast });
     } catch {
-      setActionError(t("users.bulk.error"));
+      toast.error(t("users.toast.error"), { id: pendingToast });
     } finally {
+      targetIds.forEach((id) => setSyncing(id, false));
       setBusyId(null);
     }
+  };
+
+  const runBulkAction = () => {
+    if (["ban", "delete", "reset-password"].includes(bulkAction)) {
+      setConfirm({ kind: "bulk", action: bulkAction });
+      return;
+    }
+    void executeBulkAction();
   };
 
   const statusOf = (row: AdminUser): "active" | "inactive" | "banned" => {
@@ -349,66 +387,64 @@ export default function UsersContent({
         labelKey: state === "active" ? "users.actions.deactivate" : "users.actions.activate",
         onClick: () =>
           state === "active"
-            ? setConfirm({ user: row, action: "deactivate" })
+            ? setConfirm({ kind: "row", user: row, action: "deactivate" })
             : runAction(row, { isActive: true }),
       });
       buttons.push({
         key: "ban",
         labelKey: "users.actions.ban",
         danger: true,
-        onClick: () => setConfirm({ user: row, action: "ban" }),
+        onClick: () => setConfirm({ kind: "row", user: row, action: "ban" }),
       });
     }
 
     if (!isSelf) {
       buttons.push({ key: "role", labelKey: "users.actions.changeRole", onClick: () => { setRoleTarget(row); setRoleValue(row.roles[0] ?? ""); } });
       buttons.push({ key: "password", labelKey: "users.actions.changePassword", onClick: () => setPasswordTarget(row) });
-      buttons.push({ key: "delete", labelKey: "users.actions.delete", danger: true, onClick: () => {
-        if (!window.confirm(t("users.actions.deleteConfirm", { name: row.fullName }))) return;
-        void deleteUser(row);
-      } });
+      buttons.push({ key: "delete", labelKey: "users.actions.delete", danger: true, onClick: () => setConfirm({ kind: "row", user: row, action: "delete" }) });
     }
 
     return buttons;
   };
 
-  const rowActions = (row: AdminUser) => (
-    <button
-      type="button"
-      onClick={(event) => {
-        const rect = event.currentTarget.getBoundingClientRect();
-        const menuWidth = 208;
-        setActionMenu((current) =>
-          current?.row.id === row.id
-            ? null
-            : {
-              row,
-              top: rect.bottom + 8 + 360 > window.innerHeight - 16 ? Math.max(16, rect.top - 368) : rect.bottom + 8,
-              left: Math.max(16, Math.min(rect.right - menuWidth, window.innerWidth - menuWidth - 16)),
-            },
-        );
-      }}
-      aria-expanded={actionMenu?.row.id === row.id}
-      aria-haspopup="menu"
-      aria-label={t("users.actions.menu")}
-      className="inline-flex size-11 shrink-0 items-center justify-center rounded-pill border border-border-interactive bg-surface-secondary p-0 text-accent shadow-elevation-1 transition hover:bg-surface-tertiary hover:shadow-elevation-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-    >
-      <MoreVertical className="size-5" aria-hidden="true" />
-    </button>
-  );
-
-  const deleteUser = async (row: AdminUser) => {
-    setBusyId(row.id);
-    setActionError(null);
-    try {
-      const response = await fetch(`/api/v1/users/${row.id}`, { method: "DELETE", credentials: "include" });
-      if (!response.ok) throw new Error("delete_failed");
-      await load({ search: debouncedSearch, status, role, page });
-    } catch {
-      setActionError(t("users.errors.action"));
-    } finally {
-      setBusyId(null);
-    }
+  const rowActions = (row: AdminUser) => {
+    const buttons = rowActionButtons(row);
+    const statusButtons = buttons.filter((button) => ["activate", "deactivate", "unban"].includes(button.key));
+    const accountButtons = buttons.filter((button) => ["role", "password"].includes(button.key));
+    const dangerButtons = buttons.filter((button) => ["ban", "delete"].includes(button.key));
+    const renderButton = (button: (typeof buttons)[number]) => (
+      <DropdownMenuItem
+        key={button.key}
+        disabled={syncingIds.has(row.id) || button.key === "self"}
+        onSelect={button.onClick}
+        className={button.danger ? "text-error focus:bg-error/10 focus:text-error" : "text-accent"}
+      >
+        {button.key === "ban" && <Ban className="size-4" strokeWidth={2} />}
+        {button.key === "unban" && <ShieldCheck className="size-4" strokeWidth={2} />}
+        {button.key === "deactivate" && <UserX className="size-4" strokeWidth={2} />}
+        {button.key === "activate" && <UserCheck className="size-4" strokeWidth={2} />}
+        {button.key === "self" && <ShieldCheck className="size-4" strokeWidth={2} />}
+        {button.key === "role" && <UserCog className="size-4" strokeWidth={2} />}
+        {button.key === "password" && <KeyRound className="size-4" strokeWidth={2} />}
+        {button.key === "delete" && <Trash2 className="size-4" strokeWidth={2} />}
+        <span>{t(button.labelKey)}</span>
+      </DropdownMenuItem>
+    );
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button type="button" disabled={syncingIds.has(row.id)} aria-label={t("users.actions.menu")} className="inline-flex size-11 shrink-0 items-center justify-center rounded-pill border border-border-interactive bg-surface-secondary p-0 text-accent shadow-elevation-1 transition hover:bg-surface-tertiary hover:shadow-elevation-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-40">
+            <MoreVertical className="size-5" aria-hidden="true" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuGroup>{statusButtons.map(renderButton)}</DropdownMenuGroup>
+          {statusButtons.length > 0 && accountButtons.length > 0 && <DropdownMenuSeparator />}
+          <DropdownMenuGroup>{accountButtons.map(renderButton)}</DropdownMenuGroup>
+          {dangerButtons.length > 0 && <><DropdownMenuSeparator /><DropdownMenuGroup>{dangerButtons.map(renderButton)}</DropdownMenuGroup></>}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
   };
 
   const totalPages = data.totalPages;
@@ -418,19 +454,13 @@ export default function UsersContent({
     ? t("users.statusAll")
     : t(`users.status${status.charAt(0).toUpperCase()}${status.slice(1)}`);
 
-  // Dialog only renders while `confirm` is set; this narrows the union so the
-  // title/description don't need repeated `confirm?` guards.
-  const dialog = confirm
-    ? confirm.action === "ban"
-      ? {
-        title: t("users.banDialog.title", { name: confirm.user.fullName }),
-        description: t("users.banDialog.description"),
-      }
-      : {
-        title: t("users.deactivateDialog.title", { name: confirm.user.fullName }),
-        description: t("users.deactivateDialog.description"),
-      }
-    : null;
+  const confirmTitle = confirm?.kind === "row"
+    ? confirm.action === "ban" ? t("users.banDialog.title", { name: confirm.user.fullName }) : confirm.action === "deactivate" ? t("users.deactivateDialog.title", { name: confirm.user.fullName }) : t("users.actions.deleteConfirm", { name: confirm.user.fullName })
+    : confirm ? t(`users.bulk.confirm.${confirm.action}`) : "";
+  const confirmDescription = confirm?.kind === "row"
+    ? confirm.action === "ban" ? t("users.banDialog.description") : confirm.action === "deactivate" ? t("users.deactivateDialog.description") : t("users.bulk.confirmDescription")
+    : confirm ? t("users.bulk.confirmDescription") : "";
+  const bulkDangerous = ["ban", "delete", "reset-password"].includes(bulkAction);
 
   return (
     <div className="space-y-6 sm:space-y-7">
@@ -458,7 +488,7 @@ export default function UsersContent({
             {canWrite && (
               <button
                 type="button"
-                onClick={() => { setAddError(null); setAddSuccess(false); setAddOpen(true); }}
+                onClick={() => { setAddError(null); setAddOpen(true); }}
                 className="mt-3 inline-flex min-h-11 items-center justify-center gap-2 rounded-pill bg-accent px-5 py-3 text-body-sm font-bold text-content-contrast shadow-elevation-1 transition hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <UserPlus className="size-4" aria-hidden="true" />
@@ -561,15 +591,6 @@ export default function UsersContent({
         </div>
       )}
 
-      {actionError && (
-        <div
-          role="alert"
-          className="bg-error/10 border border-error/40 rounded-control p-4 text-body-sm text-error font-medium"
-        >
-          {actionError}
-        </div>
-      )}
-
       {/* Table */}
       <section className="overflow-hidden rounded-panel border border-border-primary bg-surface-secondary shadow-elevation-2" aria-label={t("users.heading")}>
         <div className="flex items-center justify-between gap-4 border-b border-border-primary bg-surface-secondary px-4 py-4 md:bg-surface-tertiary/20 md:px-6">
@@ -582,7 +603,7 @@ export default function UsersContent({
         {selectedIds.length > 0 && (
             <div className="flex min-h-14 flex-wrap items-center gap-3 border-b border-border-primary bg-accent-subtle/75 px-4 py-3 md:px-6">
             <span className="text-body-sm font-bold text-accent">{selectionScope === "filtered" ? t("users.bulk.selectedFiltered", { count: data.total }) : t("users.bulk.selected", { count: selectedIds.length })}</span>
-            <select value={bulkAction} onChange={(event) => setBulkAction(event.target.value as BulkAction)} className="min-h-10 rounded-control border border-form-input-border bg-form-input-bg px-3 text-caption font-bold text-accent outline-none focus-visible:border-copper">
+            <select value={bulkAction} onChange={(event) => setBulkAction(event.target.value as BulkAction)} className={`min-h-10 rounded-control border bg-form-input-bg px-3 text-caption font-bold outline-none focus-visible:border-copper ${bulkDangerous ? "border-error/50 text-error" : "border-form-input-border text-accent"}`}>
               <option value="activate">{t("users.bulk.activate")}</option>
               <option value="deactivate">{t("users.bulk.deactivate")}</option>
               <option value="ban">{t("users.bulk.ban")}</option>
@@ -592,7 +613,7 @@ export default function UsersContent({
               <option value="delete">{t("users.bulk.delete")}</option>
             </select>
             {bulkAction === "change-role" && <select value={bulkRole} onChange={(event) => setBulkRole(event.target.value)} className="min-h-10 rounded-control border border-form-input-border bg-form-input-bg px-3 text-caption font-bold text-accent outline-none focus-visible:border-copper"><option value="">{t("users.form.rolePlaceholder")}</option>{["admin", "doctor", "receptionist", "customer"].map((key) => <option key={key} value={key}>{roleLabel(key)}</option>)}</select>}
-            <button type="button" onClick={runBulkAction} disabled={busyId === "bulk"} className="inline-flex min-h-10 items-center gap-2 rounded-pill bg-accent px-4 text-caption font-bold text-content-contrast disabled:opacity-50">{busyId === "bulk" && <Loader2 className="size-4 animate-spin" />}{t("users.bulk.apply")}</button>
+            <button type="button" onClick={runBulkAction} disabled={busyId === "bulk"} className={`inline-flex min-h-10 items-center gap-2 rounded-pill px-4 text-caption font-bold text-content-contrast disabled:opacity-50 ${bulkDangerous ? "bg-error hover:bg-error/90" : "border border-border-interactive bg-surface-secondary text-accent hover:bg-surface-tertiary"}`}>{busyId === "bulk" && <Loader2 className="size-4 animate-spin" />}{t("users.bulk.apply")}</button>
             <button type="button" onClick={clearSelection} className="min-h-10 rounded-pill px-3 text-caption font-bold text-content-secondary hover:bg-surface-tertiary">{t("users.bulk.clear")}</button>
           </div>
         )}
@@ -604,12 +625,13 @@ export default function UsersContent({
         )}
         <div className="grid gap-3 py-3 md:hidden">
           {data.items.map((row) => {
+            if (syncingIds.has(row.id)) return <UserCardSkeleton key={row.id} />;
             const state = statusOf(row);
             return (
               <article key={row.id} className="rounded-card border border-border-primary bg-surface-secondary p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-3">
-                  <SelectionCheckbox checked={selectedIds.includes(row.id)} onChange={() => toggleUserSelection(row.id)} label={t("users.bulk.selectUser", { name: row.fullName })} />
+                    <SelectionCheckbox checked={selectedIds.includes(row.id)} disabled={row.id === currentUser.id || syncingIds.has(row.id)} onChange={() => toggleUserSelection(row.id)} label={row.id === currentUser.id ? t("users.bulk.selfNotSelectable") : t("users.bulk.selectUser", { name: row.fullName })} />
                     <span className="flex size-11 shrink-0 items-center justify-center rounded-pill border border-border-primary bg-surface-tertiary text-body-sm font-bold text-copper-strong" aria-hidden="true">{initials(row.fullName)}</span>
                     <div className="min-w-0">
                       <p className="truncate text-body font-bold text-accent">{row.fullName}</p>
@@ -638,7 +660,7 @@ export default function UsersContent({
             <thead>
               <tr className="border-b border-border-primary bg-surface-tertiary/30 text-caption text-content-secondary">
                 <th scope="col" className="w-12 px-4 py-4 text-start font-bold">
-                  <SelectionCheckbox ref={selectAllRef} checked={allVisibleSelected} indeterminate={selectedVisibleCount > 0 && !allVisibleSelected} onChange={togglePageSelection} label={t("users.bulk.selectPage")} />
+                  <SelectionCheckbox ref={selectAllRef} checked={allVisibleSelected} indeterminate={selectedVisibleCount > 0 && !allVisibleSelected} disabled={visibleIds.length === 0} onChange={togglePageSelection} label={t("users.bulk.selectPage")} />
                 </th>
                 <th scope="col" className="w-[50%] px-2 py-4 text-start font-bold xl:w-[36%]">
                   {t("users.table.user")}
@@ -661,12 +683,13 @@ export default function UsersContent({
             </thead>
             <tbody className="divide-y divide-border-primary">
               {data.items.map((row) => {
+                if (syncingIds.has(row.id)) return <tr key={row.id} className="border-b border-border-primary"><td colSpan={canManage ? 6 : 5} className="px-4 py-5"><UserRowSkeleton /></td></tr>;
                 const state = statusOf(row);
                 const isSelf = row.id === currentUser.id;
                 return (
                   <tr key={row.id} className="transition-colors hover:bg-surface-primary/60">
                     <td className="px-4 py-5">
-                      <SelectionCheckbox checked={selectedIds.includes(row.id)} onChange={() => toggleUserSelection(row.id)} label={t("users.bulk.selectUser", { name: row.fullName })} />
+                      <SelectionCheckbox checked={selectedIds.includes(row.id)} disabled={row.id === currentUser.id || syncingIds.has(row.id)} onChange={() => toggleUserSelection(row.id)} label={row.id === currentUser.id ? t("users.bulk.selfNotSelectable") : t("users.bulk.selectUser", { name: row.fullName })} />
                     </td>
                     <td className="px-2 py-5">
                       <div className="flex items-center gap-3 min-w-0">
@@ -803,121 +826,19 @@ export default function UsersContent({
         )}
       </section>
 
-      {typeof document !== "undefined" && actionMenu && createPortal(
-        <div className="fixed inset-0 z-80" onMouseDown={() => setActionMenu(null)}>
-          <div
-            ref={actionMenuRef}
-            role="menu"
-            aria-label={t("users.actions.menu")}
-            onMouseDown={(event) => event.stopPropagation()}
-            className="fixed grid max-h-[min(23rem,calc(100dvh-2rem))] min-w-52 gap-1 overflow-y-auto overscroll-contain rounded-card border border-border-primary bg-surface-secondary p-2 shadow-elevation-4"
-            style={{ top: actionMenu.top, left: actionMenu.left }}
-          >
-            {rowActionButtons(actionMenu.row).map((button) => (
-              <button
-                key={button.key}
-                type="button"
-                role="menuitem"
-                disabled={busyId === actionMenu.row.id || button.key === "self"}
-                onClick={() => {
-                  setActionMenu(null);
-                  button.onClick();
-                }}
-                className={`flex min-h-11 items-center gap-2 rounded-control px-3 text-start text-caption font-bold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50 ${button.danger ? "text-error hover:bg-error/10" : "text-accent hover:bg-surface-tertiary"}`}
-              >
-                {button.key === "ban" && <Ban className="size-4" aria-hidden="true" />}
-                {button.key === "unban" && <ShieldCheck className="size-4" aria-hidden="true" />}
-                {button.key === "deactivate" && <UserX className="size-4" aria-hidden="true" />}
-                {button.key === "activate" && <UserCheck className="size-4" aria-hidden="true" />}
-                {button.key === "self" && <ShieldCheck className="size-4" aria-hidden="true" />}
-                {button.key === "role" && <UserCog className="size-4" aria-hidden="true" />}
-                {button.key === "password" && <KeyRound className="size-4" aria-hidden="true" />}
-                {button.key === "delete" && <Trash2 className="size-4" aria-hidden="true" />}
-                <span>{t(button.labelKey)}</span>
-              </button>
-            ))}
-          </div>
-        </div>,
-        document.body,
-      )}
-
       {loading && (
         <p className="sr-only" role="status">
           {t("users.loading")}
         </p>
       )}
 
-      {/* Confirm dialog */}
-      <Dialog
-        open={confirm !== null}
-        onOpenChange={(open) => {
-          if (!open) {
-            setConfirm(null);
-            setBanReason("");
-            setActionError(null);
-          }
-        }}
-      >
-        <DialogContent closeLabel={t("users.dialog.cancel")} className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-accent text-body-lg">
-              {dialog?.title}
-            </DialogTitle>
-            <DialogDescription>{dialog?.description}</DialogDescription>
-          </DialogHeader>
-
-          {confirm?.action === "ban" && (
-            <div>
-              <label
-                htmlFor="ban-reason"
-                className="block text-caption font-medium text-content-secondary mb-2"
-              >
-                {t("users.banDialog.reason")}
-              </label>
-              <textarea
-                id="ban-reason"
-                value={banReason}
-                onChange={(e) => setBanReason(e.target.value)}
-                rows={3}
-                maxLength={500}
-                placeholder={t("users.banDialog.reasonPlaceholder")}
-                className="w-full bg-form-input-bg border border-form-input-border rounded-control py-3 px-4 text-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent resize-y"
-              />
-            </div>
-          )}
-
-          <DialogFooter className="mt-4">
-            <DialogClose
-              disabled={busyId !== null}
-              className="inline-flex items-center justify-center px-6 py-3 min-h-11 text-body-sm bg-surface-tertiary text-accent rounded-pill font-semibold transition-colors hover:bg-surface-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60"
-            >
-              {t("users.dialog.cancel")}
-            </DialogClose>
-            <button
-              type="button"
-              onClick={() => {
-                if (!confirm) return;
-                if (confirm.action === "ban") {
-                  runAction(confirm.user, {
-                    isBanned: true,
-                    banReason: banReason.trim() || null,
-                  });
-                } else {
-                  runAction(confirm.user, { isActive: false });
-                }
-              }}
-              disabled={busyId !== null}
-              aria-busy={busyId !== null}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 min-h-11 text-body-sm bg-error text-content-contrast rounded-pill font-bold transition-all duration-200 hover:bg-error/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error active:scale-95 disabled:opacity-60"
-            >
-              {busyId !== null && (
-                <Loader2 className="w-4 h-4 animate-spin" strokeWidth={2} aria-hidden="true" />
-              )}
-              <span>{t("users.dialog.confirm")}</span>
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <AlertDialog open={confirm !== null} onOpenChange={(open) => { if (!open) { setConfirm(null); setBanReason(""); } }}>
+        <AlertDialogContent closeLabel={t("users.dialog.cancel")}>
+          <AlertDialogHeader><AlertDialogTitle>{confirmTitle}</AlertDialogTitle><AlertDialogDescription>{confirmDescription}</AlertDialogDescription></AlertDialogHeader>
+          {confirm?.kind === "row" && confirm.action === "ban" && <label htmlFor="ban-reason" className="grid gap-1.5 text-caption font-bold text-content-secondary"><span>{t("users.banDialog.reason")}</span><textarea id="ban-reason" value={banReason} onChange={(event) => setBanReason(event.target.value)} rows={3} maxLength={500} placeholder={t("users.banDialog.reasonPlaceholder")} className="w-full resize-y rounded-control border border-form-input-border bg-form-input-bg px-4 py-3 text-body text-accent outline-none focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" /></label>}
+          <AlertDialogFooter><AlertDialogCancel disabled={busyId !== null}>{t("users.dialog.cancel")}</AlertDialogCancel><AlertDialogAction disabled={busyId !== null} onClick={(event) => { event.preventDefault(); if (!confirm) return; if (confirm.kind === "bulk") { void executeBulkAction(); return; } if (confirm.action === "ban") { void runAction(confirm.user, { isBanned: true, banReason: banReason.trim() || null }); } else if (confirm.action === "deactivate") { void runAction(confirm.user, { isActive: false }); } else { void deleteUser(confirm.user); } }}>{busyId !== null && <Loader2 className="size-4 animate-spin" />}{t("users.dialog.confirm")}</AlertDialogAction></AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Dialog open={roleTarget !== null} onOpenChange={(open) => { if (!open) setRoleTarget(null); }}>
         <DialogContent closeLabel={t("users.dialog.cancel")} className="max-w-sm">
@@ -925,11 +846,11 @@ export default function UsersContent({
           <select value={roleValue} onChange={(event) => setRoleValue(event.target.value)} className="min-h-11 w-full rounded-control border border-form-input-border bg-form-input-bg px-4 text-body text-accent outline-none focus-visible:border-copper">
             <option value="">{t("users.form.rolePlaceholder")}</option>{["admin", "doctor", "receptionist", "customer"].map((key) => <option key={key} value={key}>{roleLabel(key)}</option>)}
           </select>
-          <DialogFooter><DialogClose className="inline-flex min-h-11 items-center justify-center rounded-pill bg-surface-tertiary px-5 text-body-sm font-bold text-accent">{t("users.dialog.cancel")}</DialogClose><button type="button" disabled={!roleValue || busyId !== null} onClick={async () => { if (!roleTarget || !roleValue) return; setBusyId(roleTarget.id); try { const response = await fetch(`/api/v1/users/${roleTarget.id}/role`, { method: "PATCH", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ roleKey: roleValue }) }); if (!response.ok) throw new Error("role_failed"); setRoleTarget(null); await load({ search: debouncedSearch, status, role, page }); } catch { setRoleTarget(null); setActionError(t("users.errors.action")); } finally { setBusyId(null); } }} className="inline-flex min-h-11 items-center justify-center rounded-pill bg-accent px-5 text-body-sm font-bold text-content-contrast disabled:opacity-50">{t("users.changeRole.submit")}</button></DialogFooter>
+          <DialogFooter><DialogClose className="inline-flex min-h-11 items-center justify-center rounded-pill bg-surface-tertiary px-5 text-body-sm font-bold text-accent">{t("users.dialog.cancel")}</DialogClose><button type="button" disabled={!roleValue || busyId !== null} onClick={() => { if (roleTarget && roleValue) void saveRole(roleTarget, roleValue); }} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill bg-accent px-5 text-body-sm font-bold text-content-contrast disabled:opacity-50">{t("users.changeRole.submit")}</button></DialogFooter>
         </DialogContent>
       </Dialog>
 
-      <ChangePasswordDialog user={passwordTarget} onOpenChange={(open) => { if (!open) setPasswordTarget(null); }} onSuccess={async () => { await load({ search: debouncedSearch, status, role, page }); }} onError={(message) => { setPasswordTarget(null); setActionError(message); }} />
+      <ChangePasswordDialog user={passwordTarget} onOpenChange={(open) => { if (!open) setPasswordTarget(null); }} onSave={async (userId, password) => { setPasswordTarget(null); setBusyId(userId); setSyncing(userId, true); const pendingToast = toast.loading(t("users.toast.syncing")); try { const response = await fetch(`/api/v1/users/${userId}/password`, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ password, confirmPassword: password }) }); if (!response.ok) throw new Error("password_failed"); await load({ search: debouncedSearch, status, role, page }); toast.success(t("users.toast.passwordSuccess"), { id: pendingToast }); } catch { toast.error(t("users.toast.error"), { id: pendingToast }); } finally { setSyncing(userId, false); setBusyId(null); } }} />
 
       <Dialog open={bulkResult !== null} onOpenChange={(open) => { if (!open) setBulkResult(null); }}>
         <DialogContent closeLabel={t("users.dialog.cancel")} className="max-w-lg">
@@ -941,7 +862,18 @@ export default function UsersContent({
       </Dialog>
 
       <AddUserModal open={addOpen} onOpenChange={(open) => { setAddOpen(open); if (!open) setAddError(null); }} onSubmit={createUser} serverError={addError} />
-      {addSuccess && <div role="status" className="fixed bottom-5 inset-s-5 z-[110] max-w-md rounded-control border border-success/30 bg-surface-secondary p-4 text-body-sm font-bold text-success shadow-elevation-3">{t("users.form.created")}</div>}
     </div>
   );
+}
+
+function SkeletonBlock({ className = "" }: { className?: string }) {
+  return <span className={`block animate-pulse rounded-control bg-surface-tertiary/80 ${className}`} aria-hidden="true" />;
+}
+
+function UserCardSkeleton() {
+  return <article className="rounded-card border border-border-primary bg-surface-secondary p-4" aria-label="Loading user"><div className="flex items-center gap-3"><SkeletonBlock className="size-11 rounded-pill" /><div className="grid flex-1 gap-2"><SkeletonBlock className="h-4 w-2/3" /><SkeletonBlock className="h-3 w-5/6" /></div><SkeletonBlock className="size-11 rounded-pill" /></div><div className="mt-4 flex gap-2"><SkeletonBlock className="h-6 w-16" /><SkeletonBlock className="h-6 w-20" /></div><div className="mt-4 grid grid-cols-2 gap-3 border-t border-border-primary pt-4"><SkeletonBlock className="h-3 w-20" /><SkeletonBlock className="h-3 w-24" /></div></article>;
+}
+
+function UserRowSkeleton() {
+  return <div className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-4"><div className="flex items-center gap-3"><SkeletonBlock className="size-12 rounded-pill" /><div className="grid gap-2"><SkeletonBlock className="h-4 w-36" /><SkeletonBlock className="h-3 w-48" /></div></div><SkeletonBlock className="h-6 w-20" /><SkeletonBlock className="h-4 w-16" /><SkeletonBlock className="size-11 rounded-pill" /></div>;
 }

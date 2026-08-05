@@ -6,7 +6,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { changePasswordSchema } from "@/lib/validation/user";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-export default function ChangePasswordDialog({ user, onOpenChange, onSuccess, onError }: { user: { id: string; fullName: string } | null; onOpenChange: (open: boolean) => void; onSuccess: () => Promise<void>; onError: (message: string) => void }) {
+export default function ChangePasswordDialog({ user, onOpenChange, onSave }: { user: { id: string; fullName: string } | null; onOpenChange: (open: boolean) => void; onSave: (userId: string, password: string) => Promise<void> }) {
   const t = useTranslations();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -26,12 +26,9 @@ export default function ChangePasswordDialog({ user, onOpenChange, onSuccess, on
     const parsed = changePasswordSchema.safeParse({ password, confirmPassword });
     if (!parsed.success) { setError(t("users.form.errors.password")); return; }
     setPending(true); setError(null);
-    try {
-      const response = await fetch(`/api/v1/users/${user.id}/password`, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify(parsed.data) });
-      if (!response.ok) throw new Error("failed");
-      await onSuccess();
-      close(false);
-    } catch { onError(t("users.errors.create")); close(false); } finally { setPending(false); }
+    void onSave(user.id, parsed.data.password);
+    close(false);
+    setPending(false);
   };
 
   return <Dialog open={user !== null} onOpenChange={close}>
