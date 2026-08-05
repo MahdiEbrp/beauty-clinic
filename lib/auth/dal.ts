@@ -23,6 +23,7 @@ export type AuthUser = {
   fullName: string;
   roles: string[];
   permissions: string[];
+  mustChangePassword?: boolean;
 };
 
 export type AuthSession = {
@@ -92,6 +93,7 @@ export const getSession = cache(async (): Promise<AuthSession | null> => {
       email: true,
       fullName: true,
       passwordChangedAt: true,
+      mustChangePassword: true,
     },
   });
   if (!user) {
@@ -129,6 +131,7 @@ export const getSession = cache(async (): Promise<AuthSession | null> => {
       fullName: user.fullName,
       roles: [...roleSet],
       permissions: [...permissionSet],
+      mustChangePassword: user.mustChangePassword,
     },
   };
 });

@@ -64,9 +64,38 @@ export const createUserSchema = z
   })
   .strict();
 
+export const changePasswordSchema = z
+  .object({
+    password: passwordSchema,
+    confirmPassword: z.string().max(128),
+  })
+  .strict()
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match.",
+  });
+
+export const changeRoleSchema = z.object({ roleKey: z.string().trim().min(1).max(50) }).strict();
+
+export const bulkUsersSchema = z
+  .object({
+    action: z.enum(["activate", "deactivate", "ban", "unban", "change-role", "delete", "reset-password"]),
+    scope: z.enum(["page", "filtered"]),
+    ids: z.array(z.uuid()).max(100).optional(),
+    filters: listUsersQuerySchema.pick({ search: true, status: true, role: true }).optional(),
+    roleKey: z.string().trim().min(1).max(50).optional(),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    if (value.scope === "page" && (!value.ids || value.ids.length === 0)) ctx.addIssue({ code: "custom", path: ["ids"], message: "Select at least one user." });
+    if (value.action === "change-role" && !value.roleKey) ctx.addIssue({ code: "custom", path: ["roleKey"], message: "A role is required." });
+  });
+
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type ListUsersQuery = z.infer<typeof listUsersQuerySchema>;
 export type UpdateUserStatusInput = z.infer<typeof updateUserStatusSchema>;
 export type CreateUserInput = z.infer<typeof createUserSchema>;
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
+export type BulkUsersInput = z.infer<typeof bulkUsersSchema>;
 export type UserStatusFilter = NonNullable<ListUsersQuery["status"]>;

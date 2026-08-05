@@ -161,8 +161,8 @@ export default function AddUserModal({
 
             <Field label={t("users.form.password")} error={errorText("password")} hint={t("users.form.passwordHint")} required>
               <div className="relative">
-                <input type={showPassword ? "text" : "password"} dir="ltr" {...form.register("password")} className={`${inputClass(Boolean(form.formState.errors.password))} pe-12`} />
-                <button type="button" onClick={() => setShowPassword((value) => !value)} aria-label={showPassword ? t("users.form.hidePassword") : t("users.form.showPassword")} className="absolute inset-e-1 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-pill text-content-tertiary transition hover:bg-surface-tertiary hover:text-accent focus-visible:outline-2 focus-visible:outline-accent">
+                <input type={showPassword ? "text" : "password"} dir="ltr" {...form.register("password")} className={`${inputClass(Boolean(form.formState.errors.password))} ps-12`} />
+                <button type="button" onClick={() => setShowPassword((value) => !value)} aria-label={showPassword ? t("users.form.hidePassword") : t("users.form.showPassword")} className="absolute inset-s-1 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-pill text-content-tertiary transition hover:bg-surface-tertiary hover:text-accent focus-visible:outline-2 focus-visible:outline-accent">
                   {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                 </button>
               </div>

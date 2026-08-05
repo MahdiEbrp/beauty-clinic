@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { and, count, desc, eq, ilike, inArray, isNull, or, sql, type SQL } from "drizzle-orm";
 
 import { ApiError } from "@/lib/api/errors";
@@ -183,4 +184,86 @@ export async function updateUserStatus(
   if (!isActive || isBanned) {
     await db.delete(sessions).where(eq(sessions.userId, userId));
   }
+}
+
+export async function updateUserRole(userId: string, roleKey: string): Promise<void> {
+  const role = await db.query.roles.findFirst({ where: eq(roles.key, roleKey), columns: { id: true } });
+  if (!role) throw new ApiError(400, "INVALID_ROLE", "The selected role does not exist.");
+
+  const [existing] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(and(eq(users.id, userId), isNull(users.deletedAt)))
+    .limit(1);
+  if (!existing) throw new ApiError(404, "USER_NOT_FOUND", "User not found.");
+
+  await db.transaction(async (tx) => {
+    await tx.delete(userRoles).where(eq(userRoles.userId, userId));
+    await tx.insert(userRoles).values({ userId, roleId: role.id });
+  });
+}
+
+export async function changeUserPassword(
+  userId: string,
+  password: string,
+  mustChangePassword = false,
+): Promise<void> {
+  const [existing] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(and(eq(users.id, userId), isNull(users.deletedAt)))
+    .limit(1);
+  if (!existing) throw new ApiError(404, "USER_NOT_FOUND", "User not found.");
+
+  await db
+    .update(users)
+    .set({ passwordHash: await hashPassword(password), passwordChangedAt: new Date(), mustChangePassword })
+    .where(eq(users.id, userId));
+  await db.delete(sessions).where(eq(sessions.userId, userId));
+}
+
+export async function softDeleteUser(userId: string): Promise<void> {
+  const [existing] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(and(eq(users.id, userId), isNull(users.deletedAt)))
+    .limit(1);
+  if (!existing) throw new ApiError(404, "USER_NOT_FOUND", "User not found.");
+
+  await db.update(users).set({ deletedAt: new Date() }).where(eq(users.id, userId));
+  await db.delete(sessions).where(eq(sessions.userId, userId));
+}
+
+function temporaryPassword(): string {
+  return `${randomBytes(12).toString("base64url")}aA1!`;
+}
+
+export async function resetUserPassword(userId: string): Promise<string> {
+  const password = temporaryPassword();
+  await changeUserPassword(userId, password, true);
+  return password;
+}
+
+export async function findUserIds(filters: {
+  search?: string;
+  status?: UserStatusFilter;
+  role?: string;
+}): Promise<string[]> {
+  const conditions: (SQL | undefined)[] = [isNull(users.deletedAt)];
+  if (filters.search) {
+    const term = `%${filters.search}%`;
+    conditions.push(or(ilike(users.fullName, term), ilike(users.email, term)));
+  }
+  if (filters.status === "active") conditions.push(and(eq(users.isActive, true), eq(users.isBanned, false)));
+  if (filters.status === "inactive") conditions.push(eq(users.isActive, false));
+  if (filters.status === "banned") conditions.push(eq(users.isBanned, true));
+  if (filters.role) {
+    conditions.push(sql`exists (
+      select 1 from ${userRoles}
+      inner join ${roles} on ${eq(userRoles.roleId, roles.id)}
+      where ${eq(userRoles.userId, users.id)} and ${eq(roles.key, filters.role)}
+    )`);
+  }
+  const rows = await db.select({ id: users.id }).from(users).where(and(...conditions));
+  return rows.map((row) => row.id);
 }

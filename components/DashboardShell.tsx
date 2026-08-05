@@ -367,7 +367,7 @@ export default function DashboardShell({
         <span className="h-6 w-px bg-border-primary" aria-hidden="true" />
         <nav aria-label={t("dashboard.topbar.breadcrumbLabel")} className="flex min-w-0 items-center gap-2 text-body-sm">
           <span className="truncate text-content-tertiary">{t("dashboard.topbar.access")}</span>
-          <ChevronLeft className="size-4 shrink-0 text-content-tertiary rtl:rotate-180" aria-hidden="true" />
+          <ChevronLeft className="size-4 shrink-0 text-content-tertiary rtl-mirror" aria-hidden="true" />
           <span className="truncate font-bold text-content-primary">
             {pathname.startsWith("/dashboard/users") ? t("users.heading") : t("dashboard.topbar.dashboard")}
           </span>

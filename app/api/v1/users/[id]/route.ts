@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { withSecurity, jsonError, jsonOk } from "@/lib/api/security";
-import { updateUserStatus } from "@/lib/users/service";
+import { softDeleteUser, updateUserStatus } from "@/lib/users/service";
 import { updateUserStatusSchema } from "@/lib/validation/user";
 
 export const runtime = "nodejs";
@@ -33,6 +33,17 @@ export const PATCH = withSecurity(
     }
 
     await updateUserStatus(targetId, patch);
+    return jsonOk({ ok: true });
+  },
+);
+
+export const DELETE = withSecurity(
+  { auth: "required", permissions: "users.manage", audit: true },
+  async (_request, ctx) => {
+    const targetId = ctx.params?.id;
+    if (!targetId || !z.uuid().safeParse(targetId).success) return jsonError("INVALID_USER_ID", "Invalid user id.", 400);
+    if (ctx.session?.user.id === targetId) return jsonError("SELF_LOCKOUT", "You cannot delete your own account.", 400);
+    await softDeleteUser(targetId);
     return jsonOk({ ok: true });
   },
 );

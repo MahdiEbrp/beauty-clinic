@@ -270,7 +270,7 @@ export default function RegisterForm() {
                       showPassword ? t("register.hidePassword") : t("register.showPassword")
                     }
                     aria-pressed={showPassword}
-                    className="absolute top-1/2 -translate-y-1/2 inset-e-3 inline-flex items-center justify-center w-11 h-11 rounded-control text-content-secondary transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    className="absolute top-1/2 -translate-y-1/2 inset-s-3 inline-flex items-center justify-center w-11 h-11 rounded-control text-content-secondary transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                   >
                     {showPassword ? (
                       <EyeOff className="w-5 h-5" strokeWidth={2} aria-hidden="true" />

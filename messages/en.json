@@ -500,7 +500,7 @@
     "heading": "Users",
     "description": "Manage registered accounts, their status and access.",
     "eyebrow": "Access management",
-    "activeCount": "active users",
+    "activeCount": "{active} of {total} active users",
     "syncStatus": "Last synced just now",
     "filterLabel": "Filter users",
     "resultsLabel": "results",
@@ -551,7 +551,11 @@
       "ban": "Ban",
       "unban": "Unban",
       "selfNotice": "This is your account; status changes are unavailable"
-      ,"menu": "Open user actions"
+      ,"menu": "Open user actions",
+      "changeRole": "Change role",
+      "changePassword": "Change password",
+      "delete": "Delete user",
+      "deleteConfirm": "Delete {name}?"
     },
     "banDialog": {
       "title": "Ban {name}?",
@@ -565,7 +569,8 @@
     },
     "dialog": {
       "cancel": "Cancel",
-      "confirm": "Confirm"
+      "confirm": "Confirm",
+      "close": "Close"
     },
     "pagination": {
       "showing": "Showing {from}–{to} of {total}",
@@ -610,7 +615,60 @@
       "discardTitle": "Discard unsaved changes?",
       "discardDescription": "The information you entered will be lost. Do you want to leave?",
       "discardConfirm": "Leave without saving"
+    },
+    "changePassword": {
+      "title": "Change password",
+      "description": "Set a new password for {name}.",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "submit": "Save password"
+    },
+    "changeRole": {
+      "title": "Change user role",
+      "description": "Choose a new role for {name}.",
+      "submit": "Save role"
+    },
+    "bulk": {
+      "selected": "{count} users selected",
+      "selectedFiltered": "All {count} filtered results selected",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "ban": "Ban",
+      "unban": "Unban",
+      "changeRole": "Change role",
+      "resetPassword": "Reset passwords",
+      "delete": "Delete users",
+      "apply": "Apply action",
+      "clear": "Clear selection",
+      "pageSelected": "All users on this page are selected.",
+      "selectFiltered": "Select all {count} filtered results",
+      "selectUser": "Select {name}",
+      "selectPage": "Select users on this page",
+      "confirm": {
+        "ban": "Ban the selected users?",
+        "delete": "Soft-delete the selected users?",
+        "reset-password": "Generate temporary passwords for the selected users?"
+      },
+      "error": "The bulk action failed.",
+      "resultTitle": "Bulk action result",
+      "resultDescription": "Temporary passwords are shown only at this step.",
+      "temporaryPassword": "Temporary password",
+      "copy": "Copy passwords",
+      "download": "Download passwords",
+      "failureCount": "{count} operations failed."
     }
+  },
+  "resetPassword": {
+    "eyebrow": "Account security",
+    "title": "Password change required",
+    "description": "Hi {name}, set a new password to continue.",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "togglePassword": "Show or hide password",
+    "save": "Save and continue",
+    "saving": "Saving...",
+    "invalid": "Use a valid password and make sure both fields match.",
+    "error": "The password could not be changed. Try again."
   },
   "forbidden": {
     "title": "Access Denied",

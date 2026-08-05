@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations, useFormatter } from "next-intl";
 import {
@@ -19,10 +19,18 @@ import {
   UserCheck,
   UserX,
   Users as UsersIcon,
+  Check,
+  Minus,
+  KeyRound,
+  Trash2,
+  UserCog,
+  Download,
+  Copy,
 } from "lucide-react";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { AdminUser, ListUsersResult } from "@/lib/users/service";
 import AddUserModal from "@/components/AddUserModal";
+import ChangePasswordDialog from "@/components/ChangePasswordDialog";
 import {
   Dialog,
   DialogClose,
@@ -36,6 +44,7 @@ import {
 type StatusFilter = "all" | "active" | "inactive" | "banned";
 type RoleFilter = "all" | "admin" | "doctor" | "receptionist" | "customer";
 type ConfirmAction = "ban" | "deactivate";
+type BulkAction = "activate" | "deactivate" | "ban" | "unban" | "change-role" | "delete" | "reset-password";
 
 function initials(name: string): string {
   return name
@@ -45,6 +54,17 @@ function initials(name: string): string {
     .map((part) => part[0]!.toUpperCase())
     .join("");
 }
+
+const SelectionCheckbox = forwardRef<HTMLInputElement, { checked: boolean; indeterminate?: boolean; onChange: () => void; label: string }>(function SelectionCheckbox({ checked, indeterminate = false, onChange, label }, ref) {
+  return (
+    <label className="relative inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-control focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent">
+      <input ref={ref} type="checkbox" checked={checked} onChange={onChange} aria-label={label} className="peer absolute inset-0 z-10 cursor-pointer opacity-0" />
+      <span className={`inline-flex size-4 items-center justify-center rounded-[0.3rem] border transition-colors ${checked || indeterminate ? "border-accent bg-accent text-content-contrast" : "border-border-interactive bg-surface-secondary text-transparent"}`} aria-hidden="true">
+        {checked ? <Check className="size-3" strokeWidth={3} /> : indeterminate ? <Minus className="size-3" strokeWidth={3} /> : null}
+      </span>
+    </label>
+  );
+});
 
 export default function UsersContent({
   user: currentUser,
@@ -70,12 +90,30 @@ export default function UsersContent({
   const [addOpen, setAddOpen] = useState(false);
   const [addError, setAddError] = useState<string | null>(null);
   const [addSuccess, setAddSuccess] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectionScope, setSelectionScope] = useState<"page" | "filtered">("page");
+  const [bulkAction, setBulkAction] = useState<BulkAction>("activate");
+  const [bulkRole, setBulkRole] = useState("");
+  const [bulkResult, setBulkResult] = useState<{ temporaryPasswords: Array<{ id: string; password: string }>; failures: Array<{ id: string; code: string }> } | null>(null);
+  const [passwordTarget, setPasswordTarget] = useState<AdminUser | null>(null);
+  const [roleTarget, setRoleTarget] = useState<AdminUser | null>(null);
+  const [roleValue, setRoleValue] = useState("");
+  const selectAllRef = useRef<HTMLInputElement>(null);
   const [actionMenu, setActionMenu] = useState<{ row: AdminUser; top: number; left: number; } | null>(null);
   const actionMenuRef = useRef<HTMLDivElement>(null);
   const firstRun = useRef(true);
 
   const canManage = currentUser.permissions.includes("users.manage");
   const canWrite = currentUser.permissions.includes("users.write");
+
+  const visibleIds = data.items.map((item) => item.id);
+  const selectedVisibleCount = visibleIds.filter((id) => selectedIds.includes(id)).length;
+  const allVisibleSelected = visibleIds.length > 0 && selectedVisibleCount === visibleIds.length;
+
+  useEffect(() => {
+    if (!selectAllRef.current) return;
+    selectAllRef.current.indeterminate = selectedVisibleCount > 0 && !allVisibleSelected;
+  }, [selectedVisibleCount, allVisibleSelected]);
 
   const load = useCallback(
     async (params: { search: string; status: StatusFilter; role: RoleFilter; page: number; }) => {
@@ -197,6 +235,80 @@ export default function UsersContent({
   const roleLabel = (role: string) =>
     t.has(`users.roles.${role}`) ? t(`users.roles.${role}`) : role;
 
+  const roleClass = (role: string) => {
+    if (role === "admin") return "border-accent/25 bg-accent/10 text-accent";
+    if (role === "doctor") return "border-copper/30 bg-copper/10 text-copper-strong";
+    if (role === "receptionist") return "border-success/25 bg-success/10 text-success";
+    return "border-border-primary bg-surface-tertiary text-content-secondary";
+  };
+
+  const toggleUserSelection = (id: string) => {
+    setSelectionScope("page");
+    setSelectedIds((current) => current.includes(id) ? current.filter((value) => value !== id) : [...current, id]);
+  };
+
+  const togglePageSelection = () => {
+    setSelectionScope("page");
+    setSelectedIds((current) => allVisibleSelected
+      ? current.filter((id) => !visibleIds.includes(id))
+      : [...new Set([...current, ...visibleIds])]);
+  };
+
+  const selectFilteredResults = () => {
+    setSelectionScope("filtered");
+    setSelectedIds(visibleIds);
+  };
+
+  const clearSelection = () => {
+    setSelectedIds([]);
+    setSelectionScope("page");
+  };
+
+  const temporaryPasswordText = bulkResult?.temporaryPasswords.map((item) => `${item.id}\t${item.password}`).join("\n") ?? "";
+  const copyTemporaryPasswords = async () => {
+    await navigator.clipboard.writeText(temporaryPasswordText);
+  };
+  const downloadTemporaryPasswords = () => {
+    const blob = new Blob([temporaryPasswordText], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "temporary-passwords.txt";
+    anchor.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const runBulkAction = async () => {
+    if (!selectedIds.length && selectionScope === "page") return;
+    if (bulkAction === "change-role" && !bulkRole) return;
+    if (["ban", "delete", "reset-password"].includes(bulkAction) && !window.confirm(t(`users.bulk.confirm.${bulkAction}`))) return;
+    setBusyId("bulk");
+    setActionError(null);
+    try {
+      const response = await fetch("/api/v1/users/bulk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          action: bulkAction,
+          scope: selectionScope,
+          ids: selectionScope === "page" ? selectedIds : undefined,
+          filters: selectionScope === "filtered" ? { search: debouncedSearch, status, role } : undefined,
+          roleKey: bulkAction === "change-role" ? bulkRole : undefined,
+        }),
+      });
+      if (!response.ok) throw new Error("bulk_failed");
+      const payload = (await response.json()) as { data: { temporaryPasswords: Array<{ id: string; password: string }>; failures: Array<{ id: string; code: string }> } };
+      setBulkResult(payload.data.temporaryPasswords.length || payload.data.failures.length ? payload.data : null);
+      clearSelection();
+      await load({ search: debouncedSearch, status, role, page });
+    } catch {
+      setActionError(t("users.bulk.error"));
+    } finally {
+      setBusyId(null);
+    }
+  };
+
   const statusOf = (row: AdminUser): "active" | "inactive" | "banned" => {
     if (row.isBanned) return "banned";
     return row.isActive ? "active" : "inactive";
@@ -248,6 +360,15 @@ export default function UsersContent({
       });
     }
 
+    if (!isSelf) {
+      buttons.push({ key: "role", labelKey: "users.actions.changeRole", onClick: () => { setRoleTarget(row); setRoleValue(row.roles[0] ?? ""); } });
+      buttons.push({ key: "password", labelKey: "users.actions.changePassword", onClick: () => setPasswordTarget(row) });
+      buttons.push({ key: "delete", labelKey: "users.actions.delete", danger: true, onClick: () => {
+        if (!window.confirm(t("users.actions.deleteConfirm", { name: row.fullName }))) return;
+        void deleteUser(row);
+      } });
+    }
+
     return buttons;
   };
 
@@ -262,7 +383,7 @@ export default function UsersContent({
             ? null
             : {
               row,
-              top: Math.min(rect.bottom + 8, window.innerHeight - 16),
+              top: rect.bottom + 8 + 360 > window.innerHeight - 16 ? Math.max(16, rect.top - 368) : rect.bottom + 8,
               left: Math.max(16, Math.min(rect.right - menuWidth, window.innerWidth - menuWidth - 16)),
             },
         );
@@ -275,6 +396,20 @@ export default function UsersContent({
       <MoreVertical className="size-5" aria-hidden="true" />
     </button>
   );
+
+  const deleteUser = async (row: AdminUser) => {
+    setBusyId(row.id);
+    setActionError(null);
+    try {
+      const response = await fetch(`/api/v1/users/${row.id}`, { method: "DELETE", credentials: "include" });
+      if (!response.ok) throw new Error("delete_failed");
+      await load({ search: debouncedSearch, status, role, page });
+    } catch {
+      setActionError(t("users.errors.action"));
+    } finally {
+      setBusyId(null);
+    }
+  };
 
   const totalPages = data.totalPages;
   const from = data.total === 0 ? 0 : (page - 1) * data.perPage + 1;
@@ -316,7 +451,7 @@ export default function UsersContent({
         <div className="flex items-center justify-between gap-6 border-t border-border-primary pt-5 lg:border-s-2 lg:border-t-0 lg:ps-7 lg:pt-0">
           <div>
             <p className="text-heading-3 font-bold text-accent">{data.items.filter((item) => item.isActive && !item.isBanned).length}</p>
-            <p className="text-caption text-content-tertiary">{t("users.activeCount")}</p>
+            <p className="text-caption text-content-tertiary">{t("users.activeCount", { active: data.items.filter((item) => item.isActive && !item.isBanned).length, total: data.items.length })}</p>
           </div>
           <div className="text-end">
             <p className="text-caption font-semibold text-copper-strong">{t("users.syncStatus")}</p>
@@ -353,6 +488,7 @@ export default function UsersContent({
               onChange={(e) => {
                 setSearch(e.target.value);
                 setPage(1);
+                clearSelection();
               }}
               placeholder={t("users.searchPlaceholder")}
               aria-label={t("users.search")}
@@ -367,6 +503,7 @@ export default function UsersContent({
                 onChange={(e) => {
                   setStatus(e.target.value as StatusFilter);
                   setPage(1);
+                  clearSelection();
                 }}
                 className="min-h-11 w-full appearance-none rounded-control border border-form-input-border bg-form-input-bg py-2.5 ps-4 pe-10 text-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
@@ -383,7 +520,7 @@ export default function UsersContent({
             <span className="relative block w-full">
               <select
                 value={role}
-                onChange={(e) => { setRole(e.target.value as RoleFilter); setPage(1); }}
+                onChange={(e) => { setRole(e.target.value as RoleFilter); setPage(1); clearSelection(); }}
                 className="min-h-11 w-full appearance-none rounded-control border border-form-input-border bg-form-input-bg py-2.5 ps-4 pe-10 text-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <option value="all">{t("users.roleAll")}</option>
@@ -397,7 +534,7 @@ export default function UsersContent({
           {(status !== "all" || role !== "all" || search) && (
             <button
               type="button"
-              onClick={() => { setSearch(""); setStatus("all"); setRole("all"); setPage(1); }}
+              onClick={() => { setSearch(""); setStatus("all"); setRole("all"); setPage(1); clearSelection(); }}
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-control px-4 text-body-sm font-bold text-accent transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               <X className="size-4" aria-hidden="true" /> {t("users.clearFilters")}
@@ -442,6 +579,29 @@ export default function UsersContent({
           </div>
           <span className="border-s border-border-interactive ps-3 text-caption font-bold text-content-secondary">{statusSummary}</span>
         </div>
+        {selectedIds.length > 0 && (
+            <div className="flex min-h-14 flex-wrap items-center gap-3 border-b border-border-primary bg-accent-subtle/75 px-4 py-3 md:px-6">
+            <span className="text-body-sm font-bold text-accent">{selectionScope === "filtered" ? t("users.bulk.selectedFiltered", { count: data.total }) : t("users.bulk.selected", { count: selectedIds.length })}</span>
+            <select value={bulkAction} onChange={(event) => setBulkAction(event.target.value as BulkAction)} className="min-h-10 rounded-control border border-form-input-border bg-form-input-bg px-3 text-caption font-bold text-accent outline-none focus-visible:border-copper">
+              <option value="activate">{t("users.bulk.activate")}</option>
+              <option value="deactivate">{t("users.bulk.deactivate")}</option>
+              <option value="ban">{t("users.bulk.ban")}</option>
+              <option value="unban">{t("users.bulk.unban")}</option>
+              <option value="change-role">{t("users.bulk.changeRole")}</option>
+              <option value="reset-password">{t("users.bulk.resetPassword")}</option>
+              <option value="delete">{t("users.bulk.delete")}</option>
+            </select>
+            {bulkAction === "change-role" && <select value={bulkRole} onChange={(event) => setBulkRole(event.target.value)} className="min-h-10 rounded-control border border-form-input-border bg-form-input-bg px-3 text-caption font-bold text-accent outline-none focus-visible:border-copper"><option value="">{t("users.form.rolePlaceholder")}</option>{["admin", "doctor", "receptionist", "customer"].map((key) => <option key={key} value={key}>{roleLabel(key)}</option>)}</select>}
+            <button type="button" onClick={runBulkAction} disabled={busyId === "bulk"} className="inline-flex min-h-10 items-center gap-2 rounded-pill bg-accent px-4 text-caption font-bold text-content-contrast disabled:opacity-50">{busyId === "bulk" && <Loader2 className="size-4 animate-spin" />}{t("users.bulk.apply")}</button>
+            <button type="button" onClick={clearSelection} className="min-h-10 rounded-pill px-3 text-caption font-bold text-content-secondary hover:bg-surface-tertiary">{t("users.bulk.clear")}</button>
+          </div>
+        )}
+        {selectedIds.length > 0 && selectionScope === "page" && data.total > data.items.length && selectedVisibleCount === visibleIds.length && (
+          <div className="flex items-center justify-between gap-3 border-b border-border-primary px-4 py-2 text-caption text-content-secondary md:px-6">
+            <span>{t("users.bulk.pageSelected")}</span>
+            <button type="button" onClick={selectFilteredResults} className="font-bold text-copper-strong hover:underline">{t("users.bulk.selectFiltered", { count: data.total })}</button>
+          </div>
+        )}
         <div className="grid gap-3 py-3 md:hidden">
           {data.items.map((row) => {
             const state = statusOf(row);
@@ -449,6 +609,7 @@ export default function UsersContent({
               <article key={row.id} className="rounded-card border border-border-primary bg-surface-secondary p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-3">
+                  <SelectionCheckbox checked={selectedIds.includes(row.id)} onChange={() => toggleUserSelection(row.id)} label={t("users.bulk.selectUser", { name: row.fullName })} />
                     <span className="flex size-11 shrink-0 items-center justify-center rounded-pill border border-border-primary bg-surface-tertiary text-body-sm font-bold text-copper-strong" aria-hidden="true">{initials(row.fullName)}</span>
                     <div className="min-w-0">
                       <p className="truncate text-body font-bold text-accent">{row.fullName}</p>
@@ -462,10 +623,10 @@ export default function UsersContent({
                     <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
                     {t(`users.statuses.${state}`)}
                   </span>
-                  {row.roles.map((item) => <span key={item} className="inline-flex items-center rounded-control bg-surface-tertiary px-2 py-0.5 text-caption font-medium text-content-secondary">{roleLabel(item)}</span>)}
+                  {row.roles.map((item) => <span key={item} className={`inline-flex items-center rounded-control border px-2 py-0.5 text-caption font-medium ${roleClass(item)}`}>{roleLabel(item)}</span>)}
                 </div>
                 <dl className="mt-4 grid grid-cols-2 gap-3 border-t border-border-primary pt-4 text-caption">
-                  <div><dt className="text-content-tertiary">{t("users.table.lastLogin")}</dt><dd className="mt-1 text-content-secondary">{row.lastLoginAt ? format.relativeTime(row.lastLoginAt, new Date()) : t("users.never")}</dd></div>
+                  <div><dt className="text-content-tertiary">{t("users.table.lastLogin")}</dt><dd className={`mt-1 ${row.lastLoginAt ? "text-content-secondary" : "text-content-tertiary italic"}`}>{row.lastLoginAt ? format.relativeTime(row.lastLoginAt, new Date()) : t("users.never")}</dd></div>
                   <div><dt className="text-content-tertiary">{t("users.table.phone")}</dt><dd className={`mt-1 ${row.phone ? "text-content-secondary" : "text-content-tertiary"}`} dir="ltr">{row.phone ?? "—"}</dd></div>
                 </dl>
               </article>
@@ -476,7 +637,10 @@ export default function UsersContent({
           <table className="w-full min-w-155 table-fixed text-start">
             <thead>
               <tr className="border-b border-border-primary bg-surface-tertiary/30 text-caption text-content-secondary">
-                <th scope="col" className="w-[55%] px-6 py-4 text-start font-bold xl:w-[38%]">
+                <th scope="col" className="w-12 px-4 py-4 text-start font-bold">
+                  <SelectionCheckbox ref={selectAllRef} checked={allVisibleSelected} indeterminate={selectedVisibleCount > 0 && !allVisibleSelected} onChange={togglePageSelection} label={t("users.bulk.selectPage")} />
+                </th>
+                <th scope="col" className="w-[50%] px-2 py-4 text-start font-bold xl:w-[36%]">
                   {t("users.table.user")}
                 </th>
                 <th scope="col" className="hidden w-[18%] px-4 py-4 text-start font-bold xl:table-cell">
@@ -501,7 +665,10 @@ export default function UsersContent({
                 const isSelf = row.id === currentUser.id;
                 return (
                   <tr key={row.id} className="transition-colors hover:bg-surface-primary/60">
-                    <td className="px-6 py-5">
+                    <td className="px-4 py-5">
+                      <SelectionCheckbox checked={selectedIds.includes(row.id)} onChange={() => toggleUserSelection(row.id)} label={t("users.bulk.selectUser", { name: row.fullName })} />
+                    </td>
+                    <td className="px-2 py-5">
                       <div className="flex items-center gap-3 min-w-0">
                         <span
                           className="flex size-12 shrink-0 items-center justify-center rounded-pill border border-border-primary bg-surface-tertiary text-body-sm font-bold text-copper-strong"
@@ -536,7 +703,7 @@ export default function UsersContent({
                           row.roles.map((role) => (
                             <span
                               key={role}
-                              className="inline-flex items-center rounded-control bg-surface-tertiary px-2 py-0.5 text-caption font-medium text-content-secondary"
+                              className={`inline-flex items-center rounded-control border px-2 py-0.5 text-caption font-medium ${roleClass(role)}`}
                             >
                               {roleLabel(role)}
                             </span>
@@ -560,7 +727,7 @@ export default function UsersContent({
                       <p className="text-body-sm text-content-secondary whitespace-nowrap">
                         {row.lastLoginAt
                           ? format.relativeTime(row.lastLoginAt, new Date())
-                          : t("users.never")}
+                          : <span className="text-content-tertiary italic">{t("users.never")}</span>}
                       </p>
                     </td>
                     {canManage && (
@@ -613,7 +780,7 @@ export default function UsersContent({
               <button
                 type="button"
                 disabled={page <= 1}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                onClick={() => { clearSelection(); setPage((p) => Math.max(1, p - 1)); }}
                 className="inline-flex items-center gap-1.5 px-4 py-2 min-h-10 rounded-pill text-body-sm font-semibold text-accent border border-border-interactive bg-transparent transition-colors hover:bg-surface-tertiary disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <ChevronLeft className="w-4 h-4 rtl-mirror" strokeWidth={2} aria-hidden="true" />
@@ -625,7 +792,7 @@ export default function UsersContent({
               <button
                 type="button"
                 disabled={page >= totalPages}
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                onClick={() => { clearSelection(); setPage((p) => Math.min(totalPages, p + 1)); }}
                 className="inline-flex items-center gap-1.5 px-4 py-2 min-h-10 rounded-pill text-body-sm font-semibold text-accent border border-border-interactive bg-transparent transition-colors hover:bg-surface-tertiary disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <span>{t("users.pagination.next")}</span>
@@ -643,7 +810,7 @@ export default function UsersContent({
             role="menu"
             aria-label={t("users.actions.menu")}
             onMouseDown={(event) => event.stopPropagation()}
-            className="fixed grid min-w-52 gap-1 rounded-card border border-border-primary bg-surface-secondary p-2 shadow-elevation-4"
+            className="fixed grid max-h-[min(23rem,calc(100dvh-2rem))] min-w-52 gap-1 overflow-y-auto overscroll-contain rounded-card border border-border-primary bg-surface-secondary p-2 shadow-elevation-4"
             style={{ top: actionMenu.top, left: actionMenu.left }}
           >
             {rowActionButtons(actionMenu.row).map((button) => (
@@ -663,6 +830,9 @@ export default function UsersContent({
                 {button.key === "deactivate" && <UserX className="size-4" aria-hidden="true" />}
                 {button.key === "activate" && <UserCheck className="size-4" aria-hidden="true" />}
                 {button.key === "self" && <ShieldCheck className="size-4" aria-hidden="true" />}
+                {button.key === "role" && <UserCog className="size-4" aria-hidden="true" />}
+                {button.key === "password" && <KeyRound className="size-4" aria-hidden="true" />}
+                {button.key === "delete" && <Trash2 className="size-4" aria-hidden="true" />}
                 <span>{t(button.labelKey)}</span>
               </button>
             ))}
@@ -746,6 +916,27 @@ export default function UsersContent({
               <span>{t("users.dialog.confirm")}</span>
             </button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={roleTarget !== null} onOpenChange={(open) => { if (!open) setRoleTarget(null); }}>
+        <DialogContent closeLabel={t("users.dialog.cancel")} className="max-w-sm">
+          <DialogHeader><DialogTitle className="text-accent">{t("users.changeRole.title")}</DialogTitle><DialogDescription>{roleTarget && t("users.changeRole.description", { name: roleTarget.fullName })}</DialogDescription></DialogHeader>
+          <select value={roleValue} onChange={(event) => setRoleValue(event.target.value)} className="min-h-11 w-full rounded-control border border-form-input-border bg-form-input-bg px-4 text-body text-accent outline-none focus-visible:border-copper">
+            <option value="">{t("users.form.rolePlaceholder")}</option>{["admin", "doctor", "receptionist", "customer"].map((key) => <option key={key} value={key}>{roleLabel(key)}</option>)}
+          </select>
+          <DialogFooter><DialogClose className="inline-flex min-h-11 items-center justify-center rounded-pill bg-surface-tertiary px-5 text-body-sm font-bold text-accent">{t("users.dialog.cancel")}</DialogClose><button type="button" disabled={!roleValue || busyId !== null} onClick={async () => { if (!roleTarget || !roleValue) return; setBusyId(roleTarget.id); try { const response = await fetch(`/api/v1/users/${roleTarget.id}/role`, { method: "PATCH", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ roleKey: roleValue }) }); if (!response.ok) throw new Error("role_failed"); setRoleTarget(null); await load({ search: debouncedSearch, status, role, page }); } catch { setRoleTarget(null); setActionError(t("users.errors.action")); } finally { setBusyId(null); } }} className="inline-flex min-h-11 items-center justify-center rounded-pill bg-accent px-5 text-body-sm font-bold text-content-contrast disabled:opacity-50">{t("users.changeRole.submit")}</button></DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <ChangePasswordDialog user={passwordTarget} onOpenChange={(open) => { if (!open) setPasswordTarget(null); }} onSuccess={async () => { await load({ search: debouncedSearch, status, role, page }); }} onError={(message) => { setPasswordTarget(null); setActionError(message); }} />
+
+      <Dialog open={bulkResult !== null} onOpenChange={(open) => { if (!open) setBulkResult(null); }}>
+        <DialogContent closeLabel={t("users.dialog.cancel")} className="max-w-lg">
+          <DialogHeader><DialogTitle className="text-accent">{t("users.bulk.resultTitle")}</DialogTitle><DialogDescription>{t("users.bulk.resultDescription")}</DialogDescription></DialogHeader>
+          {bulkResult && bulkResult.temporaryPasswords.length > 0 && <div className="max-h-64 overflow-y-auto rounded-control border border-border-primary"><div className="grid grid-cols-[1fr_auto] gap-x-4 border-b border-border-primary bg-surface-tertiary/30 px-3 py-2 text-caption font-bold text-content-secondary"><span>{t("users.table.user")}</span><span>{t("users.bulk.temporaryPassword")}</span></div>{bulkResult.temporaryPasswords.map((item) => <div key={item.id} className="grid grid-cols-[1fr_auto] gap-x-4 border-b border-border-primary px-3 py-2 font-mono text-caption last:border-b-0"><span className="text-content-tertiary">{item.id.slice(0, 8)}</span><span className="text-accent">{item.password}</span></div>)}</div>}
+          {bulkResult && bulkResult.failures.length > 0 && <p className="text-body-sm text-error">{t("users.bulk.failureCount", { count: bulkResult.failures.length })}</p>}
+          <DialogFooter>{bulkResult && bulkResult.temporaryPasswords.length > 0 && <><button type="button" onClick={() => void copyTemporaryPasswords()} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill border border-border-interactive px-4 text-body-sm font-bold text-accent"><Copy className="size-4" />{t("users.bulk.copy")}</button><button type="button" onClick={downloadTemporaryPasswords} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill border border-border-interactive px-4 text-body-sm font-bold text-accent"><Download className="size-4" />{t("users.bulk.download")}</button></>}<DialogClose className="inline-flex min-h-11 items-center justify-center rounded-pill bg-surface-tertiary px-5 text-body-sm font-bold text-accent">{t("users.dialog.close")}</DialogClose></DialogFooter>
         </DialogContent>
       </Dialog>
 
