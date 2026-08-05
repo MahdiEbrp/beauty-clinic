@@ -88,13 +88,13 @@ export default function DashboardContent({
           </span>
         </div>
 
-        <p className="text-caption font-bold uppercase tracking-wider text-copper-strong mb-3">
+        <p className="text-dash-caption font-bold uppercase tracking-wider text-copper-strong mb-3">
           {t("dashboard.eyebrow")}
         </p>
-        <h1 className="text-heading-1 font-bold text-accent mb-2">
+        <h1 className="text-dash-display font-bold text-accent mb-2">
           {t("dashboard.hello", { name: user.fullName })}
         </h1>
-        <p className="text-body-sm text-content-tertiary" dir="ltr">
+        <p className="text-dash-body-sm text-content-tertiary" dir="ltr">
           {user.email}
         </p>
 
@@ -103,7 +103,7 @@ export default function DashboardContent({
             {user.roles.map((role) => (
               <span
                 key={role}
-                className="inline-flex items-center px-3 py-1 bg-accent-subtle text-accent border border-border-primary rounded-pill text-caption font-bold"
+                className="inline-flex items-center px-3 py-1 bg-accent-subtle text-accent border border-border-primary rounded-pill text-dash-caption font-bold"
               >
                 {roleLabel(role)}
               </span>
@@ -119,11 +119,11 @@ export default function DashboardContent({
             strokeWidth={2}
             aria-hidden="true"
           />
-          <h2 className="text-heading-2 font-bold text-accent">
+          <h2 className="text-dash-title font-bold text-accent">
             {t("dashboard.sessions.heading")}
           </h2>
         </div>
-        <p className="text-body-sm text-content-secondary mb-8">
+        <p className="text-dash-body-sm text-content-secondary mb-8">
           {t("dashboard.sessions.description")}
         </p>
 
@@ -139,17 +139,17 @@ export default function DashboardContent({
                   <DeviceIcon kind={session.deviceKind} />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="flex flex-wrap items-center gap-2 text-body font-semibold text-accent">
+                  <p className="flex flex-wrap items-center gap-2 text-dash-body font-semibold text-accent">
                     <span className="truncate">
                       {session.device || t("dashboard.sessions.unknownDevice")}
                     </span>
                     {isCurrent && (
-                      <span className="inline-flex items-center px-2.5 py-0.5 bg-accent-subtle text-accent rounded-pill text-caption font-bold whitespace-nowrap">
+                      <span className="inline-flex items-center px-2.5 py-0.5 bg-accent-subtle text-accent rounded-pill text-dash-caption font-bold whitespace-nowrap">
                         {t("dashboard.sessions.thisDevice")}
                       </span>
                     )}
                   </p>
-                  <p className="text-body-sm text-content-tertiary mt-1">
+                  <p className="text-dash-body-sm text-content-tertiary mt-1">
                     {session.ip && (
                       <span dir="ltr" className="inline-block">
                         {t("dashboard.sessions.ipLabel", { ip: session.ip })}
@@ -162,7 +162,7 @@ export default function DashboardContent({
                       date: format.relativeTime(session.lastSeenAt, new Date()),
                     })}
                   </p>
-                  <p className="text-caption text-content-tertiary mt-0.5">
+                  <p className="text-dash-caption text-content-tertiary mt-0.5">
                     {t("dashboard.sessions.signedIn", {
                       date: dateTime(session.createdAt),
                     })}
@@ -176,7 +176,7 @@ export default function DashboardContent({
         {revokeError && (
           <div
             role="alert"
-            className="mt-6 bg-error/10 border border-error/40 rounded-control p-4 text-body-sm text-error font-medium"
+            className="mt-6 bg-error/10 border border-error/40 rounded-control p-4 text-dash-body-sm text-error font-medium"
           >
             {revokeError}
           </div>
@@ -194,7 +194,7 @@ export default function DashboardContent({
               <DialogTrigger asChild>
                 <button
                   type="button"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 min-h-12 text-body-sm bg-transparent border border-border-interactive text-accent rounded-pill font-bold transition-all duration-200 hover:bg-surface-tertiary hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-95"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 min-h-12 text-dash-body-sm bg-transparent border border-border-interactive text-accent rounded-pill font-bold transition-all duration-200 hover:bg-surface-tertiary hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-95"
                 >
                   <LogOut className="w-4 h-4 rtl-mirror" strokeWidth={2} aria-hidden="true" />
                   <span>{t("dashboard.sessions.revokeOthers")}</span>
@@ -205,7 +205,7 @@ export default function DashboardContent({
                 className="max-w-md"
               >
                 <DialogHeader>
-                  <DialogTitle className="text-accent text-body-lg">
+                  <DialogTitle className="text-accent text-dash-heading">
                     {t("dashboard.sessions.revokeTitle")}
                   </DialogTitle>
                   <DialogDescription>
@@ -215,7 +215,7 @@ export default function DashboardContent({
                 <DialogFooter className="mt-4">
                   <DialogClose
                     disabled={revoking}
-                    className="inline-flex items-center justify-center px-6 py-3 min-h-11 text-body-sm bg-surface-tertiary text-accent rounded-pill font-semibold transition-colors hover:bg-surface-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60"
+                    className="inline-flex items-center justify-center px-6 py-3 min-h-11 text-dash-body-sm bg-surface-tertiary text-accent rounded-pill font-semibold transition-colors hover:bg-surface-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60"
                   >
                     {t("dashboard.sessions.cancel")}
                   </DialogClose>
@@ -224,7 +224,7 @@ export default function DashboardContent({
                     onClick={handleRevokeOthers}
                     disabled={revoking}
                     aria-busy={revoking}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3 min-h-11 text-body-sm bg-accent text-content-contrast rounded-pill font-bold transition-all duration-200 hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-95 disabled:opacity-60"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 min-h-11 text-dash-body-sm bg-accent text-content-contrast rounded-pill font-bold transition-all duration-200 hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-95 disabled:opacity-60"
                   >
                     {revoking ? (
                       <>
@@ -239,7 +239,7 @@ export default function DashboardContent({
               </DialogContent>
             </Dialog>
           ) : (
-            <p className="text-body-sm text-content-tertiary">
+            <p className="text-dash-body-sm text-content-tertiary">
               {t("dashboard.sessions.noOthers")}
             </p>
           )}

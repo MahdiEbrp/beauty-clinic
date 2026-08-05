@@ -409,6 +409,7 @@ export default function UsersContent({
 
   const rowActions = (row: AdminUser) => {
     const buttons = rowActionButtons(row);
+    const selfButtons = buttons.filter((button) => button.key === "self");
     const statusButtons = buttons.filter((button) => ["activate", "deactivate", "unban"].includes(button.key));
     const accountButtons = buttons.filter((button) => ["role", "password"].includes(button.key));
     const dangerButtons = buttons.filter((button) => ["ban", "delete"].includes(button.key));
@@ -431,13 +432,15 @@ export default function UsersContent({
       </DropdownMenuItem>
     );
     return (
-      <DropdownMenu>
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <button type="button" disabled={syncingIds.has(row.id)} aria-label={t("users.actions.menu")} className="inline-flex size-11 shrink-0 items-center justify-center rounded-pill border border-border-interactive bg-surface-secondary p-0 text-accent shadow-elevation-1 transition hover:bg-surface-tertiary hover:shadow-elevation-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-40">
             <MoreVertical className="size-5" aria-hidden="true" />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          {selfButtons.length > 0 && <DropdownMenuGroup>{selfButtons.map(renderButton)}</DropdownMenuGroup>}
+          {selfButtons.length > 0 && (statusButtons.length > 0 || accountButtons.length > 0 || dangerButtons.length > 0) && <DropdownMenuSeparator />}
           <DropdownMenuGroup>{statusButtons.map(renderButton)}</DropdownMenuGroup>
           {statusButtons.length > 0 && accountButtons.length > 0 && <DropdownMenuSeparator />}
           <DropdownMenuGroup>{accountButtons.map(renderButton)}</DropdownMenuGroup>
@@ -466,30 +469,30 @@ export default function UsersContent({
     <div className="space-y-6 sm:space-y-7">
       <header className="grid gap-5 rounded-panel border border-border-primary bg-surface-secondary p-6 shadow-elevation-2 sm:p-7 lg:grid-cols-[1fr_auto] lg:items-end">
         <div>
-          <div className="mb-3 flex items-center gap-3 text-caption font-bold uppercase tracking-[0.14em] text-copper-strong">
+          <div className="mb-3 flex items-center gap-3 text-dash-caption font-bold uppercase tracking-[0.14em] text-copper-strong">
             <span className="size-2 rounded-full bg-copper" aria-hidden="true" />
             <span>{t("users.eyebrow")}</span>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-heading-2 font-bold tracking-tight text-accent">{t("users.heading")}</h1>
-            <span className="inline-flex items-center rounded-pill border border-border-primary bg-surface-tertiary px-3 py-1 text-caption font-bold text-content-secondary">
+            <h1 className="text-dash-display font-bold tracking-tight text-accent">{t("users.heading")}</h1>
+            <span className="inline-flex items-center rounded-pill border border-border-primary bg-surface-tertiary px-3 py-1 text-dash-caption font-bold text-content-secondary">
               {data.total} {t("users.resultsLabel")}
             </span>
           </div>
-          <p className="mt-2 max-w-2xl text-body-sm text-content-secondary">{t("users.description")}</p>
+          <p className="mt-2 max-w-2xl text-dash-body-sm text-content-secondary">{t("users.description")}</p>
         </div>
         <div className="flex items-center justify-between gap-6 border-t border-border-primary pt-5 lg:border-s-2 lg:border-t-0 lg:ps-7 lg:pt-0">
           <div>
-            <p className="text-heading-3 font-bold text-accent">{data.items.filter((item) => item.isActive && !item.isBanned).length}</p>
-            <p className="text-caption text-content-tertiary">{t("users.activeCount", { active: data.items.filter((item) => item.isActive && !item.isBanned).length, total: data.items.length })}</p>
+            <p className="text-dash-title font-bold text-accent">{data.items.filter((item) => item.isActive && !item.isBanned).length}</p>
+            <p className="text-dash-caption text-content-tertiary">{t("users.activeCount", { active: data.items.filter((item) => item.isActive && !item.isBanned).length, total: data.items.length })}</p>
           </div>
           <div className="text-end">
-            <p className="text-caption font-semibold text-copper-strong">{t("users.syncStatus")}</p>
+            <p className="text-dash-caption font-semibold text-copper-strong">{t("users.syncStatus")}</p>
             {canWrite && (
               <button
                 type="button"
                 onClick={() => { setAddError(null); setAddOpen(true); }}
-                className="mt-3 inline-flex min-h-11 items-center justify-center gap-2 rounded-pill bg-accent px-5 py-3 text-body-sm font-bold text-content-contrast shadow-elevation-1 transition hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="mt-3 inline-flex min-h-11 items-center justify-center gap-2 rounded-pill bg-accent px-5 py-3 text-dash-body-sm font-bold text-content-contrast shadow-elevation-1 transition hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <UserPlus className="size-4" aria-hidden="true" />
                 {t("users.add")}
@@ -502,7 +505,7 @@ export default function UsersContent({
       {/* Filters */}
       <section aria-labelledby="user-filters-heading" className="rounded-card border border-border-primary bg-surface-secondary/60 p-4 sm:p-5">
         <div className="mb-3 flex items-center justify-between gap-3">
-          <h2 id="user-filters-heading" className="text-body-sm font-bold text-accent">{t("users.filterLabel")}</h2>
+          <h2 id="user-filters-heading" className="text-dash-body-sm font-bold text-accent">{t("users.filterLabel")}</h2>
           {loading && <Loader2 className="size-4 animate-spin text-copper" aria-label={t("users.loading")} />}
         </div>
         <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_11rem_11rem_auto] md:items-end md:gap-4">
@@ -522,10 +525,10 @@ export default function UsersContent({
               }}
               placeholder={t("users.searchPlaceholder")}
               aria-label={t("users.search")}
-              className="w-full bg-form-input-bg border border-form-input-border rounded-control py-3 ps-12 pe-4 text-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="w-full bg-form-input-bg border border-form-input-border rounded-control py-3 ps-12 pe-4 text-dash-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             />
           </div>
-          <label className="grid gap-1 text-caption font-bold text-content-secondary">
+          <label className="grid gap-1 text-dash-caption font-bold text-content-secondary">
             <span className="whitespace-nowrap">{t("users.status")}</span>
             <span className="relative block w-full">
               <select
@@ -535,7 +538,7 @@ export default function UsersContent({
                   setPage(1);
                   clearSelection();
                 }}
-                className="min-h-11 w-full appearance-none rounded-control border border-form-input-border bg-form-input-bg py-2.5 ps-4 pe-10 text-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="min-h-11 w-full appearance-none rounded-control border border-form-input-border bg-form-input-bg py-2.5 ps-4 pe-10 text-dash-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <option value="all">{t("users.statusAll")}</option>
                 <option value="active">{t("users.statusActive")}</option>
@@ -545,13 +548,13 @@ export default function UsersContent({
               <ChevronDown className="pointer-events-none absolute inset-e-3 top-1/2 size-4 -translate-y-1/2 text-content-tertiary" aria-hidden="true" />
             </span>
           </label>
-          <label className="grid gap-1 text-caption font-bold text-content-secondary">
+          <label className="grid gap-1 text-dash-caption font-bold text-content-secondary">
             <span className="whitespace-nowrap">{t("users.role")}</span>
             <span className="relative block w-full">
               <select
                 value={role}
                 onChange={(e) => { setRole(e.target.value as RoleFilter); setPage(1); clearSelection(); }}
-                className="min-h-11 w-full appearance-none rounded-control border border-form-input-border bg-form-input-bg py-2.5 ps-4 pe-10 text-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="min-h-11 w-full appearance-none rounded-control border border-form-input-border bg-form-input-bg py-2.5 ps-4 pe-10 text-dash-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <option value="all">{t("users.roleAll")}</option>
                 {(["admin", "doctor", "receptionist", "customer"] as const).map((key) => (
@@ -565,7 +568,7 @@ export default function UsersContent({
             <button
               type="button"
               onClick={() => { setSearch(""); setStatus("all"); setRole("all"); setPage(1); clearSelection(); }}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-control px-4 text-body-sm font-bold text-accent transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-control px-4 text-dash-body-sm font-bold text-accent transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               <X className="size-4" aria-hidden="true" /> {t("users.clearFilters")}
             </button>
@@ -579,11 +582,11 @@ export default function UsersContent({
           role="alert"
           className="flex flex-wrap items-center justify-between gap-3 bg-error/10 border border-error/40 rounded-control p-4"
         >
-          <p className="text-body-sm text-error font-medium">{t("users.error")}</p>
+          <p className="text-dash-body-sm text-error font-medium">{t("users.error")}</p>
           <button
             type="button"
             onClick={() => load({ search: debouncedSearch, status, role, page })}
-            className="inline-flex items-center gap-2 px-4 py-2 min-h-9 rounded-pill text-body-sm font-bold text-error border border-error/40 hover:bg-error/20 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error"
+            className="inline-flex items-center gap-2 px-4 py-2 min-h-9 rounded-pill text-dash-body-sm font-bold text-error border border-error/40 hover:bg-error/20 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error"
           >
             <RotateCcw className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
             <span>{t("users.retry")}</span>
@@ -595,15 +598,15 @@ export default function UsersContent({
       <section className="overflow-hidden rounded-panel border border-border-primary bg-surface-secondary shadow-elevation-2" aria-label={t("users.heading")}>
         <div className="flex items-center justify-between gap-4 border-b border-border-primary bg-surface-secondary px-4 py-4 md:bg-surface-tertiary/20 md:px-6">
           <div>
-            <p className="text-body-sm font-bold text-accent">{t("users.heading")}</p>
-            <p className="mt-1 text-caption text-content-tertiary">{from}–{to} / {data.total}</p>
+            <p className="text-dash-body-sm font-bold text-accent">{t("users.heading")}</p>
+            <p className="mt-1 text-dash-caption text-content-tertiary">{from}–{to} / {data.total}</p>
           </div>
-          <span className="border-s border-border-interactive ps-3 text-caption font-bold text-content-secondary">{statusSummary}</span>
+          <span className="border-s border-border-interactive ps-3 text-dash-caption font-bold text-content-secondary">{statusSummary}</span>
         </div>
         {selectedIds.length > 0 && (
             <div className="flex min-h-14 flex-wrap items-center gap-3 border-b border-border-primary bg-accent-subtle/75 px-4 py-3 md:px-6">
-            <span className="text-body-sm font-bold text-accent">{selectionScope === "filtered" ? t("users.bulk.selectedFiltered", { count: data.total }) : t("users.bulk.selected", { count: selectedIds.length })}</span>
-            <select value={bulkAction} onChange={(event) => setBulkAction(event.target.value as BulkAction)} className={`min-h-10 rounded-control border bg-form-input-bg px-3 text-caption font-bold outline-none focus-visible:border-copper ${bulkDangerous ? "border-error/50 text-error" : "border-form-input-border text-accent"}`}>
+            <span className="text-dash-body-sm font-bold text-accent">{selectionScope === "filtered" ? t("users.bulk.selectedFiltered", { count: data.total }) : t("users.bulk.selected", { count: selectedIds.length })}</span>
+            <select value={bulkAction} onChange={(event) => setBulkAction(event.target.value as BulkAction)} className={`min-h-10 rounded-control border bg-form-input-bg px-3 text-dash-caption font-bold outline-none focus-visible:border-copper ${bulkDangerous ? "border-error/50 text-error" : "border-form-input-border text-accent"}`}>
               <option value="activate">{t("users.bulk.activate")}</option>
               <option value="deactivate">{t("users.bulk.deactivate")}</option>
               <option value="ban">{t("users.bulk.ban")}</option>
@@ -612,13 +615,13 @@ export default function UsersContent({
               <option value="reset-password">{t("users.bulk.resetPassword")}</option>
               <option value="delete">{t("users.bulk.delete")}</option>
             </select>
-            {bulkAction === "change-role" && <select value={bulkRole} onChange={(event) => setBulkRole(event.target.value)} className="min-h-10 rounded-control border border-form-input-border bg-form-input-bg px-3 text-caption font-bold text-accent outline-none focus-visible:border-copper"><option value="">{t("users.form.rolePlaceholder")}</option>{["admin", "doctor", "receptionist", "customer"].map((key) => <option key={key} value={key}>{roleLabel(key)}</option>)}</select>}
-            <button type="button" onClick={runBulkAction} disabled={busyId === "bulk"} className={`inline-flex min-h-10 items-center gap-2 rounded-pill px-4 text-caption font-bold text-content-contrast disabled:opacity-50 ${bulkDangerous ? "bg-error hover:bg-error/90" : "border border-border-interactive bg-surface-secondary text-accent hover:bg-surface-tertiary"}`}>{busyId === "bulk" && <Loader2 className="size-4 animate-spin" />}{t("users.bulk.apply")}</button>
-            <button type="button" onClick={clearSelection} className="min-h-10 rounded-pill px-3 text-caption font-bold text-content-secondary hover:bg-surface-tertiary">{t("users.bulk.clear")}</button>
+            {bulkAction === "change-role" && <select value={bulkRole} onChange={(event) => setBulkRole(event.target.value)} className="min-h-10 rounded-control border border-form-input-border bg-form-input-bg px-3 text-dash-caption font-bold text-accent outline-none focus-visible:border-copper"><option value="">{t("users.form.rolePlaceholder")}</option>{["admin", "doctor", "receptionist", "customer"].map((key) => <option key={key} value={key}>{roleLabel(key)}</option>)}</select>}
+            <button type="button" onClick={runBulkAction} disabled={busyId === "bulk"} className={`inline-flex min-h-10 items-center gap-2 rounded-pill px-4 text-dash-caption font-bold disabled:opacity-50 ${bulkDangerous ? "bg-error text-content-contrast hover:bg-error/90" : "border border-border-interactive bg-surface-secondary text-accent hover:bg-surface-tertiary"}`}>{busyId === "bulk" && <Loader2 className="size-4 animate-spin" />}{t("users.bulk.apply")}</button>
+            <button type="button" onClick={clearSelection} className="min-h-10 rounded-pill px-3 text-dash-caption font-bold text-content-secondary hover:bg-surface-tertiary">{t("users.bulk.clear")}</button>
           </div>
         )}
         {selectedIds.length > 0 && selectionScope === "page" && data.total > data.items.length && selectedVisibleCount === visibleIds.length && (
-          <div className="flex items-center justify-between gap-3 border-b border-border-primary px-4 py-2 text-caption text-content-secondary md:px-6">
+          <div className="flex items-center justify-between gap-3 border-b border-border-primary px-4 py-2 text-dash-caption text-content-secondary md:px-6">
             <span>{t("users.bulk.pageSelected")}</span>
             <button type="button" onClick={selectFilteredResults} className="font-bold text-copper-strong hover:underline">{t("users.bulk.selectFiltered", { count: data.total })}</button>
           </div>
@@ -632,22 +635,22 @@ export default function UsersContent({
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-3">
                     <SelectionCheckbox checked={selectedIds.includes(row.id)} disabled={row.id === currentUser.id || syncingIds.has(row.id)} onChange={() => toggleUserSelection(row.id)} label={row.id === currentUser.id ? t("users.bulk.selfNotSelectable") : t("users.bulk.selectUser", { name: row.fullName })} />
-                    <span className="flex size-11 shrink-0 items-center justify-center rounded-pill border border-border-primary bg-surface-tertiary text-body-sm font-bold text-copper-strong" aria-hidden="true">{initials(row.fullName)}</span>
+                    <span className="flex size-11 shrink-0 items-center justify-center rounded-pill border border-border-primary bg-surface-tertiary text-dash-body-sm font-bold text-copper-strong" aria-hidden="true">{initials(row.fullName)}</span>
                     <div className="min-w-0">
-                      <p className="truncate text-body font-bold text-accent">{row.fullName}</p>
-                      <p className="truncate text-caption text-content-tertiary" dir="ltr">{row.email}</p>
+                      <p className="truncate text-dash-body font-bold text-accent">{row.fullName}</p>
+                      <p className="truncate text-dash-caption text-content-tertiary" dir="ltr">{row.email}</p>
                     </div>
                   </div>
                   {canManage && <div className="shrink-0">{rowActions(row)}</div>}
                 </div>
                 <div className="mt-4 flex flex-wrap items-center gap-2">
-                  <span className={`inline-flex items-center gap-1.5 rounded-pill border px-2.5 py-1 text-caption font-bold ${statusClass[state]}`}>
+                  <span className={`inline-flex items-center gap-1.5 rounded-pill border px-2.5 py-1 text-dash-caption font-bold ${statusClass[state]}`}>
                     <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
                     {t(`users.statuses.${state}`)}
                   </span>
-                  {row.roles.map((item) => <span key={item} className={`inline-flex items-center rounded-control border px-2 py-0.5 text-caption font-medium ${roleClass(item)}`}>{roleLabel(item)}</span>)}
+                  {row.roles.map((item) => <span key={item} className={`inline-flex items-center rounded-control border px-2 py-0.5 text-dash-caption font-medium ${roleClass(item)}`}>{roleLabel(item)}</span>)}
                 </div>
-                <dl className="mt-4 grid grid-cols-2 gap-3 border-t border-border-primary pt-4 text-caption">
+                <dl className="mt-4 grid grid-cols-2 gap-3 border-t border-border-primary pt-4 text-dash-caption">
                   <div><dt className="text-content-tertiary">{t("users.table.lastLogin")}</dt><dd className={`mt-1 ${row.lastLoginAt ? "text-content-secondary" : "text-content-tertiary italic"}`}>{row.lastLoginAt ? format.relativeTime(row.lastLoginAt, new Date()) : t("users.never")}</dd></div>
                   <div><dt className="text-content-tertiary">{t("users.table.phone")}</dt><dd className={`mt-1 ${row.phone ? "text-content-secondary" : "text-content-tertiary"}`} dir="ltr">{row.phone ?? "—"}</dd></div>
                 </dl>
@@ -658,7 +661,7 @@ export default function UsersContent({
         <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-155 table-fixed text-start">
             <thead>
-              <tr className="border-b border-border-primary bg-surface-tertiary/30 text-caption text-content-secondary">
+              <tr className="border-b border-border-primary bg-surface-tertiary/30 text-dash-caption text-content-secondary">
                 <th scope="col" className="w-12 px-4 py-4 text-start font-bold">
                   <SelectionCheckbox ref={selectAllRef} checked={allVisibleSelected} indeterminate={selectedVisibleCount > 0 && !allVisibleSelected} disabled={visibleIds.length === 0} onChange={togglePageSelection} label={t("users.bulk.selectPage")} />
                 </th>
@@ -694,21 +697,21 @@ export default function UsersContent({
                     <td className="px-2 py-5">
                       <div className="flex items-center gap-3 min-w-0">
                         <span
-                          className="flex size-12 shrink-0 items-center justify-center rounded-pill border border-border-primary bg-surface-tertiary text-body-sm font-bold text-copper-strong"
+                          className="flex size-12 shrink-0 items-center justify-center rounded-pill border border-border-primary bg-surface-tertiary text-dash-body-sm font-bold text-copper-strong"
                           aria-hidden="true"
                         >
                           {initials(row.fullName)}
                         </span>
                         <div className="min-w-0">
-                          <p className="flex items-center gap-2 text-body font-semibold text-accent truncate">
+                          <p className="flex items-center gap-2 text-dash-body font-semibold text-accent truncate">
                             <span className="truncate">{row.fullName}</span>
                             {isSelf && (
-                              <span className="shrink-0 inline-flex items-center px-2 py-0.5 bg-accent-subtle text-accent rounded-pill text-caption font-bold">
+                              <span className="shrink-0 inline-flex items-center px-2 py-0.5 bg-accent-subtle text-accent rounded-pill text-dash-caption font-bold">
                                 {t("users.self")}
                               </span>
                             )}
                           </p>
-                          <p className="text-caption text-content-tertiary truncate" dir="ltr">
+                          <p className="text-dash-caption text-content-tertiary truncate" dir="ltr">
                             {row.email}
                             {row.phone ? (
                               <>
@@ -726,13 +729,13 @@ export default function UsersContent({
                           row.roles.map((role) => (
                             <span
                               key={role}
-                              className={`inline-flex items-center rounded-control border px-2 py-0.5 text-caption font-medium ${roleClass(role)}`}
+                              className={`inline-flex items-center rounded-control border px-2 py-0.5 text-dash-caption font-medium ${roleClass(role)}`}
                             >
                               {roleLabel(role)}
                             </span>
                           ))
                         ) : (
-                          <span className="text-caption text-content-tertiary">
+                          <span className="text-dash-caption text-content-tertiary">
                             {t("users.noRoles")}
                           </span>
                         )}
@@ -740,14 +743,14 @@ export default function UsersContent({
                     </td>
                     <td className="px-4 py-5">
                       <span
-                        className={`inline-flex items-center gap-1.5 px-0 py-0.5 text-caption font-bold whitespace-nowrap ${statusTextClass[state]}`}
+                        className={`inline-flex items-center gap-1.5 px-0 py-0.5 text-dash-caption font-bold whitespace-nowrap ${statusTextClass[state]}`}
                       >
                         <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
                         {t(`users.statuses.${state}`)}
                       </span>
                     </td>
                     <td className="hidden px-4 py-5 xl:table-cell">
-                      <p className="text-body-sm text-content-secondary whitespace-nowrap">
+                      <p className="text-dash-body-sm text-content-secondary whitespace-nowrap">
                         {row.lastLoginAt
                           ? format.relativeTime(row.lastLoginAt, new Date())
                           : <span className="text-content-tertiary italic">{t("users.never")}</span>}
@@ -785,7 +788,7 @@ export default function UsersContent({
                 aria-hidden="true"
               />}
             </div>
-            <p className="text-content-secondary text-body">
+            <p className="text-content-secondary text-dash-body">
               {debouncedSearch || status !== "all" || role !== "all"
                 ? t("users.emptySearch")
                 : t("users.empty")}
@@ -796,7 +799,7 @@ export default function UsersContent({
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border-primary px-6 py-4">
-            <p className="text-body-sm text-content-tertiary">
+            <p className="text-dash-body-sm text-content-tertiary">
               {t("users.pagination.showing", { from, to, total: data.total })}
             </p>
             <div className="flex items-center gap-2">
@@ -804,19 +807,19 @@ export default function UsersContent({
                 type="button"
                 disabled={page <= 1}
                 onClick={() => { clearSelection(); setPage((p) => Math.max(1, p - 1)); }}
-                className="inline-flex items-center gap-1.5 px-4 py-2 min-h-10 rounded-pill text-body-sm font-semibold text-accent border border-border-interactive bg-transparent transition-colors hover:bg-surface-tertiary disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="inline-flex items-center gap-1.5 px-4 py-2 min-h-10 rounded-pill text-dash-body-sm font-semibold text-accent border border-border-interactive bg-transparent transition-colors hover:bg-surface-tertiary disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <ChevronLeft className="w-4 h-4 rtl-mirror" strokeWidth={2} aria-hidden="true" />
                 <span>{t("users.pagination.previous")}</span>
               </button>
-              <span className="text-body-sm text-content-secondary px-2 whitespace-nowrap">
+              <span className="text-dash-body-sm text-content-secondary px-2 whitespace-nowrap">
                 {t("users.pagination.pageInfo", { page, totalPages })}
               </span>
               <button
                 type="button"
                 disabled={page >= totalPages}
                 onClick={() => { clearSelection(); setPage((p) => Math.min(totalPages, p + 1)); }}
-                className="inline-flex items-center gap-1.5 px-4 py-2 min-h-10 rounded-pill text-body-sm font-semibold text-accent border border-border-interactive bg-transparent transition-colors hover:bg-surface-tertiary disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="inline-flex items-center gap-1.5 px-4 py-2 min-h-10 rounded-pill text-dash-body-sm font-semibold text-accent border border-border-interactive bg-transparent transition-colors hover:bg-surface-tertiary disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <span>{t("users.pagination.next")}</span>
                 <ChevronRight className="w-4 h-4 rtl-mirror" strokeWidth={2} aria-hidden="true" />
@@ -835,7 +838,7 @@ export default function UsersContent({
       <AlertDialog open={confirm !== null} onOpenChange={(open) => { if (!open) { setConfirm(null); setBanReason(""); } }}>
         <AlertDialogContent closeLabel={t("users.dialog.cancel")}>
           <AlertDialogHeader><AlertDialogTitle>{confirmTitle}</AlertDialogTitle><AlertDialogDescription>{confirmDescription}</AlertDialogDescription></AlertDialogHeader>
-          {confirm?.kind === "row" && confirm.action === "ban" && <label htmlFor="ban-reason" className="grid gap-1.5 text-caption font-bold text-content-secondary"><span>{t("users.banDialog.reason")}</span><textarea id="ban-reason" value={banReason} onChange={(event) => setBanReason(event.target.value)} rows={3} maxLength={500} placeholder={t("users.banDialog.reasonPlaceholder")} className="w-full resize-y rounded-control border border-form-input-border bg-form-input-bg px-4 py-3 text-body text-accent outline-none focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" /></label>}
+          {confirm?.kind === "row" && confirm.action === "ban" && <label htmlFor="ban-reason" className="grid gap-1.5 text-dash-caption font-bold text-content-secondary"><span>{t("users.banDialog.reason")}</span><textarea id="ban-reason" value={banReason} onChange={(event) => setBanReason(event.target.value)} rows={3} maxLength={500} placeholder={t("users.banDialog.reasonPlaceholder")} className="w-full resize-y rounded-control border border-form-input-border bg-form-input-bg px-4 py-3 text-dash-body text-accent outline-none focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" /></label>}
           <AlertDialogFooter><AlertDialogCancel disabled={busyId !== null}>{t("users.dialog.cancel")}</AlertDialogCancel><AlertDialogAction disabled={busyId !== null} onClick={(event) => { event.preventDefault(); if (!confirm) return; if (confirm.kind === "bulk") { void executeBulkAction(); return; } if (confirm.action === "ban") { void runAction(confirm.user, { isBanned: true, banReason: banReason.trim() || null }); } else if (confirm.action === "deactivate") { void runAction(confirm.user, { isActive: false }); } else { void deleteUser(confirm.user); } }}>{busyId !== null && <Loader2 className="size-4 animate-spin" />}{t("users.dialog.confirm")}</AlertDialogAction></AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -843,10 +846,10 @@ export default function UsersContent({
       <Dialog open={roleTarget !== null} onOpenChange={(open) => { if (!open) setRoleTarget(null); }}>
         <DialogContent closeLabel={t("users.dialog.cancel")} className="max-w-sm">
           <DialogHeader><DialogTitle className="text-accent">{t("users.changeRole.title")}</DialogTitle><DialogDescription>{roleTarget && t("users.changeRole.description", { name: roleTarget.fullName })}</DialogDescription></DialogHeader>
-          <select value={roleValue} onChange={(event) => setRoleValue(event.target.value)} className="min-h-11 w-full rounded-control border border-form-input-border bg-form-input-bg px-4 text-body text-accent outline-none focus-visible:border-copper">
+          <select value={roleValue} onChange={(event) => setRoleValue(event.target.value)} className="min-h-11 w-full rounded-control border border-form-input-border bg-form-input-bg px-4 text-dash-body text-accent outline-none focus-visible:border-copper">
             <option value="">{t("users.form.rolePlaceholder")}</option>{["admin", "doctor", "receptionist", "customer"].map((key) => <option key={key} value={key}>{roleLabel(key)}</option>)}
           </select>
-          <DialogFooter><DialogClose className="inline-flex min-h-11 items-center justify-center rounded-pill bg-surface-tertiary px-5 text-body-sm font-bold text-accent">{t("users.dialog.cancel")}</DialogClose><button type="button" disabled={!roleValue || busyId !== null} onClick={() => { if (roleTarget && roleValue) void saveRole(roleTarget, roleValue); }} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill bg-accent px-5 text-body-sm font-bold text-content-contrast disabled:opacity-50">{t("users.changeRole.submit")}</button></DialogFooter>
+          <DialogFooter><DialogClose className="inline-flex min-h-11 items-center justify-center rounded-pill bg-surface-tertiary px-5 text-dash-body-sm font-bold text-accent">{t("users.dialog.cancel")}</DialogClose><button type="button" disabled={!roleValue || busyId !== null} onClick={() => { if (roleTarget && roleValue) void saveRole(roleTarget, roleValue); }} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill bg-accent px-5 text-dash-body-sm font-bold text-content-contrast disabled:opacity-50">{t("users.changeRole.submit")}</button></DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -855,9 +858,9 @@ export default function UsersContent({
       <Dialog open={bulkResult !== null} onOpenChange={(open) => { if (!open) setBulkResult(null); }}>
         <DialogContent closeLabel={t("users.dialog.cancel")} className="max-w-lg">
           <DialogHeader><DialogTitle className="text-accent">{t("users.bulk.resultTitle")}</DialogTitle><DialogDescription>{t("users.bulk.resultDescription")}</DialogDescription></DialogHeader>
-          {bulkResult && bulkResult.temporaryPasswords.length > 0 && <div className="max-h-64 overflow-y-auto rounded-control border border-border-primary"><div className="grid grid-cols-[1fr_auto] gap-x-4 border-b border-border-primary bg-surface-tertiary/30 px-3 py-2 text-caption font-bold text-content-secondary"><span>{t("users.table.user")}</span><span>{t("users.bulk.temporaryPassword")}</span></div>{bulkResult.temporaryPasswords.map((item) => <div key={item.id} className="grid grid-cols-[1fr_auto] gap-x-4 border-b border-border-primary px-3 py-2 font-mono text-caption last:border-b-0"><span className="text-content-tertiary">{item.id.slice(0, 8)}</span><span className="text-accent">{item.password}</span></div>)}</div>}
-          {bulkResult && bulkResult.failures.length > 0 && <p className="text-body-sm text-error">{t("users.bulk.failureCount", { count: bulkResult.failures.length })}</p>}
-          <DialogFooter>{bulkResult && bulkResult.temporaryPasswords.length > 0 && <><button type="button" onClick={() => void copyTemporaryPasswords()} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill border border-border-interactive px-4 text-body-sm font-bold text-accent"><Copy className="size-4" />{t("users.bulk.copy")}</button><button type="button" onClick={downloadTemporaryPasswords} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill border border-border-interactive px-4 text-body-sm font-bold text-accent"><Download className="size-4" />{t("users.bulk.download")}</button></>}<DialogClose className="inline-flex min-h-11 items-center justify-center rounded-pill bg-surface-tertiary px-5 text-body-sm font-bold text-accent">{t("users.dialog.close")}</DialogClose></DialogFooter>
+          {bulkResult && bulkResult.temporaryPasswords.length > 0 && <div className="max-h-64 overflow-y-auto rounded-control border border-border-primary"><div className="grid grid-cols-[1fr_auto] gap-x-4 border-b border-border-primary bg-surface-tertiary/30 px-3 py-2 text-dash-caption font-bold text-content-secondary"><span>{t("users.table.user")}</span><span>{t("users.bulk.temporaryPassword")}</span></div>{bulkResult.temporaryPasswords.map((item) => <div key={item.id} className="grid grid-cols-[1fr_auto] gap-x-4 border-b border-border-primary px-3 py-2 font-mono text-dash-caption last:border-b-0"><span className="text-content-tertiary">{item.id.slice(0, 8)}</span><span className="text-accent">{item.password}</span></div>)}</div>}
+          {bulkResult && bulkResult.failures.length > 0 && <p className="text-dash-body-sm text-error">{t("users.bulk.failureCount", { count: bulkResult.failures.length })}</p>}
+          <DialogFooter>{bulkResult && bulkResult.temporaryPasswords.length > 0 && <><button type="button" onClick={() => void copyTemporaryPasswords()} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill border border-border-interactive px-4 text-dash-body-sm font-bold text-accent"><Copy className="size-4" />{t("users.bulk.copy")}</button><button type="button" onClick={downloadTemporaryPasswords} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill border border-border-interactive px-4 text-dash-body-sm font-bold text-accent"><Download className="size-4" />{t("users.bulk.download")}</button></>}<DialogClose className="inline-flex min-h-11 items-center justify-center rounded-pill bg-surface-tertiary px-5 text-dash-body-sm font-bold text-accent">{t("users.dialog.close")}</DialogClose></DialogFooter>
         </DialogContent>
       </Dialog>
 

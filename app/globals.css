@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
 @layer base {
+  body {
+    overflow-x: clip;
+  }
+
   :root {
     /* ---- Surfaces ---------------------------------------------------- */
     --surface-primary: #f8e9db;
@@ -70,6 +74,7 @@
     --shadow-lg: 0 12px 32px -8px rgba(57, 9, 10, 0.1), 0 4px 12px -4px rgba(57, 9, 10, 0.06);
     --shadow-xl: 0 24px 56px -12px rgba(57, 9, 10, 0.22), 0 8px 20px -8px rgba(57, 9, 10, 0.12);
   }
+
 }
 
 @theme inline {
@@ -178,6 +183,23 @@
   --text-body: clamp(1rem, 0.95rem + 0.2vw, 1.125rem);
   --text-body-sm: clamp(0.875rem, 0.84rem + 0.15vw, 0.9375rem);
   --text-caption: clamp(0.75rem, 0.72rem + 0.1vw, 0.8125rem);
+
+  /* Dashboard (user panel) type scale — a dedicated 6-step scale that is
+     deliberately more compact than the marketing headings (page titles cap
+     at 28px instead of 56px) while keeping body copy at ~16px so every age
+     group reads comfortably on mobile and desktop. Generates text-dash-*. */
+  --text-dash-display: clamp(1.5rem, 1.4rem + 0.4vw, 1.75rem);
+  /* 24-28px - page titles, greeting */
+  --text-dash-title: clamp(1.25rem, 1.2rem + 0.25vw, 1.375rem);
+  /* 20-22px - section titles */
+  --text-dash-heading: clamp(1.0625rem, 1.025rem + 0.15vw, 1.125rem);
+  /* 17-18px - card titles, dialog titles */
+  --text-dash-body: clamp(1rem, 0.98rem + 0.08vw, 1.0625rem);
+  /* 16-17px - body, inputs, names */
+  --text-dash-body-sm: clamp(0.875rem, 0.8625rem + 0.05vw, 0.9063rem);
+  /* 14-14.5px - secondary text, buttons, nav */
+  --text-dash-caption: clamp(0.75rem, 0.7375rem + 0.05vw, 0.7813rem);
+  /* 12-12.5px - meta, chips, labels */
 
   /* ---- Animation --------------------------------------------------- */
   --animate-fade-in: fade-in 250ms ease-out;

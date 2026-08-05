@@ -137,7 +137,7 @@ export default function DashboardShell({
     href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(href);
 
   const navLinkClass = (href: string, isCollapsed = collapsed) =>
-    `group flex items-center gap-3 min-h-11 rounded-control text-body-sm font-semibold no-underline transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${isCollapsed ? "justify-center px-0 mx-1" : "px-4"
+    `group flex items-center gap-3 min-h-11 rounded-control text-dash-body-sm font-semibold no-underline transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${isCollapsed ? "justify-center px-0 mx-1" : "px-4"
     } ${isActive(href)
       ? "border-s-2 border-accent bg-accent text-content-contrast shadow-elevation-1"
       : "text-content-secondary hover:bg-surface-tertiary hover:text-accent"
@@ -149,7 +149,7 @@ export default function DashboardShell({
       aria-label={t("dashboard.sidebar.navLabel")}
     >
       {!isCollapsed && (
-        <p className="px-4 pb-3 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-content-tertiary">
+        <p className="px-4 pb-3 text-dash-caption font-bold uppercase tracking-[0.16em] text-content-tertiary">
           {t("dashboard.sidebar.navigation")}
         </p>
       )}
@@ -175,7 +175,7 @@ export default function DashboardShell({
 
       <div className="mt-6 border-t border-border-primary pt-5">
         {!isCollapsed && (
-          <p className="px-4 pb-3 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-content-tertiary">
+          <p className="px-4 pb-3 text-dash-caption font-bold uppercase tracking-[0.16em] text-content-tertiary">
             {t("dashboard.sidebar.workspace")}
           </p>
         )}
@@ -184,7 +184,7 @@ export default function DashboardShell({
           onClick={() => setMenuOpen(false)}
           target="_blank"
           rel="noopener noreferrer"
-          className={`group flex items-center gap-3 min-h-11 rounded-control text-body-sm font-semibold no-underline transition-all duration-200 text-content-secondary hover:bg-surface-tertiary hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${isCollapsed ? "justify-center px-0 mx-1" : "px-4"
+          className={`group flex items-center gap-3 min-h-11 rounded-control text-dash-body-sm font-semibold no-underline transition-all duration-200 text-content-secondary hover:bg-surface-tertiary hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${isCollapsed ? "justify-center px-0 mx-1" : "px-4"
             }`}
           aria-label={isCollapsed ? t("dashboard.sidebar.viewSite") : undefined}
           title={isCollapsed ? t("dashboard.sidebar.viewSite") : undefined}
@@ -203,7 +203,7 @@ export default function DashboardShell({
   const userSection = (isCollapsed = collapsed) => (
     <div className={`shrink-0 rounded-card border border-border-primary bg-surface-tertiary/30 ${isCollapsed ? "mx-2 mb-3 flex flex-col items-center p-2" : "m-3 p-3 pt-4"}`}>
       {!isCollapsed && (
-        <p className="px-2 pb-3 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-content-tertiary">
+        <p className="px-2 pb-3 text-dash-caption font-bold uppercase tracking-[0.16em] text-content-tertiary">
           {t("dashboard.sidebar.account")}
         </p>
       )}
@@ -211,15 +211,15 @@ export default function DashboardShell({
         className={`flex items-center gap-3 ${isCollapsed ? "justify-center px-0 py-1" : "px-2 py-2"}`}
       >
         <span
-          className="w-10 h-10 shrink-0 rounded-pill bg-copper text-content-contrast flex items-center justify-center text-body-sm font-bold"
+          className="w-10 h-10 shrink-0 rounded-pill bg-copper text-content-contrast flex items-center justify-center text-dash-body-sm font-bold"
           aria-hidden="true"
         >
           {initials(user.fullName)}
         </span>
         {!isCollapsed && (
           <div className="min-w-0">
-            <p className="text-body-sm font-bold text-accent truncate">{user.fullName}</p>
-            <p className="text-caption text-content-tertiary truncate" dir="ltr">
+            <p className="text-dash-body-sm font-bold text-accent truncate">{user.fullName}</p>
+            <p className="text-dash-caption text-content-tertiary truncate" dir="ltr">
               {user.email}
             </p>
           </div>
@@ -232,7 +232,7 @@ export default function DashboardShell({
         aria-busy={loggingOut}
         aria-label={isCollapsed ? t("dashboard.sidebar.logout") : undefined}
         title={isCollapsed ? t("dashboard.sidebar.logout") : undefined}
-        className={`mt-2 flex items-center justify-center gap-2 text-body-sm font-bold text-accent border border-border-interactive bg-transparent transition-all duration-200 hover:bg-surface-tertiary hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60 ${isCollapsed ? "size-10 rounded-pill px-0" : "min-h-11 w-full rounded-control px-4 py-2"}`}
+        className={`mt-2 flex items-center justify-center gap-2 text-dash-body-sm font-bold text-accent border border-border-interactive bg-transparent transition-all duration-200 hover:bg-surface-tertiary hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60 ${isCollapsed ? "size-10 rounded-pill px-0" : "min-h-11 w-full rounded-control px-4 py-2"}`}
       >
         {loggingOut ? (
           <>
@@ -258,7 +258,7 @@ export default function DashboardShell({
       title={collapsed ? t("site.name") : undefined}
     >
       <Wind className="w-6 h-6 text-copper shrink-0" strokeWidth={2} aria-hidden="true" />
-      {!collapsed && <span className="text-lg font-black truncate">{t("site.name")}</span>}
+      {!collapsed && <span className="text-dash-title font-black truncate">{t("site.name")}</span>}
     </Link>
   );
 
@@ -277,16 +277,16 @@ export default function DashboardShell({
   };
 
   const profileMenu = profileOpen && (
-    <div className="absolute inset-e-0 top-12 z-50 w-64 rounded-card border border-border-primary bg-surface-secondary p-2 shadow-elevation-3">
+    <div className="absolute inset-e-0 top-12 z-50 w-64 max-w-[calc(100vw-1.5rem)] rounded-card border border-border-primary bg-surface-secondary p-2 shadow-elevation-3">
       <div className="border-b border-border-primary px-3 pb-3 pt-2">
-        <p className="truncate text-body-sm font-bold text-accent">{user.fullName}</p>
-        <p className="mt-1 truncate text-caption text-content-tertiary" dir="ltr">{user.email}</p>
+        <p className="truncate text-dash-body-sm font-bold text-accent">{user.fullName}</p>
+        <p className="mt-1 truncate text-dash-caption text-content-tertiary" dir="ltr">{user.email}</p>
       </div>
       <button
         type="button"
         onClick={handleLogout}
         disabled={loggingOut}
-        className="mt-2 flex min-h-11 w-full items-center gap-2 rounded-control px-3 text-start text-body-sm font-bold text-accent transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60"
+        className="mt-2 flex min-h-11 w-full items-center gap-2 rounded-control px-3 text-start text-dash-body-sm font-bold text-accent transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60"
       >
         {loggingOut ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : <LogOut className="size-4" aria-hidden="true" />}
         <span>{loggingOut ? t("dashboard.sidebar.loggingOut") : t("dashboard.sidebar.logout")}</span>
@@ -302,7 +302,7 @@ export default function DashboardShell({
         aria-expanded={profileOpen}
         aria-haspopup="menu"
         aria-label={t("dashboard.topbar.openProfile")}
-        className="inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-border-primary bg-accent-subtle text-caption font-bold text-accent shadow-elevation-1 transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        className="inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-border-primary bg-accent-subtle text-dash-caption font-bold text-accent shadow-elevation-1 transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         {initials(user.fullName)}
       </button>
@@ -317,20 +317,20 @@ export default function DashboardShell({
   });
 
   const searchResultsPanel = (
-    <div className="absolute inset-e-0 top-12 z-50 w-72 rounded-card border border-border-primary bg-surface-secondary p-2 shadow-elevation-3">
-      <p className="px-3 pb-2 pt-1 text-caption text-content-tertiary">{t("dashboard.topbar.searchResults")}</p>
+    <div className="absolute inset-e-0 top-12 z-50 w-72 max-w-[calc(100vw-1.5rem)] rounded-card border border-border-primary bg-surface-secondary p-2 shadow-elevation-3">
+      <p className="px-3 pb-2 pt-1 text-dash-caption text-content-tertiary">{t("dashboard.topbar.searchResults")}</p>
       {searchResults.length > 0 ? searchResults.map((item) => (
         <Link
           key={item.key}
           href={item.href}
           onClick={() => { setSearchOpen(false); setSearchTerm(""); }}
-          className="flex min-h-11 items-center gap-3 rounded-control px-3 text-body-sm font-semibold text-content-secondary no-underline transition hover:bg-surface-tertiary hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          className="flex min-h-11 items-center gap-3 rounded-control px-3 text-dash-body-sm font-semibold text-content-secondary no-underline transition hover:bg-surface-tertiary hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           <item.icon className="size-4" aria-hidden="true" />
           <span>{t(`dashboard.sidebar.${item.key}`)}</span>
         </Link>
       )) : (
-        <p className="px-3 py-3 text-caption text-content-tertiary">{t("dashboard.topbar.noSearchResults")}</p>
+        <p className="px-3 py-3 text-dash-caption text-content-tertiary">{t("dashboard.topbar.noSearchResults")}</p>
       )}
     </div>
   );
@@ -342,11 +342,11 @@ export default function DashboardShell({
         onClick={() => { setSearchOpen((open) => !open); setProfileOpen(false); setNotificationsOpen(false); }}
         aria-expanded={searchOpen}
         aria-haspopup="listbox"
-        className="flex h-10 w-72 items-center gap-2 rounded-control border border-border-primary bg-surface-primary px-3 text-body-sm text-content-tertiary transition hover:border-border-interactive focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        className="flex h-10 w-72 items-center gap-2 rounded-control border border-border-primary bg-surface-primary px-3 text-dash-body-sm text-content-tertiary transition hover:border-border-interactive focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         <Search className="size-4 shrink-0" aria-hidden="true" />
         <span className="flex-1 text-start">{t("dashboard.topbar.searchPlaceholder")}</span>
-        <kbd className="rounded border border-border-primary px-1.5 py-0.5 text-[0.65rem] text-content-tertiary">⌘K</kbd>
+        <kbd className="rounded border border-border-primary px-1.5 py-0.5 text-dash-caption text-content-tertiary">⌘K</kbd>
       </button>
       {searchOpen && searchResultsPanel}
     </div>
@@ -365,7 +365,7 @@ export default function DashboardShell({
           {sidebarMode === "expanded" ? <PanelRightClose className="size-5" aria-hidden="true" /> : <PanelRightOpen className="size-5" aria-hidden="true" />}
         </button>
         <span className="h-6 w-px bg-border-primary" aria-hidden="true" />
-        <nav aria-label={t("dashboard.topbar.breadcrumbLabel")} className="flex min-w-0 items-center gap-2 text-body-sm">
+        <nav aria-label={t("dashboard.topbar.breadcrumbLabel")} className="flex min-w-0 items-center gap-2 text-dash-body-sm">
           <span className="truncate text-content-tertiary">{t("dashboard.topbar.access")}</span>
           <ChevronLeft className="size-4 shrink-0 text-content-tertiary rtl-mirror" aria-hidden="true" />
           <span className="truncate font-bold text-content-primary">
@@ -386,7 +386,7 @@ export default function DashboardShell({
             <Bell className="size-5" aria-hidden="true" />
           </button>
           {notificationsOpen && (
-            <div className="absolute inset-e-0 top-12 z-50 w-56 rounded-card border border-border-primary bg-surface-secondary p-4 text-caption text-content-secondary shadow-elevation-3">
+            <div className="absolute inset-e-0 top-12 z-50 w-56 rounded-card border border-border-primary bg-surface-secondary p-4 text-dash-caption text-content-secondary shadow-elevation-3">
               {t("dashboard.topbar.noNotifications")}
             </div>
           )}
@@ -433,7 +433,7 @@ export default function DashboardShell({
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
                 placeholder={t("dashboard.topbar.searchPlaceholder")}
-                className="min-w-0 flex-1 bg-transparent text-body text-accent outline-none"
+                className="min-w-0 flex-1 bg-transparent text-dash-body text-accent outline-none"
               />
               <button type="button" onClick={() => setSearchOpen(false)} aria-label={t("dashboard.sidebar.closeMenu")} className="text-content-tertiary hover:text-accent">
                 <X className="size-5" aria-hidden="true" />
@@ -455,7 +455,7 @@ export default function DashboardShell({
         className="flex items-center gap-2 text-accent no-underline min-w-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         <Wind className="w-6 h-6 text-copper shrink-0" strokeWidth={2} aria-hidden="true" />
-        <span className="text-base font-black">{t("site.shortName")}</span>
+        <span className="text-dash-body font-black">{t("site.shortName")}</span>
       </Link>
       {mobileToolbar}
     </header>
@@ -479,7 +479,7 @@ export default function DashboardShell({
             className="flex items-center gap-2 text-accent no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             <Wind className="w-6 h-6 text-copper" strokeWidth={2} aria-hidden="true" />
-            <span className="text-lg font-black truncate">{t("site.name")}</span>
+            <span className="text-dash-title font-black truncate">{t("site.name")}</span>
           </Link>
           <div className="flex items-center gap-1 shrink-0">
             <LocaleSwitcher compact />
