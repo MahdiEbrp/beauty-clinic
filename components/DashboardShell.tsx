@@ -11,7 +11,6 @@ import {
   Menu,
   X,
   Loader2,
-  ExternalLink,
   Search,
   Bell,
   ChevronLeft,
@@ -20,6 +19,7 @@ import {
 } from "lucide-react";
 import type { AuthUser } from "@/lib/auth/dal";
 import LocaleSwitcher from "./LocaleSwitcher";
+import { SidebarNavSection, SidebarUserSection } from "@/components/dashboard/SidebarSections";
 
 const MENU_ID = "dashboard-sidebar-menu";
 const SIDEBAR_MODE_KEY = "dashboard.sidebar.mode";
@@ -136,119 +136,6 @@ export default function DashboardShell({
   const isActive = (href: string) =>
     href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(href);
 
-  const navLinkClass = (href: string, isCollapsed = collapsed) =>
-    `group flex items-center gap-3 min-h-11 rounded-control text-dash-body-sm font-semibold no-underline transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${isCollapsed ? "justify-center px-0 mx-1" : "px-4"
-    } ${isActive(href)
-      ? "border-s-2 border-accent bg-accent text-content-contrast shadow-elevation-1"
-      : "text-content-secondary hover:bg-surface-tertiary hover:text-accent"
-    }`;
-
-  const navSection = (isCollapsed = collapsed) => (
-    <nav
-      className="flex-1 overflow-y-auto px-3 py-4"
-      aria-label={t("dashboard.sidebar.navLabel")}
-    >
-      {!isCollapsed && (
-        <p className="px-4 pb-3 text-dash-caption font-bold uppercase tracking-[0.16em] text-content-tertiary">
-          {t("dashboard.sidebar.navigation")}
-        </p>
-      )}
-      <div className="space-y-1">
-        {navItems.map((item) => {
-          const label = t(`dashboard.sidebar.${item.key}`);
-          return (
-            <Link
-              key={item.key}
-              href={item.href}
-              onClick={() => setMenuOpen(false)}
-              aria-current={isActive(item.href) ? "page" : undefined}
-              aria-label={isCollapsed ? label : undefined}
-              title={isCollapsed ? label : undefined}
-              className={navLinkClass(item.href, isCollapsed)}
-            >
-              <item.icon className="size-6 shrink-0" strokeWidth={2} aria-hidden="true" />
-              {!isCollapsed && <span className="truncate">{label}</span>}
-            </Link>
-          );
-        })}
-      </div>
-
-      <div className="mt-6 border-t border-border-primary pt-5">
-        {!isCollapsed && (
-          <p className="px-4 pb-3 text-dash-caption font-bold uppercase tracking-[0.16em] text-content-tertiary">
-            {t("dashboard.sidebar.workspace")}
-          </p>
-        )}
-        <Link
-          href="/"
-          onClick={() => setMenuOpen(false)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`group flex items-center gap-3 min-h-11 rounded-control text-dash-body-sm font-semibold no-underline transition-all duration-200 text-content-secondary hover:bg-surface-tertiary hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${isCollapsed ? "justify-center px-0 mx-1" : "px-4"
-            }`}
-          aria-label={isCollapsed ? t("dashboard.sidebar.viewSite") : undefined}
-          title={isCollapsed ? t("dashboard.sidebar.viewSite") : undefined}
-        >
-          <ExternalLink
-            className="w-5 h-5 shrink-0 rtl-mirror"
-            strokeWidth={2}
-            aria-hidden="true"
-          />
-          {!isCollapsed && <span className="truncate">{t("dashboard.sidebar.viewSite")}</span>}
-        </Link>
-      </div>
-    </nav>
-  );
-
-  const userSection = (isCollapsed = collapsed) => (
-    <div className={`shrink-0 rounded-card border border-border-primary bg-surface-tertiary/30 ${isCollapsed ? "mx-2 mb-3 flex flex-col items-center p-2" : "m-3 p-3 pt-4"}`}>
-      {!isCollapsed && (
-        <p className="px-2 pb-3 text-dash-caption font-bold uppercase tracking-[0.16em] text-content-tertiary">
-          {t("dashboard.sidebar.account")}
-        </p>
-      )}
-      <div
-        className={`flex items-center gap-3 ${isCollapsed ? "justify-center px-0 py-1" : "px-2 py-2"}`}
-      >
-        <span
-          className="w-10 h-10 shrink-0 rounded-pill bg-copper text-content-contrast flex items-center justify-center text-dash-body-sm font-bold"
-          aria-hidden="true"
-        >
-          {initials(user.fullName)}
-        </span>
-        {!isCollapsed && (
-          <div className="min-w-0">
-            <p className="text-dash-body-sm font-bold text-accent truncate">{user.fullName}</p>
-            <p className="text-dash-caption text-content-tertiary truncate" dir="ltr">
-              {user.email}
-            </p>
-          </div>
-        )}
-      </div>
-      <button
-        type="button"
-        onClick={handleLogout}
-        disabled={loggingOut}
-        aria-busy={loggingOut}
-        aria-label={isCollapsed ? t("dashboard.sidebar.logout") : undefined}
-        title={isCollapsed ? t("dashboard.sidebar.logout") : undefined}
-        className={`mt-2 flex items-center justify-center gap-2 text-dash-body-sm font-bold text-accent border border-border-interactive bg-transparent transition-all duration-200 hover:bg-surface-tertiary hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60 ${isCollapsed ? "size-10 rounded-pill px-0" : "min-h-11 w-full rounded-control px-4 py-2"}`}
-      >
-        {loggingOut ? (
-          <>
-            <Loader2 className="w-4 h-4 animate-spin rtl-mirror" strokeWidth={2} aria-hidden="true" />
-            {!isCollapsed && <span>{t("dashboard.sidebar.loggingOut")}</span>}
-          </>
-        ) : (
-          <>
-            <LogOut className="w-4 h-4 rtl-mirror" strokeWidth={2} aria-hidden="true" />
-            {!isCollapsed && <span>{t("dashboard.sidebar.logout")}</span>}
-          </>
-        )}
-      </button>
-    </div>
-  );
-
   const brandLink = (
     <Link
       href="/"
@@ -267,8 +154,8 @@ export default function DashboardShell({
       className={`hidden lg:flex fixed top-0 bottom-0 inset-s-0 z-40 flex-col border-e border-border-primary bg-surface-secondary transition-[width] duration-200 ease-out ${collapsed ? "w-18" : "w-70"}`}
     >
       {brandLink}
-      {navSection()}
-      {userSection()}
+      <SidebarNavSection items={navItems} isCollapsed={collapsed} onNavigate={() => setMenuOpen(false)} isActive={isActive} t={t} />
+      <SidebarUserSection user={user} isCollapsed={collapsed} loggingOut={loggingOut} onLogout={handleLogout} t={t} />
     </aside>
   );
 
@@ -493,8 +380,8 @@ export default function DashboardShell({
             </button>
           </div>
         </div>
-        {navSection(false)}
-        {userSection(false)}
+        <SidebarNavSection items={navItems} isCollapsed={false} onNavigate={() => setMenuOpen(false)} isActive={isActive} t={t} />
+        <SidebarUserSection user={user} isCollapsed={false} loggingOut={loggingOut} onLogout={handleLogout} t={t} />
       </div>
     </div>
   );
