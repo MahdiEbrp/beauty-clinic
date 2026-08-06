@@ -24,6 +24,8 @@ export type SecurityConfig<Body = unknown, Query = unknown> = {
   validate?: {
     body?: z.ZodType<Body>;
     query?: z.ZodType<Query>;
+    /** JSON body byte cap for this route (defaults to 64 KB). */
+    bodyLimit?: number;
   };
   audit?: boolean;
 };
@@ -128,7 +130,7 @@ export function withSecurity<Body = unknown, Query = unknown>(
       }
 
       if (config.validate?.body) {
-        const body = await readJsonBody(request);
+        const body = await readJsonBody(request, config.validate.bodyLimit);
         const parsed = config.validate.body.safeParse(body);
         if (!parsed.success) {
           return reply(

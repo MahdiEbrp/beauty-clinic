@@ -47,3 +47,6 @@ next-env.d.ts
 unproccess/
 
 .freebuff/
+
+# file manager storage (private, gitignored)
+/storage

@@ -471,6 +471,7 @@
       "account": "Account",
       "overview": "Overview",
       "users": "Users",
+      "files": "Files",
       "viewSite": "View Website",
       "logout": "Log Out",
       "loggingOut": "Logging out...",
@@ -684,6 +685,124 @@
     "saving": "Saving...",
     "invalid": "Use a valid password and make sure both fields match.",
     "error": "The password could not be changed. Try again."
+  },
+  "files": {
+    "meta": {
+      "title": "Files | Nafas Beauty Clinic",
+      "description": "Browse, upload and manage clinic files."
+    },
+    "heading": "Files",
+    "description": "Browse, upload and manage your files and folders.",
+    "eyebrow": "File manager",
+    "resultsLabel": "items",
+    "syncStatus": "Private storage",
+    "upload": "Upload",
+    "uploadShort": "Upload",
+    "newFolder": "New folder",
+    "newFile": "New file",
+    "browse": "Files",
+    "trash": "Trash",
+    "emptyTitle": "This folder is empty",
+    "emptyDescription": "Upload files or create a new folder to get started.",
+    "emptyTrashTitle": "Trash is empty",
+    "emptyTrashDescription": "Deleted files and folders will appear here until they are permanently removed.",
+    "searchPlaceholder": "This folder has {count} items",
+    "error": "Couldn't load files. Please try again.",
+    "retry": "Retry",
+    "loading": "Loading files...",
+    "up": "Up one level",
+    "root": "Root",
+    "table": {
+      "name": "Name",
+      "size": "Size",
+      "modified": "Modified",
+      "actions": "Actions",
+      "type": "Type"
+    },
+    "types": {
+      "folder": "Folder",
+      "file": "File"
+    },
+    "actions": {
+      "menu": "Open actions for {name}",
+      "download": "Download",
+      "preview": "Preview",
+      "edit": "Edit",
+      "rename": "Rename",
+      "copy": "Duplicate here",
+      "copyTo": "Copy to...",
+      "trash": "Move to trash",
+      "restore": "Restore",
+      "deleteForever": "Delete forever"
+    },
+    "dialog": {
+      "cancel": "Cancel",
+      "close": "Close",
+      "confirm": "Confirm",
+      "create": "Create"
+    },
+    "newFolderDialog": {
+      "title": "New folder",
+      "description": "The folder will be created inside the current folder.",
+      "name": "Folder name",
+      "placeholder": "e.g. Contracts"
+    },
+    "newFileDialog": {
+      "title": "New file",
+      "description": "The file will be created inside the current folder.",
+      "name": "File name",
+      "placeholder": "e.g. notes.txt",
+      "createAndEdit": "Create & edit"
+    },
+    "renameDialog": {
+      "title": "Rename",
+      "description": "Enter a new name for {name}.",
+      "name": "New name"
+    },
+    "copyDialog": {
+      "title": "Copy {name}",
+      "description": "Choose the destination folder for the copy.",
+      "create": "Copy here"
+    },
+    "editorDialog": {
+      "title": "Edit {name}",
+      "save": "Save",
+      "saving": "Saving...",
+      "loading": "Loading...",
+      "unsupported": "This file type cannot be edited in the browser.",
+      "tooLarge": "This file is too large to edit here.",
+      "loadError": "Couldn't load the file content.",
+      "saveError": "Couldn't save the file. Please try again."
+    },
+    "uploadDialog": {
+      "title": "Upload files",
+      "description": "Drop files here or click to browse. Files are stored privately.",
+      "drop": "Drop files here",
+      "browse": "Browse files",
+      "uploading": "Uploading...",
+      "done": "Uploaded {count} files.",
+      "error": "Some files could not be uploaded.",
+      "nameTaken": "{name} already exists in this folder."
+    },
+    "trashDialog": {
+      "title": "Move {name} to trash?",
+      "description": "The entry can be restored from the trash later. Nothing is deleted permanently yet."
+    },
+    "deleteDialog": {
+      "title": "Delete {name} forever?",
+      "description": "This permanently removes the entry and cannot be undone."
+    },
+    "toast": {
+      "uploaded": "{count} file(s) uploaded.",
+      "folderCreated": "Folder created.",
+      "fileCreated": "File created.",
+      "renamed": "Renamed successfully.",
+      "saved": "File saved.",
+      "trashed": "Moved to trash.",
+      "restored": "Restored.",
+      "deleted": "Deleted forever.",
+      "error": "The action failed. Please try again."
+    }
   },
   "forbidden": {
     "title": "Access Denied",

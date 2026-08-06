@@ -106,7 +106,9 @@ export function Topbar({
           <span className="truncate font-bold text-content-primary">
             {pathname.startsWith("/dashboard/users")
               ? t("users.heading")
-              : t("dashboard.topbar.dashboard")}
+              : pathname.startsWith("/dashboard/files")
+                ? t("files.heading")
+                : t("dashboard.topbar.dashboard")}
           </span>
         </nav>
       </div>

@@ -22,6 +22,9 @@ const PERMISSION_DEFS = [
   { key: "records.write", name: "Write records", description: "Create and update medical records" },
   { key: "services.read", name: "Read services", description: "View the service catalog" },
   { key: "services.write", name: "Write services", description: "Manage the service catalog" },
+  { key: "files.read", name: "Read files", description: "Browse and download the file manager" },
+  { key: "files.write", name: "Write files", description: "Upload, create, edit and rename files" },
+  { key: "files.manage", name: "Manage files", description: "Move files to trash, restore and delete" },
   { key: "settings.manage", name: "Manage settings", description: "Change platform settings" },
 ] as const;
 
@@ -36,6 +39,7 @@ const ROLE_PERMISSIONS: Record<string, readonly string[]> = {
     "records.read",
     "records.write",
     "services.read",
+    "files.read",
   ],
   receptionist: [
     "users.read",
@@ -43,6 +47,8 @@ const ROLE_PERMISSIONS: Record<string, readonly string[]> = {
     "appointments.read",
     "appointments.write",
     "services.read",
+    "files.read",
+    "files.write",
   ],
   customer: [],
 };

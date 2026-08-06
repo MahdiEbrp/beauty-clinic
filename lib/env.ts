@@ -7,6 +7,8 @@ const envSchema = z.object({
   ENCRYPTION_KEY: z.string().regex(/^[0-9a-f]{64}$/),
   NEXT_PUBLIC_SITE_URL: z.url(),
   CORS_ORIGINS: z.string().optional(),
+  FILE_STORAGE_ROOT: z.string().optional(),
+  FILE_MAX_BYTES: z.coerce.number().int().positive().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
