@@ -4,18 +4,10 @@ import { ExternalLink, Loader2, LogOut } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { LucideIcon } from "lucide-react";
+import { initials } from "@/lib/utils";
 
 type Translate = (key: string) => string;
 export type SidebarNavItem = { key: string; href: string; icon: LucideIcon };
-
-function initials(name: string): string {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]!.toUpperCase())
-    .join("");
-}
 
 export function SidebarNavSection({
   items,

@@ -42,7 +42,7 @@ const DropdownMenuItem = ({
 }) => (
   <DropdownMenuPrimitive.Item
     className={cn(
-      "flex min-h-11 min-w-0 cursor-pointer select-none items-center gap-2 rounded-control px-3 text-start text-caption font-bold outline-none transition-colors focus:bg-surface-tertiary data-disabled:pointer-events-none data-disabled:opacity-45",
+      "flex min-h-11 min-w-0 cursor-pointer select-none items-center gap-2 rounded-control px-3 text-start  text-sm  outline-none transition-colors focus:bg-surface-tertiary data-disabled:pointer-events-none data-disabled:opacity-45",
       inset && "ps-8",
       className,
     )}

@@ -70,11 +70,16 @@
 
     /* ---- Elevation scale (4 levels) --------------------------------- */
     --shadow-sm: 0 1px 2px 0 rgba(57, 9, 10, 0.04);
-    --shadow-md: 0 4px 12px -2px rgba(57, 9, 10, 0.06), 0 2px 4px -2px rgba(57, 9, 10, 0.04);
-    --shadow-lg: 0 12px 32px -8px rgba(57, 9, 10, 0.1), 0 4px 12px -4px rgba(57, 9, 10, 0.06);
-    --shadow-xl: 0 24px 56px -12px rgba(57, 9, 10, 0.22), 0 8px 20px -8px rgba(57, 9, 10, 0.12);
+    --shadow-md:
+      0 4px 12px -2px rgba(57, 9, 10, 0.06),
+      0 2px 4px -2px rgba(57, 9, 10, 0.04);
+    --shadow-lg:
+      0 12px 32px -8px rgba(57, 9, 10, 0.1),
+      0 4px 12px -4px rgba(57, 9, 10, 0.06);
+    --shadow-xl:
+      0 24px 56px -12px rgba(57, 9, 10, 0.22),
+      0 8px 20px -8px rgba(57, 9, 10, 0.12);
   }
-
 }
 
 @theme inline {
@@ -184,22 +189,12 @@
   --text-body-sm: clamp(0.875rem, 0.84rem + 0.15vw, 0.9375rem);
   --text-caption: clamp(0.75rem, 0.72rem + 0.1vw, 0.8125rem);
 
-  /* Dashboard (user panel) type scale — a dedicated 6-step scale that is
-     deliberately more compact than the marketing headings (page titles cap
-     at 28px instead of 56px) while keeping body copy at ~16px so every age
-     group reads comfortably on mobile and desktop. Generates text-dash-*. */
-  --text-dash-display: clamp(1.5rem, 1.4rem + 0.4vw, 1.75rem);
-  /* 24-28px - page titles, greeting */
-  --text-dash-title: clamp(1.25rem, 1.2rem + 0.25vw, 1.375rem);
-  /* 20-22px - section titles */
-  --text-dash-heading: clamp(1.0625rem, 1.025rem + 0.15vw, 1.125rem);
-  /* 17-18px - card titles, dialog titles */
-  --text-dash-body: clamp(1rem, 0.98rem + 0.08vw, 1.0625rem);
-  /* 16-17px - body, inputs, names */
-  --text-dash-body-sm: clamp(0.875rem, 0.8625rem + 0.05vw, 0.9063rem);
-  /* 14-14.5px - secondary text, buttons, nav */
-  --text-dash-caption: clamp(0.75rem, 0.7375rem + 0.05vw, 0.7813rem);
-  /* 12-12.5px - meta, chips, labels */
+  --text-dash-display: clamp(16px, 1.2vw + 12px, 22px);
+  --text-dash-title: clamp(14px, 0.9vw + 11px, 18px);
+  --text-dash-heading: clamp(13px, 0.7vw + 10.5px, 16px);
+  --text-dash-body: clamp(12px, 0.5vw + 10.5px, 14px);
+  --text-dash-body-sm: clamp(11px, 0.4vw + 10px, 13px);
+  --text-dash-caption: clamp(10px, 0.3vw + 9.5px, 12px);
 
   /* ---- Animation --------------------------------------------------- */
   --animate-fade-in: fade-in 250ms ease-out;
@@ -213,12 +208,18 @@
   --animate-breath: breath 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 
   /* Marquee (diceui) - duration/gap/loop-count are set inline per instance. */
-  --animate-marquee-left: marquee-left var(--marquee-duration) linear var(--marquee-loop-count);
-  --animate-marquee-right: marquee-right var(--marquee-duration) linear var(--marquee-loop-count);
-  --animate-marquee-left-rtl: marquee-left-rtl var(--marquee-duration) linear var(--marquee-loop-count);
-  --animate-marquee-right-rtl: marquee-right-rtl var(--marquee-duration) linear var(--marquee-loop-count);
-  --animate-marquee-up: marquee-up var(--marquee-duration) linear var(--marquee-loop-count);
-  --animate-marquee-down: marquee-down var(--marquee-duration) linear var(--marquee-loop-count);
+  --animate-marquee-left: marquee-left var(--marquee-duration) linear
+    var(--marquee-loop-count);
+  --animate-marquee-right: marquee-right var(--marquee-duration) linear
+    var(--marquee-loop-count);
+  --animate-marquee-left-rtl: marquee-left-rtl var(--marquee-duration) linear
+    var(--marquee-loop-count);
+  --animate-marquee-right-rtl: marquee-right-rtl var(--marquee-duration) linear
+    var(--marquee-loop-count);
+  --animate-marquee-up: marquee-up var(--marquee-duration) linear
+    var(--marquee-loop-count);
+  --animate-marquee-down: marquee-down var(--marquee-duration) linear
+    var(--marquee-loop-count);
 }
 
 @keyframes fade-in {
@@ -356,20 +357,25 @@
 
 @keyframes fab-pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(83, 9, 22, 0.7), 0 10px 20px -5px rgba(83, 9, 22, 0.5);
+    box-shadow:
+      0 0 0 0 rgba(83, 9, 22, 0.7),
+      0 10px 20px -5px rgba(83, 9, 22, 0.5);
   }
 
   70% {
-    box-shadow: 0 0 0 20px rgba(83, 9, 22, 0), 0 10px 20px -5px rgba(83, 9, 22, 0.5);
+    box-shadow:
+      0 0 0 20px rgba(83, 9, 22, 0),
+      0 10px 20px -5px rgba(83, 9, 22, 0.5);
   }
 
   100% {
-    box-shadow: 0 0 0 0 rgba(83, 9, 22, 0), 0 10px 20px -5px rgba(83, 9, 22, 0.5);
+    box-shadow:
+      0 0 0 0 rgba(83, 9, 22, 0),
+      0 10px 20px -5px rgba(83, 9, 22, 0.5);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {
@@ -400,7 +406,25 @@ html[lang="fa"] *,
 html[lang="fa"] *::before,
 html[lang="fa"] *::after {
   font-family: var(--font-estedad), sans-serif;
-  font-feature-settings: 'ss01' off, 'ss02' off, 'ss03' off, 'ss10' off, 'ss11' off, 'ss12' off, 'ss20' on;
+  font-feature-settings:
+    "ss01" off,
+    "ss02" off,
+    "ss03" off,
+    "ss10" off,
+    "ss11" off,
+    "ss12" off,
+    "ss20" on;
+}
+
+html[lang="en"] {
+  --font-sans: var(--font-rubik);
+}
+
+html[lang="en"] body,
+html[lang="en"] *,
+html[lang="en"] *::before,
+html[lang="en"] *::after {
+  font-family: var(--font-rubik), sans-serif;
 }
 
 body {
@@ -417,7 +441,7 @@ body {
 }
 
 .hero-bg {
-  background-image: url('/images/hero-bg.webp');
+  background-image: url("/images/hero-bg.webp");
   background-size: cover;
   background-position: center;
 }
@@ -425,19 +449,23 @@ body {
 /* Gradient scrim over the hero photo. Derived from the surface token rather
    than hardcoded rgba() so it tracks the palette. */
 .hero-overlay {
-  background: linear-gradient(to left,
-      color-mix(in srgb, var(--surface-primary) 98%, transparent) 0%,
-      color-mix(in srgb, var(--surface-primary) 92%, transparent) 40%,
-      color-mix(in srgb, var(--surface-primary) 60%, transparent) 70%,
-      color-mix(in srgb, var(--surface-primary) 20%, transparent) 100%);
+  background: linear-gradient(
+    to left,
+    color-mix(in srgb, var(--surface-primary) 98%, transparent) 0%,
+    color-mix(in srgb, var(--surface-primary) 92%, transparent) 40%,
+    color-mix(in srgb, var(--surface-primary) 60%, transparent) 70%,
+    color-mix(in srgb, var(--surface-primary) 20%, transparent) 100%
+  );
 }
 
 html[dir="ltr"] .hero-overlay {
-  background: linear-gradient(to right,
-      color-mix(in srgb, var(--surface-primary) 98%, transparent) 0%,
-      color-mix(in srgb, var(--surface-primary) 92%, transparent) 40%,
-      color-mix(in srgb, var(--surface-primary) 60%, transparent) 70%,
-      color-mix(in srgb, var(--surface-primary) 20%, transparent) 100%);
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--surface-primary) 98%, transparent) 0%,
+    color-mix(in srgb, var(--surface-primary) 92%, transparent) 40%,
+    color-mix(in srgb, var(--surface-primary) 60%, transparent) 70%,
+    color-mix(in srgb, var(--surface-primary) 20%, transparent) 100%
+  );
 }
 
 .btn-hero-primary {
@@ -472,23 +500,28 @@ html[dir="rtl"] .rtl-mirror {
 /* Soft directional glow used behind hero copy and feature cards. Built from
    the accent/copper tokens so it stays on-brand. */
 .glow-accent {
-  background: radial-gradient(closest-side,
+  background: radial-gradient(
+    closest-side,
     color-mix(in srgb, var(--copper) 38%, transparent),
-    transparent 70%);
+    transparent 70%
+  );
   filter: blur(48px);
 }
 
 .glow-gold {
-  background: radial-gradient(closest-side,
+  background: radial-gradient(
+    closest-side,
     color-mix(in srgb, var(--gold) 30%, transparent),
-    transparent 70%);
+    transparent 70%
+  );
   filter: blur(56px);
 }
 
 /* Floating orb keyframes — slow, ambient, reduced-motion safe (the blanket
    rule at the top of this file fast-forwards them to a static frame). */
 @keyframes float-slow {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0) scale(1);
   }
   50% {
@@ -497,7 +530,8 @@ html[dir="rtl"] .rtl-mirror {
 }
 
 @keyframes float-slower {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0) scale(1);
   }
   50% {
@@ -516,16 +550,20 @@ html[dir="rtl"] .rtl-mirror {
 /* Marquee edge fades — mask the scrolling banner's hard cutoffs at both ends.
    Uses the surface token so it matches whichever palette is active. */
 .marquee-fade {
-  -webkit-mask-image: linear-gradient(to right,
+  -webkit-mask-image: linear-gradient(
+    to right,
     transparent 0%,
     var(--surface-primary) 8%,
     var(--surface-primary) 92%,
-    transparent 100%);
-  mask-image: linear-gradient(to right,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
     transparent 0%,
     var(--surface-primary) 8%,
     var(--surface-primary) 92%,
-    transparent 100%);
+    transparent 100%
+  );
 }
 
 /* Shimmering gradient text used for accent words. Colours are tokens. */
@@ -547,8 +585,10 @@ html[dir="rtl"] .rtl-mirror {
    adds a luxurious break between sections. */
 .rule-gradient {
   height: 1px;
-  background: linear-gradient(to right,
+  background: linear-gradient(
+    to right,
     transparent,
     color-mix(in srgb, var(--copper) 45%, transparent),
-    transparent);
+    transparent
+  );
 }
