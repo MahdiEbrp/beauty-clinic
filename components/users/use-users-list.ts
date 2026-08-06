@@ -50,6 +50,9 @@ export interface UsersListState {
   from: number;
   to: number;
   statusSummary: string;
+  selectionMode: boolean;
+  setSelectionMode: (value: boolean) => void;
+  toggleSelectionMode: () => void;
 }
 
 export function useUsersList(
@@ -71,6 +74,7 @@ export function useUsersList(
   );
   const [bulkAction, setBulkAction] = useState<BulkAction>("activate");
   const [bulkRole, setBulkRole] = useState("");
+  const [selectionMode, setSelectionMode] = useState(false);
   const selectAllRef = useRef<HTMLInputElement>(null);
   const firstRun = useRef(true);
 
@@ -119,6 +123,11 @@ export function useUsersList(
   const clearSelection = () => {
     setSelectedIds([]);
     setSelectionScope("page");
+  };
+
+  const toggleSelectionMode = () => {
+    if (selectionMode) clearSelection();
+    setSelectionMode(!selectionMode);
   };
 
   const load = useCallback(
@@ -208,5 +217,8 @@ export function useUsersList(
     from,
     to,
     statusSummary,
+    selectionMode,
+    setSelectionMode,
+    toggleSelectionMode,
   };
 }

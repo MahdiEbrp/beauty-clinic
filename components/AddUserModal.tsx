@@ -117,7 +117,7 @@ export default function AddUserModal({
       <Dialog open={open} onOpenChange={requestClose}>
         <DialogContent
           closeLabel={t("users.dialog.cancel")}
-          className="max-w-xl gap-0 overflow-y-auto p-0 max-md:top-auto max-md:bottom-0 max-md:inset-s-0 max-md:max-w-none max-md:translate-x-0 max-md:translate-y-0 max-md:rounded-b-none max-md:rounded-t-[1.5rem] max-md:max-h-[92dvh]"
+          className="max-w-xl gap-0 overflow-y-auto p-0 max-md:top-auto max-md:bottom-0 max-md:max-w-none max-md:translate-y-0 max-md:rounded-b-none max-md:rounded-t-[1.5rem] max-md:max-h-[92dvh]"
         >
           <div className="border-b border-border-primary bg-surface-tertiary/35 px-6 pb-5 pt-7 sm:px-8">
             <DialogHeader className="gap-2 pe-8">

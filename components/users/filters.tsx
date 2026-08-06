@@ -1,10 +1,56 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Search, X, Loader2, ChevronDown } from "lucide-react";
+import { Search, X, Loader2, ChevronDown, Check } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ROLE_KEYS, type RoleFilter, type StatusFilter } from "./types";
 import { useRoleLabel } from "./helpers";
 import { useUsers } from "./users-context";
+
+type StatusOption = { value: StatusFilter; labelKey: string };
+
+const STATUS_OPTIONS: StatusOption[] = [
+  { value: "all", labelKey: "users.statusAll" },
+  { value: "active", labelKey: "users.statuses.active" },
+  { value: "inactive", labelKey: "users.statuses.inactive" },
+  { value: "banned", labelKey: "users.statuses.banned" },
+];
+
+function FilterPill({
+  label,
+  active,
+  children,
+}: {
+  label: string;
+  active: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          className={`inline-flex shrink-0 items-center gap-1.5 rounded-pill border px-3.5 py-2 text-dash-body-sm font-bold whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+            active
+              ? "border-accent bg-accent text-content-contrast"
+              : "border-border-interactive bg-surface-secondary text-accent hover:bg-surface-tertiary"
+          }`}
+        >
+          <span>{label}</span>
+          <ChevronDown className="size-3.5 rtl-mirror" strokeWidth={2} aria-hidden="true" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" onCloseAutoFocus={(event) => event.preventDefault()}>
+        {children}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 export function UsersFilters() {
   const t = useTranslations();
@@ -27,94 +73,97 @@ export function UsersFilters() {
     setSelectionScope("page");
   };
 
+  const setStatusFilter = (value: StatusFilter) => {
+    setStatus(value);
+    setPage(1);
+    clearSelection();
+  };
+
+  const setRoleFilter = (value: RoleFilter) => {
+    setRole(value);
+    setPage(1);
+    clearSelection();
+  };
+
+  const hasActiveFilters = status !== "all" || role !== "all" || Boolean(search);
+
+  const statusLabel =
+    status === "all" ? t("users.statusAll") : t(`users.statuses.${status}`);
+  const roleFilterLabel =
+    role === "all" ? t("users.roleAll") : roleLabel(role);
+
   return (
     <section
-      aria-labelledby="user-filters-heading"
-      className="rounded-card border border-border-primary bg-surface-secondary/60 p-4 sm:p-5"
+      aria-label={t("users.filterLabel")}
+      className="rounded-card border border-border-primary bg-surface-secondary/60 p-2.5 sm:p-3"
     >
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <h2
-          id="user-filters-heading"
-          className="text-dash-body-sm font-bold text-accent"
-        >
-          {t("users.filterLabel")}
-        </h2>
+      <div className="relative">
+        <Search
+          className="pointer-events-none absolute inset-s-3 top-1/2 size-4 -translate-y-1/2 text-content-tertiary"
+          strokeWidth={2}
+          aria-hidden="true"
+        />
+        <input
+          type="search"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+            clearSelection();
+          }}
+          placeholder={t("users.searchPlaceholder")}
+          aria-label={t("users.search")}
+          className="h-9 w-full rounded-control border border-form-input-border bg-form-input-bg ps-9 pe-9 text-dash-body-sm text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        />
         {isLoading && (
           <Loader2
-            className="size-4 animate-spin text-copper"
+            className="pointer-events-none absolute inset-e-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-copper"
             aria-label={t("users.loading")}
           />
         )}
       </div>
-      <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_11rem_11rem_auto] md:items-end md:gap-4">
-        <div className="relative flex-1 min-w-0">
-          <Search
-            className="w-5 h-5 text-content-tertiary absolute top-1/2 -translate-y-1/2 inset-s-4 pointer-events-none"
-            strokeWidth={2}
-            aria-hidden="true"
-          />
-          <input
-            type="search"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-              clearSelection();
-            }}
-            placeholder={t("users.searchPlaceholder")}
-            aria-label={t("users.search")}
-            className="w-full bg-form-input-bg border border-form-input-border rounded-control py-3 ps-12 pe-4 text-dash-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          />
-        </div>
-        <label className="grid gap-1 text-dash-caption font-bold text-content-secondary">
-          <span className="whitespace-nowrap">{t("users.status")}</span>
-          <span className="relative block w-full">
-            <select
-              value={status}
-              onChange={(e) => {
-                setStatus(e.target.value as StatusFilter);
-                setPage(1);
-                clearSelection();
-              }}
-              className="min-h-11 w-full appearance-none rounded-control border border-form-input-border bg-form-input-bg py-2.5 ps-4 pe-10 text-dash-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+      <div className="mt-2 flex items-center gap-2 overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <FilterPill
+          label={`${t("users.status")}: ${statusLabel}`}
+          active={status !== "all"}
+        >
+          {STATUS_OPTIONS.map((option) => (
+            <DropdownMenuItem
+              key={option.value}
+              onSelect={() => setStatusFilter(option.value)}
+              className="justify-between gap-3"
             >
-              <option value="all">{t("users.statusAll")}</option>
-              <option value="active">{t("users.statusActive")}</option>
-              <option value="inactive">{t("users.statusInactive")}</option>
-              <option value="banned">{t("users.statusBanned")}</option>
-            </select>
-            <ChevronDown
-              className="pointer-events-none absolute inset-e-3 top-1/2 size-4 -translate-y-1/2 text-content-tertiary"
-              aria-hidden="true"
-            />
-          </span>
-        </label>
-        <label className="grid gap-1 text-dash-caption font-bold text-content-secondary">
-          <span className="whitespace-nowrap">{t("users.role")}</span>
-          <span className="relative block w-full">
-            <select
-              value={role}
-              onChange={(e) => {
-                setRole(e.target.value as RoleFilter);
-                setPage(1);
-                clearSelection();
-              }}
-              className="min-h-11 w-full appearance-none rounded-control border border-form-input-border bg-form-input-bg py-2.5 ps-4 pe-10 text-dash-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              <span>{t(option.labelKey)}</span>
+              {status === option.value && (
+                <Check className="size-4 shrink-0 text-copper" strokeWidth={2.5} aria-hidden="true" />
+              )}
+            </DropdownMenuItem>
+          ))}
+        </FilterPill>
+        <FilterPill
+          label={`${t("users.role")}: ${roleFilterLabel}`}
+          active={role !== "all"}
+        >
+          <DropdownMenuItem onSelect={() => setRoleFilter("all")} className="justify-between gap-3">
+            <span>{t("users.roleAll")}</span>
+            {role === "all" && (
+              <Check className="size-4 shrink-0 text-copper" strokeWidth={2.5} aria-hidden="true" />
+            )}
+          </DropdownMenuItem>
+          {ROLE_KEYS.map((key) => (
+            <DropdownMenuItem
+              key={key}
+              onSelect={() => setRoleFilter(key)}
+              className="justify-between gap-3"
             >
-              <option value="all">{t("users.roleAll")}</option>
-              {ROLE_KEYS.map((key) => (
-                <option key={key} value={key}>
-                  {roleLabel(key)}
-                </option>
-              ))}
-            </select>
-            <ChevronDown
-              className="pointer-events-none absolute inset-e-3 top-1/2 size-4 -translate-y-1/2 text-content-tertiary"
-              aria-hidden="true"
-            />
-          </span>
-        </label>
-        {(status !== "all" || role !== "all" || search) && (
+              <span>{roleLabel(key)}</span>
+              {role === key && (
+                <Check className="size-4 shrink-0 text-copper" strokeWidth={2.5} aria-hidden="true" />
+              )}
+            </DropdownMenuItem>
+          ))}
+        </FilterPill>
+        {hasActiveFilters && (
           <button
             type="button"
             onClick={() => {
@@ -124,9 +173,10 @@ export function UsersFilters() {
               setPage(1);
               clearSelection();
             }}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-control px-4 text-dash-body-sm font-bold text-accent transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-pill border border-border-primary bg-surface-tertiary px-3.5 py-2 text-dash-body-sm font-bold text-content-secondary transition-colors hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
-            <X className="size-4" aria-hidden="true" /> {t("users.clearFilters")}
+            <X className="size-3.5" strokeWidth={2} aria-hidden="true" />
+            {t("users.clearFilters")}
           </button>
         )}
       </div>

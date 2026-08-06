@@ -80,10 +80,12 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 inset-s-1/2 z-100 grid max-h-[calc(100dvh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-y-1/2 gap-4 overflow-y-auto rounded-panel border border-border-primary bg-surface-secondary p-6 shadow-elevation-4 outline-none data-[state=open]:animate-slide-up sm:max-w-lg",
-          // `start-1/2` resolves to left in LTR and right in RTL, so the
-          // centring translate has to flip sign with the writing direction.
-          "rtl:translate-x-1/2 ltr:-translate-x-1/2",
+          "fixed inset-x-0 top-1/2 z-100 grid max-h-[calc(100dvh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-y-1/2 gap-4 overflow-y-auto rounded-panel border border-border-primary bg-surface-secondary p-6 shadow-elevation-4 outline-none data-[state=open]:animate-slide-up sm:max-w-lg",
+          // Centred horizontally with `inset-x-0` + `mx-auto` (direction-agnostic,
+          // no translate). A translate-based centre would fight the `ltr:`/`rtl:`
+          // variants — emitted later in the cascade — whenever a consumer
+          // overrides the transform (e.g. a mobile bottom sheet).
+          "mx-auto",
           className,
         )}
         {...props}

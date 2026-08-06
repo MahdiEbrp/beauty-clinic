@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, SquareCheckBig } from "lucide-react";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { ListUsersResult } from "@/lib/users/service";
 import { UsersProvider, useUsers } from "./users-context";
@@ -13,6 +13,7 @@ import { UsersDesktopTable } from "./desktop-table";
 import { UsersEmptyState } from "./empty-state";
 import { UsersPagination } from "./pagination";
 import { UsersDialogs } from "./dialogs";
+import { AddUserFab } from "./add-user-fab";
 
 function UsersErrorBanner() {
   const t = useTranslations();
@@ -43,25 +44,33 @@ function UsersErrorBanner() {
 
 function UsersTableSection() {
   const t = useTranslations();
-  const { data, from, to, statusSummary, isLoading } = useUsers();
+  const { canManage, data, selectionMode, toggleSelectionMode, isLoading } =
+    useUsers();
 
   return (
     <section
       className="overflow-hidden rounded-panel border border-border-primary bg-surface-secondary shadow-elevation-2"
       aria-label={t("users.heading")}
     >
-      <div className="flex items-center justify-between gap-4 border-b border-border-primary bg-surface-secondary px-4 py-4 md:bg-surface-tertiary/20 md:px-6">
-        <div>
-          <p className="text-dash-body-sm font-bold text-accent">
-            {t("users.heading")}
-          </p>
-          <p className="mt-1 text-dash-caption text-content-tertiary">
-            {from}–{to} / {data.total}
-          </p>
-        </div>
-        <span className="border-s border-border-interactive ps-3 text-dash-caption font-bold text-content-secondary">
-          {statusSummary}
-        </span>
+      <div className="flex min-h-11 items-center justify-between gap-3 border-b border-border-primary bg-surface-secondary px-4 py-2.5 md:px-6">
+        <p className="text-dash-caption text-content-tertiary">
+          {t("users.syncStatus")}
+        </p>
+        {canManage && data.items.length > 0 && (
+          <button
+            type="button"
+            onClick={toggleSelectionMode}
+            aria-pressed={selectionMode}
+            className={`inline-flex min-h-9 items-center gap-1.5 rounded-pill border px-3 text-dash-caption font-bold transition-colors md:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+              selectionMode
+                ? "border-accent bg-accent text-content-contrast"
+                : "border-border-interactive bg-surface-secondary text-accent hover:bg-surface-tertiary"
+            }`}
+          >
+            <SquareCheckBig className="size-4" aria-hidden="true" />
+            {selectionMode ? t("users.done") : t("users.select")}
+          </button>
+        )}
       </div>
       <UsersSelectionBar />
       <UsersSelectFilteredRow />
@@ -80,12 +89,13 @@ function UsersTableSection() {
 
 function UsersView() {
   return (
-    <div className="space-y-6 sm:space-y-7">
+    <div className="space-y-4 sm:space-y-6">
       <UsersHeader />
       <UsersFilters />
       <UsersErrorBanner />
       <UsersTableSection />
       <UsersDialogs />
+      <AddUserFab />
     </div>
   );
 }

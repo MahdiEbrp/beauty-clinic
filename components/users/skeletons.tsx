@@ -10,24 +10,20 @@ export function SkeletonBlock({ className = "" }: { className?: string }) {
 export function UserCardSkeleton() {
   return (
     <article
-      className="rounded-card border border-border-primary bg-surface-secondary p-4"
+      className="rounded-card border border-border-primary bg-surface-secondary p-3"
       aria-label="Loading user"
     >
       <div className="flex items-center gap-3">
-        <SkeletonBlock className="size-11 rounded-pill" />
+        <SkeletonBlock className="size-10 rounded-pill" />
         <div className="grid flex-1 gap-2">
           <SkeletonBlock className="h-4 w-2/3" />
           <SkeletonBlock className="h-3 w-5/6" />
+          <div className="mt-0.5 flex gap-1.5">
+            <SkeletonBlock className="h-4 w-16" />
+            <SkeletonBlock className="h-4 w-20" />
+          </div>
         </div>
         <SkeletonBlock className="size-11 rounded-pill" />
-      </div>
-      <div className="mt-4 flex gap-2">
-        <SkeletonBlock className="h-6 w-16" />
-        <SkeletonBlock className="h-6 w-20" />
-      </div>
-      <div className="mt-4 grid grid-cols-2 gap-3 border-t border-border-primary pt-4">
-        <SkeletonBlock className="h-3 w-20" />
-        <SkeletonBlock className="h-3 w-24" />
       </div>
     </article>
   );
