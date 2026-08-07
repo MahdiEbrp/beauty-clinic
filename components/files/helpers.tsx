@@ -1,3 +1,4 @@
+import { createElement } from "react";
 import {
   FileArchive,
   FileAudio,
@@ -82,13 +83,17 @@ export function iconFor(entry: { isDir: boolean; name: string }): LucideIcon {
   return FileCode;
 }
 
-/** Renders the entry icon directly to an element (avoids re-creating components). */
+/**
+ * Renders the entry icon to an element without creating a component during
+ * render. Uses createElement because lucide-react icons are React 19
+ * forwardRef objects, which cannot be invoked as plain functions.
+ */
 export function renderEntryIcon(
   entry: { isDir: boolean; name: string },
   className: string,
   strokeWidth = 2,
 ): React.ReactNode {
-  return iconFor(entry)({
+  return createElement(iconFor(entry), {
     className,
     "aria-hidden": true,
     strokeWidth,

@@ -17,15 +17,13 @@ import type { EntryMeta } from "./types";
 
 function CopyPicker({
   initialPath,
-  target,
-  onClose,
+  targets,
 }: {
   initialPath: string;
-  target: EntryMeta;
-  onClose: () => void;
+  targets: EntryMeta[];
 }) {
   const t = useTranslations();
-  const { busy, copyEntry } = useFiles();
+  const { busy, copySelected } = useFiles();
   const [pickPath, setPickPath] = useState(initialPath);
   const [folders, setFolders] = useState<EntryMeta[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,7 +63,7 @@ function CopyPicker({
   };
 
   const submit = () => {
-    if (!busy) void copyEntry(target, pickPath).then(onClose);
+    if (!busy) void copySelected(pickPath);
   };
 
   const segments = pickPath === "" ? [] : pickPath.split("/");
@@ -74,7 +72,9 @@ function CopyPicker({
     <DialogContent closeLabel={t("files.dialog.cancel")} className="max-w-sm">
       <DialogHeader>
         <DialogTitle className="text-accent">
-          {t("files.copyDialog.title", { name: target.name })}
+          {targets.length === 1
+            ? t("files.copyDialog.title", { name: targets[0].name })
+            : t("files.copyDialog.titleMany", { count: targets.length })}
         </DialogTitle>
         <DialogDescription>
           {t("files.copyDialog.description")}
@@ -165,21 +165,20 @@ function CopyPicker({
 }
 
 export function CopyDialog() {
-  const { copyTarget, setCopyTarget, path } = useFiles();
+  const { copyTargets, setCopyTargets, path } = useFiles();
 
   return (
     <Dialog
-      open={copyTarget !== null}
+      open={copyTargets !== null}
       onOpenChange={(open) => {
-        if (!open) setCopyTarget(null);
+        if (!open) setCopyTargets(null);
       }}
     >
-      {copyTarget && (
+      {copyTargets && (
         <CopyPicker
-          key={copyTarget.name}
+          key={copyTargets.map((target) => target.name).join("|")}
           initialPath={path}
-          target={copyTarget}
-          onClose={() => setCopyTarget(null)}
+          targets={copyTargets}
         />
       )}
     </Dialog>

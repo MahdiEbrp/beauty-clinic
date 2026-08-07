@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { filesCache } from "./files-cache";
 import { joinRel } from "./helpers";
 import type { ConfirmTarget, EntryMeta, TrashItem } from "./types";
 import type { FilesListState } from "./use-files-list";
@@ -17,8 +18,6 @@ export interface FilesActionsState {
   setNewFileOpen: (value: boolean) => void;
   renameTarget: EntryMeta | null;
   setRenameTarget: (value: EntryMeta | null) => void;
-  copyTarget: EntryMeta | null;
-  setCopyTarget: (value: EntryMeta | null) => void;
   editorTarget: EntryMeta | null;
   setEditorTarget: (value: EntryMeta | null) => void;
   confirm: ConfirmTarget | null;
@@ -27,7 +26,6 @@ export interface FilesActionsState {
   createFolder: (name: string) => Promise<void>;
   createFile: (name: string) => Promise<void>;
   renameEntry: (entry: EntryMeta, newName: string) => Promise<void>;
-  copyEntry: (entry: EntryMeta, targetFolder: string) => Promise<void>;
   moveToTrash: (entry: EntryMeta) => Promise<void>;
   restoreEntry: (item: TrashItem) => Promise<void>;
   deleteForever: (item: TrashItem) => Promise<void>;
@@ -65,10 +63,21 @@ export function useFilesActions(list: FilesListState): FilesActionsState {
   const [newFolderOpen, setNewFolderOpen] = useState(false);
   const [newFileOpen, setNewFileOpen] = useState(false);
   const [renameTarget, setRenameTarget] = useState<EntryMeta | null>(null);
-  const [copyTarget, setCopyTarget] = useState<EntryMeta | null>(null);
   const [editorTarget, setEditorTarget] = useState<EntryMeta | null>(null);
   const [confirm, setConfirm] = useState<ConfirmTarget | null>(null);
   const busyRef = useRef(false);
+
+  /** Drops a folder and its parent from the cache so the next load refetches. */
+  const invalidateCache = (rel: string) => {
+    filesCache.invalidate(rel);
+    const parent = rel.lastIndexOf("/");
+    if (parent !== -1) filesCache.invalidate(rel.slice(0, parent));
+  };
+
+  const refetch = async (rel: string) => {
+    invalidateCache(rel);
+    await load();
+  };
 
   const withBusy = async (action: () => Promise<void>) => {
     if (busyRef.current) return;
@@ -110,7 +119,7 @@ export function useFilesActions(list: FilesListState): FilesActionsState {
         uploaded += 1;
       }
       setUploadOpen(false);
-      await load();
+      await refetch(path);
       if (uploaded > 0) {
         toast.success(t("files.toast.uploaded", { count: uploaded }), { id: pendingToast });
       } else {
@@ -123,7 +132,7 @@ export function useFilesActions(list: FilesListState): FilesActionsState {
     await withBusy(async () => {
       await postJson("/api/v1/files/directory", { path: joinRel(path, name) });
       setNewFolderOpen(false);
-      await load();
+      await refetch(path);
       toast.success(t("files.toast.folderCreated"));
     });
   };
@@ -132,7 +141,7 @@ export function useFilesActions(list: FilesListState): FilesActionsState {
     await withBusy(async () => {
       await postJson("/api/v1/files/file", { path: joinRel(path, name), content: "" });
       setNewFileOpen(false);
-      await load();
+      await refetch(path);
       toast.success(t("files.toast.fileCreated"));
     });
   };
@@ -144,19 +153,7 @@ export function useFilesActions(list: FilesListState): FilesActionsState {
         name: newName,
       });
       setRenameTarget(null);
-      await load();
-      toast.success(t("files.toast.renamed"));
-    });
-  };
-
-  const copyEntry = async (entry: EntryMeta, targetFolder: string) => {
-    await withBusy(async () => {
-      await postJson("/api/v1/files/copy", {
-        path: joinRel(path, entry.name),
-        target: joinRel(targetFolder, entry.name),
-      });
-      setCopyTarget(null);
-      await load();
+      await refetch(path);
       toast.success(t("files.toast.renamed"));
     });
   };
@@ -165,18 +162,17 @@ export function useFilesActions(list: FilesListState): FilesActionsState {
     setConfirm(null);
     await withBusy(async () => {
       await postJson("/api/v1/files/trash", { path: joinRel(path, entry.name) });
-      await load();
+      await refetch(path);
       toast.success(t("files.toast.trashed"));
     });
   };
 
-  const restoreEntry = async (item: TrashItem) => {
-    setConfirm(null);
-    await withBusy(async () => {
-      await postJson("/api/v1/files/restore", { trashPath: item.trashPath });
-      await load();
-      toast.success(t("files.toast.restored"));
-    });
+  const restoreEntry = async (item: TrashItem) => {      setConfirm(null);
+      await withBusy(async () => {
+        await postJson("/api/v1/files/restore", { trashPath: item.trashPath });
+        await refetch(item.originalPath);
+        toast.success(t("files.toast.restored"));
+      });
   };
 
   const deleteForever = async (item: TrashItem) => {
@@ -189,7 +185,7 @@ export function useFilesActions(list: FilesListState): FilesActionsState {
         body: JSON.stringify({ trashPath: item.trashPath }),
       });
       if (!response.ok) throw new Error("action_failed");
-      await load();
+      await refetch("");
       toast.success(t("files.toast.deleted"));
     });
   };
@@ -224,7 +220,7 @@ export function useFilesActions(list: FilesListState): FilesActionsState {
         content,
       });
       setEditorTarget(null);
-      await load();
+      await refetch(path);
       toast.success(t("files.toast.saved"));
     });
   };
@@ -239,8 +235,6 @@ export function useFilesActions(list: FilesListState): FilesActionsState {
     setNewFileOpen,
     renameTarget,
     setRenameTarget,
-    copyTarget,
-    setCopyTarget,
     editorTarget,
     setEditorTarget,
     confirm,
@@ -249,7 +243,6 @@ export function useFilesActions(list: FilesListState): FilesActionsState {
     createFolder,
     createFile,
     renameEntry,
-    copyEntry,
     moveToTrash,
     restoreEntry,
     deleteForever,

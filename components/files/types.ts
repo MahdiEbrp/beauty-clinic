@@ -19,4 +19,5 @@ export type FilesView = "browse" | "trash";
 
 export type ConfirmTarget =
   | { kind: "trash"; entry: EntryMeta }
+  | { kind: "trashMany"; entries: EntryMeta[] }
   | { kind: "deleteForever"; item: TrashItem };

@@ -1,12 +1,13 @@
 import path from "node:path";
 
 import { ApiError } from "@/lib/api/errors";
-import { getStorageConfig } from "@/lib/storage/config";
+import { ensureStorage, getStorageConfig } from "@/lib/storage/config";
 import * as fss from "@/lib/storage/fs";
 import { ensureAllowed, notFound } from "@/lib/storage/guards";
 import {
   joinRel,
   normalizeRelativePath,
+  realPathWithin,
   resolveSafePath,
   splitPath,
 } from "@/lib/storage/paths";
@@ -41,23 +42,29 @@ function assertTrashPath(rel: string): string {
 }
 
 export async function trashEntry(rel: string): Promise<void> {
+  await ensureStorage();
   const normalized = normalizeRelativePath(rel);
   ensureAllowed(normalized);
-  const root = getStorageConfig().root;
+  const config = getStorageConfig();
+  const root = config.root;
   const abs = resolveSafePath(root, normalized);
-  if (!(await fss.exists(abs))) {
+  const real = await realPathWithin(root, abs);
+  if (!(await fss.exists(real))) {
     await notFound(normalized, "entry");
   }
-  const target = resolveSafePath(root, trashRelFor(normalized));
-  await fss.mkdirRecursive(path.dirname(target));
-  await fss.renameEntry(abs, target);
+  const target = resolveSafePath(config.metaRoot, trashRelFor(normalized));
+  const realTarget = await realPathWithin(config.metaRoot, target);
+  await fss.mkdirRecursive(path.dirname(realTarget));
+  await fss.renameEntry(real, realTarget);
 }
 
 export async function restoreEntry(trashPath: string): Promise<void> {
+  await ensureStorage();
   const normalized = assertTrashPath(trashPath);
-  const root = getStorageConfig().root;
-  const abs = resolveSafePath(root, normalized);
-  if (!(await fss.exists(abs))) {
+  const config = getStorageConfig();
+  const abs = resolveSafePath(config.metaRoot, normalized);
+  const real = await realPathWithin(config.metaRoot, abs);
+  if (!(await fss.exists(real))) {
     await notFound(normalized, "trash entry");
   }
   const originalPath = originalFromTrash(normalized);
@@ -65,21 +72,24 @@ export async function restoreEntry(trashPath: string): Promise<void> {
     return notFound(normalized, "trash entry");
   }
   ensureAllowed(originalPath);
-  const target = resolveSafePath(root, originalPath);
+  const targetText = resolveSafePath(config.root, originalPath);
+  const target = await realPathWithin(config.root, targetText);
   if (await fss.exists(target)) {
     throw new ApiError(409, "CONFLICT", "An entry with this name already exists at the original location.");
   }
   await fss.mkdirRecursive(path.dirname(target));
-  await fss.renameEntry(abs, target);
+  await fss.renameEntry(real, target);
 }
 
 export async function listTrash(): Promise<TrashItem[]> {
-  const root = getStorageConfig().root;
-  const trashDir = resolveSafePath(root, TRASH_FOLDER);
-  if (!(await fss.isDirectory(trashDir))) {
+  await ensureStorage();
+  const config = getStorageConfig();
+  const trashDir = resolveSafePath(config.metaRoot, TRASH_FOLDER);
+  const real = await realPathWithin(config.metaRoot, trashDir);
+  if (!(await fss.isDirectory(real))) {
     return [];
   }
-  const entries = await fss.listDir(trashDir);
+  const entries = await fss.listDir(real);
   const items: TrashItem[] = [];
   for (const entry of entries) {
     const originalPath = originalFromTrash(entry.name);
@@ -90,11 +100,13 @@ export async function listTrash(): Promise<TrashItem[]> {
 }
 
 export async function deleteForever(trashPath: string): Promise<void> {
+  await ensureStorage();
   const normalized = assertTrashPath(trashPath);
-  const root = getStorageConfig().root;
-  const abs = resolveSafePath(root, normalized);
-  if (!(await fss.exists(abs))) {
+  const config = getStorageConfig();
+  const abs = resolveSafePath(config.metaRoot, normalized);
+  const real = await realPathWithin(config.metaRoot, abs);
+  if (!(await fss.exists(real))) {
     await notFound(normalized, "trash entry");
   }
-  await fss.removeEntry(abs, true);
+  await fss.removeEntry(real, true);
 }

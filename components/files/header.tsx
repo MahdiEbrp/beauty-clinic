@@ -1,14 +1,44 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { FolderPlus, FilePlus, Trash2, Upload, X } from "lucide-react";
+import {
+  Copy,
+  Download,
+  FilePlus,
+  FolderPlus,
+  Loader2,
+  Trash2,
+  Upload,
+  X,
+} from "lucide-react";
 import { Breadcrumbs } from "./breadcrumbs";
 import { useFiles } from "./files-context";
 
 export function FilesHeader() {
   const t = useTranslations();
-  const { canWrite, canManage, entries, view, setView, setUploadOpen, setNewFolderOpen, setNewFileOpen } =
-    useFiles();
+  const {
+    canWrite,
+    canManage,
+    busy,
+    entries,
+    view,
+    setView,
+    setUploadOpen,
+    setNewFolderOpen,
+    setNewFileOpen,
+    selectedEntries,
+    anySelected,
+    clearSelection,
+    downloadSelected,
+    setCopyTargets,
+    setConfirm,
+    isRefreshing,
+  } = useFiles();
+
+  const hasFiles = selectedEntries.some((entry) => !entry.isDir);
+
+  const toolbarButton =
+    "inline-flex min-h-9 items-center justify-center gap-1.5 rounded-pill border border-border-interactive bg-surface-secondary px-3 text-dash-caption font-bold text-accent transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-40";
 
   return (
     <header className="rounded-panel border border-border-primary bg-surface-secondary px-4 py-3 shadow-elevation-2 sm:px-6 sm:py-4">
@@ -82,9 +112,66 @@ export function FilesHeader() {
         </div>
       </div>
 
+      {anySelected && view === "browse" && (
+        <div className="mt-3 flex flex-wrap items-center gap-2 rounded-control border border-accent/25 bg-accent/5 px-3 py-2">
+          <span className="text-dash-caption font-bold text-accent">
+            {t("files.bulk.selected", { count: selectedEntries.length })}
+          </span>
+          <span className="h-4 w-px bg-border-interactive" aria-hidden="true" />
+          {hasFiles && (
+            <button
+              type="button"
+              onClick={downloadSelected}
+              disabled={busy}
+              className={toolbarButton}
+            >
+              <Download className="size-4" aria-hidden="true" />
+              <span className="hidden sm:inline">{t("files.bulk.download")}</span>
+            </button>
+          )}
+          {canWrite && (
+            <button
+              type="button"
+              onClick={() => setCopyTargets(selectedEntries)}
+              disabled={busy}
+              className={toolbarButton}
+            >
+              <Copy className="size-4" aria-hidden="true" />
+              <span className="hidden sm:inline">{t("files.bulk.copy")}</span>
+            </button>
+          )}
+          {canManage && (
+            <button
+              type="button"
+              onClick={() => setConfirm({ kind: "trashMany", entries: selectedEntries })}
+              disabled={busy}
+              className={`${toolbarButton} border-error/30 text-error hover:bg-error/10`}
+            >
+              <Trash2 className="size-4" aria-hidden="true" />
+              <span className="hidden sm:inline">{t("files.bulk.trash")}</span>
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={clearSelection}
+            disabled={busy}
+            aria-label={t("files.bulk.clear")}
+            className="ms-auto inline-flex min-h-9 items-center justify-center rounded-pill p-1.5 text-content-tertiary transition hover:bg-surface-tertiary hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            <X className="size-4" aria-hidden="true" />
+          </button>
+        </div>
+      )}
+
       {entries.length > 0 && view === "browse" && (
-        <p className="mt-3 text-dash-caption font-bold text-content-tertiary">
-          {t("files.searchPlaceholder", { count: entries.length })}
+        <p className="mt-3 flex items-center gap-2 text-dash-caption font-bold text-content-tertiary">
+          <span>{t("files.searchPlaceholder", { count: entries.length })}</span>
+          {isRefreshing && (
+            <>
+              <Loader2 className="size-3.5 animate-spin text-accent" aria-hidden="true" />
+              <span className="sr-only">{t("files.refreshing")}</span>
+            </>
+          )}
         </p>
       )}
     </header>

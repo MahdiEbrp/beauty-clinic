@@ -1,3 +1,4 @@
+import fs from "node:fs/promises";
 import path from "node:path";
 
 import { ApiError } from "@/lib/api/errors";
@@ -48,6 +49,35 @@ export function resolveSafePath(root: string, relative: string): string {
   return target;
 }
 
+/**
+ * Resolves a path on disk and asserts it stays inside the root, resolving any
+ * intermediate symlinks (defense against escaping the root through a symlink
+ * placed inside it). For targets that do not exist yet (create/rename/upload) it
+ * realpaths the deepest existing ancestor and appends the remaining segments.
+ */
+export async function realPathWithin(root: string, abs: string): Promise<string> {
+  const rootReal = await fs.realpath(root);
+  const isInside = (candidate: string) =>
+    candidate === rootReal || candidate.startsWith(`${rootReal}${path.sep}`);
+
+  let current = abs;
+  const tail: string[] = [];
+  while (true) {
+    let real: string;
+    try {
+      real = await fs.realpath(current);
+    } catch {
+      tail.unshift(path.basename(current));
+      current = path.dirname(current);
+      continue;
+    }
+    if (!isInside(real)) {
+      throw new ApiError(403, "FORBIDDEN", "Path escapes the storage root.");
+    }
+    return tail.length === 0 ? real : path.join(real, ...tail);
+  }
+}
+
 /** Validates a single entry name (no slashes, no dot segments, no null bytes). */
 export function sanitizeName(name: string): string {
   const trimmed = name.trim();
@@ -59,6 +89,9 @@ export function sanitizeName(name: string): string {
   }
   if (trimmed.includes("\0")) {
     throw new ApiError(400, "INVALID_NAME", "Names cannot contain null bytes.");
+  }
+  if (trimmed.startsWith(".")) {
+    throw new ApiError(400, "INVALID_NAME", "Names cannot start with a dot.");
   }
   if (trimmed.length > MAX_NAME_LENGTH) {
     throw new ApiError(400, "INVALID_NAME", "Name is too long.");

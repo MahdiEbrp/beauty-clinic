@@ -1,10 +1,14 @@
 import { describe, expect, it } from "vitest";
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 
 import { ApiError } from "@/lib/api/errors";
 import {
   extOf,
   joinRel,
   normalizeRelativePath,
+  realPathWithin,
   resolveSafePath,
   sanitizeName,
   splitPath,
@@ -66,6 +70,12 @@ describe("sanitizeName", () => {
     expect(() => sanitizeName("a\\b")).toThrow(ApiError);
     expect(() => sanitizeName("a\u0000b")).toThrow(ApiError);
   });
+
+  it("rejects dot-names so hidden files cannot be created or renamed into", () => {
+    for (const name of [".env", ".gitignore", ".trash", "./a"]) {
+      expect(() => sanitizeName(name)).toThrow(ApiError);
+    }
+  });
 });
 
 describe("joinRel / splitPath / extOf", () => {
@@ -84,5 +94,58 @@ describe("joinRel / splitPath / extOf", () => {
     expect(extOf("report.PDF")).toBe("pdf");
     expect(extOf("README")).toBe("");
     expect(extOf(".gitignore")).toBe("");
+  });
+});
+
+describe("realPathWithin", () => {
+  it("resolves existing paths inside the root", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "rpw-"));
+    try {
+      const file = path.join(root, "a.txt");
+      await fs.writeFile(file, "x");
+      expect(await realPathWithin(root, file)).toBe(await fs.realpath(file));
+    } finally {
+      await fs.rm(root, { recursive: true, force: true });
+    }
+  });
+
+  it("resolves non-existent nested targets via the deepest existing ancestor", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "rpw-"));
+    try {
+      const realRoot = await fs.realpath(root);
+      const target = path.join(root, "sub", "new.txt");
+      expect(await realPathWithin(root, target)).toBe(path.join(realRoot, "sub", "new.txt"));
+    } finally {
+      await fs.rm(root, { recursive: true, force: true });
+    }
+  });
+
+  it("throws when a symlink inside the root points outside it", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "rpw-"));
+    const outsideFile = path.join(os.tmpdir(), `outside-${Date.now()}.txt`);
+    try {
+      await fs.writeFile(outsideFile, "secret");
+      const link = path.join(root, "leak.txt");
+      await fs.symlink(outsideFile, link);
+      await expect(realPathWithin(root, link)).rejects.toThrow(ApiError);
+    } finally {
+      await fs.rm(root, { recursive: true, force: true });
+      await fs.rm(outsideFile, { force: true });
+    }
+  });
+
+  it("allows a symlink inside the root that stays inside it", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "rpw-"));
+    try {
+      const realRoot = await fs.realpath(root);
+      const inner = path.join(root, "real.txt");
+      const link = path.join(root, "shortcut.txt");
+      await fs.writeFile(inner, "x");
+      await fs.symlink(inner, link);
+      expect(await realPathWithin(root, link)).toBe(await fs.realpath(inner));
+      expect(await realPathWithin(root, link)).toMatch(new RegExp(`^${realRoot}/`));
+    } finally {
+      await fs.rm(root, { recursive: true, force: true });
+    }
   });
 });

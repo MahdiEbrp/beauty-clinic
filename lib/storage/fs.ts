@@ -18,6 +18,7 @@ function assertFsPath(absPath: string): void {
 export interface EntryInfo {
   name: string;
   isDir: boolean;
+  isSymlink: boolean;
   size: number;
   mtimeMs: number;
 }
@@ -65,7 +66,7 @@ export async function listDir(absPath: string): Promise<EntryInfo[]> {
       } catch {
         // Broken symlink or race with a concurrent delete: report defaults.
       }
-      return { name: dirent.name, isDir: dirent.isDirectory(), size, mtimeMs };
+      return { name: dirent.name, isDir: dirent.isDirectory(), isSymlink: dirent.isSymbolicLink(), size, mtimeMs };
     }),
   );
 }
@@ -104,7 +105,9 @@ export async function renameEntry(from: string, to: string): Promise<void> {
 export async function copyEntry(from: string, to: string): Promise<void> {
   assertFsPath(from);
   assertFsPath(to);
-  await fs.cp(from, to, { recursive: true, errorOnExist: true });
+  // force:false is required for errorOnExist to take effect; without it fs.cp
+  // silently overwrites an existing destination.
+  await fs.cp(from, to, { recursive: true, errorOnExist: true, force: false });
 }
 
 /**

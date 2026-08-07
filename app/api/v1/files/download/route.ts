@@ -12,8 +12,7 @@ export const runtime = "nodejs";
 
 export const GET = withSecurity(
   {
-    auth: "required",
-    permissions: "files.read",
+    auth: "public",
     validate: { query: z.object({ path: pathSchema }).strict() },
   },
   async (_request, ctx) => {
@@ -24,7 +23,7 @@ export const GET = withSecurity(
         "Content-Type": target.mime,
         "Content-Length": String(target.size),
         "Content-Disposition": `attachment; filename*=UTF-8''${encoded}`,
-        "Cache-Control": "private, no-store",
+        "Cache-Control": "public, max-age=60, stale-while-revalidate=300",
       },
     });
   },

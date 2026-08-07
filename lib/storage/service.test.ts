@@ -192,3 +192,47 @@ describe("trash and restore", () => {
     await expect(service.restoreEntry(trash[0].trashPath)).rejects.toThrow(ApiError);
   });
 });
+
+describe("security hardening (public root)", () => {
+  it("skips symlinks when listing so they can never leak into the UI", async () => {
+    await service.createFile("real.txt", "x");
+    await fs.symlink(path.join(root, "real.txt"), path.join(root, "shortcut.txt"));
+    await fs.symlink("/etc/hostname", path.join(root, "outside.txt"));
+    const listing = await service.listFolder("");
+    expect(listing.entries.map((e) => e.name)).toEqual(["real.txt"]);
+  });
+
+  it("rejects reading or downloading through a symlink that escapes the root", async () => {
+    const secret = path.join(os.tmpdir(), `secret-${Date.now()}.txt`);
+    try {
+      await fs.writeFile(secret, "top-secret");
+      await fs.symlink(secret, path.join(root, "leak.txt"));
+      await expect(service.readTextContent("leak.txt")).rejects.toThrow(ApiError);
+      await expect(service.download("leak.txt")).rejects.toThrow(ApiError);
+    } finally {
+      await fs.rm(secret, { force: true });
+    }
+  });
+
+  it("allows a symlink inside the root that stays inside it", async () => {
+    await service.ensureFolder("docs");
+    await service.createFile("docs/a.txt", "hello");
+    await fs.symlink(path.join(root, "docs", "a.txt"), path.join(root, "alias.txt"));
+    expect((await service.readTextContent("alias.txt")).content).toBe("hello");
+  });
+
+  it("rejects dot-names on create, rename and upload", async () => {
+    await expect(service.createFile(".env", "x")).rejects.toThrow(ApiError);
+    await expect(service.createFile("ok.txt", "x")).resolves.toBeTruthy();
+    await expect(service.renameEntry("ok.txt", ".gitignore")).rejects.toThrow(ApiError);
+    await expect(
+      service.uploadFile("", ".htaccess", toWebStream("x"), 1),
+    ).rejects.toThrow(ApiError);
+  });
+
+  it("hides the internal meta tree from listings", async () => {
+    await service.createFile("visible.txt", "x");
+    const listing = await service.listFolder("");
+    expect(listing.entries.map((e) => e.name)).toEqual(["visible.txt"]);
+  });
+});

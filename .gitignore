@@ -50,3 +50,6 @@ unproccess/
 
 # file manager storage (private, gitignored)
 /storage
+
+# file manager internal metadata (trash, staged uploads)
+/.file-manager

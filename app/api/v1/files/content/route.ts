@@ -6,13 +6,17 @@ export const runtime = "nodejs";
 
 export const GET = withSecurity(
   {
-    auth: "required",
-    permissions: "files.read",
+    auth: "public",
     validate: { query: contentSchema },
   },
   async (_request, ctx) => {
     const content = await readTextContent(ctx.query!.path);
-    return jsonOk(content);
+    const response = jsonOk(content);
+    response.headers.set(
+      "Cache-Control",
+      "public, max-age=60, stale-while-revalidate=300",
+    );
+    return response;
   },
 );
 

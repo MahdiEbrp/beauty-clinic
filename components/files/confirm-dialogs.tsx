@@ -16,20 +16,24 @@ import { useFiles } from "./files-context";
 
 export function FilesConfirmDialogs() {
   const t = useTranslations();
-  const { confirm, setConfirm, busy, moveToTrash, deleteForever } = useFiles();
+  const { confirm, setConfirm, busy, moveToTrash, deleteForever, trashSelected } = useFiles();
 
   const target = confirm?.kind === "trash" ? confirm.entry : null;
   const item = confirm?.kind === "deleteForever" ? confirm.item : null;
   const title =
     confirm?.kind === "trash"
       ? t("files.trashDialog.title", { name: confirm.entry.name })
-      : confirm?.kind === "deleteForever"
-        ? t("files.deleteDialog.title", { name: confirm.item.originalPath.split("/").pop() ?? "" })
-        : "";
+      : confirm?.kind === "trashMany"
+        ? t("files.bulkTrashDialog.title", { count: confirm.entries.length })
+        : confirm?.kind === "deleteForever"
+          ? t("files.deleteDialog.title", { name: confirm.item.originalPath.split("/").pop() ?? "" })
+          : "";
   const description =
     confirm?.kind === "trash"
       ? t("files.trashDialog.description")
-      : t("files.deleteDialog.description");
+      : confirm?.kind === "trashMany"
+        ? t("files.bulkTrashDialog.description")
+        : t("files.deleteDialog.description");
 
   return (
     <AlertDialog
@@ -52,7 +56,12 @@ export function FilesConfirmDialogs() {
             onClick={(event) => {
               event.preventDefault();
               if (confirm?.kind === "trash" && target) void moveToTrash(target);
-              else if (confirm?.kind === "deleteForever" && item) void deleteForever(item);
+              else if (confirm?.kind === "trashMany") {
+                setConfirm(null);
+                void trashSelected();
+              } else if (confirm?.kind === "deleteForever" && item) {
+                void deleteForever(item);
+              }
             }}
           >
             {busy && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}

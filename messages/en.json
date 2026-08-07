@@ -452,7 +452,7 @@
       "description": "Devices currently signed in to your account.",
       "thisDevice": "This device",
       "ipLabel": "IP: {ip}",
-      "lastSeen": "Last seen {date}",
+      "lastSeen": "Last seen <date/>",
       "signedIn": "Signed in {date}",
       "unknownDevice": "Unknown device",
       "revokeOthers": "Sign out of all other devices",
@@ -707,6 +707,7 @@
     "emptyTrashTitle": "Trash is empty",
     "emptyTrashDescription": "Deleted files and folders will appear here until they are permanently removed.",
     "searchPlaceholder": "This folder has {count} items",
+    "refreshing": "Refreshing...",
     "error": "Couldn't load files. Please try again.",
     "retry": "Retry",
     "loading": "Loading files...",
@@ -725,6 +726,8 @@
     },
     "actions": {
       "menu": "Open actions for {name}",
+      "open": "Open",
+      "select": "Select {name}",
       "download": "Download",
       "preview": "Preview",
       "edit": "Edit",
@@ -761,6 +764,7 @@
     },
     "copyDialog": {
       "title": "Copy {name}",
+      "titleMany": "Copy {count} items",
       "description": "Choose the destination folder for the copy.",
       "create": "Copy here"
     },
@@ -788,9 +792,21 @@
       "title": "Move {name} to trash?",
       "description": "The entry can be restored from the trash later. Nothing is deleted permanently yet."
     },
+    "bulkTrashDialog": {
+      "title": "Move {count} items to trash?",
+      "description": "The selected items can be restored from the trash later. Nothing is deleted permanently yet."
+    },
     "deleteDialog": {
       "title": "Delete {name} forever?",
       "description": "This permanently removes the entry and cannot be undone."
+    },
+    "bulk": {
+      "selected": "{count} selected",
+      "selectAll": "Select all items",
+      "download": "Download",
+      "copy": "Copy",
+      "trash": "Trash",
+      "clear": "Clear selection"
     },
     "toast": {
       "uploaded": "{count} file(s) uploaded.",
@@ -801,6 +817,9 @@
       "trashed": "Moved to trash.",
       "restored": "Restored.",
       "deleted": "Deleted forever.",
+      "trashedMany": "Moved {count} items to trash.",
+      "copiedMany": "Copied {count} items.",
+      "partialFailure": "{count} operation(s) failed.",
       "error": "The action failed. Please try again."
     }
   },

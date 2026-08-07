@@ -14,6 +14,7 @@ import {
   Loader2,
 } from "lucide-react";
 import type { AuthUser, ActiveSession } from "@/lib/auth/dal";
+import { RelativeTime } from "@/components/ui/relative-time";
 import {
   Dialog,
   DialogClose,
@@ -158,8 +159,8 @@ export default function DashboardContent({
                         </span>
                       </span>
                     )}
-                    {t("dashboard.sessions.lastSeen", {
-                      date: format.relativeTime(session.lastSeenAt, new Date()),
+                    {t.rich("dashboard.sessions.lastSeen", {
+                      date: () => <RelativeTime value={session.lastSeenAt} />,
                     })}
                   </p>
                   <p className="text-dash-caption text-content-tertiary mt-0.5">

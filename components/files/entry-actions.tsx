@@ -5,6 +5,7 @@ import {
   Copy,
   Download,
   FilePenLine,
+  FolderOpen,
   MoreVertical,
   Pencil,
   Trash2,
@@ -27,10 +28,11 @@ export function EntryActions({ entry }: { entry: EntryMeta }) {
     canManage,
     busy,
     path,
+    openEntry,
     downloadEntry,
     setEditorTarget,
     setRenameTarget,
-    setCopyTarget,
+    setCopyTargets,
     setConfirm,
   } = useFiles();
 
@@ -39,25 +41,25 @@ export function EntryActions({ entry }: { entry: EntryMeta }) {
 
   const menuLabel = t("files.actions.menu", { name: entry.name });
 
-  const rowButton = (
-    <DropdownMenuTrigger asChild>
-      <button
-        type="button"
-        disabled={busy}
-        aria-label={menuLabel}
-        className="inline-flex size-11 shrink-0 items-center justify-center rounded-pill border border-border-interactive bg-surface-secondary p-0 text-accent shadow-elevation-1 transition hover:bg-surface-tertiary hover:shadow-elevation-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-40"
-      >
-        <MoreVertical className="size-5" aria-hidden="true" />
-      </button>
-    </DropdownMenuTrigger>
-  );
-
-  if (!canWrite && !canManage) return rowButton;
-
   return (
     <DropdownMenu modal={false}>
-      {rowButton}
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          disabled={busy}
+          aria-label={menuLabel}
+          className="inline-flex size-11 shrink-0 items-center justify-center rounded-pill border border-border-interactive bg-surface-secondary p-0 text-accent shadow-elevation-1 transition hover:bg-surface-tertiary hover:shadow-elevation-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-40"
+        >
+          <MoreVertical className="size-5" aria-hidden="true" />
+        </button>
+      </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        {entry.isDir && (
+          <DropdownMenuItem onSelect={() => openEntry(entry)} className="text-accent">
+            <FolderOpen className="size-4" aria-hidden="true" />
+            <span>{t("files.actions.open")}</span>
+          </DropdownMenuItem>
+        )}
         {!entry.isDir && (
           <DropdownMenuItem onSelect={() => downloadEntry(entry)} className="text-accent">
             <Download className="size-4" aria-hidden="true" />
@@ -82,7 +84,7 @@ export function EntryActions({ entry }: { entry: EntryMeta }) {
             <span>{t("files.actions.preview")}</span>
           </DropdownMenuItem>
         )}
-        <DropdownMenuSeparator />
+        {(canWrite || canManage) && <DropdownMenuSeparator />}
         {canWrite && (
           <DropdownMenuItem onSelect={() => setRenameTarget(entry)} className="text-accent">
             <Pencil className="size-4" aria-hidden="true" />
@@ -90,7 +92,7 @@ export function EntryActions({ entry }: { entry: EntryMeta }) {
           </DropdownMenuItem>
         )}
         {canWrite && (
-          <DropdownMenuItem onSelect={() => setCopyTarget(entry)} className="text-accent">
+          <DropdownMenuItem onSelect={() => setCopyTargets([entry])} className="text-accent">
             <Copy className="size-4" aria-hidden="true" />
             <span>{t("files.actions.copy")}</span>
           </DropdownMenuItem>
