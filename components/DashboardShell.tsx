@@ -111,7 +111,7 @@ export default function DashboardShell({
   );
 
   return (
-    <div className="min-h-dvh bg-surface-primary">
+    <div className="min-h-dvh bg-surface-tertiary">
       <aside
         className={`hidden lg:flex fixed top-0 bottom-0 inset-s-0 z-40 flex-col border-e border-border-primary bg-surface-secondary transition-[width] duration-200 ease-out ${
           collapsed ? "w-18" : "w-70"

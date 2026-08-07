@@ -93,10 +93,10 @@ export function FilesHeader() {
               type="button"
               onClick={() => setView(view === "trash" ? "browse" : "trash")}
               aria-pressed={view === "trash"}
-              className={`inline-flex min-h-9 items-center justify-center gap-1.5 rounded-pill border px-3 text-dash-caption font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+              className={`inline-flex min-h-9 items-center justify-center gap-1.5 rounded-pill border px-3 text-dash-caption font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error ${
                 view === "trash"
-                  ? "border-error/30 bg-error/10 text-error"
-                  : "border-border-interactive bg-surface-secondary text-content-secondary hover:bg-surface-tertiary hover:text-accent"
+                  ? "border-error bg-error text-content-contrast hover:bg-error/90"
+                  : "border-error/40 bg-error/10 text-error hover:bg-error/20"
               }`}
             >
               {view === "trash" ? (
@@ -164,7 +164,7 @@ export function FilesHeader() {
       )}
 
       {entries.length > 0 && view === "browse" && (
-        <p className="mt-3 flex items-center gap-2 text-dash-caption font-bold text-content-tertiary">
+        <p className="mt-3 flex items-center gap-2 text-dash-caption font-bold text-content-secondary">
           <span>{t("files.searchPlaceholder", { count: entries.length })}</span>
           {isRefreshing && (
             <>

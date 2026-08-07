@@ -115,5 +115,7 @@ export function entryColor(entry: { isDir: boolean; name: string }): string {
   const ext = extOf(entry.name);
   if (IMAGE_EXTS.has(ext)) return "text-copper-strong";
   if (VIDEO_EXTS.has(ext) || AUDIO_EXTS.has(ext)) return "text-success";
-  return "text-content-tertiary";
+  if (ARCHIVE_EXTS.has(ext)) return "text-warning";
+  if (SPREADSHEET_EXTS.has(ext)) return "text-copper";
+  return "text-content-secondary";
 }

@@ -41,7 +41,7 @@ function MobileCard({ entry }: { entry: EntryMeta }) {
             <span className="block truncate text-dash-body font-bold text-accent">
               {entry.name}
             </span>
-            <span className="mt-0.5 block truncate text-dash-caption text-content-tertiary">
+            <span className="mt-0.5 block truncate text-dash-caption text-content-secondary">
               {entry.isDir ? t("files.types.folder") : formatBytes(entry.size)}
               <span aria-hidden="true"> · </span>
               <RelativeTime value={entry.mtimeMs} />

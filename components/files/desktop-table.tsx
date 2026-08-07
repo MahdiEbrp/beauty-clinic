@@ -59,7 +59,7 @@ function DesktopRow({ entry }: { entry: EntryMeta }) {
             <span className="block truncate text-dash-body font-semibold text-accent">
               {entry.name}
             </span>
-            <span className="block truncate text-dash-caption text-content-tertiary">
+            <span className="block truncate text-dash-caption text-content-secondary">
               {entry.isDir ? t("files.types.folder") : t("files.types.file")}
             </span>
           </span>
@@ -129,20 +129,20 @@ export function FilesDesktopTable() {
     >
       <table className="w-full min-w-130 table-fixed text-start">
         <thead>
-          <tr className="border-b border-border-primary bg-surface-tertiary/30 text-dash-caption text-content-secondary">
+          <tr className="border-b border-border-primary bg-surface-tertiary text-content-secondary">
             <th scope="col" className="w-10 px-3 py-4">
               <SelectAllCheckbox />
             </th>
-            <th scope="col" className="w-[46%] px-4 py-4 text-start font-bold">
+            <th scope="col" className="w-[46%] px-4 py-4 text-start text-dash-caption font-bold uppercase tracking-wide">
               {t("files.table.name")}
             </th>
-            <th scope="col" className="w-[16%] px-4 py-4 text-start font-bold">
+            <th scope="col" className="w-[16%] px-4 py-4 text-start text-dash-caption font-bold uppercase tracking-wide">
               {t("files.table.size")}
             </th>
-            <th scope="col" className="w-[20%] px-4 py-4 text-start font-bold">
+            <th scope="col" className="w-[20%] px-4 py-4 text-start text-dash-caption font-bold uppercase tracking-wide">
               {t("files.table.modified")}
             </th>
-            <th scope="col" className="w-16 px-2 py-4 text-end font-bold">
+            <th scope="col" className="w-16 px-2 py-4 text-end text-dash-caption font-bold uppercase tracking-wide">
               {t("files.table.actions")}
             </th>
           </tr>

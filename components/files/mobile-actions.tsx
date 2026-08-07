@@ -42,7 +42,11 @@ export function FilesMobileActions() {
             type="button"
             onClick={() => setView(view === "trash" ? "browse" : "trash")}
             aria-pressed={view === "trash"}
-            className="pointer-events-auto inline-flex min-h-12 items-center justify-center gap-2 rounded-pill border border-border-interactive bg-surface-secondary px-4 text-dash-body-sm font-bold text-accent shadow-elevation-2 transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className={`pointer-events-auto inline-flex min-h-12 items-center justify-center gap-2 rounded-pill border px-4 text-dash-body-sm font-bold shadow-elevation-2 transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error ${
+              view === "trash"
+                ? "border-error bg-error text-content-contrast"
+                : "border-error/40 bg-error/10 text-error hover:bg-error/20"
+            }`}
           >
             {view === "trash" ? t("files.browse") : t("files.trash")}
           </button>

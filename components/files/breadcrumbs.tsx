@@ -31,7 +31,7 @@ export function Breadcrumbs() {
         aria-current={segments.length === 0 ? "page" : undefined}
         className={`inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-pill px-2 text-dash-caption font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
           segments.length === 0
-            ? "bg-accent/10 text-accent"
+            ? "border border-accent/40 bg-accent/10 text-accent"
             : "text-content-secondary hover:bg-surface-tertiary hover:text-accent"
         }`}
       >
@@ -51,7 +51,7 @@ export function Breadcrumbs() {
             aria-current={index === segments.length - 1 ? "page" : undefined}
             className={`inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-pill px-2 text-dash-caption font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
               index === segments.length - 1
-                ? "bg-accent/10 text-accent"
+                ? "border border-accent/40 bg-accent/10 text-accent"
                 : "text-content-secondary hover:bg-surface-tertiary hover:text-accent"
             }`}
           >
