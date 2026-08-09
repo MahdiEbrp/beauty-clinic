@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection -- mock rows are indexed by dynamic schema column keys */
 import { evalWhere, sqlText, type Row } from "./sql";
 import type { MockDbInternal } from "./defaults";
 

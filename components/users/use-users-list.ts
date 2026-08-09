@@ -169,7 +169,7 @@ export function useUsersList(
       firstRun.current = false;
       return;
     }
-    load({ search: debouncedSearch, status, role, page });
+    void load({ search: debouncedSearch, status, role, page });
   }, [debouncedSearch, status, role, page, load]);
 
   const totalPages = data.totalPages;

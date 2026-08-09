@@ -24,6 +24,7 @@ export function getGalleryItems() {
   return galleryKeys.map((key) => ({
     key,
     tKey: `galleryItems.${key}` as const,
+    // eslint-disable-next-line security/detect-object-injection -- fixed image map keyed by a closed union
     image: galleryImages[key],
   }));
 }

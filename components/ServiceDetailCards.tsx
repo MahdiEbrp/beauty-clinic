@@ -35,6 +35,7 @@ export default function ServiceDetailCards() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {serviceKeys.map((key) => {
+        // eslint-disable-next-line security/detect-object-injection -- fixed icon map with safe fallback
         const Icon = iconMap[key] ?? Droplets;
 
         return (

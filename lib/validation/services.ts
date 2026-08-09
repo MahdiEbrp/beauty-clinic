@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { SLUG_PATTERN } from "@/lib/validation/slug";
+
 export const priceTypeSchema = z.enum(["fixed", "from", "on_request"]);
 
 export const serviceImageTypeSchema = z.enum(["before", "after", "gallery"]);
@@ -31,7 +33,7 @@ export const createServiceGroupSchema = z
       .trim()
       .min(1)
       .max(160)
-      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be kebab-case"),
+      .regex(SLUG_PATTERN, "Slug must be kebab-case"),
     description: z.string().trim().max(1000).optional().nullable(),
     icon: z.string().trim().max(100).optional().nullable(),
     image: z.string().trim().max(2048).optional().nullable(),
@@ -53,7 +55,7 @@ export const createServiceCategorySchema = z
       .trim()
       .min(1)
       .max(160)
-      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be kebab-case"),
+      .regex(SLUG_PATTERN, "Slug must be kebab-case"),
     description: z.string().trim().max(1000).optional().nullable(),
     icon: z.string().trim().max(100).optional().nullable(),
     image: z.string().trim().max(2048).optional().nullable(),
@@ -91,7 +93,7 @@ export const createServiceSchema = z
       .trim()
       .min(1)
       .max(160)
-      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be kebab-case"),
+      .regex(SLUG_PATTERN, "Slug must be kebab-case"),
     shortDesc: z.string().trim().max(512).optional().nullable(),
     fullDesc: z.string().trim().max(4000).optional().nullable(),
     price: z.coerce.number().nonnegative().max(1_000_000_000).optional().nullable(),

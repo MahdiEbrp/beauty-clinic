@@ -46,6 +46,7 @@ export default function RegisterForm() {
   };
 
   const fieldError = (field: string) => {
+    // eslint-disable-next-line security/detect-object-injection -- typed field-errors record access
     if (!errors[field]?.length) return null;
     switch (field) {
       case "fullName":
@@ -120,7 +121,7 @@ export default function RegisterForm() {
             {t("register.description")}
           </p>
 
-          <form onSubmit={handleSubmit} noValidate>
+          <form onSubmit={(event) => void handleSubmit(event)} noValidate>
             <div className="grid gap-6">
               <RegisterFields fullName={fullName} email={email} phone={phone} password={password} showPassword={showPassword} errors={errors} onChange={(field, value) => { if (field === "fullName") setFullName(value); else if (field === "email") setEmail(value); else if (field === "phone") setPhone(value); else setPassword(value); }} onTogglePassword={() => setShowPassword((visible) => !visible)} fieldError={fieldError} />
 

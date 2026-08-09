@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-non-literal-fs-filename, security/detect-non-literal-regexp -- tests operate on dynamic temp directories by design */
 import { describe, expect, it } from "vitest";
 import fs from "node:fs/promises";
 import os from "node:os";

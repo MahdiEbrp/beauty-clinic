@@ -12,6 +12,7 @@ export function toFieldErrors(
   const out: Record<string, string[]> = {};
   for (const issue of error.issues) {
     const key = String(issue.path[0] ?? "");
+    // eslint-disable-next-line security/detect-object-injection -- keys are validated zod schema paths on a fresh local object
     (out[key] ??= []).push(issue.message);
   }
   return out;

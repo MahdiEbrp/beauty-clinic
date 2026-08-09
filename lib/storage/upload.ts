@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-non-literal-fs-filename -- target paths are resolved and confined via realPathWithin before use */
 import fs from "node:fs/promises";
 import path from "node:path";
 import { Readable } from "node:stream";

@@ -97,6 +97,7 @@ export default function RegisterFields({
                   }
                   dir={name === "fullName" ? undefined : "ltr"}
                   placeholder={placeholder}
+                  // eslint-disable-next-line security/detect-object-injection -- typed field-errors record access
                   aria-invalid={Boolean(errors[name])}
                   aria-describedby={error ? `${id}-error` : undefined}
                   className={`${fieldClass} ps-12 ${name !== "fullName" ? "text-end" : ""}`}

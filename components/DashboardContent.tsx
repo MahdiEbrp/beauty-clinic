@@ -222,7 +222,7 @@ export default function DashboardContent({
                   </DialogClose>
                   <button
                     type="button"
-                    onClick={handleRevokeOthers}
+                    onClick={() => void handleRevokeOthers()}
                     disabled={revoking}
                     aria-busy={revoking}
                     className="inline-flex items-center justify-center gap-2 px-6 py-3 min-h-11 text-dash-body-sm bg-accent text-content-contrast rounded-pill font-bold transition-all duration-200 hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-95 disabled:opacity-60"

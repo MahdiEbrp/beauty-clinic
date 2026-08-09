@@ -87,7 +87,7 @@ export default function AddUserForm({
 }) {
   return (
     <form
-      onSubmit={form.handleSubmit(onSubmit)}
+      onSubmit={(event) => void form.handleSubmit(onSubmit)(event)}
       className="grid gap-5 px-6 py-6 sm:px-8"
     >
       <Field

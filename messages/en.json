@@ -15,6 +15,11 @@
     "description": "The page you are looking for does not exist or has been moved.",
     "goHome": "Go Home"
   },
+  "tabs": {
+    "services": "Services",
+    "groups": "Groups",
+    "categories": "Categories"
+  },
   "nav": {
     "home": "Home",
     "services": "Services",
@@ -531,7 +536,7 @@
       "description": "Devices currently signed in to your account.",
       "thisDevice": "This device",
       "ipLabel": "IP: {ip}",
-      "lastSeen": "Last seen <date/>",
+      "lastSeen": "Last seen {date}",
       "signedIn": "Signed in {date}",
       "unknownDevice": "Unknown device",
       "revokeOthers": "Sign out of all other devices",

@@ -44,7 +44,7 @@ function ServicesErrorBanner() {
       <button
         type="button"
         onClick={() =>
-          load({ search: debouncedSearch, status, featured, categoryId, page })
+          void load({ search: debouncedSearch, status, featured, categoryId, page })
         }
         className="inline-flex items-center gap-2 px-4 py-2 min-h-9 rounded-pill text-dash-body-sm font-bold text-error border border-error/40 hover:bg-error/20 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error"
       >

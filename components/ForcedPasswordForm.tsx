@@ -51,7 +51,7 @@ export default function ForcedPasswordForm({ fullName }: { fullName: string }) {
         <h1 className="mt-2 text-dash-title font-bold tracking-tight text-accent">{t("title")}</h1>
         <p className="mt-3 text-dash-body-sm leading-6 text-content-secondary">{t("description", { name: fullName })}</p>
 
-        <form onSubmit={submit} className="mt-7 grid gap-5">
+        <form onSubmit={(event) => void submit(event)} className="mt-7 grid gap-5">
           <PasswordField id="forced-password" label={t("newPassword")} value={password} onChange={setPassword} visible={showPassword} onToggle={() => setShowPassword((value) => !value)} toggleLabel={t("togglePassword")} />
           <PasswordField id="forced-password-confirm" label={t("confirmPassword")} value={confirmPassword} onChange={setConfirmPassword} visible={showConfirm} onToggle={() => setShowConfirm((value) => !value)} toggleLabel={t("togglePassword")} />
           {error && <p role="alert" className="rounded-control border border-error/30 bg-error/10 p-3 text-dash-body-sm font-medium text-error">{error}</p>}

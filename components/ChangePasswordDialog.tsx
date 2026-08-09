@@ -78,7 +78,7 @@ export default function ChangePasswordDialog({
               t("users.changePassword.description", { name: user.fullName })}
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={submit} className="grid gap-4">
+        <form onSubmit={(event) => void submit(event)} className="grid gap-4">
           <PasswordField
             id="change-password"
             value={password}

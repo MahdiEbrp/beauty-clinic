@@ -37,7 +37,7 @@ export function DeleteTargetDialog() {
 
   return (
     <AlertDialog open onOpenChange={(open) => !open && closeDelete()}>
-      <AlertDialogContent closeLabel={t("servicesCatalog.dialog.cancel")}>
+      <AlertDialogContent closeLabel={t("servicesCatalog.dialog.cancel")} className="w-full max-w-sm">
         <AlertDialogHeader>
           <AlertDialogTitle>{t(titleKey, { name })}</AlertDialogTitle>
           <AlertDialogDescription>

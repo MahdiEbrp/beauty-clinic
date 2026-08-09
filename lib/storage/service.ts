@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-non-literal-fs-filename -- paths come from download()/stat helpers already confined by resolveSafePath/realPathWithin */
 import fs from "node:fs/promises";
 import path from "node:path";
 

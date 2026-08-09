@@ -37,6 +37,7 @@ export function formatBytes(bytes: number): string {
     units.length - 1,
   );
   const value = bytes / 1024 ** exponent;
+  // eslint-disable-next-line security/detect-object-injection -- array indexing by a bounded exponent
   return `${value.toFixed(exponent === 0 ? 0 : value >= 100 ? 0 : 1)} ${units[exponent]}`;
 }
 

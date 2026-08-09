@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection -- mock tables/rows are indexed by dynamic schema names */
 import type { MockDbInternal } from "./defaults";
 import { FindFirstBuilder } from "./find-first-builder";
 import {

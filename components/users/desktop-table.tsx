@@ -84,7 +84,7 @@ function DesktopRow({ row }: { row: AdminUser }) {
         </div>
       </td>
       <td className="px-4 py-5">
-        <span className={`inline-flex items-center gap-1.5 px-0 py-0.5 text-dash-caption font-bold whitespace-nowrap ${statusTextClass[state]}`}>
+        <span className={`inline-flex items-center gap-1.5 px-0 py-0.5 text-dash-caption font-bold whitespace-nowrap ${/* eslint-disable-line security/detect-object-injection -- typed status class lookup */ statusTextClass[state]}`}>
           <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
           {t(`users.statuses.${state}`)}
         </span>

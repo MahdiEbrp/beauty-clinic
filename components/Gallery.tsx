@@ -65,6 +65,7 @@ export default function Gallery() {
     return () => document.removeEventListener("keydown", onKey);
   }, [isOpen, navigate, rotateRight]);
 
+  // eslint-disable-next-line security/detect-object-injection -- array indexing by a clamped numeric index
   const active = lightboxIndex === null ? null : items[lightboxIndex];
 
   return (

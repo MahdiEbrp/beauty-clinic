@@ -5,6 +5,8 @@ import { useTranslations } from "next-intl";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
+
+import { SLUG_PATTERN } from "@/lib/validation/slug";
 import { Loader2 } from "lucide-react";
 import {
   Dialog,
@@ -27,7 +29,7 @@ const categorySchema = z.object({
     .trim()
     .min(1)
     .max(160)
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "invalid"),
+    .regex(SLUG_PATTERN, "invalid"),
   description: z.string().trim().max(1000),
   icon: z.string().trim().max(100),
   image: z.string().trim().max(2048),
@@ -147,6 +149,7 @@ export function CategoryDialog() {
   };
 
   const errorText = (field: keyof CategoryForm) => {
+    // eslint-disable-next-line security/detect-object-injection -- typed react-hook-form field access
     if (!form.formState.errors[field]) return null;
     if (field === "groupId") return t("servicesCatalog.categoryForm.errors.group");
     if (field === "slug") return t("servicesCatalog.categoryForm.errors.slug");
@@ -160,7 +163,7 @@ export function CategoryDialog() {
       <Dialog open={categoryDialog !== null} onOpenChange={requestClose}>
         <DialogContent
           closeLabel={t("servicesCatalog.dialog.cancel")}
-          className="max-w-xl gap-0 overflow-y-auto p-0 max-md:top-auto max-md:bottom-0 max-md:max-w-none max-md:translate-y-0 max-md:rounded-b-none max-md:rounded-t-[1.5rem] max-md:max-h-[92dvh]"
+          className="gap-0 overflow-y-auto p-0 max-w-none w-full max-h-[92dvh] md:max-w-xl md:rounded-lg"
         >
           <div className="border-b border-border-primary bg-surface-tertiary/35 px-6 pb-5 pt-7 sm:px-8">
             <DialogHeader className="gap-2 pe-8">
@@ -178,7 +181,7 @@ export function CategoryDialog() {
           </div>
 
           <form
-            onSubmit={form.handleSubmit(submit)}
+            onSubmit={(event) => void form.handleSubmit(submit)(event)}
             className="grid gap-5 px-6 py-6 sm:px-8"
           >
             <Field
@@ -331,7 +334,7 @@ export function CategoryDialog() {
       <Dialog open={discardOpen} onOpenChange={setDiscardOpen}>
         <DialogContent
           closeLabel={t("servicesCatalog.dialog.cancel")}
-          className="max-w-sm"
+          className="w-full max-w-sm"
         >
           <DialogHeader>
             <DialogTitle className="text-accent">

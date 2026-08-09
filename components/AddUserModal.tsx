@@ -51,24 +51,26 @@ export default function AddUserModal({
   useEffect(() => {
     const parsed = z.email().safeParse(email.trim());
     if (!parsed.success) return;
-    const timer = window.setTimeout(async () => {
-      setEmailState("checking");
-      try {
-        const response = await fetch(
-          `/api/v1/users?search=${encodeURIComponent(email.trim())}&perPage=1`,
-          { credentials: "include" },
-        );
-        if (!response.ok) throw new Error("check_failed");
-        const payload = (await response.json()) as {
-          data?: { items?: Array<{ email: string }> };
-        };
-        const exists = payload.data?.items?.some(
-          (item) => item.email.toLowerCase() === email.trim().toLowerCase(),
-        );
-        setEmailState(exists ? "taken" : "available");
-      } catch {
-        setEmailState("idle");
-      }
+    const timer = window.setTimeout(() => {
+      void (async () => {
+        setEmailState("checking");
+        try {
+          const response = await fetch(
+            `/api/v1/users?search=${encodeURIComponent(email.trim())}&perPage=1`,
+            { credentials: "include" },
+          );
+          if (!response.ok) throw new Error("check_failed");
+          const payload = (await response.json()) as {
+            data?: { items?: Array<{ email: string }> };
+          };
+          const exists = payload.data?.items?.some(
+            (item) => item.email.toLowerCase() === email.trim().toLowerCase(),
+          );
+          setEmailState(exists ? "taken" : "available");
+        } catch {
+          setEmailState("idle");
+        }
+      })();
     }, 500);
     return () => window.clearTimeout(timer);
   }, [email]);
@@ -101,6 +103,7 @@ export default function AddUserModal({
   };
 
   const errorText = (field: keyof AddUserValues) => {
+    // eslint-disable-next-line security/detect-object-injection -- typed react-hook-form field access
     if (!form.formState.errors[field]) return null;
     if (field === "fullName") return t("users.form.errors.fullName");
     if (field === "email")

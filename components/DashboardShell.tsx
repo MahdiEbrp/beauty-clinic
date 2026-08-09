@@ -133,7 +133,7 @@ export default function DashboardShell({
           user={user}
           isCollapsed={collapsed}
           loggingOut={loggingOut}
-          onLogout={handleLogout}
+          onLogout={() => void handleLogout()}
           t={t}
         />
       </aside>
@@ -143,7 +143,7 @@ export default function DashboardShell({
         onToggleMenu={setMenuOpen}
         user={user}
         loggingOut={loggingOut}
-        onLogout={handleLogout}
+        onLogout={() => void handleLogout()}
         navItems={navItems}
         isActive={isActive}
       />
@@ -165,7 +165,7 @@ export default function DashboardShell({
           pathname={pathname}
           user={user}
           loggingOut={loggingOut}
-          onLogout={handleLogout}
+          onLogout={() => void handleLogout()}
           navItems={navItems}
         />
         <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-8 sm:py-8 xl:px-10">

@@ -145,7 +145,7 @@ export default function Navbar({ user }: { user: AuthUser | null }) {
 
         <div className="hidden lg:flex items-center gap-3">
           <LocaleSwitcher />
-          <NavbarAuth user={user} onLogout={handleLogout} />
+          <NavbarAuth user={user} onLogout={() => void handleLogout()} />
         </div>
 
         <div className="lg:hidden flex items-center gap-1">
@@ -225,7 +225,7 @@ export default function Navbar({ user }: { user: AuthUser | null }) {
                   type="button"
                   onClick={() => {
                     setMenuOpen(false);
-                    handleLogout();
+                    void handleLogout();
                   }}
                   className="p-3 min-h-11 flex items-center justify-center gap-2 rounded-control text-accent font-semibold text-body-sm w-full text-center border border-border-interactive focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent hover:bg-surface-tertiary"
                 >

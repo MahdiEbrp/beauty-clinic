@@ -105,7 +105,7 @@ export function RowActions({ row }: { row: AdminUser }) {
     buttons.push({
       key: "unban",
       labelKey: "users.actions.unban",
-      onClick: () => runAction(row, { isBanned: false }),
+      onClick: () => void runAction(row, { isBanned: false }),
     });
   } else {
     buttons.push({
@@ -114,10 +114,13 @@ export function RowActions({ row }: { row: AdminUser }) {
         state === "active"
           ? "users.actions.deactivate"
           : "users.actions.activate",
-      onClick: () =>
-        state === "active"
-          ? setConfirm({ kind: "row", user: row, action: "deactivate" })
-          : runAction(row, { isActive: true }),
+      onClick: () => {
+        if (state === "active") {
+          setConfirm({ kind: "row", user: row, action: "deactivate" });
+        } else {
+          void runAction(row, { isActive: true });
+        }
+      },
     });
     buttons.push({
       key: "ban",

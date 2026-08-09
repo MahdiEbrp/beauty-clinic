@@ -113,7 +113,7 @@ export default function LoginForm() {
             {t("login.description")}
           </p>
 
-          <form onSubmit={handleSubmit} noValidate>
+          <form onSubmit={(event) => void handleSubmit(event)} noValidate>
             <div className="grid gap-6">
               <div>
                 <label htmlFor="login-email" className={labelClass}>
