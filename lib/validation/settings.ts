@@ -44,7 +44,7 @@ export const upsertSettingSchema = z
       "Value exceeds 10 KB",
     ),
     type: z.enum(SUPPORTED_TYPES).optional(),
-    userId: z.string().uuid().optional(),
+    userId: z.uuid().optional(),
   })
   .strict()
   .refine(
@@ -72,7 +72,7 @@ export const settingsQuerySchema = z
         const n = Number(v ?? "20");
         return Number.isFinite(n) && n >= 1 && n <= 100 ? n : 20;
       }),
-    userId: z.string().uuid().optional(),
+    userId: z.uuid().optional(),
   })
   .strict();
 
@@ -80,7 +80,7 @@ export const deleteSettingsQuerySchema = z
   .object({
     scope: z.enum(SCOPE_VALUES).optional(),
     key: settingKeySchema,
-    userId: z.string().uuid().optional(),
+    userId: z.uuid().optional(),
   })
   .strict();
 

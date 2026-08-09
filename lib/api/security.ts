@@ -6,6 +6,7 @@ import { getSession, type AuthSession } from "@/lib/auth/dal";
 import { handleApiError, jsonError, jsonOk } from "@/lib/api/errors";
 import { isSameOrigin, readJsonBody } from "@/lib/api/request";
 import { rateLimit } from "@/lib/api/rate-limit";
+import { toFieldErrors } from "@/lib/validation/field-errors";
 import { logError } from "@/lib/log";
 
 export { jsonError, jsonOk };
@@ -138,7 +139,7 @@ export function withSecurity<Body = unknown, Query = unknown>(
               "VALIDATION_ERROR",
               "Invalid request body.",
               400,
-              parsed.error.flatten().fieldErrors,
+              toFieldErrors(parsed.error),
             ),
           );
         }
@@ -155,7 +156,7 @@ export function withSecurity<Body = unknown, Query = unknown>(
               "VALIDATION_ERROR",
               "Invalid query parameters.",
               400,
-              parsed.error.flatten().fieldErrors,
+              toFieldErrors(parsed.error),
             ),
           );
         }

@@ -14,6 +14,7 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { loginSchema } from "@/lib/validation/user";
+import { toFieldErrors } from "@/lib/validation/field-errors";
 
 const fieldClass =
   "w-full bg-form-input-bg border border-form-input-border rounded-control py-3 px-4 text-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
@@ -55,13 +56,13 @@ export default function LoginForm() {
     }
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     setFormError(null);
 
     const parsed = loginSchema.safeParse({ email, password });
     if (!parsed.success) {
-      setErrors(parsed.error.flatten().fieldErrors);
+      setErrors(toFieldErrors(parsed.error));
       return;
     }
     setErrors({});

@@ -186,6 +186,7 @@ function evalLeaf(chunks: Chunk[], row: Row): boolean {
   }
   const normalizedOp = opText.replace(/\s+/g, " ");
   if (/\bin\b/.test(normalizedOp)) return params.includes(value);
+  if (normalizedOp.includes("<>")) return value !== params[0];
   if (normalizedOp.includes("!=")) return value !== params[0];
   if (normalizedOp.includes("=")) return value === params[0];
   if (opText.includes(" < ")) return (value as number) < (params[0] as number);

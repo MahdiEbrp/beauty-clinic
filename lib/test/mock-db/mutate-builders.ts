@@ -9,7 +9,7 @@ import {
 import { applyDefaults, type MockDbInternal } from "./defaults";
 
 export class InsertBuilder implements PromiseLike<Row[]> {
-  private valuesData: Record<string, unknown> = {};
+  private valuesData: Record<string, unknown>[] = [];
   private conflict?: {
     target?: unknown[];
     targetWhere?: unknown;
@@ -21,8 +21,8 @@ export class InsertBuilder implements PromiseLike<Row[]> {
     private readonly table: unknown,
   ) {}
 
-  values(values: Record<string, unknown>): this {
-    this.valuesData = values;
+  values(values: Record<string, unknown> | Record<string, unknown>[]): this {
+    this.valuesData = Array.isArray(values) ? values : [values];
     return this;
   }
 
@@ -45,33 +45,38 @@ export class InsertBuilder implements PromiseLike<Row[]> {
   ): PromiseLike<TResult1 | TResult2> {
     const run = async (): Promise<Row[]> => {
       const name = tableName(this.table);
-      this.db.log.push({
-        type: "insert",
-        table: name,
-        values: { ...this.valuesData },
-      });
+      const inserted: Row[] = [];
 
-      // Real drizzle omits `undefined` values from inserts.
-      const clean: Record<string, unknown> = {};
-      for (const [k, v] of Object.entries(this.valuesData)) {
-        if (v !== undefined) clean[k] = v;
-      }
+      for (const single of this.valuesData) {
+        this.db.log.push({
+          type: "insert",
+          table: name,
+          values: { ...single },
+        });
 
-      const failure = this.db.failInsert?.(name, clean);
-      if (failure) throw failure;
-
-      const existing = this.findConflictRow(name, clean);
-      let row: Row;
-      if (existing && this.conflict) {
-        row = { ...existing };
-        for (const [k, v] of Object.entries(this.conflict.set ?? {})) {
-          row[k] = v;
+        // Real drizzle omits `undefined` values from inserts.
+        const clean: Record<string, unknown> = {};
+        for (const [k, v] of Object.entries(single)) {
+          if (v !== undefined) clean[k] = v;
         }
-      } else {
-        row = applyDefaults(this.table, clean);
-        (this.db.data[name] ??= []).push(row);
+
+        const failure = this.db.failInsert?.(name, clean);
+        if (failure) throw failure;
+
+        const existing = this.findConflictRow(name, clean);
+        if (existing && this.conflict) {
+          const row = { ...existing };
+          for (const [k, v] of Object.entries(this.conflict.set ?? {})) {
+            row[k] = v;
+          }
+          inserted.push(row);
+        } else {
+          const row = applyDefaults(this.table, clean);
+          (this.db.data[name] ??= []).push(row);
+          inserted.push(row);
+        }
       }
-      return [row];
+      return inserted;
     };
     return run().then(onfulfilled, onrejected);
   }

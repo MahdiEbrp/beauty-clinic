@@ -6,6 +6,8 @@ import {
   inet,
   integer,
   jsonb,
+  numeric,
+  pgEnum,
   pgTable,
   primaryKey,
   text,
@@ -222,3 +224,166 @@ export type Setting = typeof settings.$inferSelect;
 export type NewSetting = typeof settings.$inferInsert;
 export type StorageNode = typeof storageNodes.$inferSelect;
 export type NewStorageNode = typeof storageNodes.$inferInsert;
+
+// ---------------------------------------------------------------------------
+// Service catalog
+//
+// Three levels: serviceGroups (top level, e.g. "Laser") → serviceCategories
+// (sub-groups that always belong to a group) → services (actual billable
+// treatments). Translation keys are stored in name/title/description columns
+// (e.g. `servicesList.facial.title`) and rendered via next-intl `t()`.
+// ---------------------------------------------------------------------------
+
+export const priceTypeEnum = pgEnum("price_type", ["fixed", "from", "on_request"]);
+
+export const serviceImageTypeEnum = pgEnum("service_image_type", [
+  "before",
+  "after",
+  "gallery",
+]);
+
+export const serviceGroups = pgTable(
+  "service_groups",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: text("name").notNull(),
+    slug: text("slug").notNull(),
+    description: text("description"),
+    icon: text("icon"),
+    image: text("image"),
+    displayOrder: integer("display_order").notNull().default(0),
+    isActive: boolean("is_active").notNull().default(true),
+    seoTitle: text("seo_title"),
+    seoDescription: text("seo_description"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("service_groups_slug_idx").on(table.slug),
+    index("service_groups_is_active_idx").on(table.isActive),
+  ],
+);
+
+export const serviceCategories = pgTable(
+  "service_categories",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    groupId: uuid("group_id")
+      .notNull()
+      .references(() => serviceGroups.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    slug: text("slug").notNull(),
+    description: text("description"),
+    icon: text("icon"),
+    image: text("image"),
+    displayOrder: integer("display_order").notNull().default(0),
+    isActive: boolean("is_active").notNull().default(true),
+    seoTitle: text("seo_title"),
+    seoDescription: text("seo_description"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("service_categories_slug_idx").on(table.slug),
+    index("service_categories_group_id_idx").on(table.groupId),
+    index("service_categories_is_active_idx").on(table.isActive),
+  ],
+);
+
+export const services = pgTable(
+  "services",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    categoryId: uuid("category_id")
+      .notNull()
+      .references(() => serviceCategories.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    slug: text("slug").notNull(),
+    shortDesc: text("short_desc"),
+    fullDesc: text("full_desc"),
+    price: numeric("price", { precision: 10, scale: 2 }),
+    priceType: priceTypeEnum("price_type").notNull().default("fixed"),
+    durationMin: integer("duration_min"),
+    sessionsCount: integer("sessions_count").notNull().default(1),
+    coverImage: text("cover_image"),
+    isActive: boolean("is_active").notNull().default(true),
+    isFeatured: boolean("is_featured").notNull().default(false),
+    displayOrder: integer("display_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("services_slug_idx").on(table.slug),
+    index("services_category_id_idx").on(table.categoryId),
+    index("services_is_active_idx").on(table.isActive),
+    index("services_is_featured_idx").on(table.isFeatured),
+  ],
+);
+
+export const serviceImages = pgTable(
+  "service_images",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    serviceId: uuid("service_id")
+      .notNull()
+      .references(() => services.id, { onDelete: "cascade" }),
+    imageUrl: text("image_url").notNull(),
+    type: serviceImageTypeEnum("type").notNull().default("gallery"),
+    displayOrder: integer("display_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("service_images_service_id_idx").on(table.serviceId)],
+);
+
+export const serviceFaqs = pgTable(
+  "service_faqs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    serviceId: uuid("service_id")
+      .notNull()
+      .references(() => services.id, { onDelete: "cascade" }),
+    question: text("question").notNull(),
+    answer: text("answer").notNull(),
+    displayOrder: integer("display_order").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("service_faqs_service_id_idx").on(table.serviceId)],
+);
+
+export const serviceGroupsRelations = relations(serviceGroups, ({ many }) => ({
+  categories: many(serviceCategories),
+}));
+
+export const serviceCategoriesRelations = relations(serviceCategories, ({ one, many }) => ({
+  group: one(serviceGroups, {
+    fields: [serviceCategories.groupId],
+    references: [serviceGroups.id],
+  }),
+  services: many(services),
+}));
+
+export const servicesRelations = relations(services, ({ one, many }) => ({
+  category: one(serviceCategories, {
+    fields: [services.categoryId],
+    references: [serviceCategories.id],
+  }),
+  images: many(serviceImages),
+  faqs: many(serviceFaqs),
+}));
+
+export const serviceImagesRelations = relations(serviceImages, ({ one }) => ({
+  service: one(services, { fields: [serviceImages.serviceId], references: [services.id] }),
+}));
+
+export const serviceFaqsRelations = relations(serviceFaqs, ({ one }) => ({
+  service: one(services, { fields: [serviceFaqs.serviceId], references: [services.id] }),
+}));
+
+export type ServiceGroup = typeof serviceGroups.$inferSelect;
+export type NewServiceGroup = typeof serviceGroups.$inferInsert;
+export type ServiceCategory = typeof serviceCategories.$inferSelect;
+export type NewServiceCategory = typeof serviceCategories.$inferInsert;
+export type Service = typeof services.$inferSelect;
+export type NewService = typeof services.$inferInsert;
+export type ServiceImage = typeof serviceImages.$inferSelect;
+export type ServiceFaq = typeof serviceFaqs.$inferSelect;

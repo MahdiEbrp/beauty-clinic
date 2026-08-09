@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import { Wind, Loader2, UserPlus, ShieldAlert } from "lucide-react";
 import { signupSchema } from "@/lib/validation/user";
+import { toFieldErrors } from "@/lib/validation/field-errors";
 import RegisterFields from "@/components/register/RegisterFields";
 
 type FieldErrors = Record<string, string[] | undefined>;
@@ -60,13 +61,13 @@ export default function RegisterForm() {
     }
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     setFormError(null);
 
     const parsed = signupSchema.safeParse({ fullName, email, phone, password });
     if (!parsed.success) {
-      setErrors(parsed.error.flatten().fieldErrors);
+      setErrors(toFieldErrors(parsed.error));
       return;
     }
     setErrors({});

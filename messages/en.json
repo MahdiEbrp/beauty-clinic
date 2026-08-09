@@ -83,6 +83,7 @@
     "socialTitle": "Social Media",
     "rubika": "Rubika Channel",
     "bale": "Bale Channel",
+    "instagram": "Instagram",
     "bookingTitle": "Online Booking",
     "neshanMap": "Neshan Map",
     "neshanDesc": "Navigate with Neshan App",
@@ -296,6 +297,84 @@
       }
     }
   },
+  "serviceDetail": {
+    "labels": {
+      "backToServices": "All services",
+      "category": "Category",
+      "price": "Price",
+      "from": "From",
+      "onRequest": "Price on request",
+      "duration": "Duration",
+      "minutes": "min",
+      "sessions": "Sessions",
+      "sessionsCount": "{count, plural, one {# session} other {# sessions}}",
+      "gallery": "Gallery",
+      "before": "Before",
+      "after": "After",
+      "faq": "Frequently Asked Questions",
+      "bookNow": "Book now",
+      "notFound": "Service not found",
+      "notFoundDesc": "The service you are looking for does not exist or has been moved."
+    },
+    "services": {
+      "gel-botox-injection": {
+        "fullDesc": "Precise filler and botox injections performed by our medical team with top international brands. We shape the lips, chin, jawline, cheeks and smile lines with natural, balanced results, and soften expression lines with botox — all in a single comfortable session with minimal downtime."
+      },
+      "specialized-facial": {
+        "fullDesc": "A medical-grade facial tailored to your skin type, using pharmaceutical serums for deep hydration, brightening and renewal. Your specialist analyses your skin and combines cleansing, exfoliation and mask therapy for visible, long-lasting results."
+      },
+      "rejuvenation-lift": {
+        "fullDesc": "Advanced non-surgical rejuvenation combining mesotherapy, PRP, Profhilo and lifting techniques to restore volume, elasticity and a youthful glow. We map your face and build a personalised plan that evolves with your skin over several sessions."
+      },
+      "body-filler": {
+        "fullDesc": "Body shaping and volumizing with specialised fillers for bikini lines and buttocks. We design a natural silhouette, injecting precisely by the cc so you pay only for what you need, with visible results immediately."
+      },
+      "hifu-therapy": {
+        "fullDesc": "Face lifting and skin tightening with focused ultrasound waves that reach deep layers without surgery. HIFU stimulates collagen and elastin production for a gradual, natural lift that strengthens over the following months."
+      },
+      "microneedling": {
+        "fullDesc": "Natural collagen stimulation with fine micro-needles that renew skin texture and reduce fine lines, scars and enlarged pores. Combined with growth-factor serums, microneedling delivers a smoother, firmer and more radiant complexion over a course of sessions."
+      }
+    },
+    "faqs": {
+      "gel-botox-injection": {
+        "q1": "Does filler injection hurt?",
+        "a1": "The procedure is quick; we use topical numbing cream and fine needles, so most clients feel only slight pressure.",
+        "q2": "How long do the results last?",
+        "a2": "Depending on the brand and area, most fillers last between 6 and 18 months; botox typically lasts 3 to 6 months."
+      },
+      "specialized-facial": {
+        "q1": "How often should I get a facial?",
+        "a1": "For best results we recommend a session every 3 to 4 weeks, matching your skin's renewal cycle.",
+        "q2": "Is there any downtime?",
+        "a2": "No. You can return to your normal routine immediately; mild redness fades within a few hours."
+      },
+      "rejuvenation-lift": {
+        "q1": "How many sessions will I need?",
+        "a1": "Most clients see clear improvement after 2 to 4 sessions; your specialist will adjust the plan based on your skin's response.",
+        "q2": "When will I see results?",
+        "a2": "Results appear gradually over 2 to 6 weeks as collagen is stimulated, and continue to improve over time."
+      },
+      "body-filler": {
+        "q1": "Is body filler safe?",
+        "a1": "When performed by an experienced physician with quality products, it is a well-established, minimally invasive procedure.",
+        "q2": "How is the price calculated?",
+        "a2": "Pricing is per cc, and the required volume is determined during the consultation based on your goals."
+      },
+      "hifu-therapy": {
+        "q1": "Is HIFU painful?",
+        "a1": "You may feel a mild warming or tingling during the session; discomfort is minimal and no anaesthesia is needed.",
+        "q2": "How long do HIFU results last?",
+        "a2": "Most clients maintain results for 12 to 18 months, with touch-up sessions recommended once or twice a year."
+      },
+      "microneedling": {
+        "q1": "How many sessions are needed?",
+        "a1": "A typical course is 3 to 5 sessions, 4 weeks apart, for the best collagen remodelling.",
+        "q2": "What is the recovery time?",
+        "a2": "Skin appears red like a mild sunburn for 24 to 48 hours; most clients return to work the next day."
+      }
+    }
+  },
   "care": {
     "meta": {
       "title": "Care Guide | Nafas Beauty Clinic",
@@ -470,6 +549,7 @@
       "workspace": "Workspace",
       "account": "Account",
       "overview": "Overview",
+      "services": "Services",
       "users": "Users",
       "files": "Files",
       "viewSite": "View Website",
@@ -828,5 +908,225 @@
     "description": "You don't have permission to view this page. Contact an administrator if you believe this is a mistake.",
     "backToDashboard": "Back to Dashboard",
     "goHome": "Go Home"
+  },
+  "servicesCatalog": {
+    "meta": {
+      "title": "Services Catalog | Nafas Beauty Clinic",
+      "description": "Manage service groups, categories and treatments."
+    },
+    "heading": "Services Catalog",
+    "summary": "{groups} groups · {categories} categories · {services} services",
+    "resultsLabel": "services",
+    "add": "Add service",
+    "addShort": "Add",
+    "filterLabel": "Filter services",
+    "search": "Search services",
+    "searchPlaceholder": "Search by title or slug...",
+    "status": "Status",
+    "statusAll": "All",
+    "category": "Category",
+    "categoryAll": "All categories",
+    "featuredLabel": "Featured",
+    "featuredAll": "All",
+    "featured": {
+      "yes": "Featured",
+      "no": "Not featured"
+    },
+    "featuredShort": "Featured",
+    "clearFilters": "Clear filters",
+    "error": "Couldn't load services. Please try again.",
+    "retry": "Retry",
+    "loading": "Loading services...",
+    "empty": "No services found.",
+    "emptySearch": "No services match your filters.",
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "priceTypes": {
+      "fixed": "Fixed",
+      "from": "From",
+      "on_request": "On request"
+    },
+    "imageTypes": {
+      "before": "Before",
+      "after": "After",
+      "gallery": "Gallery"
+    },
+    "onRequest": "On request",
+    "from": "From",
+    "currency": "Toman",
+    "duration": "{minutes} min",
+    "noDuration": "—",
+    "tabs": {
+      "label": "Service catalog views",
+      "services": "Services",
+      "groups": "Groups",
+      "categories": "Categories"
+    },
+    "columns": {
+      "service": "Service",
+      "category": "Category",
+      "price": "Price",
+      "duration": "Duration",
+      "media": "Media",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "actions": {
+      "menu": "Open service actions",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "groupsCount": "{count} groups",
+    "groupsCategories": "{count} categories",
+    "groupsEmpty": "No service groups yet. Add one to organize your catalog.",
+    "categoriesCount": "{count} categories",
+    "categoriesServices": "{count} services",
+    "categoriesEmpty": "No categories yet. Add one to group your services.",
+    "dialog": {
+      "cancel": "Cancel",
+      "close": "Close"
+    },
+    "delete": {
+      "serviceTitle": "Delete {name}?",
+      "serviceDescription": "This service and its images and FAQs will be permanently removed. This cannot be undone.",
+      "groupTitle": "Delete {name}?",
+      "groupDescription": "This group and everything inside it (categories and services) will be permanently removed. This cannot be undone.",
+      "categoryTitle": "Delete {name}?",
+      "categoryDescription": "This category and all of its services will be permanently removed. This cannot be undone.",
+      "confirm": "Delete"
+    },
+    "groupForm": {
+      "title": "Add a service group",
+      "description": "Create a top-level group for the catalog.",
+      "editTitle": "Edit service group",
+      "editDescription": "Update the details of this group.",
+      "create": "Create group",
+      "save": "Save changes",
+      "name": "Name",
+      "namePlaceholder": "e.g. Laser therapy",
+      "slug": "Slug",
+      "slugHint": "Used in URLs. Auto-generated from the name.",
+      "descriptionLabel": "Description",
+      "icon": "Icon",
+      "image": "Image URL",
+      "displayOrder": "Display order",
+      "isActive": "Status",
+      "seoTitle": "SEO title",
+      "seoDescription": "SEO description",
+      "discardTitle": "Discard changes?",
+      "discardDescription": "You have unsaved changes in this form.",
+      "discardConfirm": "Discard",
+      "errors": {
+        "name": "Name is required.",
+        "slug": "Slug must be kebab-case (letters, numbers, hyphens).",
+        "displayOrder": "Enter a valid number."
+      }
+    },
+    "categoryForm": {
+      "title": "Add a service category",
+      "description": "Create a sub-group inside a service group.",
+      "editTitle": "Edit service category",
+      "editDescription": "Update the details of this category.",
+      "create": "Create category",
+      "save": "Save changes",
+      "group": "Group",
+      "groupPlaceholder": "Select a group",
+      "name": "Name",
+      "namePlaceholder": "e.g. Skin rejuvenation",
+      "slug": "Slug",
+      "slugHint": "Used in URLs. Auto-generated from the name.",
+      "descriptionLabel": "Description",
+      "icon": "Icon",
+      "image": "Image URL",
+      "displayOrder": "Display order",
+      "isActive": "Status",
+      "seoTitle": "SEO title",
+      "seoDescription": "SEO description",
+      "discardTitle": "Discard changes?",
+      "discardDescription": "You have unsaved changes in this form.",
+      "discardConfirm": "Discard",
+      "errors": {
+        "name": "Name is required.",
+        "group": "Please select a group.",
+        "slug": "Slug must be kebab-case (letters, numbers, hyphens).",
+        "displayOrder": "Enter a valid number."
+      }
+    },
+    "serviceForm": {
+      "title": "Add a service",
+      "description": "Create a billable treatment in the catalog.",
+      "editTitle": "Edit service",
+      "editDescription": "Update the details of this service.",
+      "create": "Create service",
+      "save": "Save changes",
+      "group": "Group",
+      "groupPlaceholder": "Select a group",
+      "category": "Category",
+      "categoryPlaceholder": "Select a category",
+      "titleLabel": "Title",
+      "titlePlaceholder": "e.g. Microdermabrasion",
+      "slug": "Slug",
+      "slugHint": "Used in URLs. Auto-generated from the title.",
+      "priceType": "Price type",
+      "price": "Price",
+      "priceOnRequestHint": "Price is shown as on request.",
+      "duration": "Duration (min)",
+      "sessions": "Sessions",
+      "displayOrder": "Display order",
+      "shortDesc": "Short description",
+      "fullDesc": "Full description",
+      "coverImage": "Cover image URL",
+      "isActive": "Status",
+      "isFeatured": "Featured",
+      "imagesTitle": "Images",
+      "imagesEmpty": "No images added yet.",
+      "addImage": "Add image",
+      "removeImage": "Remove image",
+      "imageUrlPlaceholder": "https://...",
+      "imageType": "Type",
+      "faqsTitle": "FAQs",
+      "faqsEmpty": "No FAQs added yet.",
+      "addFaq": "Add FAQ",
+      "removeFaq": "Remove FAQ",
+      "faqQuestionPlaceholder": "Question",
+      "faqAnswerPlaceholder": "Answer",
+      "discardTitle": "Discard changes?",
+      "discardDescription": "You have unsaved changes in this form.",
+      "discardConfirm": "Discard",
+      "errors": {
+        "title": "Title is required.",
+        "slug": "Slug must be kebab-case (letters, numbers, hyphens).",
+        "price": "Enter a valid price.",
+        "duration": "Enter a valid duration (1–1440 minutes).",
+        "sessions": "Enter a valid number of sessions (1–100).",
+        "displayOrder": "Enter a valid number.",
+        "category": "Please select a category.",
+        "group": "Please select a group."
+      }
+    },
+    "toasts": {
+      "saving": "Saving...",
+      "created": "Service created.",
+      "updated": "Service updated.",
+      "groupCreated": "Group created.",
+      "groupUpdated": "Group updated.",
+      "categoryCreated": "Category created.",
+      "categoryUpdated": "Category updated.",
+      "deleting": "Deleting...",
+      "deleted": "Deleted."
+    },
+    "errors": {
+      "slugTaken": "This slug is already in use. Try a different one.",
+      "save": "The changes could not be saved. Please try again.",
+      "delete": "The item could not be deleted. Please try again."
+    },
+    "pagination": {
+      "showing": "Showing {from}–{to} of {total}",
+      "previous": "Previous",
+      "next": "Next",
+      "pageInfo": "Page {page} of {totalPages}"
+    }
   }
 }

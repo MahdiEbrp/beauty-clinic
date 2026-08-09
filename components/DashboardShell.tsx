@@ -7,7 +7,7 @@ import {
   usePathname,
   useRouter,
 } from "@/src/i18n/navigation";
-import { LayoutDashboard, Users, Files, Wind } from "lucide-react";
+import { LayoutDashboard, Sparkles, Users, Files, Wind } from "lucide-react";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { SidebarNavItem } from "@/components/dashboard/SidebarSections";
 import {
@@ -38,9 +38,13 @@ export default function DashboardShell({
 
   const canViewUsers = user.permissions.includes("users.read");
   const canViewFiles = user.permissions.includes("files.read");
+  const canViewServices = user.permissions.includes("services.read");
 
   const navItems: SidebarNavItem[] = [
     { key: "overview", href: "/dashboard", icon: LayoutDashboard },
+    ...(canViewServices
+      ? [{ key: "services", href: "/dashboard/services", icon: Sparkles }]
+      : []),
     ...(canViewUsers
       ? [{ key: "users", href: "/dashboard/users", icon: Users }]
       : []),

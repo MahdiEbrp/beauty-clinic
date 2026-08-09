@@ -25,6 +25,7 @@ const mapTile =
 const DEFAULT_SOCIAL = {
   rubika: "https://rubika.ir/nafasclinic",
   bale: "https://ble.ir/nafasclinic",
+  instagram: "https://instagram.com/nafasclinic",
 } as const;
 
 const DEFAULT_MAPS = {
@@ -38,6 +39,7 @@ export default function Contact({ onOpenBooking, clinic }: ContactProps) {
   const socials = [
     { key: "rubika", href: clinic?.social.rubika ?? DEFAULT_SOCIAL.rubika },
     { key: "bale", href: clinic?.social.bale ?? DEFAULT_SOCIAL.bale },
+    { key: "instagram", href: clinic?.social.instagram ?? DEFAULT_SOCIAL.instagram },
   ] as const;
 
   return (

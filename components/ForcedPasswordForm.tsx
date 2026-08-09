@@ -16,7 +16,7 @@ export default function ForcedPasswordForm({ fullName }: { fullName: string }) {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
-  const submit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const submit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
     const parsed = changePasswordSchema.safeParse({ password, confirmPassword });

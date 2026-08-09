@@ -18,6 +18,7 @@ export type ClinicData = {
   social: {
     rubika: string;
     bale: string;
+    instagram: string;
   };
   maps: {
     neshan: string;
@@ -45,6 +46,7 @@ const DEFAULT_CLINIC: ClinicData = {
   social: {
     rubika: "https://rubika.ir/nafasclinic",
     bale: "https://ble.ir/nafasclinic",
+    instagram: "https://instagram.com/nafasclinic",
   },
   maps: {
     neshan: "https://nshn.ir/rbvg0k2xLMq4",
@@ -52,11 +54,39 @@ const DEFAULT_CLINIC: ClinicData = {
   },
 };
 
+type OpeningSlot = {
+  days: string[];
+  opens: string;
+  closes: string;
+};
+
+function isOpeningSlot(value: unknown): value is OpeningSlot {
+  if (typeof value !== "object" || value === null) return false;
+  const slot = value as Record<string, unknown>;
+  return (
+    Array.isArray(slot.days) &&
+    slot.days.every((day) => typeof day === "string") &&
+    typeof slot.opens === "string" &&
+    typeof slot.closes === "string"
+  );
+}
+
 export async function getClinicData(): Promise<ClinicData> {
   const settings = await loadSystemSettingsMap();
 
   const s = (key: string, fallback: string) =>
     typeof settings.get(key) === "string" ? (settings.get(key) as string) : fallback;
+
+  // Opening hours are editable via the `clinic.opening_hours` system setting
+  // (a JSON array of day-range slots); a malformed or missing value falls back
+  // to the compiled defaults so the site never renders broken hours.
+  const openingHoursSetting = settings.get("clinic.opening_hours");
+  const openingHours =
+    Array.isArray(openingHoursSetting) &&
+    openingHoursSetting.length > 0 &&
+    openingHoursSetting.every(isOpeningSlot)
+      ? openingHoursSetting
+      : DEFAULT_CLINIC.openingHours;
 
   return {
     telephone: typeof settings.get("contact.phone") === "string"
@@ -68,10 +98,11 @@ export async function getClinicData(): Promise<ClinicData> {
       addressRegion: s("contact.province", DEFAULT_CLINIC.address.addressRegion),
       addressCountry: s("contact.country", DEFAULT_CLINIC.address.addressCountry),
     },
-    openingHours: DEFAULT_CLINIC.openingHours,
+    openingHours,
     social: {
       rubika: s("social.rubika", DEFAULT_CLINIC.social.rubika),
       bale: s("social.bale", DEFAULT_CLINIC.social.bale),
+      instagram: s("social.instagram", DEFAULT_CLINIC.social.instagram),
     },
     maps: {
       neshan: s("contact.map_neshan", DEFAULT_CLINIC.maps.neshan),

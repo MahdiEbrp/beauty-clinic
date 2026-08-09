@@ -35,7 +35,7 @@ export default async function JsonLd() {
       opens: slot.opens,
       closes: slot.closes,
     })),
-    sameAs: [clinic.social.rubika, clinic.social.bale],
+    sameAs: [clinic.social.rubika, clinic.social.bale, clinic.social.instagram],
   };
 
   return (

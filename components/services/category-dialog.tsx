@@ -1,0 +1,360 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, useWatch } from "react-hook-form";
+import { Loader2 } from "lucide-react";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Field, SelectField, inputClass } from "./form-field";
+import { slugify } from "./helpers";
+import { useServices } from "./services-context";
+
+const categorySchema = z.object({
+  groupId: z.uuid("invalid"),
+  name: z.string().trim().min(1).max(256),
+  slug: z
+    .string()
+    .trim()
+    .min(1)
+    .max(160)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "invalid"),
+  description: z.string().trim().max(1000),
+  icon: z.string().trim().max(100),
+  image: z.string().trim().max(2048),
+  displayOrder: z
+    .string()
+    .refine((v) => v === "" || (/^\d+$/.test(v) && Number(v) <= 10000), "invalid"),
+  isActive: z.boolean(),
+  seoTitle: z.string().trim().max(256),
+  seoDescription: z.string().trim().max(512),
+});
+
+type CategoryForm = z.infer<typeof categorySchema>;
+
+export function CategoryDialog() {
+  const t = useTranslations();
+  const {
+    categoryDialog,
+    closeCategoryDialog,
+    busyId,
+    createCategory,
+    updateCategory,
+    summary,
+  } = useServices();
+  const [discardOpen, setDiscardOpen] = useState(false);
+  const editing =
+    categoryDialog?.mode === "edit" ? categoryDialog.category : null;
+
+  const form = useForm<CategoryForm>({
+    resolver: zodResolver(categorySchema),
+    mode: "onBlur",
+    reValidateMode: "onChange",
+    defaultValues: {
+      groupId: "",
+      name: "",
+      slug: "",
+      description: "",
+      icon: "",
+      image: "",
+      displayOrder: "0",
+      isActive: true,
+      seoTitle: "",
+      seoDescription: "",
+    },
+  });
+
+  useEffect(() => {
+    if (editing) {
+      form.reset({
+        groupId: editing.groupId,
+        name: editing.name,
+        slug: editing.slug,
+        description: editing.description ?? "",
+        icon: editing.icon ?? "",
+        image: editing.image ?? "",
+        displayOrder: String(editing.displayOrder),
+        isActive: editing.isActive,
+        seoTitle: editing.seoTitle ?? "",
+        seoDescription: editing.seoDescription ?? "",
+      });
+    } else {
+      form.reset({
+        groupId: "",
+        name: "",
+        slug: "",
+        description: "",
+        icon: "",
+        image: "",
+        displayOrder: "0",
+        isActive: true,
+        seoTitle: "",
+        seoDescription: "",
+      });
+    }
+  }, [editing, form]);
+
+  const title = useWatch({ control: form.control, name: "name" });
+  const groupId = useWatch({ control: form.control, name: "groupId" });
+  const isActive = useWatch({ control: form.control, name: "isActive" });
+  const groupOptions = summary.groups.map((group) => ({
+    value: group.id,
+    label: group.name,
+  }));
+
+  const close = () => {
+    form.reset();
+    setDiscardOpen(false);
+    closeCategoryDialog();
+  };
+
+  const requestClose = (nextOpen: boolean) => {
+    if (nextOpen) {
+      closeCategoryDialog();
+    } else if (form.formState.isDirty) {
+      setDiscardOpen(true);
+    } else {
+      close();
+    }
+  };
+
+  const submit = async (values: CategoryForm) => {
+    const payload = {
+      groupId: values.groupId,
+      name: values.name,
+      slug: values.slug || slugify(values.name),
+      description: values.description || null,
+      icon: values.icon || null,
+      image: values.image || null,
+      displayOrder: values.displayOrder ? Number(values.displayOrder) : 0,
+      isActive: values.isActive,
+      seoTitle: values.seoTitle || null,
+      seoDescription: values.seoDescription || null,
+    };
+    const result = editing
+      ? await updateCategory(editing.id, payload)
+      : await createCategory(payload);
+    if (result.ok) close();
+  };
+
+  const errorText = (field: keyof CategoryForm) => {
+    if (!form.formState.errors[field]) return null;
+    if (field === "groupId") return t("servicesCatalog.categoryForm.errors.group");
+    if (field === "slug") return t("servicesCatalog.categoryForm.errors.slug");
+    if (field === "displayOrder")
+      return t("servicesCatalog.categoryForm.errors.displayOrder");
+    return t("servicesCatalog.categoryForm.errors.name");
+  };
+
+  return (
+    <>
+      <Dialog open={categoryDialog !== null} onOpenChange={requestClose}>
+        <DialogContent
+          closeLabel={t("servicesCatalog.dialog.cancel")}
+          className="max-w-xl gap-0 overflow-y-auto p-0 max-md:top-auto max-md:bottom-0 max-md:max-w-none max-md:translate-y-0 max-md:rounded-b-none max-md:rounded-t-[1.5rem] max-md:max-h-[92dvh]"
+        >
+          <div className="border-b border-border-primary bg-surface-tertiary/35 px-6 pb-5 pt-7 sm:px-8">
+            <DialogHeader className="gap-2 pe-8">
+              <DialogTitle className="text-dash-heading font-bold tracking-tight text-accent">
+                {editing
+                  ? t("servicesCatalog.categoryForm.editTitle")
+                  : t("servicesCatalog.categoryForm.title")}
+              </DialogTitle>
+              <DialogDescription className="max-w-md text-dash-body-sm leading-6">
+                {editing
+                  ? t("servicesCatalog.categoryForm.editDescription")
+                  : t("servicesCatalog.categoryForm.description")}
+              </DialogDescription>
+            </DialogHeader>
+          </div>
+
+          <form
+            onSubmit={form.handleSubmit(submit)}
+            className="grid gap-5 px-6 py-6 sm:px-8"
+          >
+            <Field
+              label={t("servicesCatalog.categoryForm.group")}
+              error={errorText("groupId")}
+              required
+            >
+              <SelectField
+                value={groupId}
+                onValueChange={(value) => form.setValue("groupId", value)}
+                placeholder={t("servicesCatalog.categoryForm.groupPlaceholder")}
+                invalid={Boolean(form.formState.errors.groupId)}
+                options={groupOptions}
+                optionLabel={(value) =>
+                  summary.groups.find((g) => g.id === value)?.name ?? value
+                }
+              />
+            </Field>
+            <Field
+              label={t("servicesCatalog.categoryForm.name")}
+              error={errorText("name")}
+              required
+            >
+              <input
+                autoFocus
+                {...form.register("name")}
+                placeholder={t("servicesCatalog.categoryForm.namePlaceholder")}
+                className={inputClass(Boolean(form.formState.errors.name))}
+              />
+            </Field>
+            <Field
+              label={t("servicesCatalog.categoryForm.slug")}
+              error={errorText("slug")}
+              hint={t("servicesCatalog.categoryForm.slugHint")}
+              required
+            >
+              <input
+                dir="ltr"
+                {...form.register("slug")}
+                placeholder={slugify(title) || "anti-aging"}
+                className={inputClass(Boolean(form.formState.errors.slug))}
+              />
+            </Field>
+            <Field
+              label={t("servicesCatalog.categoryForm.descriptionLabel")}
+              error={errorText("description")}
+            >
+              <textarea
+                {...form.register("description")}
+                rows={3}
+                className={`${inputClass(Boolean(form.formState.errors.description))} resize-y`}
+              />
+            </Field>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field label={t("servicesCatalog.categoryForm.icon")} error={errorText("icon")}>
+                <input
+                  dir="ltr"
+                  {...form.register("icon")}
+                  placeholder="sparkles"
+                  className={inputClass(Boolean(form.formState.errors.icon))}
+                />
+              </Field>
+              <Field label={t("servicesCatalog.categoryForm.image")} error={errorText("image")}>
+                <input
+                  dir="ltr"
+                  {...form.register("image")}
+                  placeholder="https://..."
+                  className={inputClass(Boolean(form.formState.errors.image))}
+                />
+              </Field>
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field
+                label={t("servicesCatalog.categoryForm.displayOrder")}
+                error={errorText("displayOrder")}
+              >
+                <input
+                  dir="ltr"
+                  inputMode="numeric"
+                  {...form.register("displayOrder")}
+                  className={inputClass(Boolean(form.formState.errors.displayOrder))}
+                />
+              </Field>
+              <Field label={t("servicesCatalog.categoryForm.isActive")}>
+                <SelectField
+                  value={isActive ? "true" : "false"}
+                  onValueChange={(value) =>
+                    form.setValue("isActive", value === "true")
+                  }
+                  placeholder={t("servicesCatalog.categoryForm.isActive")}
+                  options={[
+                    { value: "true", label: t("servicesCatalog.statuses.active") },
+                    { value: "false", label: t("servicesCatalog.statuses.inactive") },
+                  ]}
+                  optionLabel={(value) =>
+                    value === "true"
+                      ? t("servicesCatalog.statuses.active")
+                      : t("servicesCatalog.statuses.inactive")
+                  }
+                />
+              </Field>
+            </div>
+            <Field label={t("servicesCatalog.categoryForm.seoTitle")} error={errorText("seoTitle")}>
+              <input
+                {...form.register("seoTitle")}
+                className={inputClass(Boolean(form.formState.errors.seoTitle))}
+              />
+            </Field>
+            <Field
+              label={t("servicesCatalog.categoryForm.seoDescription")}
+              error={errorText("seoDescription")}
+            >
+              <textarea
+                {...form.register("seoDescription")}
+                rows={2}
+                className={`${inputClass(Boolean(form.formState.errors.seoDescription))} resize-y`}
+              />
+            </Field>
+
+            <div className="mt-2 flex flex-col-reverse gap-3 border-t border-border-primary pt-5 sm:flex-row sm:items-center sm:justify-between">
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.preventDefault();
+                  requestClose(false);
+                }}
+                className="inline-flex min-h-11 items-center justify-center rounded-pill px-5 text-dash-body-sm font-bold text-content-secondary transition hover:bg-surface-tertiary hover:text-accent"
+              >
+                {t("servicesCatalog.dialog.cancel")}
+              </button>
+              <button
+                type="submit"
+                disabled={form.formState.isSubmitting || busyId !== null}
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill bg-accent px-6 text-dash-body-sm font-bold text-content-contrast shadow-elevation-1 transition hover:bg-accent-hover disabled:pointer-events-none disabled:opacity-45"
+              >
+                {form.formState.isSubmitting && (
+                  <Loader2 className="size-4 animate-spin" />
+                )}
+                {form.formState.isSubmitting
+                  ? t("servicesCatalog.toasts.saving")
+                  : editing
+                    ? t("servicesCatalog.categoryForm.save")
+                    : t("servicesCatalog.categoryForm.create")}
+              </button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={discardOpen} onOpenChange={setDiscardOpen}>
+        <DialogContent
+          closeLabel={t("servicesCatalog.dialog.cancel")}
+          className="max-w-sm"
+        >
+          <DialogHeader>
+            <DialogTitle className="text-accent">
+              {t("servicesCatalog.categoryForm.discardTitle")}
+            </DialogTitle>
+            <DialogDescription>
+              {t("servicesCatalog.categoryForm.discardDescription")}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-3">
+            <DialogClose className="inline-flex min-h-11 items-center justify-center rounded-pill bg-surface-tertiary px-5 text-dash-body-sm font-bold text-accent">
+              {t("servicesCatalog.dialog.cancel")}
+            </DialogClose>
+            <button
+              type="button"
+              onClick={close}
+              className="inline-flex min-h-11 items-center justify-center rounded-pill bg-error px-5 text-dash-body-sm font-bold text-content-contrast"
+            >
+              {t("servicesCatalog.categoryForm.discardConfirm")}
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
