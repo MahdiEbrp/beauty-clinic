@@ -160,7 +160,7 @@ export default function DashboardContent({
                       </span>
                     )}
                     {t.rich("dashboard.sessions.lastSeen", {
-                      date: () => <RelativeTime value={session.lastSeenAt} />,
+                      date: <RelativeTime key="last-seen" value={session.lastSeenAt} />,
                     })}
                   </p>
                   <p className="text-dash-caption text-content-tertiary mt-0.5">
