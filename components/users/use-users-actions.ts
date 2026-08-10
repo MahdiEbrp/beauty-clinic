@@ -93,8 +93,10 @@ export function useUsersActions(list: UsersListState): UsersActionsState {
         body: JSON.stringify(patch),
       });
       if (!response.ok) {
-        const payload = await response.json().catch(() => null);
-        const code = payload?.error?.code as string | undefined;
+        const payload = (await response.json().catch(() => null)) as
+          | { error?: { code?: string } }
+          | null;
+        const code = payload?.error?.code;
         if (code === "SELF_LOCKOUT") throw new Error("self_lockout");
         throw new Error("action_failed");
       }

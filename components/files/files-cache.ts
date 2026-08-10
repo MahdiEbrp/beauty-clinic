@@ -47,7 +47,7 @@ export class FilesCache {
     this.store.delete(path);
     this.store.set(path, { entries, fetchedAt: Date.now(), seq: ++this.seqCounter });
     if (this.store.size > FILES_CACHE_MAX) {
-      const oldest = this.store.keys().next().value as string | undefined;
+      const oldest = this.store.keys().next().value;
       if (oldest !== undefined) this.store.delete(oldest);
     }
   }

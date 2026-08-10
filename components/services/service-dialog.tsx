@@ -1,6 +1,8 @@
 "use client";
 
 /* eslint-disable security/detect-object-injection -- typed react-hook-form state/field access, keys are a closed union */
+/* eslint-disable no-secrets/no-secrets -- translation key flagged as high entropy, not a secret */
+/* eslint-disable max-lines -- complex dialog component with multiple form sections and FAQ management */
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";

@@ -12,7 +12,8 @@ export const POST = withSecurity(
     audit: true,
   },
   async (_request, ctx) => {
-    const meta = await ensureFolder(ctx.body!.path);
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    const meta = await ensureFolder(body.path);
     return jsonOk(meta, 201);
   },
 );

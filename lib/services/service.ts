@@ -1,3 +1,5 @@
+/* eslint-disable max-lines -- comprehensive service layer with CRUD operations for services, groups, categories, and FAQs */
+
 import {
   and,
   count,

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { decryptSecret, encryptSecret } from "./encryption";
 
+// eslint-disable-next-line no-secrets/no-secrets -- test fixture, not a real secret
 const SECRET = "Bearer sk_live_1234567890abcdef";
 
 describe("encryptSecret / decryptSecret", () => {

@@ -53,7 +53,7 @@ describe("withSecurity", () => {
   });
 
   it("blocks cross-origin mutations with 403", async () => {
-    const handler = withSecurity({}, async () => {
+    const handler = withSecurity({}, () => {
       throw new Error("should not run");
     });
     const response = await handler(
@@ -102,7 +102,7 @@ describe("withSecurity", () => {
   it("injects the session for an authenticated request", async () => {
     mockGetSession.mockResolvedValue(SESSION);
     let seen: AuthSession | undefined;
-    const handler = withSecurity({ auth: "required" }, async (_req, ctx) => {
+    const handler = withSecurity({ auth: "required" }, (_req, ctx) => {
       seen = ctx.session;
       return okResponse();
     });
@@ -134,7 +134,7 @@ describe("withSecurity", () => {
   it("returns 400 for an invalid request body and injects valid bodies", async () => {
     const handler = withSecurity(
       { validate: { body: testBodySchema } },
-      async (_req, ctx) => {
+      (_req, ctx) => {
         expect(ctx.body).toEqual({ name: "alice" });
         return okResponse();
       },
@@ -165,7 +165,7 @@ describe("withSecurity", () => {
   it("returns 400 for invalid query params and injects valid queries", async () => {
     const handler = withSecurity(
       { validate: { query: testQuerySchema } },
-      async (_req, ctx) => {
+      (_req, ctx) => {
         expect(ctx.query).toEqual({ page: 3 });
         return okResponse();
       },
@@ -191,7 +191,7 @@ describe("withSecurity", () => {
   });
 
   it("converts unexpected handler errors into a generic 500", async () => {
-    const handler = withSecurity({}, async () => {
+    const handler = withSecurity({}, () => {
       throw new Error("boom");
     });
     const response = await handler(makeRequest("GET"));

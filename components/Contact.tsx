@@ -30,6 +30,7 @@ const DEFAULT_SOCIAL = {
 
 const DEFAULT_MAPS = {
   neshan: "https://nshn.ir/rbvg0k2xLMq4",
+  // eslint-disable-next-line no-secrets/no-secrets -- public Google Maps search URL, not a secret
   google: "https://www.google.com/maps/search/?api=1&query=Andisheh+Phase+2",
 } as const;
 

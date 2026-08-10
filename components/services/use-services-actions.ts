@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable max-lines -- complex hook with multiple service mutation functions */
+
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";

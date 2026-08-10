@@ -48,7 +48,7 @@ export default function ChangePasswordDialog({
     onOpenChange(false);
   };
 
-  const submit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
+  const submit = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!user) return;
     const parsed = changePasswordSchema.safeParse({

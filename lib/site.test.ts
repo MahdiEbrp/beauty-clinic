@@ -10,6 +10,7 @@ import {
 
 describe("siteUrl", () => {
   it("reads NEXT_PUBLIC_SITE_URL without a trailing slash", () => {
+    // eslint-disable-next-line no-secrets/no-secrets -- test comment mentioning env var
     // vitest.config.mts sets NEXT_PUBLIC_SITE_URL=https://example.com
     expect(siteUrl).toBe("https://example.com");
   });

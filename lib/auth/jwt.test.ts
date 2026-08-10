@@ -5,6 +5,7 @@ import { decryptSession, encryptSession } from "./jwt";
 const claims = {
   sessionId: "a9f1c0a8-0000-0000-0000-000000000001",
   userId: "a9f1c0a8-0000-0000-0000-000000000002",
+  // eslint-disable-next-line no-secrets/no-secrets -- test fixture, not a real secret
   tokenHash: "0123456789abcdef0123456789abcdef",
 };
 

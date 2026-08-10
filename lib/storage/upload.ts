@@ -47,7 +47,7 @@ export async function uploadFile(
 
   const tempDir = await fss.createTempDir(config.metaRoot);
   const stage = path.join(tempDir, name);
-  const parts: Buffer[] = [];
+  const parts: Buffer<ArrayBufferLike>[] = [];
   let written = 0;
   try {
     const nodeStream = Readable.fromWeb(stream as never);
@@ -57,6 +57,7 @@ export async function uploadFile(
       if (written > maxBytes) {
         throw new ApiError(413, "PAYLOAD_TOO_LARGE", "The uploaded file exceeds the maximum size.");
       }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- Buffer is compatible with Buffer<ArrayBufferLike>
       parts.push(buf);
     }
     if (written === 0) {

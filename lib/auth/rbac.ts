@@ -6,7 +6,7 @@ export function hasRole(
   userRoles: readonly string[],
   ...allowed: readonly RoleKey[]
 ): boolean {
-  return userRoles.some((role) => (allowed as readonly string[]).includes(role));
+  return userRoles.some((role) => allowed.includes(role as RoleKey));
 }
 
 export function hasAllRoles(
@@ -21,6 +21,7 @@ export function hasPermission(
   required: string | readonly string[],
 ): boolean {
   const requiredList = Array.isArray(required) ? required : [required];
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- permission is string from requiredList
   return requiredList.every((permission) => userPermissions.includes(permission));
 }
 

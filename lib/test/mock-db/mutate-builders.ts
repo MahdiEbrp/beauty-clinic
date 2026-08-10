@@ -44,7 +44,7 @@ export class InsertBuilder implements PromiseLike<Row[]> {
     onfulfilled?: ((value: Row[]) => TResult1 | PromiseLike<TResult1>) | null,
     onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null,
   ): PromiseLike<TResult1 | TResult2> {
-    const run = async (): Promise<Row[]> => {
+    const run = (): Promise<Row[]> => {
       const name = tableName(this.table);
       const inserted: Row[] = [];
 
@@ -77,7 +77,7 @@ export class InsertBuilder implements PromiseLike<Row[]> {
           inserted.push(row);
         }
       }
-      return inserted;
+      return Promise.resolve(inserted);
     };
     return run().then(onfulfilled, onrejected);
   }
@@ -88,7 +88,7 @@ export class InsertBuilder implements PromiseLike<Row[]> {
   ): Row | undefined {
     const conflict = this.conflict;
     if (!conflict) return undefined;
-    const target = (conflict.target ?? []) as unknown[];
+    const target = (conflict.target ?? []);
     const rows = this.db.data[table] ?? [];
     return rows.find((row) => {
       for (const column of target) {
@@ -130,7 +130,7 @@ export class UpdateBuilder implements PromiseLike<void> {
     onfulfilled?: ((value: void) => TResult1 | PromiseLike<TResult1>) | null,
     onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null,
   ): PromiseLike<TResult1 | TResult2> {
-    const run = async (): Promise<void> => {
+    const run = (): Promise<void> => {
       const name = tableName(this.table);
       this.db.log.push({
         type: "update",
@@ -142,6 +142,7 @@ export class UpdateBuilder implements PromiseLike<void> {
       for (const row of rows) {
         if (evalWhere(this.whereClause, row)) Object.assign(row, this.setValues);
       }
+      return Promise.resolve();
     };
     return run().then(onfulfilled, onrejected);
   }
@@ -164,7 +165,7 @@ export class DeleteBuilder implements PromiseLike<void> {
     onfulfilled?: ((value: void) => TResult1 | PromiseLike<TResult1>) | null,
     onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null,
   ): PromiseLike<TResult1 | TResult2> {
-    const run = async (): Promise<void> => {
+    const run = (): Promise<void> => {
       const name = tableName(this.table);
       this.db.log.push({
         type: "delete",
@@ -176,6 +177,7 @@ export class DeleteBuilder implements PromiseLike<void> {
       if (remaining.length > 0 || rows.length > 0) {
         this.db.data[name] = remaining;
       }
+      return Promise.resolve();
     };
     return run().then(onfulfilled, onrejected);
   }

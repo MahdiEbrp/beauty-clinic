@@ -10,18 +10,18 @@ vi.mock("@upstash/redis", () => {
   class MockRedis {
     private counts = new Map<string, number>();
 
-    async incr(key: string): Promise<number> {
+    incr(key: string): number {
       if (mockStoreDown) throw new Error("store down");
       const next = (this.counts.get(key) ?? 0) + 1;
       this.counts.set(key, next);
       return next;
     }
 
-    async expire(): Promise<number> {
+    expire(): number {
       return 1;
     }
 
-    async ttl(): Promise<number> {
+    ttl(): number {
       return 5;
     }
 

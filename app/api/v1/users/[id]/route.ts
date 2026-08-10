@@ -19,11 +19,12 @@ export const PATCH = withSecurity(
       return jsonError("INVALID_USER_ID", "Invalid user id.", 400);
     }
 
-    const patch = ctx.body!;
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    const session = ctx.session ?? (() => { throw new Error("Session is missing"); })();
 
     // Admins must not be able to lock themselves out of the system.
-    if (ctx.session?.user.id === targetId) {
-      if (patch.isActive === false || patch.isBanned === true) {
+    if (session.user.id === targetId) {
+      if (body.isActive === false || body.isBanned === true) {
         return jsonError(
           "SELF_LOCKOUT",
           "You cannot deactivate or ban your own account.",
@@ -32,7 +33,7 @@ export const PATCH = withSecurity(
       }
     }
 
-    await updateUserStatus(targetId, patch);
+    await updateUserStatus(targetId, body);
     return jsonOk({ ok: true });
   },
 );
@@ -42,7 +43,8 @@ export const DELETE = withSecurity(
   async (_request, ctx) => {
     const targetId = ctx.params?.id;
     if (!targetId || !z.uuid().safeParse(targetId).success) return jsonError("INVALID_USER_ID", "Invalid user id.", 400);
-    if (ctx.session?.user.id === targetId) return jsonError("SELF_LOCKOUT", "You cannot delete your own account.", 400);
+    const session = ctx.session ?? (() => { throw new Error("Session is missing"); })();
+    if (session.user.id === targetId) return jsonError("SELF_LOCKOUT", "You cannot delete your own account.", 400);
     await softDeleteUser(targetId);
     return jsonOk({ ok: true });
   },

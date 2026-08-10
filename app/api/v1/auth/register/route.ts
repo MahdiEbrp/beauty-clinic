@@ -25,8 +25,9 @@ export const POST = withSecurity(
     // trusted header exists, never a placeholder like "unknown".
     const ip = clientIp(request);
     const userAgent = request.headers.get("user-agent") ?? undefined;
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
 
-    const result = await registerUser(ctx.body!, { userAgent, ip });
+    const result = await registerUser(body, { userAgent, ip });
 
     if (!result.ok) {
       return jsonError(

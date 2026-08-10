@@ -8,7 +8,7 @@ import {
   withApiHandler,
 } from "./errors";
 
-const logError = vi.fn();
+const logError = vi.fn(() => {});
 vi.mock("@/lib/log", () => ({
   logError: (...args: unknown[]) => logError(...args),
 }));
@@ -89,7 +89,7 @@ describe("handleApiError", () => {
     );
   });
 
-  it("handles non-Error thrown values", async () => {
+  it("handles non-Error thrown values", () => {
     const response = handleApiError("just a string", "req-2");
     expect(response.status).toBe(500);
     expect(logError).toHaveBeenCalledWith(
@@ -101,7 +101,7 @@ describe("handleApiError", () => {
 
 describe("withApiHandler", () => {
   it("adds x-request-id to successful responses", async () => {
-    const handler = withApiHandler(async () => jsonOk({ ok: true }));
+    const handler = withApiHandler(() => jsonOk({ ok: true }));
     const response = await handler(new Request("http://localhost/api/v1/users"));
     expect(response.status).toBe(200);
     expect(response.headers.get("x-request-id")).toMatch(
@@ -111,7 +111,7 @@ describe("withApiHandler", () => {
   });
 
   it("converts thrown ApiErrors into error responses with the request id", async () => {
-    const handler = withApiHandler(async () => {
+    const handler = withApiHandler(() => {
       throw new ApiError(404, "USER_NOT_FOUND", "User not found.");
     });
     const response = await handler(new Request("http://localhost/api/v1/users"));
@@ -123,12 +123,13 @@ describe("withApiHandler", () => {
   });
 
   it("returns a generic 500 for unexpected errors", async () => {
-    const handler = withApiHandler(async () => {
+    const handler = withApiHandler(() => {
       throw new Error("kaboom");
     });
     const response = await handler(new Request("http://localhost/api/v1/users"));
     expect(response.status).toBe(500);
     expect(await responseBody(response)).toEqual({
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- test matcher
       error: { code: "INTERNAL_SERVER_ERROR", message: expect.any(String) },
     });
     expect(response.headers.get("x-request-id")).toBeTruthy();

@@ -34,7 +34,8 @@ export const PATCH = withSecurity(
   async (_request, ctx) => {
     const id = ctx.params?.id;
     if (!id || !z.uuid().safeParse(id).success) return invalidId();
-    await updateGroup(id, ctx.body!);
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    await updateGroup(id, body);
     return jsonOk({ ok: true });
   },
 );

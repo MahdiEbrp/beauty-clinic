@@ -20,7 +20,8 @@ export const POST = withSecurity(
     audit: true,
   },
   async (_request, ctx) => {
-    const category = await createCategory(ctx.body!);
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    const category = await createCategory(body);
     return jsonOk(category, 201);
   },
 );

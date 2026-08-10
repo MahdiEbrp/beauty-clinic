@@ -20,7 +20,8 @@ export const POST = withSecurity(
     audit: true,
   },
   async (_request, ctx) => {
-    const group = await createGroup(ctx.body!);
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    const group = await createGroup(body);
     return jsonOk(group, 201);
   },
 );

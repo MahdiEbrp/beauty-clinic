@@ -10,7 +10,8 @@ export const GET = withSecurity(
     validate: { query: contentSchema },
   },
   async (_request, ctx) => {
-    const content = await readTextContent(ctx.query!.path);
+    const query = ctx.query ?? (() => { throw new Error("Query params are missing"); })();
+    const content = await readTextContent(query.path);
     const response = jsonOk(content);
     response.headers.set(
       "Cache-Control",
@@ -28,7 +29,8 @@ export const PUT = withSecurity(
     audit: true,
   },
   async (_request, ctx) => {
-    const meta = await writeTextContent(ctx.body!.path, ctx.body!.content);
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    const meta = await writeTextContent(body.path, body.content);
     return jsonOk(meta);
   },
 );

@@ -15,8 +15,9 @@ export const GET = withSecurity(
     validate: { query: settingsQuerySchema },
   },
   async (_request, ctx) => {
-    const session = ctx.session!;
-    const { scope, page, limit, userId } = ctx.query!;
+    const session = ctx.session ?? (() => { throw new Error("Session is missing"); })();
+    const query = ctx.query ?? (() => { throw new Error("Query params are missing"); })();
+    const { scope, page, limit, userId } = query;
     const guard = resolveTarget(session, scope, userId);
     if (guard.status === "error") return guard.response;
 
@@ -30,7 +31,8 @@ export const GET = withSecurity(
       return jsonOk(result);
     }
 
-    const items = await getUserSettings(guard.targetUserId!);
+    const targetUserId = guard.targetUserId ?? (() => { throw new Error("Target user ID is missing"); })();
+    const items = await getUserSettings(targetUserId);
     return jsonOk({ items });
   },
 );
@@ -42,8 +44,9 @@ export const POST = withSecurity(
     audit: true,
   },
   async (_request, ctx) => {
-    const session = ctx.session!;
-    const { scope, key, value, type, userId } = ctx.body!;
+    const session = ctx.session ?? (() => { throw new Error("Session is missing"); })();
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    const { scope, key, value, type, userId } = body;
     const guard = resolveTarget(session, scope, userId);
     if (guard.status === "error") return guard.response;
 
@@ -63,8 +66,9 @@ export const DELETE = withSecurity(
     audit: true,
   },
   async (_request, ctx) => {
-    const session = ctx.session!;
-    const { scope, key, userId } = ctx.query!;
+    const session = ctx.session ?? (() => { throw new Error("Session is missing"); })();
+    const query = ctx.query ?? (() => { throw new Error("Query params are missing"); })();
+    const { scope, key, userId } = query;
     const guard = resolveTarget(session, scope, userId);
     if (guard.status === "error") return guard.response;
 

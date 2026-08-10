@@ -1,3 +1,5 @@
+/* eslint-disable max-lines -- complete database schema with all tables, relations, and enums */
+
 import { relations, sql } from "drizzle-orm";
 import {
   bigint,

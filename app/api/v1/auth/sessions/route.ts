@@ -10,8 +10,9 @@ export const runtime = "nodejs";
 // Revokes every active session of the current user except the one making the
 // request ("sign out of other devices"). Uses the shared revokeSession helper.
 export const DELETE = withSecurity({ auth: "required" }, async (_request, ctx) => {
-  const userId = ctx.session!.userId;
-  const currentSessionId = ctx.session!.sessionId;
+  const session = ctx.session ?? (() => { throw new Error("Session is missing"); })();
+  const userId = session.userId;
+  const currentSessionId = session.sessionId;
 
   const others = await db.query.sessions.findMany({
     where: and(eq(sessions.userId, userId), ne(sessions.id, currentSessionId)),

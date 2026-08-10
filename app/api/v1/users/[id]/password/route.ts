@@ -10,7 +10,8 @@ export const POST = withSecurity(
   async (_request, ctx) => {
     const targetId = ctx.params?.id;
     if (!targetId || !z.uuid().safeParse(targetId).success) return jsonError("INVALID_USER_ID", "Invalid user id.", 400);
-    await changeUserPassword(targetId, ctx.body!.password, false);
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    await changeUserPassword(targetId, body.password, false);
     return jsonOk({ ok: true });
   },
 );

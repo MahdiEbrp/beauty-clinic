@@ -11,7 +11,8 @@ export const GET = withSecurity(
     validate: { query: listUsersQuerySchema },
   },
   async (_request, ctx) => {
-    const { page, perPage, search, status, role } = ctx.query!;
+    const query = ctx.query ?? (() => { throw new Error("Query params are missing"); })();
+    const { page, perPage, search, status, role } = query;
     const result = await listUsers({ page, perPage, search, status, role });
     return jsonOk(result);
   },
@@ -25,7 +26,8 @@ export const POST = withSecurity(
     audit: true,
   },
   async (_request, ctx) => {
-    const user = await createUser(ctx.body!);
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    const user = await createUser(body);
     return jsonOk(user, 201);
   },
 );

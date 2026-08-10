@@ -6,7 +6,7 @@ import { LogOut } from "lucide-react";
 import type { AuthUser } from "@/lib/auth/dal";
 
 function initials(name: string): string {
-  return name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]!.toUpperCase()).join("");
+  return name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0].toUpperCase()).join("");
 }
 
 export default function NavbarAuth({ user, onLogout }: { user: AuthUser | null; onLogout: () => void }) {

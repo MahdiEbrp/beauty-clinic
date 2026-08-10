@@ -12,7 +12,8 @@ export const POST = withSecurity(
     audit: true,
   },
   async (_request, ctx) => {
-    const meta = await createFile(ctx.body!.path, ctx.body!.content);
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    const meta = await createFile(body.path, body.content);
     return jsonOk(meta, 201);
   },
 );

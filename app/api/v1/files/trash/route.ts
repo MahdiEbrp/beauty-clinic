@@ -23,7 +23,8 @@ export const POST = withSecurity(
     audit: true,
   },
   async (_request, ctx) => {
-    await trashEntry(ctx.body!.path);
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    await trashEntry(body.path);
     return jsonOk({ ok: true });
   },
 );
@@ -36,7 +37,8 @@ export const DELETE = withSecurity(
     audit: true,
   },
   async (_request, ctx) => {
-    await deleteForever(ctx.body!.trashPath);
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    await deleteForever(body.trashPath);
     return jsonOk({ ok: true });
   },
 );

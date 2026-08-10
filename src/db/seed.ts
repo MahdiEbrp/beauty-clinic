@@ -1,3 +1,5 @@
+/* eslint-disable max-lines -- comprehensive seed script with all reference data and defaults */
+
 import { eq, sql } from "drizzle-orm";
 
 import { hashPassword } from "@/lib/auth/password";
@@ -132,6 +134,7 @@ async function seed(): Promise<void> {
     { key: "contact.province", value: "تهران", type: "string" },
     { key: "contact.country", value: "IR", type: "string" },
     { key: "contact.map_neshan", value: "https://nshn.ir/rbvg0k2xLMq4", type: "string" },
+    // eslint-disable-next-line no-secrets/no-secrets -- public Google Maps search URL, not a secret
     { key: "contact.map_google", value: "https://www.google.com/maps/search/?api=1&query=Andisheh+Phase+2", type: "string" },
     { key: "social.rubika", value: "https://rubika.ir/nafasclinic", type: "string" },
     { key: "social.bale", value: "https://ble.ir/nafasclinic", type: "string" },

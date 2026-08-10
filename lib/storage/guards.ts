@@ -2,7 +2,7 @@ import { ApiError } from "@/lib/api/errors";
 
 export const HIDDEN_PREFIX = ".";
 
-export async function notFound(rel: string, kind: "file" | "folder" | "entry" | "trash entry"): Promise<never> {
+export function notFound(rel: string, kind: "file" | "folder" | "entry" | "trash entry"): never {
   throw new ApiError(404, "NOT_FOUND", `The ${kind} "${rel}" does not exist.`);
 }
 

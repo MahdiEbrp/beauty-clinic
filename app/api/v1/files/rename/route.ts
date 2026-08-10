@@ -12,7 +12,8 @@ export const PATCH = withSecurity(
     audit: true,
   },
   async (_request, ctx) => {
-    const meta = await renameEntry(ctx.body!.path, ctx.body!.name);
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    const meta = await renameEntry(body.path, body.name);
     return jsonOk(meta);
   },
 );

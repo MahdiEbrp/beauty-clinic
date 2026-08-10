@@ -12,7 +12,8 @@ export const POST = withSecurity(
     audit: true,
   },
   async (_request, ctx) => {
-    await restoreEntry(ctx.body!.trashPath);
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    await restoreEntry(body.trashPath);
     return jsonOk({ ok: true });
   },
 );

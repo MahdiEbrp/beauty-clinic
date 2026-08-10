@@ -10,7 +10,8 @@ export const PATCH = withSecurity(
   async (_request, ctx) => {
     const targetId = ctx.params?.id;
     if (!targetId || !z.uuid().safeParse(targetId).success) return jsonError("INVALID_USER_ID", "Invalid user id.", 400);
-    await updateUserRole(targetId, ctx.body!.roleKey);
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    await updateUserRole(targetId, body.roleKey);
     return jsonOk({ ok: true });
   },
 );

@@ -1,5 +1,7 @@
 import { randomUUID } from "node:crypto";
 
+/* eslint-disable max-lines -- comprehensive test suite for service operations */
+
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { Row, MockDb } from "@/lib/test/mock-db";

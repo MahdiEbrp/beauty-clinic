@@ -30,7 +30,8 @@ export const PATCH = withSecurity(
   async (_request, ctx) => {
     const id = ctx.params?.id;
     if (!id || !z.uuid().safeParse(id).success) return invalidId();
-    await updateService(id, ctx.body!);
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    await updateService(id, body);
     return jsonOk({ ok: true });
   },
 );

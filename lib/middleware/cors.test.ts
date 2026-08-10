@@ -55,8 +55,9 @@ describe("handlePreflight", () => {
     });
     const response = handlePreflight(request);
     expect(response).not.toBeNull();
-    expect(response!.status).toBe(204);
-    expect(response!.headers.get("Access-Control-Allow-Origin")).toBe("http://localhost:3000");
+    if (!response) return;
+    expect(response.status).toBe(204);
+    expect(response.headers.get("Access-Control-Allow-Origin")).toBe("http://localhost:3000");
   });
 
   it("returns null for non-OPTIONS requests", () => {

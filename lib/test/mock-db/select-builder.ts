@@ -60,7 +60,7 @@ export class SelectBuilder implements PromiseLike<Row[]> {
     return this.run().then(onfulfilled, onrejected);
   }
 
-  private async run(): Promise<Row[]> {
+  private run(): Promise<Row[]> {
     if (!this.table) throw new Error("mock-db: select() requires .from(table)");
     const name = tableName(this.table);
 
@@ -110,23 +110,25 @@ export class SelectBuilder implements PromiseLike<Row[]> {
 
     const shape = this.shape;
     if (shape) {
-      return results.map((entry) => {
-        const { row, sources } = entry;
-        const out: Record<string, unknown> = {};
-        for (const [key, value] of Object.entries(shape)) {
-          if (isColumn(value)) {
-            const source = sources.get(tableName(value.table)) ?? row;
-            out[key] = source[columnKey(value)];
-          } else if (isSQL(value)) {
-            // `{ value: count() }` / `{ count: sql`count(*)` }` selects.
-            out[key] = allCount;
-          } else {
-            out[key] = value;
+      return Promise.resolve(
+        results.map((entry) => {
+          const { row, sources } = entry;
+          const out: Record<string, unknown> = {};
+          for (const [key, value] of Object.entries(shape)) {
+            if (isColumn(value)) {
+              const source = sources.get(tableName(value.table)) ?? row;
+              out[key] = source[columnKey(value)];
+            } else if (isSQL(value)) {
+              // `{ value: count() }` / `{ count: sql`count(*)` }` selects.
+              out[key] = allCount;
+            } else {
+              out[key] = value;
+            }
           }
-        }
-        return out;
-      });
+          return out;
+        })
+      );
     }
-    return results.map((entry) => entry.row);
+    return Promise.resolve(results.map((entry) => entry.row));
   }
 }

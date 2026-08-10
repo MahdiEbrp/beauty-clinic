@@ -3,12 +3,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { MockDb, Row } from "@/lib/test/mock-db";
 
 const passwordMock = vi.hoisted(() => ({
-  hashPassword: vi.fn(async (plain: string) => `hash:${plain}`),
-  verifyPassword: vi.fn(async () => true),
+  hashPassword: vi.fn((plain: string) => `hash:${plain}`),
+  verifyPassword: vi.fn(() => true),
 }));
 
 const sessionMock = vi.hoisted(() => ({
-  createSession: vi.fn(async () => {}),
+  createSession: vi.fn(() => {}),
 }));
 
 // `server-only` throws when imported outside a Server Component runtime, so
@@ -55,7 +55,7 @@ const baseUser: Row = {
 beforeEach(() => {
   mockDb.reset();
   passwordMock.verifyPassword.mockResolvedValue(true);
-  passwordMock.hashPassword.mockImplementation(async (plain: string) => `hash:${plain}`);
+  passwordMock.hashPassword.mockImplementation((plain: string) => `hash:${plain}`);
   sessionMock.createSession.mockClear();
 });
 
@@ -125,6 +125,7 @@ describe("loginUser", () => {
     expect(mockDb.data.users[0]).toMatchObject({
       failedLoginAttempts: 0,
       lockedUntil: null,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- test matcher
       lastLoginAt: expect.any(Date),
     });
     expect(sessionMock.createSession).toHaveBeenCalledWith(

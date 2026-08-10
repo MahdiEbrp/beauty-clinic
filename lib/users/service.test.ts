@@ -160,6 +160,7 @@ describe("listUsers", () => {
     const result = await listUsers({ page: 1, perPage: 10, status: "banned" });
     expect(result.items[0]).toMatchObject({
       isBanned: true,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- test matcher
       bannedAt: expect.any(Date),
       banReason: "spam",
     });
@@ -224,6 +225,7 @@ describe("updateUserStatus", () => {
     expect(mockDb.data.users[0]).toMatchObject({
       isActive: true,
       isBanned: true,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- test matcher
       bannedAt: expect.any(Date),
       banReason: null,
     });
@@ -238,6 +240,7 @@ describe("updateUserStatus", () => {
 
     expect(mockDb.data.users[0]).toMatchObject({
       isBanned: true,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- test matcher
       bannedAt: expect.any(Date),
       banReason: "abuse",
     });

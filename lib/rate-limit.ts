@@ -32,7 +32,9 @@ function sharedClient(): Redis | null {
     }
     return null;
   }
-  redis ??= new Redis({ url: REDIS_URL!, token: REDIS_TOKEN! });
+  const url = REDIS_URL ?? (() => { throw new Error("REDIS_URL is not set"); })();
+  const token = REDIS_TOKEN ?? (() => { throw new Error("REDIS_TOKEN is not set"); })();
+  redis ??= new Redis({ url, token });
   return redis;
 }
 

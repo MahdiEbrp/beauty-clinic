@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, RotateCcw, RotateCw } from "lucide-react";
-import { getGalleryItems } from "@/data/gallery";
+import type { getGalleryItems } from "@/data/gallery";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 const overlayButton =

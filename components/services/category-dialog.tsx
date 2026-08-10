@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable max-lines -- complex dialog component with multiple form sections */
+
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { z } from "zod";

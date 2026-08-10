@@ -16,7 +16,8 @@ export const GET = withSecurity(
     validate: { query: z.object({ path: pathSchema }).strict() },
   },
   async (_request, ctx) => {
-    const target = await download(ctx.query!.path);
+    const query = ctx.query ?? (() => { throw new Error("Query params are missing"); })();
+    const target = await download(query.path);
     const encoded = encodeURIComponent(target.name).replace(/['()*]/g, (c) => `%${c.charCodeAt(0).toString(16)}`);
     // eslint-disable-next-line security/detect-non-literal-fs-filename -- target.path is confined by resolveSafePath/realPathWithin
     return new NextResponse(Readable.toWeb(fs.createReadStream(target.path)) as ReadableStream<Uint8Array>, {

@@ -22,7 +22,8 @@ export const POST = withSecurity(
     // `sessions.ip` is an `inet` column: pass undefined (→ NULL) when no
     // trusted header exists, never a placeholder like "unknown".
     const ip = clientIp(request);
-    const { email, password } = ctx.body!;
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    const { email, password } = body;
     const userAgent = request.headers.get("user-agent") ?? undefined;
 
     const ok = await loginUser(email, password, { userAgent, ip });

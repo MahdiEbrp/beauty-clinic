@@ -18,7 +18,7 @@ export class FindFirstBuilder implements PromiseLike<Row | undefined> {
       | null,
     onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null,
   ): PromiseLike<TResult1 | TResult2> {
-    const run = async (): Promise<Row | undefined> => {
+    const run = (): Promise<Row | undefined> => {
       const { where, columns } = this.opts;
       this.db.log.push({
         type: "findFirst",
@@ -27,15 +27,15 @@ export class FindFirstBuilder implements PromiseLike<Row | undefined> {
       });
       const rows = this.db.data[this.tableName] ?? [];
       const found = where ? rows.find((r) => evalWhere(where, r)) : rows[0];
-      if (!found) return undefined;
+      if (!found) return Promise.resolve(undefined);
       if (columns) {
         const out: Row = {};
         for (const [key, include] of Object.entries(columns)) {
           if (include) out[key] = found[key];
         }
-        return out;
+        return Promise.resolve(out);
       }
-      return { ...found };
+      return Promise.resolve({ ...found });
     };
     return run().then(onfulfilled, onrejected);
   }

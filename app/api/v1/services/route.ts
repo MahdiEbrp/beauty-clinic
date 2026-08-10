@@ -14,7 +14,8 @@ export const GET = withSecurity(
     validate: { query: listServicesQuerySchema },
   },
   async (_request, ctx) => {
-    const result = await listServices(ctx.query!);
+    const query = ctx.query ?? (() => { throw new Error("Query params are missing"); })();
+    const result = await listServices(query);
     return jsonOk(result);
   },
 );
@@ -27,7 +28,8 @@ export const POST = withSecurity(
     audit: true,
   },
   async (_request, ctx) => {
-    const service = await createService(ctx.body!);
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    const service = await createService(body);
     return jsonOk(service, 201);
   },
 );

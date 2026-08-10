@@ -10,7 +10,8 @@ export const GET = withSecurity(
     validate: { query: listQuerySchema },
   },
   async (_request, ctx) => {
-    const { path } = ctx.query!;
+    const query = ctx.query ?? (() => { throw new Error("Query params are missing"); })();
+    const { path } = query;
     const listing = await listFolder(path);
     const response = jsonOk(listing);
     response.headers.set(

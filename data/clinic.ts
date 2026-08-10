@@ -50,6 +50,7 @@ const DEFAULT_CLINIC: ClinicData = {
   },
   maps: {
     neshan: "https://nshn.ir/rbvg0k2xLMq4",
+    // eslint-disable-next-line no-secrets/no-secrets -- public Google Maps search URL, not a secret
     google: "https://www.google.com/maps/search/?api=1&query=Andisheh+Phase+2",
   },
 };
