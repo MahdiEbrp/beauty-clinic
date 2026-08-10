@@ -1,8 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# beauty-clinic
 
-## Getting Started
+A modern Next.js + TypeScript starter app for a beauty clinic website. This repository contains a frontend built with Next.js (App Router) and TypeScript, with styles and assets for a responsive clinic site.
 
-First, run the development server:
+## Features
+
+- Next.js (App Router) with TypeScript
+- Server-side and client components where appropriate
+- Optimized fonts and images using Next.js built-in features
+- Responsive layout and basic styling
+
+> NOTE: This README is a general project overview. Adjust the sections below to match project-specific details (routes, env vars, deployment steps) if you add backend services or third-party integrations.
+
+## Table of contents
+
+- [Getting started](#getting-started)
+- [Prerequisites](#prerequisites)
+- [Available scripts](#available-scripts)
+- [Environment variables](#environment-variables)
+- [Project structure](#project-structure)
+- [Deploy](#deploy)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Getting started
+
+Clone the repo and install dependencies:
+
+```bash
+# clone
+git clone https://github.com/MahdiEbrp/beauty-clinic.git
+cd beauty-clinic
+
+# install (choose one)
+npm install
+# or
+yarn
+# or
+pnpm install
+```
+
+Run the development server:
 
 ```bash
 npm run dev
@@ -14,23 +51,89 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 in your browser. Edit `app/page.tsx` (or other files under `app/`) — changes will auto-refresh.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Prerequisites
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Node.js 18.x or newer is recommended (ensure compatibility with your package manager and Next.js version).
+- A package manager: npm, yarn, or pnpm.
 
-## Learn More
+## Available scripts
 
-To learn more about Next.js, take a look at the following resources:
+These are common scripts used in Next.js + TypeScript projects. Confirm and update them in `package.json` if your project differs.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```json
+{
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start",
+  "lint": "next lint",
+  "format": "prettier --write ."
+}
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `dev` — Runs the app in development mode on localhost:3000.
+- `build` — Builds the application for production.
+- `start` — Starts the production server (run after `build`).
+- `lint` — Runs ESLint.
+- `format` — Formats code with Prettier.
 
-## Deploy on Vercel
+## Environment variables
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+If your project requires environment variables, create a `.env.local` file in the repository root and add variables there. Example:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+NEXT_PUBLIC_API_URL=https://api.example.com
+```
+
+Never commit secrets to the repository. Use environment or secret management for production.
+
+## Project structure
+
+A typical layout for this repo:
+
+```
+/app                  # Next.js App Router pages and components
+/public               # Static assets (images, favicon)
+/styles               # Global and component styles (CSS/SCSS)
+/next.config.js       # Next.js configuration
+/tsconfig.json        # TypeScript configuration
+/package.json
+/README.md
+```
+
+Adjust the structure section to reflect any additional folders (lib, components, hooks, services) you add.
+
+## Deploy
+
+The easiest way to deploy is to use Vercel (from the Next.js creators). Connect the GitHub repo in Vercel and deploy the `main` (or default) branch. For manual deployment:
+
+```bash
+npm run build
+npm run start
+```
+
+Check out the Next.js docs for other deployment targets: https://nextjs.org/docs/app/building-your-application/deploying
+
+## Contributing
+
+Contributions are welcome. Suggested guidelines:
+
+- Open an issue to discuss major changes.
+- Create a small, focused pull request with one change per PR.
+- Run linters and formatters before submitting.
+
+## Troubleshooting
+
+- If you see TypeScript errors, run `npm run build` locally to get the full error output.
+- If hot reloading doesn't pick up changes, restart the dev server.
+
+## License
+
+Specify your license here (e.g., MIT). If you don't have a license yet, add one to the repository to clarify usage rights.
+
+---
+
+If you'd like, I can:
+- Tailor this README with project-specific details (scripts from package.json, environment variables, screenshots, or routes).
+- Add badges (build, license, dependencies) and a demo link if you provide them.
