@@ -8,9 +8,10 @@ import {
   withApiHandler,
 } from "./errors";
 
-const logError = vi.fn(() => {});
+const logError = vi.hoisted(() => vi.fn());
+
 vi.mock("@/lib/log", () => ({
-  logError: (...args: unknown[]) => logError(...args),
+  logError,
 }));
 
 async function responseBody(response: Response): Promise<Record<string, unknown>> {

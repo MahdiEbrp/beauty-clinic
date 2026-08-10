@@ -5,15 +5,20 @@ import { ensureAllowed, HIDDEN_PREFIX, notFound } from "@/lib/storage/guards";
 
 describe("guards", () => {
   describe("notFound", () => {
-    it("throws a 404 NOT_FOUND ApiError", async () => {
-      await expect(notFound("a.txt", "file")).rejects.toMatchObject({
-        status: 404,
-        code: "NOT_FOUND",
-      });
+    it("throws a 404 NOT_FOUND ApiError", () => {
+      try {
+        void notFound("a.txt", "file");
+      } catch (error) {
+        expect(error).toBeInstanceOf(ApiError);
+        expect(error).toMatchObject({
+          status: 404,
+          code: "NOT_FOUND",
+        });
+      }
     });
 
-    it("includes the requested kind in the message", async () => {
-      await expect(notFound("x", "trash entry")).rejects.toThrow(/trash entry/);
+    it("includes the requested kind in the message", () => {
+      expect(() => notFound("x", "trash entry")).toThrow(/trash entry/);
     });
   });
 
