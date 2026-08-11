@@ -12,16 +12,20 @@ import {
   updateServiceSchema,
 } from "./services";
 
-const validGroup = {
+const groupTranslation = {
   name: "Laser",
-  slug: "laser",
   description: "Laser treatments",
+  seoTitle: "Laser | Clinic",
+  seoDescription: null,
+};
+
+const validGroup = {
+  slug: "laser",
   icon: "laser",
   image: null,
   displayOrder: 1,
   isActive: true,
-  seoTitle: "Laser | Clinic",
-  seoDescription: null,
+  translations: { fa: groupTranslation, en: groupTranslation },
 };
 
 const validCategory = {
@@ -29,12 +33,15 @@ const validCategory = {
   groupId: "7f9c2f10-2f6b-4d4f-9e1f-5f2f3f4f5f6f",
 };
 
-const validService = {
-  categoryId: "7f9c2f10-2f6b-4d4f-9e1f-5f2f3f4f5f6f",
+const serviceTranslation = {
   title: "Laser Hair Removal",
-  slug: "laser-hair-removal",
   shortDesc: "Permanent hair removal",
   fullDesc: null,
+};
+
+const validService = {
+  categoryId: "7f9c2f10-2f6b-4d4f-9e1f-5f2f3f4f5f6f",
+  slug: "laser-hair-removal",
   price: 250,
   priceType: "from",
   durationMin: 45,
@@ -43,11 +50,18 @@ const validService = {
   isActive: true,
   isFeatured: false,
   displayOrder: 1,
+  translations: { fa: serviceTranslation, en: serviceTranslation },
   images: [
     { imageUrl: "/images/laser.webp", type: "gallery", displayOrder: 1 },
   ],
   faqs: [
-    { question: "Does it hurt?", answer: "No.", displayOrder: 1 },
+    {
+      displayOrder: 1,
+      translations: {
+        fa: { question: "Does it hurt?", answer: "No." },
+        en: { question: "Does it hurt?", answer: "No." },
+      },
+    },
   ],
 };
 
@@ -105,8 +119,8 @@ describe("listServicesQuerySchema", () => {
 describe("createServiceGroupSchema", () => {
   it("accepts a valid group and applies defaults", () => {
     const result = createServiceGroupSchema.safeParse({
-      name: "Laser",
       slug: "laser",
+      translations: { fa: groupTranslation, en: groupTranslation },
     });
     expect(result.success).toBe(true);
     if (result.success) {
@@ -130,8 +144,19 @@ describe("createServiceGroupSchema", () => {
     expect(createServiceGroupSchema.safeParse({ ...validGroup, ownerId: "x" }).success).toBe(false);
   });
 
-  it("rejects an empty name", () => {
-    expect(createServiceGroupSchema.safeParse({ ...validGroup, name: "   " }).success).toBe(false);
+  it("rejects an empty name in either locale", () => {
+    expect(
+      createServiceGroupSchema.safeParse({
+        ...validGroup,
+        translations: { ...validGroup.translations, fa: { ...groupTranslation, name: "   " } },
+      }).success,
+    ).toBe(false);
+    expect(
+      createServiceGroupSchema.safeParse({
+        ...validGroup,
+        translations: { ...validGroup.translations, en: { ...groupTranslation, name: "   " } },
+      }).success,
+    ).toBe(false);
   });
 });
 

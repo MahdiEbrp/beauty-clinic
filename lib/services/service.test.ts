@@ -11,6 +11,10 @@ vi.mock("@/src/db", async () => {
   return { db: createMockDb() };
 });
 
+// `server-only` throws when imported outside a Server Component runtime, so
+// stub it out so this suite can run against the mock database.
+vi.mock("server-only", () => ({}));
+
 import { db } from "@/src/db";
 import { ApiError } from "@/lib/api/errors";
 import {
@@ -23,6 +27,7 @@ import {
   getCatalogSummary,
   getCategory,
   getGroup,
+  getPublicCatalog,
   getService,
   listCategories,
   listGroups,
@@ -119,6 +124,50 @@ function makeFaq(overrides: Partial<Row> = {}): Row {
   };
 }
 
+/** Seeds a group plus its fa/en translations (names resolve through i18n). */
+function seedGroup(overrides: Partial<Row> = {}): Row {
+  const row = makeGroup(overrides);
+  mockDb.seed("service_groups", [row]);
+  mockDb.seed("service_groups_i18n", [
+    { groupId: row.id, locale: "fa", name: row.name, description: row.description, seoTitle: row.seoTitle, seoDescription: row.seoDescription },
+    { groupId: row.id, locale: "en", name: row.name, description: row.description, seoTitle: row.seoTitle, seoDescription: row.seoDescription },
+  ]);
+  return row;
+}
+
+/** Seeds a category plus its fa/en translations. */
+function seedCategory(overrides: Partial<Row> = {}): Row {
+  const row = makeCategory(overrides);
+  mockDb.seed("service_categories", [row]);
+  mockDb.seed("service_categories_i18n", [
+    { categoryId: row.id, locale: "fa", name: row.name, description: row.description, seoTitle: row.seoTitle, seoDescription: row.seoDescription },
+    { categoryId: row.id, locale: "en", name: row.name, description: row.description, seoTitle: row.seoTitle, seoDescription: row.seoDescription },
+  ]);
+  return row;
+}
+
+/** Seeds a service plus its fa/en translations. */
+function seedService(overrides: Partial<Row> = {}): Row {
+  const row = makeService(overrides);
+  mockDb.seed("services", [row]);
+  mockDb.seed("services_i18n", [
+    { serviceId: row.id, locale: "fa", title: row.title, shortDesc: row.shortDesc, fullDesc: row.fullDesc },
+    { serviceId: row.id, locale: "en", title: row.title, shortDesc: row.shortDesc, fullDesc: row.fullDesc },
+  ]);
+  return row;
+}
+
+/** Seeds a faq plus its fa/en translations. */
+function seedFaq(overrides: Partial<Row> = {}): Row {
+  const row = makeFaq(overrides);
+  mockDb.seed("service_faqs", [row]);
+  mockDb.seed("service_faqs_i18n", [
+    { faqId: row.id, locale: "fa", question: row.question, answer: row.answer },
+    { faqId: row.id, locale: "en", question: row.question, answer: row.answer },
+  ]);
+  return row;
+}
+
 beforeEach(() => {
   mockDb.reset();
 });
@@ -155,11 +204,9 @@ describe("listServices", () => {
   });
 
   it("attaches category and group names from the join", async () => {
-    mockDb.seed("service_groups", [makeGroup({ id: "g1", name: "Laser", slug: "laser" })]);
-    mockDb.seed("service_categories", [
-      makeCategory({ id: "c1", groupId: "g1", name: "Laser Hair", slug: "laser-hair" }),
-    ]);
-    mockDb.seed("services", [makeService({ id: "s1", categoryId: "c1" })]);
+    seedGroup({ id: "g1", name: "Laser", slug: "laser" });
+    seedCategory({ id: "c1", groupId: "g1", name: "Laser Hair", slug: "laser-hair" });
+    seedService({ id: "s1", categoryId: "c1" });
 
     const result = await listServices({ page: 1, perPage: 20 });
     expect(result.items[0]).toMatchObject({
@@ -170,10 +217,8 @@ describe("listServices", () => {
   });
 
   it("searches by title and slug", async () => {
-    mockDb.seed("services", [
-      makeService({ id: "s1", title: "Botox Injection", slug: "botox-injection" }),
-      makeService({ id: "s2", title: "Facial", slug: "specialized-facial" }),
-    ]);
+    seedService({ id: "s1", title: "Botox Injection", slug: "botox-injection" });
+    seedService({ id: "s2", title: "Facial", slug: "specialized-facial" });
 
     const byTitle = await listServices({ page: 1, perPage: 20, search: "botox" });
     expect(byTitle.items.map((s) => s.id)).toEqual(["s1"]);
@@ -220,13 +265,11 @@ describe("getService", () => {
   });
 
   it("returns a service with names, images and faqs", async () => {
-    mockDb.seed("service_groups", [makeGroup({ id: "g1", name: "Laser" })]);
-    mockDb.seed("service_categories", [
-      makeCategory({ id: "c1", groupId: "g1", name: "Laser Hair" }),
-    ]);
-    mockDb.seed("services", [makeService({ id: "s1", categoryId: "c1", price: 250 })]);
+    seedGroup({ id: "g1", name: "Laser" });
+    seedCategory({ id: "c1", groupId: "g1", name: "Laser Hair" });
+    seedService({ id: "s1", categoryId: "c1", price: 250 });
     mockDb.seed("service_images", [makeImage({ serviceId: "s1" })]);
-    mockDb.seed("service_faqs", [makeFaq({ serviceId: "s1" })]);
+    seedFaq({ serviceId: "s1" });
 
     const service = await getService("s1");
     expect(service).toMatchObject({
@@ -246,10 +289,7 @@ describe("getService", () => {
 describe("createService", () => {
   const input = {
     categoryId: "c1",
-    title: "Botox Injection",
     slug: "botox-injection",
-    shortDesc: null,
-    fullDesc: null,
     price: 150,
     priceType: "fixed" as const,
     durationMin: 30,
@@ -258,20 +298,37 @@ describe("createService", () => {
     isActive: true,
     isFeatured: false,
     displayOrder: 0,
+    translations: {
+      fa: { title: "Botox Injection", shortDesc: null, fullDesc: null },
+      en: { title: "Botox Injection", shortDesc: null, fullDesc: null },
+    },
     images: [{ imageUrl: "/images/botox.webp", type: "gallery" as const, displayOrder: 1 }],
-    faqs: [{ question: "Q?", answer: "A.", displayOrder: 1 }],
+    faqs: [
+      {
+        displayOrder: 1,
+        translations: {
+          fa: { question: "Q?", answer: "A." },
+          en: { question: "Q?", answer: "A." },
+        },
+      },
+    ],
   };
 
-  it("creates a service with nested images and faqs", async () => {
+  it("creates a service with nested translations, images and faqs", async () => {
     mockDb.seed("service_categories", [makeCategory({ id: "c1" })]);
 
     const { id } = await createService(input);
     expect(id).toBeTruthy();
     expect(mockDb.data.services).toHaveLength(1);
-    expect(mockDb.data.services[0]).toMatchObject({ title: "Botox Injection", slug: "botox-injection" });
+    expect(mockDb.data.services[0]).toMatchObject({ slug: "botox-injection" });
+    expect(mockDb.data.services_i18n).toHaveLength(2);
+    expect(
+      mockDb.data.services_i18n.some((r) => r.locale === "fa" && r.title === "Botox Injection"),
+    ).toBe(true);
     expect(mockDb.data.service_images).toHaveLength(1);
     expect(mockDb.data.service_images[0]).toMatchObject({ serviceId: id, imageUrl: "/images/botox.webp" });
     expect(mockDb.data.service_faqs).toHaveLength(1);
+    expect(mockDb.data.service_faqs_i18n).toHaveLength(2);
   });
 
   it("throws INVALID_CATEGORY for a missing category", async () => {
@@ -295,16 +352,25 @@ describe("createService", () => {
 
 describe("updateService", () => {
   it("throws SERVICE_NOT_FOUND for a missing service", async () => {
-    await expect(updateService("missing", { title: "X" })).rejects.toThrow(
+    await expect(
+      updateService("missing", { isFeatured: true }),
+    ).rejects.toThrow(
       new ApiError(404, "SERVICE_NOT_FOUND", "Service not found."),
     );
   });
 
-  it("patches scalar fields", async () => {
+  it("patches scalar fields and translations", async () => {
     mockDb.seed("services", [makeService({ id: "s1" })]);
-    await updateService("s1", { title: "New Title", isFeatured: true });
+    await updateService("s1", {
+      isFeatured: true,
+      translations: { fa: { title: "New Title" }, en: { title: "New Title" } },
+    });
 
-    expect(mockDb.data.services[0]).toMatchObject({ title: "New Title", isFeatured: true });
+    expect(mockDb.data.services[0]).toMatchObject({ isFeatured: true });
+    expect(mockDb.data.services_i18n).toHaveLength(2);
+    expect(
+      mockDb.data.services_i18n.some((r) => r.locale === "fa" && r.title === "New Title"),
+    ).toBe(true);
   });
 
   it("replaces images and faqs when provided", async () => {
@@ -373,36 +439,56 @@ describe("listGroups", () => {
 describe("group CRUD", () => {
   it("creates a group", async () => {
     const { id } = await createGroup({
-      name: "Peeling",
       slug: "peel",
-      description: null,
       icon: "peel",
       image: null,
       displayOrder: 5,
       isActive: true,
-      seoTitle: null,
-      seoDescription: null,
+      translations: {
+        fa: { name: "Peeling", description: null, seoTitle: null, seoDescription: null },
+        en: { name: "Peeling", description: null, seoTitle: null, seoDescription: null },
+      },
     });
     expect(id).toBeTruthy();
     expect(mockDb.data.service_groups).toHaveLength(1);
+    expect(mockDb.data.service_groups_i18n).toHaveLength(2);
   });
 
   it("maps a duplicate group slug to a 409", async () => {
     mockDb.failInsert = (table, values) =>
       table === "service_groups" && values.slug === "peel" ? { code: "23505" } : null;
-    await expect(
-      createGroup({ name: "Peeling", slug: "peel", displayOrder: 0, isActive: true }),
-    ).rejects.toThrow(new ApiError(409, "SLUG_TAKEN", "A group with this slug already exists."));
+    const input = {
+      slug: "peel",
+      displayOrder: 0,
+      isActive: true,
+      translations: {
+        fa: { name: "Peeling", description: null, seoTitle: null, seoDescription: null },
+        en: { name: "Peeling", description: null, seoTitle: null, seoDescription: null },
+      },
+    };
+    await expect(createGroup(input)).rejects.toThrow(
+      new ApiError(409, "SLUG_TAKEN", "A group with this slug already exists."),
+    );
   });
 
   it("updates a group", async () => {
     mockDb.seed("service_groups", [makeGroup({ id: "g1", slug: "laser" })]);
-    await updateGroup("g1", { name: "Advanced Laser" });
-    expect(mockDb.data.service_groups[0]).toMatchObject({ name: "Advanced Laser" });
+    await updateGroup("g1", {
+      translations: {
+        fa: { name: "Advanced Laser" },
+        en: { name: "Advanced Laser" },
+      },
+    });
+    expect(mockDb.data.service_groups_i18n).toHaveLength(2);
+    expect(
+      mockDb.data.service_groups_i18n.some((r) => r.locale === "fa" && r.name === "Advanced Laser"),
+    ).toBe(true);
   });
 
   it("throws GROUP_NOT_FOUND when updating or deleting a missing group", async () => {
-    await expect(updateGroup("missing", { name: "X" })).rejects.toThrow(ApiError);
+    await expect(
+      updateGroup("missing", { isActive: false }),
+    ).rejects.toThrow(ApiError);
     await expect(deleteGroup("missing")).rejects.toThrow(ApiError);
   });
 
@@ -425,7 +511,7 @@ describe("group CRUD", () => {
 
 describe("listCategories", () => {
   it("returns categories with group names and service counts", async () => {
-    mockDb.seed("service_groups", [makeGroup({ id: "g1", name: "Laser" })]);
+    seedGroup({ id: "g1", name: "Laser", slug: "laser" });
     mockDb.seed("service_categories", [
       makeCategory({ id: "c1", groupId: "g1", name: "Laser Hair" }),
       makeCategory({ id: "c2", groupId: "g1", name: "HIFU" }),
@@ -446,15 +532,15 @@ describe("listCategories", () => {
 describe("category CRUD", () => {
   const input = {
     groupId: "g1",
-    name: "HIFU Therapy",
     slug: "hifu",
-    description: null,
     icon: "hifu",
     image: null,
     displayOrder: 1,
     isActive: true,
-    seoTitle: null,
-    seoDescription: null,
+    translations: {
+      fa: { name: "HIFU Therapy", description: null, seoTitle: null, seoDescription: null },
+      en: { name: "HIFU Therapy", description: null, seoTitle: null, seoDescription: null },
+    },
   };
 
   it("creates a category", async () => {
@@ -462,6 +548,7 @@ describe("category CRUD", () => {
     const { id } = await createCategory(input);
     expect(id).toBeTruthy();
     expect(mockDb.data.service_categories).toHaveLength(1);
+    expect(mockDb.data.service_categories_i18n).toHaveLength(2);
   });
 
   it("throws INVALID_GROUP for a missing group", async () => {
@@ -473,8 +560,16 @@ describe("category CRUD", () => {
   it("updates a category", async () => {
     mockDb.seed("service_groups", [makeGroup({ id: "g1" })]);
     mockDb.seed("service_categories", [makeCategory({ id: "c1", groupId: "g1" })]);
-    await updateCategory("c1", { name: "Renamed" });
-    expect(mockDb.data.service_categories[0]).toMatchObject({ name: "Renamed" });
+    await updateCategory("c1", {
+      translations: {
+        fa: { name: "Renamed" },
+        en: { name: "Renamed" },
+      },
+    });
+    expect(mockDb.data.service_categories_i18n).toHaveLength(2);
+    expect(
+      mockDb.data.service_categories_i18n.some((r) => r.locale === "fa" && r.name === "Renamed"),
+    ).toBe(true);
   });
 
   it("rejects reparenting to a missing group", async () => {
@@ -493,9 +588,9 @@ describe("category CRUD", () => {
   });
 
   it("returns a single category with its names and count", async () => {
-    mockDb.seed("service_groups", [makeGroup({ id: "g1", name: "Laser" })]);
-    mockDb.seed("service_categories", [makeCategory({ id: "c1", groupId: "g1", name: "HIFU" })]);
-    mockDb.seed("services", [makeService({ id: "s1", categoryId: "c1" })]);
+    seedGroup({ id: "g1", name: "Laser" });
+    seedCategory({ id: "c1", groupId: "g1", name: "HIFU" });
+    seedService({ id: "s1", categoryId: "c1" });
     const category = await getCategory("c1");
     expect(category).toMatchObject({ groupName: "Laser", serviceCount: 1 });
   });
@@ -503,7 +598,7 @@ describe("category CRUD", () => {
 
 describe("getCatalogSummary", () => {
   it("returns groups, categories and the total service count", async () => {
-    mockDb.seed("service_groups", [makeGroup({ id: "g1", name: "Laser" })]);
+    seedGroup({ id: "g1", name: "Laser", slug: "laser" });
     mockDb.seed("service_categories", [
       makeCategory({ id: "c1", groupId: "g1", name: "Laser Hair" }),
       makeCategory({ id: "c2", groupId: "g1", name: "HIFU" }),
@@ -520,5 +615,46 @@ describe("getCatalogSummary", () => {
     expect(summary.groups[0]).toMatchObject({ name: "Laser", categoryCount: 2 });
     const byId = new Map(summary.categories.map((c) => [c.id, c]));
     expect(byId.get("c1")).toMatchObject({ groupName: "Laser", serviceCount: 2 });
+  });
+});
+
+describe("getPublicCatalog", () => {
+  it("returns active groups and categories localized for the requested locale", async () => {
+    const group = makeGroup({ id: "g1", slug: "facial", icon: "facial", displayOrder: 1, name: "Facial" });
+    mockDb.seed("service_groups", [group]);
+    mockDb.seed("service_groups_i18n", [
+      { groupId: group.id, locale: "fa", name: "فیشیال", description: null, seoTitle: null, seoDescription: null },
+      { groupId: group.id, locale: "en", name: "Facial", description: null, seoTitle: null, seoDescription: null },
+    ]);
+    const category = makeCategory({
+      id: "c1",
+      groupId: "g1",
+      slug: "gel-botox",
+      icon: "gelBotox",
+      displayOrder: 1,
+      name: "Filler & Botox",
+    });
+    mockDb.seed("service_categories", [category]);
+    mockDb.seed("service_categories_i18n", [
+      { categoryId: category.id, locale: "fa", name: "ژل و بوتاکس", description: null, seoTitle: null, seoDescription: null },
+      { categoryId: category.id, locale: "en", name: "Filler & Botox", description: null, seoTitle: null, seoDescription: null },
+    ]);
+
+    const en = await getPublicCatalog("en");
+    const fa = await getPublicCatalog("fa");
+
+    expect(en.groups).toEqual([{ slug: "facial", icon: "facial", displayOrder: 1, title: "Facial", description: null }]);
+    expect(en.categories).toEqual([{ slug: "gel-botox", icon: "gelBotox", displayOrder: 1, title: "Filler & Botox", description: null }]);
+    expect(fa.groups[0].title).toBe("فیشیال");
+    expect(fa.categories[0].title).toBe("ژل و بوتاکس");
+  });
+
+  it("skips inactive rows and orders by displayOrder", async () => {
+    seedGroup({ id: "g1", slug: "laser", displayOrder: 2 });
+    seedGroup({ id: "g2", slug: "facial", displayOrder: 1 });
+    seedGroup({ id: "g3", slug: "hidden", displayOrder: 0, isActive: false });
+
+    const catalog = await getPublicCatalog("fa");
+    expect(catalog.groups.map((group) => group.slug)).toEqual(["facial", "laser"]);
   });
 });

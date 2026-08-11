@@ -1,13 +1,17 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { getServices, serviceIconMap } from "@/data/services";
+import { iconForCatalog } from "@/data/services";
+import { usePublicCatalog } from "@/lib/hooks/use-public-catalog";
 import Reveal from "@/components/motion/reveal";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
 
+const SKELETON_COUNT = 6;
+
 export default function Services() {
   const t = useTranslations();
-  const services = getServices();
+  const catalog = usePublicCatalog();
+  const services = catalog?.groups ?? [];
 
   return (
     <section id="services" className="py-24 relative bg-surface-primary">
@@ -24,48 +28,73 @@ export default function Services() {
           </div>
         </Reveal>
 
-        <Stagger
-          stagger={0.1}
-          className="grid grid-cols-12 gap-6"
-        >
-          {services.map((service, index) => {
-            const Icon = serviceIconMap[service.key];
-            // First card is the feature tile: full height.
-            const isFeature = index === 0;
-
-            return (
-              <StaggerItem
-                key={service.key}
-                direction="up"
+        {services.length === 0 ? (
+          <div
+            className="grid grid-cols-12 gap-6"
+            aria-hidden="true"
+            role="presentation"
+          >
+            {Array.from({ length: SKELETON_COUNT }, (_, index) => (
+              <div
+                key={index}
                 className={`col-span-12 md:col-span-6 ${
-                  isFeature ? "md:row-span-2" : ""
+                  index === 0 ? "md:row-span-2" : ""
                 }`}
               >
-                <article className="bg-surface-secondary border border-border-primary rounded-panel p-8 relative overflow-hidden transition-all duration-300 flex flex-col h-full hover:-translate-y-2 hover:shadow-elevation-3 hover:border-transparent hover:bg-surface-tertiary group">
-                  {/* Subtle glow on hover */}
-                  <div
-                    className="absolute -top-16 -inset-s-16 w-48 h-48 rounded-full opacity-0 group-hover:opacity-60 transition-opacity duration-500 pointer-events-none"
-                    aria-hidden="true"
-                  >
-                    <div className="glow-accent w-full h-full" />
+                <div className="bg-surface-secondary border border-border-primary rounded-panel p-8 h-full">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-14 h-14 bg-surface-primary rounded-control animate-pulse" />
+                    <div className="h-6 w-40 bg-surface-primary rounded animate-pulse" />
                   </div>
+                  <div className="h-4 w-full bg-surface-primary rounded animate-pulse" />
+                  <div className="h-4 w-2/3 bg-surface-primary rounded animate-pulse mt-2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <Stagger stagger={0.1} className="grid grid-cols-12 gap-6">
+            {services.map((service, index) => {
+              const Icon = iconForCatalog(service.icon);
+              // First card is the feature tile: full height.
+              const isFeature = index === 0;
 
-                  <div className="relative flex items-center gap-4 mb-6">
-                    <div className="w-14 h-14 bg-surface-primary text-copper rounded-control flex items-center justify-center transition-all duration-300 shrink-0 group-hover:bg-accent group-hover:text-content-contrast group-hover:scale-110 group-hover:-rotate-12">
-                      <Icon className="w-6 h-6" strokeWidth={2} aria-hidden="true" />
+              return (
+                <StaggerItem
+                  key={service.slug}
+                  direction="up"
+                  className={`col-span-12 md:col-span-6 ${
+                    isFeature ? "md:row-span-2" : ""
+                  }`}
+                >
+                  <article className="bg-surface-secondary border border-border-primary rounded-panel p-8 relative overflow-hidden transition-all duration-300 flex flex-col h-full hover:-translate-y-2 hover:shadow-elevation-3 hover:border-transparent hover:bg-surface-tertiary group">
+                    {/* Subtle glow on hover */}
+                    <div
+                      className="absolute -top-16 -inset-s-16 w-48 h-48 rounded-full opacity-0 group-hover:opacity-60 transition-opacity duration-500 pointer-events-none"
+                      aria-hidden="true"
+                    >
+                      <div className="glow-accent w-full h-full" />
                     </div>
-                    <h3 className="text-heading-3 font-bold m-0 text-accent">
-                      {t(`${service.tKey}.title`)}
-                    </h3>
-                  </div>
-                  <p className="mt-auto text-body-sm text-content-secondary relative">
-                    {t(`${service.tKey}.description`)}
-                  </p>
-                </article>
-              </StaggerItem>
-            );
-          })}
-        </Stagger>
+
+                    <div className="relative flex items-center gap-4 mb-6">
+                      <div className="w-14 h-14 bg-surface-primary text-copper rounded-control flex items-center justify-center transition-all duration-300 shrink-0 group-hover:bg-accent group-hover:text-content-contrast group-hover:scale-110 group-hover:-rotate-12">
+                        <Icon className="w-6 h-6" strokeWidth={2} aria-hidden="true" />
+                      </div>
+                      <h3 className="text-heading-3 font-bold m-0 text-accent">
+                        {service.title}
+                      </h3>
+                    </div>
+                    {service.description ? (
+                      <p className="mt-auto text-body-sm text-content-secondary relative">
+                        {service.description}
+                      </p>
+                    ) : null}
+                  </article>
+                </StaggerItem>
+              );
+            })}
+          </Stagger>
+        )}
       </div>
     </section>
   );

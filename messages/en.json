@@ -118,45 +118,11 @@
     "socialHeading": "Social Media",
     "socialNav": "Social media links"
   },
-  "servicesList": {
-    "facial": {
-      "title": "Specialized Facial",
-      "description": "Custom treatments with medical-grade serums for deep hydration, brightening, and skin rejuvenation."
-    },
-    "laser": {
-      "title": "Laser Treatments",
-      "description": "Advanced technology for hair removal and skin resurfacing."
-    },
-    "antiaging": {
-      "title": "Anti-Aging",
-      "description": "Collagen stimulation methods for restoring youthful vitality."
-    },
-    "body": {
-      "title": "Body Contouring",
-      "description": "Non-invasive body shaping treatments."
-    },
-    "peel": {
-      "title": "Peeling",
-      "description": "Professional chemical peels for acne scars and uneven texture."
-    },
-    "wellness": {
-      "title": "Wellness",
-      "description": "Stress relief with aromatherapy massage and holistic wellness."
-    }
-  },
   "galleryItems": {
     "hydrafacial": "HydraFacial Treatment",
     "laserRejuv": "Laser Skin Rejuvenation",
     "microneedling": "Microneedling Therapy",
     "skinCare": "Skin Care"
-  },
-  "serviceOptions": {
-    "facial": "Specialized Facial",
-    "laser": "Laser Treatment",
-    "antiaging": "Anti-Aging",
-    "body": "Body Contouring",
-    "peel": "Peeling",
-    "wellness": "Wellness"
   },
   "jsonLd": {
     "description": "Nafas Aesthetic Clinic offering specialized facials, laser treatments, anti-aging therapy, body contouring, and wellness services."
@@ -274,33 +240,7 @@
       "description": "Complete range of specialized beauty and medical services at Nafas Clinic"
     },
     "heading": "Our Specialized Services",
-    "description": "Nafas Beauty Clinic offers a complete range of specialized skin and beauty services",
-    "services": {
-      "gelBotox": {
-        "title": "Filler & Botox Injection",
-        "description": "Specialized filler and botox injection for face and body with top brands"
-      },
-      "facial": {
-        "title": "Specialized Facial",
-        "description": "Medical-grade facial with pharmaceutical serums for deep hydration and rejuvenation"
-      },
-      "rejuvenation": {
-        "title": "Rejuvenation & Lift",
-        "description": "Advanced non-surgical face rejuvenation and lifting methods"
-      },
-      "bodyFiller": {
-        "title": "Body Filler",
-        "description": "Body shaping and volumizing with specialized fillers"
-      },
-      "hifu": {
-        "title": "HIFU Therapy",
-        "description": "Face lifting and skin tightening with focused ultrasound waves"
-      },
-      "microneedling": {
-        "title": "Microneedling",
-        "description": "Natural collagen stimulation with fine needles"
-      }
-    }
+    "description": "Nafas Beauty Clinic offers a complete range of specialized skin and beauty services"
   },
   "serviceDetail": {
     "labels": {

@@ -1,9 +1,10 @@
 /**
  * Shared shapes for the service catalog.
  *
- * The DB stores *translation keys* (e.g. `servicesPage.services.gelBotox.title`)
- * in the name/title/description columns; components resolve them via next-intl
- * `t()` so the same row works for both locales.
+ * Localized content is stored per locale in the DB *_i18n tables (see
+ * src/db/schema). Admin reads return a `translations` object carrying both
+ * fa/en content, plus `*Key`-less shorthand fields (`name`, `title`, ...)
+ * mirroring `translations.fa`.
  */
 
 export type PriceType = "fixed" | "from" | "on_request";
@@ -74,38 +75,70 @@ export type ServiceDetailData = {
 // Admin (dashboard) shapes for the service catalog CRUD.
 // ---------------------------------------------------------------------------
 
+export type Locale = "fa" | "en";
+
+export type TranslatedContent<T> = { fa: T; en: T };
+
+/** Localized fields of a service group. */
+export type ServiceGroupContent = {
+  name: string;
+  description: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+};
+
+/** Localized fields of a service category (same shape as a group). */
+export type ServiceCategoryContent = ServiceGroupContent;
+
+/** Localized fields of a service. */
+export type ServiceContent = {
+  title: string;
+  shortDesc: string | null;
+  fullDesc: string | null;
+};
+
+/** Localized fields of a service FAQ. */
+export type ServiceFaqContent = {
+  question: string;
+  answer: string;
+};
+
 export type AdminServiceGroup = {
   id: string;
-  name: string;
   slug: string;
-  description: string | null;
   icon: string | null;
   image: string | null;
   displayOrder: number;
   isActive: boolean;
-  seoTitle: string | null;
-  seoDescription: string | null;
   createdAt: Date;
   updatedAt: Date;
   categoryCount: number;
+  /** Shorthand for `translations.fa` kept for list display and dialogs. */
+  name: string;
+  description: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  translations: TranslatedContent<ServiceGroupContent>;
 };
 
 export type AdminServiceCategory = {
   id: string;
   groupId: string;
   groupName: string;
-  name: string;
   slug: string;
-  description: string | null;
   icon: string | null;
   image: string | null;
   displayOrder: number;
   isActive: boolean;
-  seoTitle: string | null;
-  seoDescription: string | null;
   createdAt: Date;
   updatedAt: Date;
   serviceCount: number;
+  /** Shorthand for `translations.fa`. */
+  name: string;
+  description: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  translations: TranslatedContent<ServiceCategoryContent>;
 };
 
 export type AdminServiceImage = {
@@ -120,10 +153,12 @@ export type AdminServiceImage = {
 export type AdminServiceFaq = {
   id: string;
   serviceId: string;
-  question: string;
-  answer: string;
   displayOrder: number;
   createdAt: Date;
+  /** Shorthand for `translations.fa`. */
+  question: string;
+  answer: string;
+  translations: TranslatedContent<ServiceFaqContent>;
 };
 
 export type AdminService = {
@@ -132,10 +167,7 @@ export type AdminService = {
   categoryName: string;
   groupId: string;
   groupName: string;
-  title: string;
   slug: string;
-  shortDesc: string | null;
-  fullDesc: string | null;
   price: number | null;
   priceType: PriceType;
   durationMin: number | null;
@@ -146,6 +178,11 @@ export type AdminService = {
   displayOrder: number;
   createdAt: Date;
   updatedAt: Date;
+  /** Shorthand for `translations.fa`. */
+  title: string;
+  shortDesc: string | null;
+  fullDesc: string | null;
+  translations: TranslatedContent<ServiceContent>;
   images: AdminServiceImage[];
   faqs: AdminServiceFaq[];
 };
@@ -162,4 +199,23 @@ export type ServiceCatalogSummary = {
   groups: AdminServiceGroup[];
   categories: AdminServiceCategory[];
   totalServices: number;
+};
+
+// ---------------------------------------------------------------------------
+// Public (marketing site) shapes for the service catalog.
+// ---------------------------------------------------------------------------
+
+/** A catalog entry rendered on the public site, localized for one locale. */
+export type PublicCatalogEntry = {
+  slug: string;
+  icon: string | null;
+  displayOrder: number;
+  title: string;
+  description: string | null;
+};
+
+/** Catalog data consumed by the public marketing pages. */
+export type PublicCatalog = {
+  groups: PublicCatalogEntry[];
+  categories: PublicCatalogEntry[];
 };
