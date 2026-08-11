@@ -176,10 +176,3 @@ Contributions are welcome.
 ## License
 
 This repository is released under the MIT License — see [LICENSE](./LICENSE) for details.
-
----
-
-If you'd like, I can also:
-- Add screenshots and a demo link to the README.
-- Add CI badges (GitHub Actions) once you enable workflows.
-- Add a CODE_OF_CONDUCT or CONTRIBUTING.md file and an explicit PR template.
