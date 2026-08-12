@@ -36,7 +36,7 @@ export default function ServiceManagePlaceholder({
       <div className="rounded-panel border border-border-primary bg-surface-secondary p-8 text-center shadow-elevation-2 sm:p-10">
         <div className="relative mx-auto mb-6 flex size-16 items-center justify-center rounded-pill border border-border-primary bg-surface-tertiary text-copper-strong">
           <ManageEntityIcon entity={entity} />
-          <span className="absolute -bottom-1 -end-1 flex size-7 items-center justify-center rounded-pill bg-accent text-on-primary shadow-elevation-2">
+          <span className="absolute -bottom-1 -inset-e-1 flex size-7 items-center justify-center rounded-pill bg-accent text-on-primary shadow-elevation-2">
             <Construction className="size-4" aria-hidden="true" />
           </span>
         </div>
