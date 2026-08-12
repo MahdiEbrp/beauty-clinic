@@ -77,7 +77,7 @@ export const services = pgTable(
       .notNull()
       .references(() => serviceCategories.id, { onDelete: "cascade" }),
     slug: text("slug").notNull(),
-    price: numeric("price", { precision: 10, scale: 2 }),
+    price: numeric("price", { precision: 12, scale: 2 }),
     priceType: priceTypeEnum("price_type").notNull().default("fixed"),
     durationMin: integer("duration_min"),
     sessionsCount: integer("sessions_count").notNull().default(1),

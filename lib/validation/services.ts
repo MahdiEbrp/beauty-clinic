@@ -8,13 +8,6 @@ export const serviceImageTypeSchema = z.enum(["before", "after", "gallery"]);
 
 export const localeSchema = z.enum(["en", "fa"]);
 
-export const serviceListQuerySchema = z
-  .object({
-    groupId: z.uuid().optional(),
-    categoryId: z.uuid().optional(),
-  })
-  .strict();
-
 /** Admin services listing query (search, filters, pagination). */
 export const listServicesQuerySchema = z
   .object({
@@ -260,7 +253,6 @@ export const updateServiceSchema = z
 
 export type CreateServiceInput = z.infer<typeof createServiceSchema>;
 export type UpdateServiceInput = z.infer<typeof updateServiceSchema>;
-export type ServiceListQuery = z.infer<typeof serviceListQuerySchema>;
 export type CreateServiceGroupInput = z.infer<typeof createServiceGroupSchema>;
 export type UpdateServiceGroupInput = z.infer<typeof updateServiceGroupSchema>;
 export type CreateServiceCategoryInput = z.infer<typeof createServiceCategorySchema>;

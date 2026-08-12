@@ -52,7 +52,7 @@ describe("cache (in-memory fallback)", () => {
   });
 
   it("cacheWrap computes on a miss and serves the cache on a hit", async () => {
-    const producer = vi.fn(async () => ({ n: 42 }));
+    const producer = vi.fn(() => Promise.resolve({ n: 42 }));
     expect(await cacheWrap("mem:wrap", 60, producer)).toEqual({ n: 42 });
     expect(await cacheWrap("mem:wrap", 60, producer)).toEqual({ n: 42 });
     expect(producer).toHaveBeenCalledTimes(1);
@@ -76,7 +76,7 @@ describe("cache (in-memory fallback)", () => {
   });
 
   it("cacheDel busts a cached value so the producer re-runs", async () => {
-    const producer = vi.fn(async () => "v");
+    const producer = vi.fn(() => Promise.resolve("v"));
     await cacheWrap("mem:bust", 60, producer); // miss -> compute
     await cacheWrap("mem:bust", 60, producer); // hit
     await cacheDel("mem:bust");

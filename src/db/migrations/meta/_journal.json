@@ -50,6 +50,13 @@
       "when": 1786398144831,
       "tag": "0006_fast_zemo",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1786541108404,
+      "tag": "0007_bumpy_thundra",
+      "breakpoints": true
     }
   ]
 }
