@@ -64,16 +64,21 @@ describe("upsertSetting", () => {
     expect(rows).toHaveLength(2);
   });
 
-  it.each([
+    it.each([
     [42, "number"],
     [true, "boolean"],
     [["a", "b"], "array"],
     [{ nested: true }, "object"],
     ["hello", "string"],
-    [null, "object"],
   ])("infers type %s as %s", async (value, type) => {
     const row = await upsertSetting("k", value, { scope: "system" });
     expect(row.type).toBe(type);
+  });
+
+      it("rejects null value (column is NOT NULL)", async () => {
+    await expect(upsertSetting("k", null, { scope: "system" })).rejects.toThrow(
+      "cannot be null",
+    );
   });
 
   it("honors an explicit type override", async () => {

@@ -7,7 +7,7 @@ import { handleApiError, jsonError, jsonOk } from "@/lib/api/errors";
 import { isSameOrigin, readJsonBody } from "@/lib/api/request";
 import { rateLimit } from "@/lib/api/rate-limit";
 import { toFieldErrors } from "@/lib/validation/field-errors";
-import { logError } from "@/lib/log";
+import { logError, logInfo } from "@/lib/log";
 
 export { jsonError, jsonOk };
 
@@ -166,7 +166,7 @@ export function withSecurity<Body = unknown, Query = unknown>(
       const response = await handler(request, ctx);
 
       if (config.audit && MUTATION_METHODS.has(request.method)) {
-        logError("api.audit", {
+        logInfo("api.audit", {
           requestId,
           method: request.method,
           path: requestPath(request),

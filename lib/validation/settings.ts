@@ -13,11 +13,13 @@ export type ValueType = (typeof SUPPORTED_TYPES)[number];
 export const SCOPE_VALUES = ["user", "system"] as const;
 export type Scope = (typeof SCOPE_VALUES)[number];
 
+// The `settings.value` column is NOT NULL, so a SQL NULL can never be stored.
+// `null` is intentionally excluded from the JSON value union — a client wanting
+// to "clear" a value should delete the setting instead of writing null.
 const jsonValueSchema: z.ZodType<unknown> = z.union([
   z.string(),
   z.number(),
   z.boolean(),
-  z.null(),
   z.array(z.unknown()),
   z.record(z.string(), z.unknown()),
 ]);

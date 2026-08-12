@@ -1,5 +1,6 @@
 import { and, eq, sql } from "drizzle-orm";
 
+import { ApiError } from "@/lib/api/errors";
 import { cacheDel } from "@/lib/cache";
 import { db } from "@/src/db";
 import { settings, type Setting } from "@/src/db/schema";
@@ -33,6 +34,12 @@ export async function upsertSetting(
     scope?: string;
   },
 ): Promise<Setting> {
+  // `settings.value` is NOT NULL — reject null up front instead of letting it
+  // surface as an unhandled Postgres constraint violation.
+  if (value === null) {
+    throw new ApiError(400, "INVALID_SETTING_VALUE", "Setting value cannot be null.");
+  }
+
   const resolvedType = options?.type ?? inferType(value);
   const scope = options?.scope ?? "user";
 

@@ -56,9 +56,9 @@ describe("upsertSettingSchema", () => {
     expect(result.success).toBe(false);
   });
 
-  it("accepts null value", () => {
+  it("rejects null value (column is NOT NULL)", () => {
     const result = upsertSettingSchema.safeParse({ ...valid, value: null });
-    expect(result.success).toBe(true);
+    expect(result.success).toBe(false);
   });
 
   it("rejects a string value > 10 KB", () => {

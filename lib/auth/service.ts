@@ -4,6 +4,7 @@ import { and, eq, isNull } from "drizzle-orm";
 
 import { db } from "@/src/db";
 import { roles, userRoles, users } from "@/src/db/schema";
+import { ApiError } from "@/lib/api/errors";
 import { verifyPassword, hashPassword } from "./password";
 import { createSession } from "./session";
 import type { SignupInput } from "@/lib/validation/user";
@@ -99,9 +100,18 @@ export async function registerUser(
         columns: { id: true },
       });
 
-      if (role) {
-        await tx.insert(userRoles).values({ userId: user.id, roleId: role.id });
+      // A registered account without the customer role is unusable (no
+      // permissions, invisible to the dashboard), and silently creating one
+      // would hide a misconfigured seed. Fail loudly and roll back the insert.
+      if (!role) {
+        throw new ApiError(
+          500,
+          "CUSTOMER_ROLE_NOT_FOUND",
+          "The customer role is not configured.",
+        );
       }
+
+      await tx.insert(userRoles).values({ userId: user.id, roleId: role.id });
 
       return user.id;
     });

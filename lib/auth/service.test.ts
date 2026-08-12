@@ -164,17 +164,21 @@ describe("registerUser", () => {
     );
   });
 
-  it("skips role assignment when the customer role is missing", async () => {
-    const result = await registerUser({
-      fullName: "Jane Doe",
-      email: "jane@example.com",
-      phone: null,
-      password: "secret",
+      it("throws CUSTOMER_ROLE_NOT_FOUND when the customer role is missing", async () => {
+    await expect(
+      registerUser({
+        fullName: "Jane Doe",
+        email: "jane@example.com",
+        phone: null,
+        password: "secret",
+      }),
+    ).rejects.toMatchObject({
+      code: "CUSTOMER_ROLE_NOT_FOUND",
     });
 
-    expect(result).toEqual({ ok: true });
-    expect(mockDb.data.users).toHaveLength(1);
+    // No session should be created, and no user-role assignment.
     expect(mockDb.data.user_roles ?? []).toHaveLength(0);
+    expect(sessionMock.createSession).not.toHaveBeenCalled();
   });
 
   it("returns EMAIL_TAKEN on a unique-violation error", async () => {
