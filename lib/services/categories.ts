@@ -12,6 +12,7 @@ import {
   serviceGroups,
   services,
 } from "@/src/db/schema";
+import { bustPublicCatalogCache } from "./public-catalog";
 import { assertGroupExists, assertSlugAvailable, isUniqueViolation, mapCategoryRow, uniqueSlugError } from "./helpers";
 import {
   emptyGroupContent,
@@ -82,7 +83,7 @@ export async function createCategory(
   await assertGroupExists(input.groupId);
 
   try {
-    return await db.transaction(async (tx) => {
+    const result = await db.transaction(async (tx) => {
       const [row] = await tx
         .insert(serviceCategories)
         .values({
@@ -120,6 +121,10 @@ export async function createCategory(
 
       return { id: row.id };
     });
+
+    // Invalidate the cached public feed so the new category shows up now.
+    await bustPublicCatalogCache();
+    return result;
   } catch (error) {
     if (error instanceof ApiError) throw error;
     if (isUniqueViolation(error)) throw uniqueSlugError("category");
@@ -160,6 +165,9 @@ export async function updateCategory(
         }
       }
     });
+
+    // Invalidate the cached public feed so the edits are reflected now.
+    await bustPublicCatalogCache();
   } catch (error) {
     if (error instanceof ApiError) throw error;
     if (isUniqueViolation(error)) throw uniqueSlugError("category");
@@ -177,4 +185,7 @@ export async function deleteCategory(id: string): Promise<void> {
   }
 
   await db.delete(serviceCategories).where(eq(serviceCategories.id, id));
+
+  // Invalidate the cached public feed so the removed category disappears now.
+  await bustPublicCatalogCache();
 }

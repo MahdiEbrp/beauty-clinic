@@ -7,6 +7,7 @@ import type {
 } from "@/lib/validation/services";
 import { db } from "@/src/db";
 import { serviceCategories, serviceGroups, serviceGroupsI18n } from "@/src/db/schema";
+import { bustPublicCatalogCache } from "./public-catalog";
 import { assertSlugAvailable, isUniqueViolation, mapGroupRow, uniqueSlugError } from "./helpers";
 import {
   emptyGroupContent,
@@ -58,7 +59,7 @@ export async function createGroup(
   input: CreateServiceGroupInput,
 ): Promise<{ id: string }> {
   try {
-    return await db.transaction(async (tx) => {
+    const result = await db.transaction(async (tx) => {
       const [row] = await tx
         .insert(serviceGroups)
         .values({
@@ -93,6 +94,10 @@ export async function createGroup(
 
       return { id: row.id };
     });
+
+    // Invalidate the cached public feed so the new group shows up now.
+    await bustPublicCatalogCache();
+    return result;
   } catch (error) {
     if (error instanceof ApiError) throw error;
     if (isUniqueViolation(error)) throw uniqueSlugError("group");
@@ -128,6 +133,9 @@ export async function updateGroup(
         }
       }
     });
+
+    // Invalidate the cached public feed so the edits are reflected now.
+    await bustPublicCatalogCache();
   } catch (error) {
     if (error instanceof ApiError) throw error;
     if (isUniqueViolation(error)) throw uniqueSlugError("group");
@@ -143,4 +151,7 @@ export async function deleteGroup(id: string): Promise<void> {
   if (!existing) throw new ApiError(404, "GROUP_NOT_FOUND", "Service group not found.");
 
   await db.delete(serviceGroups).where(eq(serviceGroups.id, id));
+
+  // Invalidate the cached public feed so the removed group disappears now.
+  await bustPublicCatalogCache();
 }

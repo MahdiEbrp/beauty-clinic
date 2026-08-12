@@ -5,6 +5,7 @@ import { randomUUID } from "node:crypto";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { Row, MockDb } from "@/lib/test/mock-db";
+import { resetCacheForTests } from "@/lib/cache";
 
 vi.mock("@/src/db", async () => {
   const { createMockDb } = await import("@/lib/test/mock-db");
@@ -170,6 +171,7 @@ function seedFaq(overrides: Partial<Row> = {}): Row {
 
 beforeEach(() => {
   mockDb.reset();
+  resetCacheForTests();
 });
 
 describe("listServices", () => {

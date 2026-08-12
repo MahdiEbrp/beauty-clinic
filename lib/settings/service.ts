@@ -1,7 +1,11 @@
 import { and, eq, sql } from "drizzle-orm";
 
+import { cacheDel } from "@/lib/cache";
 import { db } from "@/src/db";
 import { settings, type Setting } from "@/src/db/schema";
+
+/** Shared cache key for the system-wide settings map (see lib/settings/loader.ts). */
+export const SYSTEM_SETTINGS_CACHE_KEY = "settings:system";
 
 export type PaginatedResponse = {
   items: Setting[];
@@ -42,6 +46,7 @@ export async function upsertSetting(
         set: { value, type: resolvedType, updatedAt: new Date() },
       })
       .returning();
+    await cacheDel(SYSTEM_SETTINGS_CACHE_KEY);
     return row;
   }
 
@@ -134,6 +139,7 @@ export async function deleteSetting(
     await db
       .delete(settings)
       .where(and(eq(settings.scope, "system"), eq(settings.key, key)));
+    await cacheDel(SYSTEM_SETTINGS_CACHE_KEY);
   } else {
     const userId = opts?.userId;
     if (!userId) throw new Error("userId is required for user-scoped delete");

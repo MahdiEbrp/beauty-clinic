@@ -1,12 +1,20 @@
 import "server-only";
 
 import { cache } from "react";
+import { cacheWrap } from "@/lib/cache";
 import { logError } from "@/lib/log";
-import { getSystemSettings } from "./service";
+import { getSystemSettings, SYSTEM_SETTINGS_CACHE_KEY } from "./service";
+
+/** TTL for the cached system-settings map (seconds). */
+const SYSTEM_SETTINGS_CACHE_TTL_SECS = 60;
 
 export const loadSystemSettingsMap = cache(async () => {
   try {
-    const rows = await getSystemSettings();
+    const rows = await cacheWrap(
+      SYSTEM_SETTINGS_CACHE_KEY,
+      SYSTEM_SETTINGS_CACHE_TTL_SECS,
+      getSystemSettings,
+    );
     return new Map(rows.map((r) => [r.key, r.value]));
   } catch (error) {
     // System settings are optional site-wide overrides (contact info, social
