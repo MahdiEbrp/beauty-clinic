@@ -33,6 +33,10 @@
     --accent: #530916;
     --accent-hover: #39090a;
     --accent-subtle: #fdf0e8;
+    /* Darkest accent used for pressed/active accent surfaces. */
+    --primary-deep: #310007;
+    /* Text rendered on accent surfaces. */
+    --on-primary: #ffffff;
 
     /* ---- Brand metals ----------------------------------------------- */
     /* --gold is only ever placed on dark: 7.05:1 on accent, 8.21:1 on footer-bg. */
@@ -43,6 +47,11 @@
     /* Small text. */
     --copper-strong: #9e5932;
     /* 4.50:1 on --surface-primary */
+    /* Dark copper for progress fills and secondary accents. */
+    --copper-deep: #924b20;
+
+    /* ---- Surfaces (variant) ----------------------------------------- */
+    --surface-variant: #f0dede;
 
     /* ---- Form -------------------------------------------------------- */
     --form-input-bg: #f8e9db;
@@ -98,10 +107,15 @@
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-subtle: var(--accent-subtle);
+  --color-primary-deep: var(--primary-deep);
+  --color-on-primary: var(--on-primary);
 
   --color-gold: var(--gold);
   --color-copper: var(--copper);
   --color-copper-strong: var(--copper-strong);
+  --color-copper-deep: var(--copper-deep);
+
+  --color-surface-variant: var(--surface-variant);
 
   --color-form-input-bg: var(--form-input-bg);
   --color-form-input-border: var(--form-input-border);

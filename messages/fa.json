@@ -560,8 +560,8 @@
       "roles": "نقش‌ها",
       "status": "وضعیت",
       "lastLogin": "آخرین ورود",
-      "actions": "عملیات"
-      ,"phone": "شماره تماس"
+      "actions": "عملیات",
+      "phone": "شماره تماس"
     },
     "statuses": {
       "active": "فعال",
@@ -579,8 +579,8 @@
       "deactivate": "غیرفعال‌سازی",
       "ban": "مسدود کردن",
       "unban": "رفع مسدودی",
-      "selfNotice": "این حساب شماست؛ تغییر وضعیت مجاز نیست"
-      ,"menu": "باز کردن عملیات کاربر",
+      "selfNotice": "این حساب شماست؛ تغییر وضعیت مجاز نیست",
+      "menu": "باز کردن عملیات کاربر",
       "changeRole": "تغییر نقش",
       "changePassword": "تغییر رمز عبور",
       "delete": "حذف کاربر",
@@ -854,224 +854,64 @@
     "backToDashboard": "بازگشت به داشبورد",
     "goHome": "بازگشت به خانه"
   },
-  "servicesCatalog": {
+  "servicesAnalytics": {
     "meta": {
-      "title": "کاتالوگ خدمات | کلینیک زیبایی نفس",
-      "description": "مدیریت گروه‌های خدماتی، دسته‌بندی‌ها و خدمات درمانی."
+      "title": "مدیریت خدمات | کلینیک زیبایی نفس",
+      "description": "بر سلسله‌مراتب خدمات کلینیک نظارت کنید و آن را بهبود دهید."
     },
-    "heading": "کاتالوگ خدمات",
-    "summary": "{groups} گروه · {categories} دسته · {services} خدمت",
-    "resultsLabel": "خدمت",
-    "add": "افزودن خدمت",
-    "addShort": "افزودن",
-    "filterLabel": "فیلتر خدمات",
-    "search": "جستجوی خدمات",
-    "searchPlaceholder": "جستجو بر اساس عنوان یا اسلاگ...",
-    "status": "وضعیت",
-    "statusAll": "همه",
-    "category": "دسته‌بندی",
-    "categoryAll": "همه دسته‌بندی‌ها",
-    "featuredLabel": "ویژه",
-    "featuredAll": "همه",
-    "featured": {
-      "yes": "ویژه",
-      "no": "غیرویژه"
-    },
-    "featuredShort": "ویژه",
-    "clearFilters": "پاک کردن فیلترها",
-    "error": "بارگذاری خدمات ممکن نشد. دوباره تلاش کنید.",
-    "retry": "تلاش دوباره",
-    "loading": "در حال بارگذاری خدمات...",
-    "empty": "هیچ خدمتی یافت نشد.",
-    "emptySearch": "هیچ خدمتی با این فیلترها یافت نشد.",
-    "statuses": {
-      "active": "فعال",
-      "inactive": "غیرفعال"
-    },
-    "priceTypes": {
-      "fixed": "ثابت",
-      "from": "از",
-      "on_request": "استعلام"
-    },
-    "imageTypes": {
-      "before": "قبل",
-      "after": "بعد",
-      "gallery": "گالری"
-    },
-    "onRequest": "استعلام",
-    "from": "از",
-    "currency": "تومان",
-    "duration": "{minutes} دقیقه",
-    "noDuration": "—",
-    "tabs": {
-      "label": "نمایش‌های کاتالوگ خدمات",
+    "heading": "تحلیل و مدیریت",
+    "subtitle": "بر سلسله‌مراتب خدمات کلینیک خود نظارت کنید و آن را بهبود دهید.",
+    "performance": {
+      "title": "نمای عملکرد",
+      "totalAssets": "کل دارایی‌های خدماتی",
+      "activeItems": "مورد فعال",
+      "live": "فعال",
       "services": "خدمات",
-      "groups": "گروه‌ها",
-      "categories": "دسته‌بندی‌ها"
+      "categories": "دسته‌بندی‌ها",
+      "groups": "گروه‌های خدماتی"
     },
-    "columns": {
-      "service": "خدمت",
-      "category": "دسته‌بندی",
-      "price": "قیمت",
-      "duration": "مدت",
-      "media": "رسانه",
-      "status": "وضعیت",
-      "actions": "عملیات"
-    },
-    "actions": {
-      "menu": "باز کردن عملیات خدمت",
-      "edit": "ویرایش",
-      "delete": "حذف"
-    },
-    "groupsCount": "{count} گروه",
-    "groupsCategories": "{count} دسته",
-    "groupsEmpty": "هنوز گروه خدماتی وجود ندارد. برای سازمان‌دهی کاتالوگ یکی اضافه کنید.",
-    "categoriesCount": "{count} دسته‌بندی",
-    "categoriesServices": "{count} خدمت",
-    "categoriesEmpty": "هنوز دسته‌بندی وجود ندارد. برای گروه‌بندی خدمات یکی اضافه کنید.",
-    "dialog": {
-      "cancel": "انصراف",
-      "close": "بستن"
-    },
-    "delete": {
-      "serviceTitle": "حذف {name}؟",
-      "serviceDescription": "این خدمت به همراه تصاویر و سوالات متداولش برای همیشه حذف می‌شود. این عمل قابل بازگشت نیست.",
-      "groupTitle": "حذف {name}؟",
-      "groupDescription": "این گروه و همه محتوای داخل آن (دسته‌بندی‌ها و خدمات) برای همیشه حذف می‌شود. این عمل قابل بازگشت نیست.",
-      "categoryTitle": "حذف {name}؟",
-      "categoryDescription": "این دسته‌بندی و همه خدماتش برای همیشه حذف می‌شود. این عمل قابل بازگشت نیست.",
-      "confirm": "حذف"
-    },
-    "groupForm": {
-      "title": "افزودن گروه خدماتی",
-      "description": "یک گروه سطح بالا برای کاتالوگ ایجاد کنید.",
-      "editTitle": "ویرایش گروه خدماتی",
-      "editDescription": "جزئیات این گروه را به‌روزرسانی کنید.",
-      "create": "ایجاد گروه",
-      "save": "ذخیره تغییرات",
-      "name": "نام",
-      "namePlaceholder": "مثلاً لیزر درمانی",
-      "slug": "اسلاگ",
-      "slugHint": "در آدرس‌ها استفاده می‌شود. به‌صورت خودکار از نام ساخته می‌شود.",
-      "descriptionLabel": "توضیحات",
-      "icon": "آیکون",
-      "image": "آدرس تصویر",
-      "displayOrder": "ترتیب نمایش",
-      "isActive": "وضعیت",
-      "seoTitle": "عنوان سئو",
-      "seoDescription": "توضیحات سئو",
-      "discardTitle": "دور ریختن تغییرات؟",
-      "discardDescription": "تغییرات ذخیره‌نشده در این فرم وجود دارد.",
-      "discardConfirm": "دور ریختن",
-      "errors": {
-        "name": "نام الزامی است.",
-        "slug": "اسلاگ باید به شکل kebab-case باشد (حروف، اعداد، خط تیره).",
-        "displayOrder": "یک عدد معتبر وارد کنید."
+    "hub": {
+      "title": "مرکز مدیریت",
+      "group": {
+        "name": "گروه‌های خدماتی",
+        "description": "واحدهای سازمانی سطح بالا.",
+        "featureSlug": "اسلاگ و متادیتای سئو",
+        "featureOrder": "کنترل ترتیب نمایش",
+        "featureBrand": "نگاشت دارایی برند"
+      },
+      "category": {
+        "name": "دسته‌بندی‌ها",
+        "description": "زیرگروه‌های رابطه‌ای خدمات.",
+        "featureGroup": "نگاشت گروه",
+        "featureSeo": "عنوان و توضیحات سئو",
+        "featureSlug": "اسلاگ‌های سفارشی"
+      },
+      "service": {
+        "name": "خدمات",
+        "description": "درمان‌های قابل‌صورتحساب.",
+        "featurePrice": "قیمت ثابت/از مبلغ",
+        "featureDuration": "مدت و تعداد جلسات",
+        "featureFeatured": "وضعیت ویژه"
       }
     },
-    "categoryForm": {
-      "title": "افزودن دسته‌بندی خدماتی",
-      "description": "یک زیرگروه در داخل یک گروه خدماتی ایجاد کنید.",
-      "editTitle": "ویرایش دسته‌بندی خدماتی",
-      "editDescription": "جزئیات این دسته‌بندی را به‌روزرسانی کنید.",
-      "create": "ایجاد دسته‌بندی",
-      "save": "ذخیره تغییرات",
-      "group": "گروه",
-      "groupPlaceholder": "انتخاب گروه",
-      "name": "نام",
-      "namePlaceholder": "مثلاً جوان‌سازی پوست",
-      "slug": "اسلاگ",
-      "slugHint": "در آدرس‌ها استفاده می‌شود. به‌صورت خودکار از نام ساخته می‌شود.",
-      "descriptionLabel": "توضیحات",
-      "icon": "آیکون",
-      "image": "آدرس تصویر",
-      "displayOrder": "ترتیب نمایش",
-      "isActive": "وضعیت",
-      "seoTitle": "عنوان سئو",
-      "seoDescription": "توضیحات سئو",
-      "discardTitle": "دور ریختن تغییرات؟",
-      "discardDescription": "تغییرات ذخیره‌نشده در این فرم وجود دارد.",
-      "discardConfirm": "دور ریختن",
-      "errors": {
-        "name": "نام الزامی است.",
-        "group": "لطفاً یک گروه انتخاب کنید.",
-        "slug": "اسلاگ باید به شکل kebab-case باشد (حروف، اعداد، خط تیره).",
-        "displayOrder": "یک عدد معتبر وارد کنید."
-      }
+    "counts": {
+      "active": "{count} فعال",
+      "total": "در مجموع {count}"
     },
-    "serviceForm": {
-      "title": "افزودن خدمت",
-      "description": "یک درمان قابل ارائه در کاتالوگ ایجاد کنید.",
-      "editTitle": "ویرایش خدمت",
-      "editDescription": "جزئیات این خدمت را به‌روزرسانی کنید.",
-      "create": "ایجاد خدمت",
-      "save": "ذخیره تغییرات",
-      "group": "گروه",
-      "groupPlaceholder": "انتخاب گروه",
-      "category": "دسته‌بندی",
-      "categoryPlaceholder": "انتخاب دسته‌بندی",
-      "titleLabel": "عنوان",
-      "titlePlaceholder": "مثلاً میکرودرم‌ابریژن",
-      "slug": "اسلاگ",
-      "slugHint": "در آدرس‌ها استفاده می‌شود. به‌صورت خودکار از عنوان ساخته می‌شود.",
-      "priceType": "نوع قیمت",
-      "price": "قیمت",
-      "priceOnRequestHint": "قیمت به‌صورت استعلام نمایش داده می‌شود.",
-      "duration": "مدت (دقیقه)",
-      "sessions": "جلسات",
-      "displayOrder": "ترتیب نمایش",
-      "shortDesc": "توضیح کوتاه",
-      "fullDesc": "توضیح کامل",
-      "coverImage": "آدرس تصویر جلد",
-      "isActive": "وضعیت",
-      "isFeatured": "ویژه",
-      "imagesTitle": "تصاویر",
-      "imagesEmpty": "هنوز تصویری اضافه نشده است.",
-      "addImage": "افزودن تصویر",
-      "removeImage": "حذف تصویر",
-      "imageUrlPlaceholder": "https://...",
-      "imageType": "نوع",
-      "faqsTitle": "سوالات متداول",
-      "faqsEmpty": "هنوز سوال متداولی اضافه نشده است.",
-      "addFaq": "افزودن سوال",
-      "removeFaq": "حذف سوال",
-      "faqQuestionPlaceholder": "سوال",
-      "faqAnswerPlaceholder": "پاسخ",
-      "discardTitle": "دور ریختن تغییرات؟",
-      "discardDescription": "تغییرات ذخیره‌نشده در این فرم وجود دارد.",
-      "discardConfirm": "دور ریختن",
-      "errors": {
-        "title": "عنوان الزامی است.",
-        "slug": "اسلاگ باید به شکل kebab-case باشد (حروف، اعداد، خط تیره).",
-        "price": "یک قیمت معتبر وارد کنید.",
-        "duration": "مدت معتبر وارد کنید (۱ تا ۱۴۴۰ دقیقه).",
-        "sessions": "تعداد جلسات معتبر وارد کنید (۱ تا ۱۰۰).",
-        "displayOrder": "یک عدد معتبر وارد کنید.",
-        "category": "لطفاً یک دسته‌بندی انتخاب کنید.",
-        "group": "لطفاً یک گروه انتخاب کنید."
-      }
+    "manage": "مدیریت",
+    "addNew": "افزودن جدید"
+  },
+  "servicesManage": {
+    "meta": {
+      "title": "مدیریت {name} | کلینیک زیبایی نفس"
     },
-    "toasts": {
-      "saving": "در حال ذخیره...",
-      "created": "خدمت ایجاد شد.",
-      "updated": "خدمت به‌روزرسانی شد.",
-      "groupCreated": "گروه ایجاد شد.",
-      "groupUpdated": "گروه به‌روزرسانی شد.",
-      "categoryCreated": "دسته‌بندی ایجاد شد.",
-      "categoryUpdated": "دسته‌بندی به‌روزرسانی شد.",
-      "deleting": "در حال حذف...",
-      "deleted": "حذف شد."
-    },
-    "errors": {
-      "slugTaken": "این اسلاگ قبلاً استفاده شده است. اسلاگ دیگری انتخاب کنید.",
-      "save": "ذخیره تغییرات ممکن نشد. دوباره تلاش کنید.",
-      "delete": "حذف آیتم ممکن نشد. دوباره تلاش کنید."
-    },
-    "pagination": {
-      "showing": "نمایش {from} تا {to} از {total}",
-      "previous": "قبلی",
-      "next": "بعدی",
-      "pageInfo": "صفحه {page} از {totalPages}"
+    "heading": "مدیریت {name}",
+    "description": "نمای مدیریت {name} در دست ساخت است و به‌زودی در دسترس قرار می‌گیرد.",
+    "back": "بازگشت به خدمات",
+    "names": {
+      "groups": "گروه‌های خدماتی",
+      "categories": "دسته‌بندی‌ها",
+      "services": "خدمات"
     }
   }
 }

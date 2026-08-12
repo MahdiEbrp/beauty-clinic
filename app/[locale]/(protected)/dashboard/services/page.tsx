@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
+import ServicesAnalyticsContent from "@/components/ServicesAnalyticsContent";
 import { requirePermission } from "@/lib/auth/dal";
-import { getCatalogSummary, listServices } from "@/lib/services/service";
+import { getPerformanceView } from "@/lib/services/performance";
 import { siteUrl } from "@/lib/site";
-import ServicesCatalogContent from "@/components/services";
 
 export async function generateMetadata({
   params,
@@ -12,7 +12,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "servicesCatalog" });
+  const t = await getTranslations({ locale, namespace: "servicesAnalytics" });
 
   return {
     title: t("meta.title"),
@@ -29,17 +29,8 @@ export async function generateMetadata({
 }
 
 export default async function ServicesPage() {
-  const session = await requirePermission("services.read");
-  const [initialData, summary] = await Promise.all([
-    listServices({ page: 1, perPage: 10 }),
-    getCatalogSummary(),
-  ]);
+  await requirePermission("services.read");
+  const data = await getPerformanceView();
 
-  return (
-    <ServicesCatalogContent
-      user={session.user}
-      initialData={initialData}
-      summary={summary}
-    />
-  );
+  return <ServicesAnalyticsContent data={data} />;
 }

@@ -560,8 +560,8 @@
       "roles": "Roles",
       "status": "Status",
       "lastLogin": "Last Login",
-      "actions": "Actions"
-      ,"phone": "Phone"
+      "actions": "Actions",
+      "phone": "Phone"
     },
     "statuses": {
       "active": "Active",
@@ -579,8 +579,8 @@
       "deactivate": "Deactivate",
       "ban": "Ban",
       "unban": "Unban",
-      "selfNotice": "This is your account; status changes are unavailable"
-      ,"menu": "Open user actions",
+      "selfNotice": "This is your account; status changes are unavailable",
+      "menu": "Open user actions",
       "changeRole": "Change role",
       "changePassword": "Change password",
       "delete": "Delete user",
@@ -854,224 +854,64 @@
     "backToDashboard": "Back to Dashboard",
     "goHome": "Go Home"
   },
-  "servicesCatalog": {
+  "servicesAnalytics": {
     "meta": {
-      "title": "Services Catalog | Nafas Beauty Clinic",
-      "description": "Manage service groups, categories and treatments."
+      "title": "Services Management | Nafas Beauty Clinic",
+      "description": "Monitor and refine your clinic's service hierarchy."
     },
-    "heading": "Services Catalog",
-    "summary": "{groups} groups · {categories} categories · {services} services",
-    "resultsLabel": "services",
-    "add": "Add service",
-    "addShort": "Add",
-    "filterLabel": "Filter services",
-    "search": "Search services",
-    "searchPlaceholder": "Search by title or slug...",
-    "status": "Status",
-    "statusAll": "All",
-    "category": "Category",
-    "categoryAll": "All categories",
-    "featuredLabel": "Featured",
-    "featuredAll": "All",
-    "featured": {
-      "yes": "Featured",
-      "no": "Not featured"
-    },
-    "featuredShort": "Featured",
-    "clearFilters": "Clear filters",
-    "error": "Couldn't load services. Please try again.",
-    "retry": "Retry",
-    "loading": "Loading services...",
-    "empty": "No services found.",
-    "emptySearch": "No services match your filters.",
-    "statuses": {
-      "active": "Active",
-      "inactive": "Inactive"
-    },
-    "priceTypes": {
-      "fixed": "Fixed",
-      "from": "From",
-      "on_request": "On request"
-    },
-    "imageTypes": {
-      "before": "Before",
-      "after": "After",
-      "gallery": "Gallery"
-    },
-    "onRequest": "On request",
-    "from": "From",
-    "currency": "Toman",
-    "duration": "{minutes} min",
-    "noDuration": "—",
-    "tabs": {
-      "label": "Service catalog views",
+    "heading": "Analytics & Management",
+    "subtitle": "Monitor and refine your clinic's service hierarchy.",
+    "performance": {
+      "title": "Performance Overview",
+      "totalAssets": "Total Service Assets",
+      "activeItems": "Active Items",
+      "live": "LIVE",
       "services": "Services",
-      "groups": "Groups",
-      "categories": "Categories"
+      "categories": "Categories",
+      "groups": "Service Groups"
     },
-    "columns": {
-      "service": "Service",
-      "category": "Category",
-      "price": "Price",
-      "duration": "Duration",
-      "media": "Media",
-      "status": "Status",
-      "actions": "Actions"
-    },
-    "actions": {
-      "menu": "Open service actions",
-      "edit": "Edit",
-      "delete": "Delete"
-    },
-    "groupsCount": "{count} groups",
-    "groupsCategories": "{count} categories",
-    "groupsEmpty": "No service groups yet. Add one to organize your catalog.",
-    "categoriesCount": "{count} categories",
-    "categoriesServices": "{count} services",
-    "categoriesEmpty": "No categories yet. Add one to group your services.",
-    "dialog": {
-      "cancel": "Cancel",
-      "close": "Close"
-    },
-    "delete": {
-      "serviceTitle": "Delete {name}?",
-      "serviceDescription": "This service and its images and FAQs will be permanently removed. This cannot be undone.",
-      "groupTitle": "Delete {name}?",
-      "groupDescription": "This group and everything inside it (categories and services) will be permanently removed. This cannot be undone.",
-      "categoryTitle": "Delete {name}?",
-      "categoryDescription": "This category and all of its services will be permanently removed. This cannot be undone.",
-      "confirm": "Delete"
-    },
-    "groupForm": {
-      "title": "Add a service group",
-      "description": "Create a top-level group for the catalog.",
-      "editTitle": "Edit service group",
-      "editDescription": "Update the details of this group.",
-      "create": "Create group",
-      "save": "Save changes",
-      "name": "Name",
-      "namePlaceholder": "e.g. Laser therapy",
-      "slug": "Slug",
-      "slugHint": "Used in URLs. Auto-generated from the name.",
-      "descriptionLabel": "Description",
-      "icon": "Icon",
-      "image": "Image URL",
-      "displayOrder": "Display order",
-      "isActive": "Status",
-      "seoTitle": "SEO title",
-      "seoDescription": "SEO description",
-      "discardTitle": "Discard changes?",
-      "discardDescription": "You have unsaved changes in this form.",
-      "discardConfirm": "Discard",
-      "errors": {
-        "name": "Name is required.",
-        "slug": "Slug must be kebab-case (letters, numbers, hyphens).",
-        "displayOrder": "Enter a valid number."
+    "hub": {
+      "title": "Management Hub",
+      "group": {
+        "name": "Service Groups",
+        "description": "Top-level organizational units.",
+        "featureSlug": "Slug & SEO Metadata",
+        "featureOrder": "Display Order Control",
+        "featureBrand": "Brand Asset Mapping"
+      },
+      "category": {
+        "name": "Categories",
+        "description": "Relational sub-groups for services.",
+        "featureGroup": "Group Mapping",
+        "featureSeo": "SEO Title & Desc",
+        "featureSlug": "Custom Slugs"
+      },
+      "service": {
+        "name": "Services",
+        "description": "Individual billable treatments.",
+        "featurePrice": "Fixed/From Pricing",
+        "featureDuration": "Duration & Sessions",
+        "featureFeatured": "Featured Status"
       }
     },
-    "categoryForm": {
-      "title": "Add a service category",
-      "description": "Create a sub-group inside a service group.",
-      "editTitle": "Edit service category",
-      "editDescription": "Update the details of this category.",
-      "create": "Create category",
-      "save": "Save changes",
-      "group": "Group",
-      "groupPlaceholder": "Select a group",
-      "name": "Name",
-      "namePlaceholder": "e.g. Skin rejuvenation",
-      "slug": "Slug",
-      "slugHint": "Used in URLs. Auto-generated from the name.",
-      "descriptionLabel": "Description",
-      "icon": "Icon",
-      "image": "Image URL",
-      "displayOrder": "Display order",
-      "isActive": "Status",
-      "seoTitle": "SEO title",
-      "seoDescription": "SEO description",
-      "discardTitle": "Discard changes?",
-      "discardDescription": "You have unsaved changes in this form.",
-      "discardConfirm": "Discard",
-      "errors": {
-        "name": "Name is required.",
-        "group": "Please select a group.",
-        "slug": "Slug must be kebab-case (letters, numbers, hyphens).",
-        "displayOrder": "Enter a valid number."
-      }
+    "counts": {
+      "active": "{count} Active",
+      "total": "{count} Total"
     },
-    "serviceForm": {
-      "title": "Add a service",
-      "description": "Create a billable treatment in the catalog.",
-      "editTitle": "Edit service",
-      "editDescription": "Update the details of this service.",
-      "create": "Create service",
-      "save": "Save changes",
-      "group": "Group",
-      "groupPlaceholder": "Select a group",
-      "category": "Category",
-      "categoryPlaceholder": "Select a category",
-      "titleLabel": "Title",
-      "titlePlaceholder": "e.g. Microdermabrasion",
-      "slug": "Slug",
-      "slugHint": "Used in URLs. Auto-generated from the title.",
-      "priceType": "Price type",
-      "price": "Price",
-      "priceOnRequestHint": "Price is shown as on request.",
-      "duration": "Duration (min)",
-      "sessions": "Sessions",
-      "displayOrder": "Display order",
-      "shortDesc": "Short description",
-      "fullDesc": "Full description",
-      "coverImage": "Cover image URL",
-      "isActive": "Status",
-      "isFeatured": "Featured",
-      "imagesTitle": "Images",
-      "imagesEmpty": "No images added yet.",
-      "addImage": "Add image",
-      "removeImage": "Remove image",
-      "imageUrlPlaceholder": "https://...",
-      "imageType": "Type",
-      "faqsTitle": "FAQs",
-      "faqsEmpty": "No FAQs added yet.",
-      "addFaq": "Add FAQ",
-      "removeFaq": "Remove FAQ",
-      "faqQuestionPlaceholder": "Question",
-      "faqAnswerPlaceholder": "Answer",
-      "discardTitle": "Discard changes?",
-      "discardDescription": "You have unsaved changes in this form.",
-      "discardConfirm": "Discard",
-      "errors": {
-        "title": "Title is required.",
-        "slug": "Slug must be kebab-case (letters, numbers, hyphens).",
-        "price": "Enter a valid price.",
-        "duration": "Enter a valid duration (1–1440 minutes).",
-        "sessions": "Enter a valid number of sessions (1–100).",
-        "displayOrder": "Enter a valid number.",
-        "category": "Please select a category.",
-        "group": "Please select a group."
-      }
+    "manage": "Manage",
+    "addNew": "Add New"
+  },
+  "servicesManage": {
+    "meta": {
+      "title": "Manage {name} | Nafas Beauty Clinic"
     },
-    "toasts": {
-      "saving": "Saving...",
-      "created": "Service created.",
-      "updated": "Service updated.",
-      "groupCreated": "Group created.",
-      "groupUpdated": "Group updated.",
-      "categoryCreated": "Category created.",
-      "categoryUpdated": "Category updated.",
-      "deleting": "Deleting...",
-      "deleted": "Deleted."
-    },
-    "errors": {
-      "slugTaken": "This slug is already in use. Try a different one.",
-      "save": "The changes could not be saved. Please try again.",
-      "delete": "The item could not be deleted. Please try again."
-    },
-    "pagination": {
-      "showing": "Showing {from}–{to} of {total}",
-      "previous": "Previous",
-      "next": "Next",
-      "pageInfo": "Page {page} of {totalPages}"
+    "heading": "Manage {name}",
+    "description": "This {name} management view is under construction. It will be available soon.",
+    "back": "Back to services",
+    "names": {
+      "groups": "Service Groups",
+      "categories": "Categories",
+      "services": "Services"
     }
   }
 }
