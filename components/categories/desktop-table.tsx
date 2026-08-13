@@ -140,7 +140,13 @@ export function CategoriesDesktopTable() {
               </tr>
             ))
           : data.items.length === 0
-            ? <CategoriesEmptyState />
+            ? (
+                <tr>
+                  <td colSpan={6}>
+                    <CategoriesEmptyState />
+                  </td>
+                </tr>
+              )
               : data.items.map((category) => {
                 const isSelected = selectedIds.includes(category.id);
                 return (

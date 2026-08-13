@@ -16,16 +16,18 @@ export type CategoryWizardSeed = {
 };
 
 function toLangContent(locale: Locale, category: AdminServiceCategory): LangContent {
+  const translation = locale === "en" ? category.translations.en : category.translations.fa;
   return {
-    name: category.translations[locale]?.name ?? "",
-    description: category.translations[locale]?.description ?? "",
+    name: translation?.name ?? "",
+    description: translation?.description ?? "",
   };
 }
 
 function toLangSeo(locale: Locale, category: AdminServiceCategory): LangSeo {
+  const translation = locale === "en" ? category.translations.en : category.translations.fa;
   return {
-    title: category.translations[locale]?.seoTitle ?? "",
-    description: category.translations[locale]?.seoDescription ?? "",
+    title: translation?.seoTitle ?? "",
+    description: translation?.seoDescription ?? "",
   };
 }
 

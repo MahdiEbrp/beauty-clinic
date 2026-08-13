@@ -814,6 +814,8 @@
     "errorTitle": "Couldn't load service categories",
     "errorDescription": "Something went wrong while loading the list. Please try again.",
     "retry": "Retry",
+    "selectAllPage": "Select all categories on this page",
+    "selectRow": "Select category",
     "table": {
       "name": "Category",
       "group": "Group",

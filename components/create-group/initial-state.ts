@@ -15,16 +15,18 @@ export type GroupWizardSeed = {
 };
 
 function toLangContent(locale: Locale, group: AdminServiceGroup): LangContent {
+  const translation = locale === "en" ? group.translations.en : group.translations.fa;
   return {
-    name: group.translations[locale]?.name ?? "",
-    description: group.translations[locale]?.description ?? "",
+    name: translation?.name ?? "",
+    description: translation?.description ?? "",
   };
 }
 
 function toLangSeo(locale: Locale, group: AdminServiceGroup): LangSeo {
+  const translation = locale === "en" ? group.translations.en : group.translations.fa;
   return {
-    title: group.translations[locale]?.seoTitle ?? "",
-    description: group.translations[locale]?.seoDescription ?? "",
+    title: translation?.seoTitle ?? "",
+    description: translation?.seoDescription ?? "",
   };
 }
 
