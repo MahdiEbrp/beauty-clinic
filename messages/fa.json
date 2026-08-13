@@ -1135,7 +1135,8 @@
     "iconPicker": {
       "title": "انتخاب آیکون",
       "searchPlaceholder": "جستجوی آیکون…",
-      "empty": "هیچ آیکونی با جستجوی شما مطابقت ندارد."
+      "empty": "هیچ آیکونی با جستجوی شما مطابقت ندارد.",
+      "resultCount": "نمایش {shown} از {count} آیکون."
     },
     "errors": {
       "slugRequired": "اسلاگ با فرمت kebab-case الزامی است.",

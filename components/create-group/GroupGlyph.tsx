@@ -1,10 +1,17 @@
 import { createElement } from "react";
-import { groupIconForKey } from "@/data/group-icons";
+import { DynamicIcon, type IconName } from "lucide-react/dynamic";
+import { Sparkles } from "lucide-react";
+
+import {
+  canonicalIconName,
+  groupIconForKey,
+} from "@/data/group-icons";
 
 /**
- * Renders the lucide icon stored on a service group. The component reference
- * is resolved via createElement so it is never created inside the render
- * phase (the icon is data, not a React component definition).
+ * Renders the lucide icon stored on a service group. Curated choices use the
+ * statically imported component (resolved via createElement so the icon stays
+ * data, not a component definition); any other stored key is resolved lazily
+ * through `DynamicIcon` so the full icon library stays out of the bundle.
  */
 export default function GroupGlyph({
   name,
@@ -20,5 +27,30 @@ export default function GroupGlyph({
   "aria-hidden"?: boolean;
 }) {
   const Glyph = groupIconForKey(name);
-  return createElement(Glyph, { className, size, strokeWidth, "aria-hidden": ariaHidden });
+  if (Glyph) {
+    return createElement(Glyph, {
+      className,
+      size,
+      strokeWidth,
+      "aria-hidden": ariaHidden,
+    });
+  }
+  const canonical = canonicalIconName(name);
+  if (canonical) {
+    return (
+      <DynamicIcon
+        name={canonical as IconName}
+        className={className}
+        size={size}
+        strokeWidth={strokeWidth}
+        aria-hidden={ariaHidden}
+      />
+    );
+  }
+  return createElement(Sparkles, {
+    className,
+    size,
+    strokeWidth,
+    "aria-hidden": ariaHidden,
+  });
 }

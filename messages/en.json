@@ -1135,7 +1135,8 @@
     "iconPicker": {
       "title": "Choose an icon",
       "searchPlaceholder": "Search icons…",
-      "empty": "No icons match your search."
+      "empty": "No icons match your search.",
+      "resultCount": "Showing {shown} of {count} icons."
     },
     "errors": {
       "slugRequired": "A kebab-case slug is required.",

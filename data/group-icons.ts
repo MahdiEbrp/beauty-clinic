@@ -43,6 +43,7 @@ import {
   Zap,
   type LucideIcon,
 } from "lucide-react";
+import { iconNames } from "lucide-react/dynamic";
 
 /**
  * Curated icon choices for the service-group wizard. The `key` is the value
@@ -94,9 +95,56 @@ export const GROUP_ICONS: Array<{ key: string; icon: LucideIcon }> = [
   { key: "Gift", icon: Gift },
 ];
 
-/** Resolve a stored icon key to its lucide component, with a safe fallback. */
-export function groupIconForKey(key: string | null): LucideIcon {
-  if (!key) return Sparkles;
-  const match = GROUP_ICONS.find((entry) => entry.key === key);
-  return match?.icon ?? Sparkles;
+const normalizeIconName = (name: string): string =>
+  name.toLowerCase().replace(/[\s_-]+/g, "");
+
+const pascalFromKebab = (name: string): string =>
+  name
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join("");
+
+/** Canonical kebab-case names for every icon shipped by lucide. */
+export const ICON_NAME_SET: ReadonlySet<string> = new Set(iconNames);
+
+/** Maps legacy PascalCase component names back to their canonical kebab-case name. */
+const KEBAB_BY_PASCAL: ReadonlyMap<string, string> = new Map(
+  iconNames.map((name) => [pascalFromKebab(name), name]),
+);
+
+/** Resolve a curated icon whose canonical name matches the given key. */
+const CURATED_BY_CANONICAL: ReadonlyMap<string, LucideIcon> = new Map(
+  GROUP_ICONS.flatMap((entry) => {
+    const canonical = KEBAB_BY_PASCAL.get(entry.key);
+    return canonical ? [[canonical, entry.icon] as const] : [];
+  }),
+);
+
+/**
+ * Normalize any stored icon key (legacy PascalCase or canonical kebab-case) to
+ * the canonical lucide kebab-case name, or null when it is not a real icon.
+ */
+export function canonicalIconName(key: string): string | null {
+  if (ICON_NAME_SET.has(key)) return key;
+  return KEBAB_BY_PASCAL.get(key) ?? null;
+}
+
+/** All lucide icons whose normalized name contains the query, in kebab-case. */
+export function searchAllIcons(query: string): Array<string> {
+  const needle = normalizeIconName(query);
+  if (!needle) return [];
+  return iconNames.filter((name) => normalizeIconName(name).includes(needle));
+}
+
+/**
+ * Resolve a stored icon key to its static lucide component when it is one of
+ * the curated choices (a fast, dependency-free path), or null when the key
+ * should be rendered lazily through `DynamicIcon` instead.
+ */
+export function groupIconForKey(key: string | null): LucideIcon | null {
+  if (!key) return null;
+  const direct = GROUP_ICONS.find((entry) => entry.key === key);
+  if (direct) return direct.icon;
+  const canonical = canonicalIconName(key);
+  return canonical ? CURATED_BY_CANONICAL.get(canonical) ?? null : null;
 }

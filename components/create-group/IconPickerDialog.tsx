@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Search } from "lucide-react";
+import { DynamicIcon, type IconName } from "lucide-react/dynamic";
 
 import {
   Dialog,
@@ -10,8 +11,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { GROUP_ICONS } from "@/data/group-icons";
+import {
+  canonicalIconName,
+  GROUP_ICONS,
+  searchAllIcons,
+} from "@/data/group-icons";
 import { inputClass } from "./ui";
+
+const MAX_RESULTS = 120;
 
 export default function IconPickerDialog({
   open,
@@ -27,13 +34,14 @@ export default function IconPickerDialog({
   const t = useTranslations("groupWizard");
   const [search, setSearch] = useState("");
 
-  const filtered = useMemo(() => {
-    const query = search.trim().toLowerCase();
-    if (!query) return GROUP_ICONS;
-    return GROUP_ICONS.filter((entry) =>
-      entry.key.toLowerCase().includes(query),
-    );
-  }, [search]);
+  const query = search.trim();
+  const matches = useMemo(() => (query ? searchAllIcons(query) : []), [query]);
+  const shownMatches = matches.slice(0, MAX_RESULTS);
+  const selectedCanonical = canonicalIconName(selected) ?? selected;
+
+  const pick = (key: string) => {
+    onSelect(canonicalIconName(key) ?? key);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -49,7 +57,7 @@ export default function IconPickerDialog({
         <div className="border-b border-border-primary p-4">
           <div className="relative">
             <Search
-              className="pointer-events-none absolute inset-y-0 start-3.5 my-auto size-4 text-content-tertiary"
+              className="pointer-events-none absolute inset-y-0 inset-s-3.5 my-auto size-4 text-content-tertiary"
               aria-hidden="true"
             />
             <input
@@ -62,19 +70,48 @@ export default function IconPickerDialog({
           </div>
         </div>
         <div className="max-h-72 overflow-y-auto p-4">
-          {filtered.length === 0 ? (
-            <p className="py-10 text-center text-dash-body-sm text-content-tertiary">
-              {t("iconPicker.empty")}
-            </p>
+          {query ? (
+            matches.length === 0 ? (
+              <p className="py-10 text-center text-dash-body-sm text-content-tertiary">
+                {t("iconPicker.empty")}
+              </p>
+            ) : (
+              <div className="grid grid-cols-5 gap-2 sm:grid-cols-6">
+                {shownMatches.map((name) => {
+                  const isSelected = name === selectedCanonical;
+                  return (
+                    <button
+                      key={name}
+                      type="button"
+                      onClick={() => pick(name)}
+                      title={name}
+                      aria-pressed={isSelected}
+                      aria-label={name}
+                      className={`flex aspect-square items-center justify-center rounded-control border transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+                        isSelected
+                          ? "border-accent bg-accent text-on-primary"
+                          : "border-border-primary bg-surface-secondary text-content-secondary hover:border-border-interactive hover:bg-surface-tertiary"
+                      }`}
+                    >
+                      <DynamicIcon
+                        name={name as IconName}
+                        className="size-5"
+                        aria-hidden="true"
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            )
           ) : (
             <div className="grid grid-cols-5 gap-2 sm:grid-cols-6">
-              {filtered.map(({ key, icon: Icon }) => {
-                const isSelected = key === selected;
+              {GROUP_ICONS.map(({ key, icon: Icon }) => {
+                const isSelected = (canonicalIconName(key) ?? key) === selectedCanonical;
                 return (
                   <button
                     key={key}
                     type="button"
-                    onClick={() => onSelect(key)}
+                    onClick={() => pick(key)}
                     title={key}
                     aria-pressed={isSelected}
                     aria-label={key}
@@ -89,6 +126,14 @@ export default function IconPickerDialog({
                 );
               })}
             </div>
+          )}
+          {query && matches.length > MAX_RESULTS && (
+            <p className="mt-3 text-center text-dash-caption text-content-tertiary">
+              {t("iconPicker.resultCount", {
+                count: matches.length,
+                shown: MAX_RESULTS,
+              })}
+            </p>
           )}
         </div>
       </DialogContent>
