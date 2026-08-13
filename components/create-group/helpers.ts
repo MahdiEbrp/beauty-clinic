@@ -9,7 +9,7 @@ export const STEPS = [
 ] as const;
 
 /** Steps that expose the en/fa language switcher. */
-export const LANG_AWARE_STEPS = new Set<number>([3, 4]);
+export const LANG_AWARE_STEPS = new Set<number>([1, 3, 4]);
 
 export const LOCALES: readonly Locale[] = ["en", "fa"] as const;
 

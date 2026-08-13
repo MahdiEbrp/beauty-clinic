@@ -961,7 +961,7 @@
     "identity": {
       "groupName": "Group Name",
       "groupNamePlaceholder": "e.g. Laser Hair Removal",
-      "groupNameHint": "This English name is the base for both translations and auto-generates the slug below.",
+      "groupNameHint": "Enter the name in each language. The English name auto-generates the slug below.",
       "slug": "Slug",
       "slugHint": "Used in the public URL. Lowercase letters, numbers and hyphens.",
       "slugPrefix": "/services/",

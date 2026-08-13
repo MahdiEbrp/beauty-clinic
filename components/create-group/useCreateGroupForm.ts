@@ -67,7 +67,6 @@ export function useCreateGroupForm() {
     );
   };
 
-  const setEnName = (value: string) => patchContent("en", { name: value });
   const setLangName = (value: string) => patchContent(lang, { name: value });
   const setLangDescription = (value: string) =>
     patchContent(lang, { description: value });
@@ -88,7 +87,10 @@ export function useCreateGroupForm() {
   const validateStep = (target: number): boolean => {
     const errors: FieldErrors = {};
     if (target === 1) {
-      if (!content.en.name.trim()) errors.enName = t("errors.nameRequired");
+      if (!currentContent.name.trim()) {
+        if (lang === "en") errors.enName = t("errors.nameRequired");
+        else errors.faName = t("errors.nameRequired");
+      }
       if (!effectiveSlug.trim() || !isKebabSlug(effectiveSlug)) {
         errors.slug = t("errors.slugRequired");
       }
@@ -230,7 +232,6 @@ export function useCreateGroupForm() {
     fieldErrors,
     serverError,
     submitting,
-    setEnName,
     setLangName,
     setLangDescription,
     setSeoTitle,

@@ -3,12 +3,13 @@
 import { useTranslations } from "next-intl";
 import { Lock, Pencil, RefreshCw, Unlock } from "lucide-react";
 
-import type { FieldErrors } from "../types";
+import type { FieldErrors, Locale } from "../types";
 import { Field, Panel, inputClass } from "../ui";
 
 export default function IdentityStep({
-  enName,
-  onEnNameChange,
+  lang,
+  name,
+  onNameChange,
   slug,
   slugManual,
   onSlugChange,
@@ -19,8 +20,9 @@ export default function IdentityStep({
   onDisplayOrderChange,
   errors,
 }: {
-  enName: string;
-  onEnNameChange: (value: string) => void;
+  lang: Locale;
+  name: string;
+  onNameChange: (value: string) => void;
   slug: string;
   slugManual: boolean;
   onSlugChange: (value: string) => void;
@@ -32,25 +34,43 @@ export default function IdentityStep({
   errors: FieldErrors;
 }) {
   const t = useTranslations("groupWizard");
+  const langLabel = t(`language.${lang}`);
+  const nameError = lang === "en" ? errors.enName : errors.faName;
 
   return (
     <Panel>
       <div className="grid gap-6">
-        <Field
-          id="group-name"
-          label={t("identity.groupName")}
-          hint={t("identity.groupNameHint")}
-          error={errors.enName}
-          required
-        >
+        <div className="grid gap-2.5">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-dash-caption font-bold text-content-secondary">
+              {t("identity.groupName")}
+              <span className="ms-1 text-copper" aria-hidden="true">
+                *
+              </span>
+            </span>
+            <span className="rounded-pill bg-copper/10 px-2.5 py-1 text-dash-caption font-bold text-copper-strong">
+              {t("language.editing", { lang: langLabel })}
+            </span>
+          </div>
           <input
-            id="group-name"
-            value={enName}
-            onChange={(event) => onEnNameChange(event.target.value)}
+            dir={lang === "fa" ? "rtl" : "ltr"}
+            value={name}
+            onChange={(event) => onNameChange(event.target.value)}
             placeholder={t("identity.groupNamePlaceholder")}
-            className={inputClass(Boolean(errors.enName))}
+            aria-label={t("identity.groupName")}
+            className={inputClass(Boolean(nameError))}
           />
-        </Field>
+          <div className="flex flex-wrap gap-x-4 gap-y-1">
+            <p className="text-dash-caption text-content-tertiary">
+              {t("identity.groupNameHint")}
+            </p>
+            {nameError && (
+              <p role="alert" className="text-dash-caption font-medium text-error">
+                {nameError}
+              </p>
+            )}
+          </div>
+        </div>
 
         <div className="grid gap-2.5">
           <div className="flex items-center justify-between gap-3">

@@ -36,7 +36,6 @@ export default function CreateServiceGroupForm() {
     fieldErrors,
     serverError,
     submitting,
-    setEnName,
     setLangName,
     setLangDescription,
     setSeoTitle,
@@ -67,8 +66,9 @@ export default function CreateServiceGroupForm() {
       <div aria-live="polite" className="space-y-6">
         {step === 1 && (
           <IdentityStep
-            enName={content.en.name}
-            onEnNameChange={setEnName}
+            lang={lang}
+            name={currentContent.name}
+            onNameChange={setLangName}
             slug={effectiveSlug}
             slugManual={slugManual}
             onSlugChange={setSlug}
