@@ -7,12 +7,14 @@ export default function WizardActionBar({
   step,
   total,
   submitting,
+  submitLabel,
   onBack,
   onPrimary,
 }: {
   step: number;
   total: number;
   submitting: boolean;
+  submitLabel?: string;
   onBack: () => void;
   onPrimary: () => void;
 }) {
@@ -41,7 +43,7 @@ export default function WizardActionBar({
         {submitting && isLastStep && (
           <Loader2 className="size-4 animate-spin" aria-hidden="true" />
         )}
-        {isLastStep ? t("nav.create") : t("nav.continue")}
+        {isLastStep ? (submitLabel ?? t("nav.create")) : t("nav.continue")}
         {!isLastStep && (
           <ChevronRight className="size-4 rtl-mirror" aria-hidden="true" />
         )}

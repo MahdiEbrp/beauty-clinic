@@ -5,35 +5,41 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/src/i18n/navigation";
 import { toast } from "sonner";
 
+import type { AdminServiceGroup } from "@/lib/services/types";
 import { createServiceGroupSchema } from "@/lib/validation/services";
 
 import { STEPS, isKebabSlug, slugify } from "./helpers";
+import { seedFromGroup } from "./initial-state";
+import { buildGroupPayload, submitGroupRequest } from "./submit";
 import type { FieldErrors, LangContent, LangSeo, Locale } from "./types";
 
-export function useCreateGroupForm() {
+export function useCreateGroupForm(initialGroup?: AdminServiceGroup) {
   const t = useTranslations("groupWizard");
   const router = useRouter();
+  const mode: "create" | "edit" = initialGroup ? "edit" : "create";
+  const seed = initialGroup ? seedFromGroup(initialGroup) : undefined;
 
   const [step, setStep] = useState<number>(1);
   const [lang, setLang] = useState<Locale>("en");
 
-  const [content, setContent] = useState<Record<Locale, LangContent>>({
-    en: { name: "", description: "" },
-    fa: { name: "", description: "" },
-  });
-  const [slugDraft, setSlugDraft] = useState("");
-  const [slugManual, setSlugManual] = useState(false);
-  const [isActive, setIsActive] = useState(true);
-  const [displayOrder, setDisplayOrder] = useState("0");
+  const [content, setContent] = useState<Record<Locale, LangContent>>(
+    seed?.content ?? {
+      en: { name: "", description: "" },
+      fa: { name: "", description: "" },
+    },
+  );
+  const [slugDraft, setSlugDraft] = useState(seed?.slugDraft ?? "");
+  const [slugManual, setSlugManual] = useState(seed?.slugManual ?? false);
+  const [isActive, setIsActive] = useState(seed?.isActive ?? true);
+  const [displayOrder, setDisplayOrder] = useState(seed?.displayOrder ?? "0");
 
-  const [iconKey, setIconKey] = useState("Sparkles");
-  const [imageUrl, setImageUrl] = useState("");
+  const [iconKey, setIconKey] = useState(seed?.iconKey ?? "Sparkles");
+  const [imageUrl, setImageUrl] = useState(seed?.imageUrl ?? "");
   const [iconPickerOpen, setIconPickerOpen] = useState(false);
 
-  const [seo, setSeo] = useState<Record<Locale, LangSeo>>({
-    en: { title: "", description: "" },
-    fa: { title: "", description: "" },
-  });
+  const [seo, setSeo] = useState<Record<Locale, LangSeo>>(
+    seed?.seo ?? { en: { title: "", description: "" }, fa: { title: "", description: "" } },
+  );
 
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -103,28 +109,6 @@ export function useCreateGroupForm() {
     return Object.values(errors).length === 0;
   };
 
-  const buildPayload = () => ({
-    slug: effectiveSlug.trim(),
-    icon: iconKey || null,
-    image: imageUrl.trim() || null,
-    displayOrder: Number(displayOrder) || 0,
-    isActive,
-    translations: {
-      en: {
-        name: content.en.name.trim(),
-        description: content.en.description.trim() || null,
-        seoTitle: seo.en.title.trim() || null,
-        seoDescription: seo.en.description.trim() || null,
-      },
-      fa: {
-        name: content.fa.name.trim(),
-        description: content.fa.description.trim() || null,
-        seoTitle: seo.fa.title.trim() || null,
-        seoDescription: seo.fa.description.trim() || null,
-      },
-    },
-  });
-
   const applyValidationToStep = (
     issues: Array<{ path: Array<string | number | symbol> }>,
   ) => {
@@ -154,7 +138,15 @@ export function useCreateGroupForm() {
 
   const handleCreate = async () => {
     setServerError(null);
-    const payload = buildPayload();
+    const payload = buildGroupPayload({
+      content,
+      seo,
+      slug: effectiveSlug,
+      iconKey,
+      imageUrl,
+      displayOrder,
+      isActive,
+    });
     const parsed = createServiceGroupSchema.safeParse(payload);
     if (!parsed.success) {
       applyValidationToStep(parsed.error.issues);
@@ -162,30 +154,29 @@ export function useCreateGroupForm() {
     }
 
     setSubmitting(true);
-    const pending = toast.loading(t("toast.creating"));
+    const pending = toast.loading(
+      t(mode === "edit" ? "toast.saving" : "toast.creating"),
+    );
     try {
-      const response = await fetch("/api/v1/service-groups", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(parsed.data),
+      const result = await submitGroupRequest({
+        groupId: mode === "edit" ? initialGroup?.id : undefined,
+        payload: parsed.data,
       });
-      if (!response.ok) {
-        const errorBody = (await response.json().catch(() => null)) as
-          | { error?: { code?: string; message?: string } }
-          | null;
-        if (errorBody?.error?.code === "SLUG_TAKEN") {
+      if (!result.ok) {
+        if (result.kind === "slug-taken") {
           setFieldErrors((prev) => ({ ...prev, slug: t("errors.slugTaken") }));
           goTo(1);
           toast.error(t("errors.slugTaken"), { id: pending });
         } else {
-          const message = errorBody?.error?.message;
+          const message = result.message;
           setServerError(message ?? t("toast.error"));
           toast.error(t("toast.error"), { id: pending });
         }
         return;
       }
-      toast.success(t("toast.created"), { id: pending });
+      toast.success(t(mode === "edit" ? "toast.updated" : "toast.created"), {
+        id: pending,
+      });
       router.push("/dashboard/services/manage/groups");
       router.refresh();
     } catch {
@@ -211,6 +202,7 @@ export function useCreateGroupForm() {
   };
 
   return {
+    mode,
     step,
     goTo,
     lang,

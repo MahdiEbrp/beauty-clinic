@@ -1,6 +1,9 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { AlertTriangle } from "lucide-react";
+
+import type { AdminServiceGroup } from "@/lib/services/types";
 
 import { LANG_AWARE_STEPS, STEPS } from "./helpers";
 import IconPickerDialog from "./IconPickerDialog";
@@ -13,8 +16,14 @@ import { useCreateGroupForm } from "./useCreateGroupForm";
 import WizardActionBar from "./WizardActionBar";
 import WizardHeader from "./WizardHeader";
 
-export default function CreateServiceGroupForm() {
+export default function CreateServiceGroupForm({
+  group,
+}: {
+  group?: AdminServiceGroup;
+}) {
+  const t = useTranslations("groupWizard");
   const {
+    mode,
     step,
     goTo,
     lang,
@@ -47,9 +56,12 @@ export default function CreateServiceGroupForm() {
     setImageUrl,
     handlePrimary,
     onIconSelect,
-  } = useCreateGroupForm();
+  } = useCreateGroupForm(group);
 
   const isLangAware = LANG_AWARE_STEPS.has(step);
+  const heading = mode === "edit" ? t("editHeading") : t("heading");
+  const subtitle = mode === "edit" ? t("editSubtitle") : t("subtitle");
+  const submitLabel = mode === "edit" ? t("nav.save") : undefined;
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -59,6 +71,8 @@ export default function CreateServiceGroupForm() {
         total={STEPS.length}
         lang={lang}
         langAware={isLangAware}
+        heading={heading}
+        subtitle={subtitle}
         onLangChange={setLang}
         onGoTo={goTo}
       />
@@ -142,6 +156,7 @@ export default function CreateServiceGroupForm() {
         step={step}
         total={STEPS.length}
         submitting={submitting}
+        submitLabel={submitLabel}
         onBack={() => goTo(step - 1)}
         onPrimary={handlePrimary}
       />

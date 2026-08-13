@@ -1,14 +1,22 @@
 import { withSecurity, jsonOk } from "@/lib/api/security";
-import { createGroup, listGroups } from "@/lib/services/service";
+import { createGroup, listServiceGroups } from "@/lib/services/service";
 import { createServiceGroupSchema } from "@/lib/validation/services";
+import { listServiceGroupsQuerySchema } from "@/lib/validation/service-groups-admin";
 
 export const runtime = "nodejs";
 
 export const GET = withSecurity(
-  { auth: "required", permissions: "services.read" },
-  async () => {
-    const groups = await listGroups();
-    return jsonOk(groups);
+  {
+    auth: "required",
+    permissions: "services.read",
+    validate: { query: listServiceGroupsQuerySchema },
+  },
+  async (_request, ctx) => {
+    const query =
+      ctx.query ?? (() => { throw new Error("Query params are missing"); })();
+    const { page, perPage, search, status } = query;
+    const result = await listServiceGroups({ page, perPage, search, status });
+    return jsonOk(result);
   },
 );
 

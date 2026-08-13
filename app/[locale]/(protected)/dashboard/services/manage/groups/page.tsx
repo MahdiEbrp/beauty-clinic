@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import ServiceManagePlaceholder, {
-  type ManageEntity,
-} from "@/components/ServiceManagePlaceholder";
+import GroupsContent from "@/components/GroupsContent";
 import { requirePermission } from "@/lib/auth/dal";
+import { listServiceGroups } from "@/lib/services/service";
 import { siteUrl } from "@/lib/site";
 
-const ENTITY: ManageEntity = "groups";
 const ROUTE = "/dashboard/services/manage/groups";
 
 export async function generateMetadata({
@@ -16,10 +14,11 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "servicesManage" });
+  const t = await getTranslations({ locale, namespace: "serviceGroups" });
 
   return {
-    title: t("meta.title", { name: t(`names.${ENTITY}`) }),
+    title: t("meta.title"),
+    description: t("meta.description"),
     alternates: {
       canonical: `${siteUrl}/${locale}${ROUTE}`,
       languages: {
@@ -32,6 +31,8 @@ export async function generateMetadata({
 }
 
 export default async function ManageGroupsPage() {
-  await requirePermission("services.read");
-  return <ServiceManagePlaceholder entity={ENTITY} />;
+  const session = await requirePermission("services.read");
+  const initialData = await listServiceGroups({ page: 1, perPage: 10 });
+
+  return <GroupsContent user={session.user} initialData={initialData} />;
 }

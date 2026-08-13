@@ -13,6 +13,8 @@ export default function WizardHeader({
   total,
   lang,
   langAware,
+  heading,
+  subtitle,
   onLangChange,
   onGoTo,
 }: {
@@ -21,6 +23,8 @@ export default function WizardHeader({
   total: number;
   lang: Locale;
   langAware: boolean;
+  heading?: string;
+  subtitle?: string;
   onLangChange: (value: Locale) => void;
   onGoTo: (next: number) => void;
 }) {
@@ -39,10 +43,10 @@ export default function WizardHeader({
         </Link>
         <div className="space-y-1">
           <h1 className="text-dash-display font-bold tracking-tight text-accent">
-            {t("heading")}
+            {heading ?? t("heading")}
           </h1>
           <p className="max-w-2xl text-dash-body text-content-secondary">
-            {t("subtitle")}
+            {subtitle ?? t("subtitle")}
           </p>
         </div>
       </div>

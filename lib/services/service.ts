@@ -10,6 +10,8 @@ export {
 } from "./service-mutations";
 export {
   listGroups,
+  listServiceGroups,
+  findGroupIds,
   getGroup,
   createGroup,
   updateGroup,
