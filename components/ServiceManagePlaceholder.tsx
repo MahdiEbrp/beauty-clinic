@@ -6,6 +6,7 @@ import {
   Construction,
   LayoutGrid,
   Network,
+  Plus,
   Stethoscope,
 } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
@@ -46,13 +47,24 @@ export default function ServiceManagePlaceholder({
         <p className="mt-3 text-dash-body-sm text-content-secondary">
           {t("servicesManage.description", { name })}
         </p>
-        <Link
-          href="/dashboard/services"
-          className="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-pill bg-accent px-5 text-dash-body-sm font-bold text-content-contrast transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          <ArrowRight className="size-4 rtl-mirror" aria-hidden="true" />
-          <span>{t("servicesManage.back")}</span>
-        </Link>
+        <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+          {entity === "groups" && (
+            <Link
+              href="/dashboard/services/manage/groups/add"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill bg-accent px-5 text-dash-body-sm font-bold text-content-contrast transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              <Plus className="size-4" aria-hidden="true" />
+              <span>{t("servicesManage.addNew")}</span>
+            </Link>
+          )}
+          <Link
+            href="/dashboard/services"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill border border-border-interactive bg-surface-secondary px-5 text-dash-body-sm font-bold text-accent transition-colors hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            <ArrowRight className="size-4 rtl-mirror" aria-hidden="true" />
+            <span>{t("servicesManage.back")}</span>
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -62,6 +62,7 @@ export default function ServicesAnalyticsContent({
       title: t("servicesAnalytics.hub.group.name"),
       description: t("servicesAnalytics.hub.group.description"),
       href: "/dashboard/services/manage/groups",
+      addHref: "/dashboard/services/manage/groups/add",
       icon: Network,
       badge: t("servicesAnalytics.counts.active", {
         count: format.number(data.groups.active),
@@ -255,7 +256,7 @@ export default function ServicesAnalyticsContent({
                   <Settings2 className="size-4 shrink-0" aria-hidden="true" />
                   <span>{t("servicesAnalytics.manage")}</span>
                 </Link>
-                <Link href={card.href} className={addClass}>
+                <Link href={card.addHref ?? card.href} className={addClass}>
                   <Plus className="size-4 shrink-0" aria-hidden="true" />
                   <span>{t("servicesAnalytics.addNew")}</span>
                 </Link>

@@ -908,10 +908,148 @@
     "heading": "Manage {name}",
     "description": "This {name} management view is under construction. It will be available soon.",
     "back": "Back to services",
+    "addNew": "Add New",
     "names": {
       "groups": "Service Groups",
       "categories": "Categories",
       "services": "Services"
+    }
+  },
+  "groupWizard": {
+    "meta": {
+      "title": "Add Service Group | Nafas Beauty Clinic",
+      "description": "Create a new top-level service group with bilingual content and SEO metadata."
+    },
+    "back": "Back to Service Groups",
+    "heading": "Create Service Group",
+    "subtitle": "Add a top-level service group to your catalog.",
+    "steps": {
+      "identity": {
+        "name": "Identity",
+        "desc": "Define the group",
+        "fullDesc": "Define the basic identity of this service group."
+      },
+      "appearance": {
+        "name": "Appearance",
+        "desc": "Create its visual identity",
+        "fullDesc": "Give this service group a visual identity."
+      },
+      "localization": {
+        "name": "Localization",
+        "desc": "Add bilingual content",
+        "fullDesc": "Configure language-specific names and descriptions."
+      },
+      "seo": {
+        "name": "SEO",
+        "desc": "Prepare search metadata",
+        "fullDesc": "Optimize this group for search engines."
+      },
+      "review": {
+        "name": "Review",
+        "desc": "Confirm everything",
+        "fullDesc": "Review and confirm your settings."
+      }
+    },
+    "language": {
+      "label": "Language",
+      "en": "English (EN)",
+      "fa": "Persian (FA)",
+      "editing": "Editing: {lang}",
+      "enSection": "English (Base)",
+      "faSection": "Persian (FA)"
+    },
+    "identity": {
+      "groupName": "Group Name",
+      "groupNamePlaceholder": "e.g. Laser Hair Removal",
+      "groupNameHint": "This English name is the base for both translations and auto-generates the slug below.",
+      "slug": "Slug",
+      "slugHint": "Used in the public URL. Lowercase letters, numbers and hyphens.",
+      "slugPrefix": "/services/",
+      "editManual": "Edit manually",
+      "resetAuto": "Reset to auto",
+      "auto": "Auto",
+      "custom": "Custom",
+      "active": "Active Status",
+      "activeHint": "Make this group visible to customers.",
+      "activeLabel": "Active",
+      "inactiveLabel": "Inactive",
+      "displayOrder": "Display Order",
+      "displayOrderHint": "Lower numbers appear first in the catalog."
+    },
+    "appearance": {
+      "icon": "Group icon",
+      "iconHint": "Choose an icon for this service group.",
+      "change": "Change icon",
+      "image": "Cover image",
+      "imageHint": "Paste an image URL to represent this service group.",
+      "imagePlaceholder": "https://example.com/cover.jpg",
+      "imagePreview": "Preview"
+    },
+    "localization": {
+      "title": "Bilingual Content",
+      "name": "Name",
+      "namePlaceholder": "Enter the group name in {lang}",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter a short description in {lang}",
+      "descriptionHint": "Shown on the public catalog."
+    },
+    "seo": {
+      "title": "Search Preview",
+      "noTitle": "(No title set)",
+      "noDescription": "(No meta description set)",
+      "pageTitle": "Page Title Tag",
+      "pageTitlePlaceholder": "Enter a page title",
+      "metaDescription": "Meta Description",
+      "metaDescriptionPlaceholder": "Enter a meta description",
+      "chars": "{count} / {max}",
+      "incompleteTitle": "Search metadata is incomplete for this language.",
+      "incompleteDescription": "This may affect how the group appears in search results."
+    },
+    "review": {
+      "title": "Ready to Launch",
+      "description": "Review your service group details below. Once created, this group will be available for booking immediately.",
+      "identity": "Identity",
+      "appearance": "Appearance",
+      "localization": "Localization",
+      "seo": "SEO",
+      "groupName": "Group Name",
+      "slug": "Slug",
+      "visibility": "Visibility",
+      "icon": "Icon",
+      "image": "Cover Image",
+      "imageSet": "Cover image set",
+      "notProvided": "—",
+      "notSet": "Not set",
+      "optimized": "Optimized",
+      "incomplete": "Incomplete",
+      "english": "English",
+      "persian": "Persian",
+      "submit": "Create Service Group",
+      "creating": "Creating…"
+    },
+    "nav": {
+      "back": "Back",
+      "continue": "Continue",
+      "create": "Create Group",
+      "stepOf": "Step {current} of {total}"
+    },
+    "iconPicker": {
+      "title": "Choose an icon",
+      "searchPlaceholder": "Search icons…",
+      "empty": "No icons match your search."
+    },
+    "errors": {
+      "slugRequired": "A kebab-case slug is required.",
+      "nameRequired": "Fill in the name in both languages.",
+      "setupError": "Something went wrong while preparing the form.",
+      "slugTaken": "This slug is already in use. Choose another one.",
+      "createFailed": "Could not create the group. {message}",
+      "generic": "These fields need attention before continuing."
+    },
+    "toast": {
+      "creating": "Creating service group…",
+      "created": "Service group created.",
+      "error": "Could not create the group."
     }
   }
 }
