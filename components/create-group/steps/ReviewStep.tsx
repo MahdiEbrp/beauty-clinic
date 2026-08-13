@@ -16,6 +16,8 @@ export default function ReviewStep({
   isActive,
   iconKey,
   imageUrl,
+  ns,
+  extraSummary,
 }: {
   content: Record<"en" | "fa", LangContent>;
   seo: Record<"en" | "fa", LangSeo>;
@@ -23,8 +25,10 @@ export default function ReviewStep({
   isActive: boolean;
   iconKey: string;
   imageUrl: string;
+  ns?: string;
+  extraSummary?: { label: string; value: string };
 }) {
-  const t = useTranslations("groupWizard");
+  const t = useTranslations(ns ?? "groupWizard");
 
   const seoIncomplete =
     !seo.en.title.trim() ||
@@ -65,6 +69,14 @@ export default function ReviewStep({
 
       <ReviewCard title={t("review.identity")}>
         <dl className="grid grid-cols-2 gap-4 p-5">
+          {extraSummary && (
+            <div className="space-y-1">
+              <ReviewLabel>{extraSummary.label}</ReviewLabel>
+              <dd className="wrap-break-word text-dash-body font-medium text-content-primary">
+                {extraSummary.value || t("review.notProvided")}
+              </dd>
+            </div>
+          )}
           <div className="space-y-1">
             <ReviewLabel>{t("review.groupName")}</ReviewLabel>
             <dd className="wrap-break-word text-dash-body font-medium text-content-primary">

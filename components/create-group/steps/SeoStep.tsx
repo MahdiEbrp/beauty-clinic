@@ -16,6 +16,7 @@ export default function SeoStep({
   onDescriptionChange,
   slug,
   faIncomplete,
+  ns,
 }: {
   lang: Locale;
   title: string;
@@ -24,8 +25,9 @@ export default function SeoStep({
   onDescriptionChange: (value: string) => void;
   slug: string;
   faIncomplete: boolean;
+  ns?: string;
 }) {
-  const t = useTranslations("groupWizard");
+  const t = useTranslations(ns ?? "groupWizard");
 
   return (
     <Panel>

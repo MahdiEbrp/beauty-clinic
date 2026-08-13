@@ -1,14 +1,22 @@
 import { withSecurity, jsonOk } from "@/lib/api/security";
-import { createCategory, listCategories } from "@/lib/services/service";
+import { createCategory, listServiceCategories } from "@/lib/services/service";
 import { createServiceCategorySchema } from "@/lib/validation/services";
+import { listServiceCategoriesQuerySchema } from "@/lib/validation/service-categories-admin";
 
 export const runtime = "nodejs";
 
 export const GET = withSecurity(
-  { auth: "required", permissions: "services.read" },
-  async () => {
-    const categories = await listCategories();
-    return jsonOk(categories);
+  {
+    auth: "required",
+    permissions: "services.read",
+    validate: { query: listServiceCategoriesQuerySchema },
+  },
+  async (_request, ctx) => {
+    const query =
+      ctx.query ?? (() => { throw new Error("Query params are missing"); })();
+    const { page, perPage, search, status } = query;
+    const result = await listServiceCategories({ page, perPage, search, status });
+    return jsonOk(result);
   },
 );
 

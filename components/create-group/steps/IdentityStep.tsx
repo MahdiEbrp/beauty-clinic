@@ -19,6 +19,7 @@ export default function IdentityStep({
   displayOrder,
   onDisplayOrderChange,
   errors,
+  ns,
 }: {
   lang: Locale;
   name: string;
@@ -32,8 +33,9 @@ export default function IdentityStep({
   displayOrder: string;
   onDisplayOrderChange: (value: string) => void;
   errors: FieldErrors;
+  ns?: string;
 }) {
-  const t = useTranslations("groupWizard");
+  const t = useTranslations(ns ?? "groupWizard");
   const langLabel = t(`language.${lang}`);
   const nameError = lang === "en" ? errors.enName : errors.faName;
 

@@ -127,6 +127,22 @@ export async function listServiceGroups(opts: {
   };
 }
 
+/**
+ * Lightweight group options (id + fa name) for the category wizard's group
+ * picker. Batched translation lookup keeps it to two queries.
+ */
+export async function listGroupOptions(): Promise<Array<{ id: string; name: string }>> {
+  const rows = await db
+    .select({ id: serviceGroups.id, displayOrder: serviceGroups.displayOrder })
+    .from(serviceGroups)
+    .orderBy(serviceGroups.displayOrder, serviceGroups.createdAt);
+  const groupTr = await loadGroupTranslations(rows.map((row) => row.id));
+  return rows.map((row) => ({
+    id: row.id,
+    name: groupTr.get(row.id)?.fa.name ?? "",
+  }));
+}
+
 /** Returns the group ids matching the given search/status filters. */
 export async function findGroupIds(opts: {
   search?: string;

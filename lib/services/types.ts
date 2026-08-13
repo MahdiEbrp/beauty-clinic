@@ -203,6 +203,14 @@ export type ListServiceGroupsResult = {
   totalPages: number;
 };
 
+export type ListServiceCategoriesResult = {
+  items: AdminServiceCategory[];
+  total: number;
+  page: number;
+  perPage: number;
+  totalPages: number;
+};
+
 export type ServiceCatalogSummary = {
   groups: AdminServiceGroup[];
   categories: AdminServiceCategory[];

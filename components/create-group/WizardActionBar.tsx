@@ -10,6 +10,7 @@ export default function WizardActionBar({
   submitLabel,
   onBack,
   onPrimary,
+  ns = "groupWizard",
 }: {
   step: number;
   total: number;
@@ -17,8 +18,9 @@ export default function WizardActionBar({
   submitLabel?: string;
   onBack: () => void;
   onPrimary: () => void;
+  ns?: string;
 }) {
-  const t = useTranslations("groupWizard");
+  const t = useTranslations(ns);
   const isLastStep = step === total;
 
   return (

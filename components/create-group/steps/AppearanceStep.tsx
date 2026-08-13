@@ -12,13 +12,15 @@ export default function AppearanceStep({
   onOpenIconPicker,
   imageUrl,
   onImageUrlChange,
+  ns,
 }: {
   iconKey: string;
   onOpenIconPicker: () => void;
   imageUrl: string;
   onImageUrlChange: (value: string) => void;
+  ns?: string;
 }) {
-  const t = useTranslations("groupWizard");
+  const t = useTranslations(ns ?? "groupWizard");
 
   return (
     <Panel>

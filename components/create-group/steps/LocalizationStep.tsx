@@ -12,6 +12,7 @@ export default function LocalizationStep({
   onNameChange,
   onDescriptionChange,
   errors,
+  ns,
 }: {
   lang: Locale;
   name: string;
@@ -19,8 +20,9 @@ export default function LocalizationStep({
   onNameChange: (value: string) => void;
   onDescriptionChange: (value: string) => void;
   errors: FieldErrors;
+  ns?: string;
 }) {
-  const t = useTranslations("groupWizard");
+  const t = useTranslations(ns ?? "groupWizard");
   const langLabel = t(`language.${lang}`);
   const error = lang === "en" ? errors.enName : errors.faName;
 

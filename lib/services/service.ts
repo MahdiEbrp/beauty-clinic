@@ -12,6 +12,7 @@ export {
   listGroups,
   listServiceGroups,
   findGroupIds,
+  listGroupOptions,
   getGroup,
   createGroup,
   updateGroup,
@@ -24,6 +25,7 @@ export {
   updateCategory,
   deleteCategory,
 } from "./categories";
+export { listServiceCategories, findCategoryIds } from "./categories-admin";
 export { getCatalogSummary } from "./summary";
 export { getPublicCatalog } from "./public-catalog";
 export type { AdminService } from "./types";

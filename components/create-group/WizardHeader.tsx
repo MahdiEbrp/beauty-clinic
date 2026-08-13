@@ -17,6 +17,9 @@ export default function WizardHeader({
   subtitle,
   onLangChange,
   onGoTo,
+  ns = "groupWizard",
+  steps = STEPS,
+  backHref = "/dashboard/services/manage/groups",
 }: {
   step: number;
   currentStepKey: string;
@@ -27,15 +30,18 @@ export default function WizardHeader({
   subtitle?: string;
   onLangChange: (value: Locale) => void;
   onGoTo: (next: number) => void;
+  ns?: string;
+  steps?: ReadonlyArray<{ id: number; key: string }>;
+  backHref?: string;
 }) {
-  const t = useTranslations("groupWizard");
+  const t = useTranslations(ns);
   const progress = Math.round((step / total) * 100);
 
   return (
     <header className="space-y-6 sm:space-y-8">
       <div className="space-y-3">
         <Link
-          href="/dashboard/services/manage/groups"
+          href={backHref}
           className="inline-flex min-h-11 items-center gap-1.5 text-dash-body-sm font-semibold text-content-secondary no-underline transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           <ChevronLeft className="size-4 rtl-mirror" aria-hidden="true" />
@@ -108,7 +114,7 @@ export default function WizardHeader({
           aria-label={t("heading")}
           className="mt-4 flex items-center gap-1 sm:gap-2"
         >
-          {STEPS.map(({ id, key }) => {
+          {steps.map(({ id, key }) => {
             const isActive = id === step;
             const isCompleted = id < step;
             return (

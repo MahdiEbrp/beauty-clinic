@@ -791,6 +791,85 @@
       "error": "The action failed. Please try again."
     }
   },
+  "serviceCategories": {
+    "meta": {
+      "title": "Service Categories | Nafas Beauty Clinic",
+      "description": "Manage service categories, their groups, visibility and catalog ordering."
+    },
+    "heading": "Service Categories",
+    "resultsLabel": "categories",
+    "add": "Add new category",
+    "search": "Search service categories",
+    "searchPlaceholder": "Search by slug or name...",
+    "status": "Status",
+    "statusAll": "All",
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "clearFilters": "Clear filters",
+    "loading": "Loading service categories...",
+    "empty": "No service categories found.",
+    "emptySearch": "No service categories match your search.",
+    "errorTitle": "Couldn't load service categories",
+    "errorDescription": "Something went wrong while loading the list. Please try again.",
+    "retry": "Retry",
+    "table": {
+      "name": "Category",
+      "group": "Group",
+      "services": "Services",
+      "status": "Status"
+    },
+    "actions": {
+      "edit": "Edit",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "menu": "Open category actions",
+      "delete": "Delete category",
+      "deleteConfirm": "Delete {name}?"
+    },
+    "deactivateDialog": {
+      "title": "Deactivate {name}?",
+      "description": "The category will be hidden from the public catalog. It can be reactivated anytime."
+    },
+    "dialog": {
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "done": "Done"
+    },
+    "pagination": {
+      "showing": "Showing {from}–{to} of {total}",
+      "previous": "Previous",
+      "next": "Next",
+      "pageInfo": "Page {page} of {totalPages}"
+    },
+    "bulk": {
+      "selected": "{count} categories selected",
+      "selectedFiltered": "All {count} filtered results selected",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete categories",
+      "apply": "Apply action",
+      "clear": "Clear selection",
+      "pageSelected": "All categories on this page are selected.",
+      "selectFiltered": "Select all {count} filtered results",
+      "confirm": {
+        "delete": "Delete the selected categories?",
+        "deactivate": "Deactivate the selected categories?"
+      },
+      "confirmDescription": "This action will be applied to the selected categories and may change their visibility.",
+      "resultTitle": "Bulk action completed",
+      "resultPartialTitle": "Bulk action completed with errors",
+      "resultDescription": "{count} categories were updated.",
+      "resultPartialDescription": "{succeeded} categories succeeded, {failed} failed."
+    },
+    "toast": {
+      "syncing": "Updating service categories...",
+      "success": "Service category updated.",
+      "deleted": "Service category deleted.",
+      "error": "The action failed. Please try again."
+    }
+  },
   "resetPassword": {
     "eyebrow": "Account security",
     "title": "Password change required",
@@ -1152,6 +1231,158 @@
       "saving": "Saving service group…",
       "updated": "Service group updated.",
       "error": "Could not create the group."
+    }
+  },
+  "categoryWizard": {
+    "meta": {
+      "title": "Add Service Category | Nafas Beauty Clinic",
+      "description": "Create a new service category with bilingual content and SEO metadata."
+    },
+    "metaEdit": {
+      "title": "Edit Service Category | Nafas Beauty Clinic",
+      "description": "Update an existing service category."
+    },
+    "back": "Back to Service Categories",
+    "heading": "Create Service Category",
+    "subtitle": "Add a category to organize the services inside a group.",
+    "editHeading": "Edit Service Category",
+    "editSubtitle": "Update the details of this service category.",
+    "steps": {
+      "group": {
+        "name": "Group",
+        "desc": "Pick a group",
+        "fullDesc": "Choose the parent service group."
+      },
+      "identity": {
+        "name": "Identity",
+        "desc": "Define the category",
+        "fullDesc": "Define the basic identity of this service category."
+      },
+      "appearance": {
+        "name": "Appearance",
+        "desc": "Create its visual identity",
+        "fullDesc": "Give this service category a visual identity."
+      },
+      "localization": {
+        "name": "Localization",
+        "desc": "Add bilingual content",
+        "fullDesc": "Configure language-specific names and descriptions."
+      },
+      "seo": {
+        "name": "SEO",
+        "desc": "Prepare search metadata",
+        "fullDesc": "Optimize this category for search engines."
+      },
+      "review": {
+        "name": "Review",
+        "desc": "Confirm everything",
+        "fullDesc": "Review and confirm your settings."
+      }
+    },
+    "language": {
+      "label": "Language",
+      "en": "English (EN)",
+      "fa": "Persian (FA)",
+      "editing": "Editing: {lang}",
+      "enSection": "English (Base)",
+      "faSection": "Persian (FA)"
+    },
+    "group": {
+      "title": "Parent Group",
+      "hint": "The category lives inside a service group and inherits its catalog placement.",
+      "badge": "Step 1 of 6",
+      "emptyTitle": "No service groups yet",
+      "emptyDescription": "Create a service group first, then you can attach categories to it.",
+      "createGroup": "Create a group"
+    },
+    "identity": {
+      "groupName": "Category Name",
+      "groupNamePlaceholder": "e.g. Laser Hair Removal",
+      "groupNameHint": "Enter the name in each language. The English name auto-generates the slug below.",
+      "slug": "Slug",
+      "slugHint": "Used in the public URL. Lowercase letters, numbers and hyphens.",
+      "slugPrefix": "/services/",
+      "editManual": "Edit manually",
+      "resetAuto": "Reset to auto",
+      "auto": "Auto",
+      "custom": "Custom",
+      "active": "Active Status",
+      "activeHint": "Make this category visible to customers.",
+      "activeLabel": "Active",
+      "inactiveLabel": "Inactive",
+      "displayOrder": "Display Order",
+      "displayOrderHint": "Lower numbers appear first in the catalog."
+    },
+    "appearance": {
+      "icon": "Category icon",
+      "iconHint": "Choose an icon for this service category.",
+      "change": "Change icon",
+      "image": "Cover image",
+      "imageHint": "Paste an image URL to represent this service category.",
+      "imagePlaceholder": "https://example.com/cover.jpg",
+      "imagePreview": "Preview"
+    },
+    "localization": {
+      "title": "Bilingual Content",
+      "name": "Name",
+      "namePlaceholder": "Enter the category name in {lang}",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter a short description in {lang}",
+      "descriptionHint": "Shown on the public catalog."
+    },
+    "seo": {
+      "title": "Search Preview",
+      "noTitle": "(No title set)",
+      "noDescription": "(No meta description set)",
+      "pageTitle": "Page Title Tag",
+      "pageTitlePlaceholder": "Enter a page title",
+      "metaDescription": "Meta Description",
+      "metaDescriptionPlaceholder": "Enter a meta description",
+      "chars": "{count} / {max}",
+      "incompleteTitle": "Search metadata is incomplete for this language.",
+      "incompleteDescription": "This may affect how the category appears in search results."
+    },
+    "review": {
+      "title": "Ready to Launch",
+      "description": "Review your service category details below. Once created, this category will be available for booking immediately.",
+      "identity": "Identity",
+      "appearance": "Appearance",
+      "localization": "Localization",
+      "seo": "SEO",
+      "group": "Parent Group",
+      "groupName": "Category Name",
+      "slug": "Slug",
+      "visibility": "Visibility",
+      "icon": "Icon",
+      "image": "Cover Image",
+      "imageSet": "Cover image set",
+      "notProvided": "—",
+      "notSet": "Not set",
+      "optimized": "Optimized",
+      "incomplete": "Incomplete",
+      "english": "English",
+      "persian": "Persian"
+    },
+    "nav": {
+      "back": "Back",
+      "continue": "Continue",
+      "create": "Create Category",
+      "save": "Save Changes",
+      "stepOf": "Step {current} of {total}"
+    },
+    "errors": {
+      "slugRequired": "A kebab-case slug is required.",
+      "nameRequired": "Fill in the name in both languages.",
+      "groupRequired": "Choose a parent group.",
+      "slugTaken": "This slug is already in use. Choose another one.",
+      "generic": "These fields need attention before continuing."
+    },
+    "toast": {
+      "creating": "Creating service category…",
+      "created": "Service category created.",
+      "saving": "Saving service category…",
+      "updated": "Service category updated.",
+      "error": "Could not create the category."
     }
   }
 }
