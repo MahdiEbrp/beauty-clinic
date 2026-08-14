@@ -53,6 +53,20 @@ export function Panel({ children }: { children: ReactNode }) {
   );
 }
 
+export function PriceBadge({ priceType }: { priceType: "fixed" | "from" | "on_request" }) {
+  return (
+    <span
+      className={`inline-flex items-center rounded-pill border px-2 py-0.5 text-dash-caption font-bold ${
+        priceType === "on_request"
+          ? "border-border-primary bg-surface-tertiary text-content-tertiary"
+          : "border-copper/20 bg-copper/10 text-copper-strong"
+      }`}
+    >
+      {priceType === "from" ? "from" : priceType === "on_request" ? "—" : "$"}
+    </span>
+  );
+}
+
 export function ReviewCard({
   title,
   badge,

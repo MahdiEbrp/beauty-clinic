@@ -25,7 +25,7 @@ export {
   updateCategory,
   deleteCategory,
 } from "./categories";
-export { listServiceCategories, findCategoryIds } from "./categories-admin";
+export { listServiceCategories, findCategoryIds, listServiceCategoryOptions } from "./categories-admin";
 export { getCatalogSummary } from "./summary";
 export { getPublicCatalog } from "./public-catalog";
 export type { AdminService } from "./types";

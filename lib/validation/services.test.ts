@@ -284,14 +284,12 @@ describe("createServiceSchema", () => {
     expect(createServiceSchema.safeParse({ ...validService, availability: true }).success).toBe(false);
   });
 });
-
 describe("updateServiceSchema", () => {
   it("accepts a partial patch and applies defaults", () => {
     const result = updateServiceSchema.safeParse({ isFeatured: true });
     expect(result.success).toBe(true);
     if (result.success) expect(result.data).toMatchObject({ isFeatured: true });
   });
-
   it("accepts replacing nested images", () => {
     const result = updateServiceSchema.safeParse({
       images: [{ imageUrl: "/new.webp", type: "after", displayOrder: 1 }],

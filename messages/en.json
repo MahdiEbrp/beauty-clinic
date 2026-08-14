@@ -1086,6 +1086,151 @@
       "groups": "Service Groups",
       "categories": "Categories",
       "services": "Services"
+    },
+    "add": "Add New",
+    "resultsLabel": "{count} Services",
+    "emptyState": "No services found",
+    "emptySearch": "No services match your search",
+    "empty": "Create your first service",
+    "filters": {
+      "search": "Search",
+      "placeholder": "Search services...",
+      "clearFilters": "Clear filters"
+    },
+    "status": {
+      "all": "All",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "featured": {
+      "all": "All",
+      "yes": "Featured",
+      "no": "Not featured"
+    },
+    "priceType": {
+      "fixed": "Fixed",
+      "from": "From",
+      "on_request": "On request"
+    },
+    "columns": {
+      "name": "Name",
+      "category": "Category",
+      "price": "Price",
+      "duration": "Duration",
+      "featured": "Featured",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "toasts": {
+      "syncing": "Syncing...",
+      "success": "Successfully updated",
+      "error": "Error",
+      "generic": "An error occurred"
+    },
+    "dialogs": {
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "done": "Done"
+    },
+    "bulk": {
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete",
+      "selected": "{count} selected",
+      "selectedFiltered": "{count} selected (filtered)",
+      "pageSelected": "Page selected",
+      "apply": "Apply",
+      "clear": "Clear"
+    }
+  },
+  "serviceServices": {
+    "meta": {
+      "title": "Services | Nafas Beauty Clinic",
+      "description": "Manage the services your clinic offers."
+    },
+    "heading": "Services",
+    "resultsLabel": "{count} Services",
+    "add": "Add Service",
+    "search": "Search services",
+    "searchPlaceholder": "Search by name or slug…",
+    "loading": "Loading",
+    "status": "Status",
+    "featured": "Featured",
+    "statusAll": "All",
+    "featuredAll": "All",
+    "featuredYes": "Featured",
+    "featuredNo": "Not featured",
+    "clearFilters": "Clear filters",
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "price_on_request": "On request",
+    "durationUnit": "min",
+    "errorTitle": "Something went wrong",
+    "errorDescription": "We couldn't load the services. Please try again.",
+    "retry": "Try again",
+    "selectPage": "Select all services on this page",
+    "selectRow": "Select this service",
+    "table": {
+      "name": "Name",
+      "category": "Category",
+      "price": "Price",
+      "duration": "Duration",
+      "featured": "Featured",
+      "status": "Status"
+    },
+    "empty": "Create your first service",
+    "emptySearch": "No services match your search",
+    "pagination": {
+      "showing": "Showing {from}–{to} of {total}",
+      "previous": "Previous",
+      "next": "Next",
+      "pageInfo": "Page {page} of {totalPages}"
+    },
+    "actions": {
+      "edit": "Edit",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete",
+      "menu": "Actions",
+      "deleteConfirm": "Delete {name}?"
+    },
+    "deactivateDialog": {
+      "title": "Deactivate {name}?",
+      "description": "This service will be hidden from your public catalog until you reactivate it."
+    },
+    "bulk": {
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete",
+      "selected": "{count} selected",
+      "selectedFiltered": "{count} selected (filtered)",
+      "selectFiltered": "Select all {count} filtered",
+      "pageSelected": "Page selected",
+      "apply": "Apply",
+      "clear": "Clear",
+      "confirm": {
+        "activate": "Activate the selected services?",
+        "deactivate": "Deactivate the selected services?",
+        "delete": "Delete the selected services?"
+      },
+      "confirmDescription": "This action applies to all selected services.",
+      "resultTitle": "Bulk action completed",
+      "resultPartialTitle": "Partly completed",
+      "resultDescription": "{count} services updated successfully",
+      "resultPartialDescription": "{count} services updated successfully, but {failed} failed"
+    },
+    "dialog": {
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "done": "Done"
+    },
+    "toast": {
+      "syncing": "Syncing…",
+      "success": "Service updated",
+      "deleted": "Service deleted",
+      "error": "Something went wrong"
     }
   },
   "groupWizard": {
@@ -1385,6 +1530,156 @@
       "saving": "Saving service category…",
       "updated": "Service category updated.",
       "error": "Could not create the category."
+    }
+  },
+  "serviceWizard": {
+    "back": "Back to Services",
+    "heading": "Create Service",
+    "subtitle": "Add a new service to your clinic's catalog.",
+    "editHeading": "Edit Service",
+    "editSubtitle": "Update the details of this service.",
+    "steps": {
+      "category": { "name": "Category" },
+      "identity": { "name": "Identity" },
+      "pricing": { "name": "Pricing" },
+      "appearance": { "name": "Appearance" },
+      "localization": { "name": "Localization" },
+      "seo": { "name": "SEO" },
+      "review": { "name": "Review" }
+    },
+    "nav": {
+      "back": "Back",
+      "continue": "Continue",
+      "create": "Create Service",
+      "save": "Save Changes",
+      "stepOf": "Step {current} of {total}"
+    },
+    "meta": {
+      "title": "Services | Nafas Beauty Clinic",
+      "description": "Create and manage the services your clinic offers.",
+      "addHeading": "Add New Service",
+      "addSubHeading": "Create a new service",
+      "editHeading": "Edit Service",
+      "editSubHeading": "Update the service details"
+    },
+    "language": {
+      "label": "Language",
+      "en": "English (EN)",
+      "fa": "Persian (FA)",
+      "editing": "Editing: {lang}",
+      "enSection": "English (Base)",
+      "faSection": "Persian (FA)"
+    },
+    "category": {
+      "title": "Category",
+      "unnamedGroup": "Uncategorized",
+      "emptyTitle": "No service categories yet",
+      "emptyDescription": "Create a service category first, then you can assign services to it.",
+      "createCategory": "Create category"
+    },
+    "identity": {
+      "serviceName": "Service name",
+      "serviceNameRequired": "Service name is required",
+      "serviceNamePlaceholder": "Enter service name",
+      "serviceNameHint": "The English name auto-generates the slug below.",
+      "slug": "Slug",
+      "slugPrefix": "/services/",
+      "editManual": "Edit manually",
+      "resetAuto": "Reset to auto",
+      "auto": "Auto",
+      "custom": "Custom",
+      "slugHint": "Used in the public URL. Lowercase letters, numbers and hyphens.",
+      "displayOrder": "Display Order",
+      "displayOrderHint": "Lower numbers appear first in the catalog.",
+      "active": "Active",
+      "activeHint": "Make this service visible to customers.",
+      "requiredField": "This field is required"
+    },
+    "pricing": {
+      "title": "Pricing",
+      "hint": "Set how this service is priced.",
+      "priceType": "Price type",
+      "price": "Price",
+      "pricePlaceholder": "Enter price",
+      "priceHint": "Price in USD",
+      "duration": "Duration (minutes)",
+      "durationPlaceholder": "e.g. 45",
+      "durationHint": "Service duration in minutes",
+      "sessions": "Sessions",
+      "sessionsHint": "Number of sessions",
+      "featured": "Featured",
+      "featuredHint": "Mark this service as featured",
+      "requiredField": "This field is required"
+    },
+    "priceType": {
+      "fixed": "Fixed",
+      "from": "From",
+      "on_request": "On request"
+    },
+    "appearance": {
+      "image": "Cover image",
+      "imageHint": "Paste an image URL to represent this service.",
+      "imagePlaceholder": "https://example.com/cover.jpg",
+      "imagePreview": "Preview"
+    },
+    "localization": {
+      "title": "Bilingual Content",
+      "titleRequired": "Title is required",
+      "titlePlaceholder": "Enter the title in {lang}",
+      "shortDesc": "Short Description",
+      "shortDescHint": "Shown on the public catalog.",
+      "shortDescPlaceholder": "Enter a short description in {lang}",
+      "fullDesc": "Full Description",
+      "fullDescHint": "Detailed description of the service.",
+      "fullDescPlaceholder": "Enter a full description in {lang}",
+      "requiredField": "This field is required"
+    },
+    "seo": {
+      "title": "Search Preview",
+      "noTitle": "(No title set)",
+      "noDescription": "(No meta description set)",
+      "pageTitle": "Page Title Tag",
+      "pageTitlePlaceholder": "Enter a page title",
+      "metaDescription": "Meta Description",
+      "metaDescriptionPlaceholder": "Enter a meta description",
+      "chars": "{count} / {max}",
+      "incompleteTitle": "Search metadata is incomplete for this language.",
+      "incompleteDescription": "This may affect how the service appears in search results."
+    },
+    "review": {
+      "heading": "Ready to Publish",
+      "subtitle": "Review the details of your service below. Once created, it will be available for booking immediately.",
+      "slug": "Slug",
+      "priceType": "Price type",
+      "price": "Price",
+      "duration": "Duration",
+      "sessions": "Sessions",
+      "featured": "Featured",
+      "active": "Active",
+      "yes": "Yes",
+      "no": "No",
+      "category": "Category",
+      "priceRequest": "Price on request",
+      "min": "min",
+      "title": "Title",
+      "shortDesc": "Short description",
+      "image": "Cover image",
+      "notSet": "Not set"
+    },
+    "errors": {
+      "generic": "An error occurred",
+      "titleRequired": "Title is required",
+      "slugInvalid": "Invalid slug format",
+      "slugTaken": "This slug is already in use. Choose another one.",
+      "priceInvalid": "Price must be a positive number",
+      "categoryRequired": "Category is required"
+    },
+    "toast": {
+      "creating": "Creating service…",
+      "created": "Service created.",
+      "saving": "Saving service…",
+      "updated": "Service updated.",
+      "error": "Could not create the service."
     }
   }
 }

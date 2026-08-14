@@ -123,3 +123,32 @@ export async function findCategoryIds(opts: {
     .where(where);
   return rows.map((row) => row.id);
 }
+
+/**
+ * Lightweight category options (id + fa name + group name) for the service
+ * wizard's category picker. Batched translation lookup keeps it to minimal
+ * queries.
+ */
+export async function listServiceCategoryOptions(): Promise<
+  Array<{ id: string; name: string; groupId: string; groupName: string }>
+> {
+  const rows = await db
+    .select({
+      id: serviceCategories.id,
+      groupId: serviceCategories.groupId,
+    })
+    .from(serviceCategories)
+    .orderBy(serviceCategories.displayOrder, serviceCategories.createdAt);
+  const categoryIds = rows.map((row) => row.id);
+  const groupIds = [...new Set(rows.map((row) => row.groupId))];
+  const [categoryTr, groupTr] = await Promise.all([
+    loadCategoryTranslations(categoryIds),
+    loadGroupTranslations(groupIds),
+  ]);
+  return rows.map((row) => ({
+    id: row.id,
+    name: categoryTr.get(row.id)?.fa.name ?? "",
+    groupId: row.groupId,
+    groupName: row.groupId ? groupTr.get(row.groupId)?.fa.name ?? "" : "",
+  }));
+}

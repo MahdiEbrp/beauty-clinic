@@ -1088,6 +1088,96 @@
       "services": "خدمات"
     }
   },
+  "serviceServices": {
+    "meta": {
+      "title": "مدیریت خدمات | کلینیک زیبایی نفس",
+      "description": "خدماتی را که کلینیک شما ارائه می‌دهد مدیریت کنید."
+    },
+    "heading": "خدمات",
+    "resultsLabel": "{count} خدمت",
+    "add": "افزودن خدمت",
+    "search": "جستجوی خدمات",
+    "searchPlaceholder": "جستجو بر اساس نام یا اسلاگ…",
+    "loading": "در حال بارگذاری",
+    "status": "وضعیت",
+    "featured": "ویژه",
+    "statusAll": "همه",
+    "featuredAll": "همه",
+    "featuredYes": "ویژه",
+    "featuredNo": "غیرویژه",
+    "clearFilters": "پاک‌کردن فیلترها",
+    "statuses": {
+      "active": "فعال",
+      "inactive": "غیرفعال"
+    },
+    "price_on_request": "در صورت درخواست",
+    "durationUnit": "دقیقه",
+    "errorTitle": "مشکلی پیش آمد",
+    "errorDescription": "امکان بارگذاری خدمات وجود نداشت. لطفاً دوباره تلاش کنید.",
+    "retry": "تلاش مجدد",
+    "selectPage": "انتخاب همهٔ خدمات این صفحه",
+    "selectRow": "انتخاب این خدمت",
+    "table": {
+      "name": "نام",
+      "category": "دسته",
+      "price": "قیمت",
+      "duration": "مدت",
+      "featured": "ویژه",
+      "status": "وضعیت"
+    },
+    "empty": "اولین خدمت خود را ایجاد کنید",
+    "emptySearch": "هیچ خدمتی با جستجوی شما مطابقت ندارد",
+    "pagination": {
+      "showing": "نمایش {from} تا {to} از {total}",
+      "previous": "قبلی",
+      "next": "بعدی",
+      "pageInfo": "صفحهٔ {page} از {totalPages}"
+    },
+    "actions": {
+      "edit": "ویرایش",
+      "activate": "فعال‌سازی",
+      "deactivate": "غیرفعال‌سازی",
+      "delete": "حذف",
+      "menu": "عملیات",
+      "deleteConfirm": "«{name}» حذف شود؟"
+    },
+    "deactivateDialog": {
+      "title": "«{name}» غیرفعال شود؟",
+      "description": "این خدمت تا زمانی که دوباره فعالش کنید از کاتالوگ عمومی شما پنهان خواهد بود."
+    },
+    "bulk": {
+      "activate": "فعال‌سازی",
+      "deactivate": "غیرفعال‌سازی",
+      "delete": "حذف",
+      "selected": "{count} انتخاب شده",
+      "selectedFiltered": "{count} انتخاب شده (فیلتر شده)",
+      "selectFiltered": "انتخاب همهٔ {count} فیلترشده",
+      "pageSelected": "صفحه انتخاب شد",
+      "apply": "اعمال",
+      "clear": "پاک‌کردن",
+      "confirm": {
+        "activate": "خدمات انتخاب‌شده فعال شوند؟",
+        "deactivate": "خدمات انتخاب‌شده غیرفعال شوند؟",
+        "delete": "خدمات انتخاب‌شده حذف شوند؟"
+      },
+      "confirmDescription": "این عملیات روی همهٔ خدمات انتخاب‌شده اعمال می‌شود.",
+      "resultTitle": "عملیات گروهی تکمیل شد",
+      "resultPartialTitle": "تا حدی تکمیل شد",
+      "resultDescription": "{count} خدمت با موفقیت به‌روزرسانی شد",
+      "resultPartialDescription": "{count} خدمت با موفقیت به‌روزرسانی شد، اما {failed} مورد شکست خورد"
+    },
+    "dialog": {
+      "cancel": "انصراف",
+      "confirm": "تأیید",
+      "done": "انجام شد"
+    },
+    "toast": {
+      "syncing": "در حال همگام‌سازی…",
+      "success": "خدمت به‌روزرسانی شد",
+      "deleted": "خدمت حذف شد",
+      "error": "مشکلی پیش آمد"
+    }
+  },
   "groupWizard": {
     "meta": {
       "title": "افزودن گروه خدماتی | کلینیک زیبایی نفس",
@@ -1385,6 +1475,156 @@
       "saving": "در حال ذخیره دسته خدماتی…",
       "updated": "دسته خدماتی به‌روزرسانی شد.",
       "error": "ایجاد دسته ممکن نشد."
+    }
+  },
+  "serviceWizard": {
+    "back": "بازگشت به خدمات",
+    "heading": "ایجاد خدمت",
+    "subtitle": "یک خدمت جدید به کاتالوگ کلینیک اضافه کنید.",
+    "editHeading": "ویرایش خدمت",
+    "editSubtitle": "جزئیات این خدمت را به‌روزرسانی کنید.",
+    "steps": {
+      "category": { "name": "دسته" },
+      "identity": { "name": "شناسایی" },
+      "pricing": { "name": "قیمت‌گذاری" },
+      "appearance": { "name": "ظاهر" },
+      "localization": { "name": "بومی‌سازی" },
+      "seo": { "name": "سئو" },
+      "review": { "name": "بازبینی" }
+    },
+    "nav": {
+      "back": "بازگشت",
+      "continue": "ادامه",
+      "create": "ایجاد خدمت",
+      "save": "ذخیره تغییرات",
+      "stepOf": "مرحلهٔ {current} از {total}"
+    },
+    "meta": {
+      "title": "مدیریت خدمات | کلینیک زیبایی نفس",
+      "description": "خدماتی را که کلینیک ارائه می‌دهد ایجاد و مدیریت کنید.",
+      "addHeading": "افزودن خدمت جدید",
+      "addSubHeading": "ایجاد یک خدمت جدید",
+      "editHeading": "ویرایش خدمت",
+      "editSubHeading": "به‌روزرسانی جزئیات خدمت"
+    },
+    "language": {
+      "label": "زبان",
+      "en": "انگلیسی (EN)",
+      "fa": "فارسی (FA)",
+      "editing": "در حال ویرایش: {lang}",
+      "enSection": "انگلیسی (پایه)",
+      "faSection": "فارسی (FA)"
+    },
+    "category": {
+      "title": "دسته",
+      "unnamedGroup": "بدون دسته",
+      "emptyTitle": "هنوز دسته خدماتی‌ای وجود ندارد",
+      "emptyDescription": "ابتدا یک دسته خدماتی بسازید؛ سپس می‌توانید خدمات را به آن متصل کنید.",
+      "createCategory": "ایجاد دسته"
+    },
+    "identity": {
+      "serviceName": "نام خدمت",
+      "serviceNameRequired": "نام خدمت الزامی است",
+      "serviceNamePlaceholder": "نام خدمت را وارد کنید",
+      "serviceNameHint": "نام انگلیسی اسلاگ زیر را به‌صورت خودکار تولید می‌کند.",
+      "slug": "اسلاگ",
+      "slugPrefix": "/services/",
+      "editManual": "ویرایش دستی",
+      "resetAuto": "بازگشت به خودکار",
+      "auto": "خودکار",
+      "custom": "دستی",
+      "slugHint": "در آدرس عمومی استفاده می‌شود. حروف کوچک، اعداد و خط تیره.",
+      "displayOrder": "ترتیب نمایش",
+      "displayOrderHint": "اعداد کوچک‌تر ابتدا در کاتالوگ نمایش داده می‌شوند.",
+      "active": "فعال",
+      "activeHint": "این خدمت برای مشتریان قابل مشاهده باشد.",
+      "requiredField": "این فیلد الزامی است"
+    },
+    "pricing": {
+      "title": "قیمت‌گذاری",
+      "hint": "نحوهٔ قیمت‌گذاری این خدمت را تعیین کنید.",
+      "priceType": "نوع قیمت",
+      "price": "قیمت",
+      "pricePlaceholder": "قیمت را وارد کنید",
+      "priceHint": "قیمت به دلار آمریکا",
+      "duration": "مدت (دقیقه)",
+      "durationPlaceholder": "مثلاً ۴۵",
+      "durationHint": "مدت خدمت بر حسب دقیقه",
+      "sessions": "تعداد جلسات",
+      "sessionsHint": "تعداد جلسات",
+      "featured": "ویژه",
+      "featuredHint": "علامت‌گذاری این خدمت به‌عنوان ویژه",
+      "requiredField": "این فیلد الزامی است"
+    },
+    "priceType": {
+      "fixed": "ثابت",
+      "from": "از",
+      "on_request": "در صورت درخواست"
+    },
+    "appearance": {
+      "image": "تصویر کاور",
+      "imageHint": "برای نمایش این خدمت، یک آدرس تصویر جای‌گذاری کنید.",
+      "imagePlaceholder": "https://example.com/cover.jpg",
+      "imagePreview": "پیش‌نمایش"
+    },
+    "localization": {
+      "title": "محتوای دوزبانه",
+      "titleRequired": "عنوان الزامی است",
+      "titlePlaceholder": "عنوان را به {lang} وارد کنید",
+      "shortDesc": "توضیحات کوتاه",
+      "shortDescHint": "در کاتالوگ عمومی نمایش داده می‌شود.",
+      "shortDescPlaceholder": "توضیحات کوتاه را به {lang} وارد کنید",
+      "fullDesc": "توضیحات کامل",
+      "fullDescHint": "توضیحات کامل خدمت.",
+      "fullDescPlaceholder": "توضیحات کامل را به {lang} وارد کنید",
+      "requiredField": "این فیلد الزامی است"
+    },
+    "seo": {
+      "title": "پیش‌نمایش جستجو",
+      "noTitle": "(عنوانی تنظیم نشده)",
+      "noDescription": "(توضیحات متا تنظیم نشده)",
+      "pageTitle": "عنوان صفحه",
+      "pageTitlePlaceholder": "عنوان صفحه را وارد کنید",
+      "metaDescription": "توضیحات متا",
+      "metaDescriptionPlaceholder": "توضیحات متا را وارد کنید",
+      "chars": "{count} از {max}",
+      "incompleteTitle": "متادیتای جستجو برای این زبان ناقص است.",
+      "incompleteDescription": "این موضوع ممکن است بر نحوهٔ نمایش در نتایج جستجو تأثیر بگذارد."
+    },
+    "review": {
+      "heading": "آمادهٔ انتشار",
+      "subtitle": "جزئیات خدمت خود را در زیر بازبینی کنید. پس از ایجاد، این خدمت بلافاصله برای رزرو در دسترس خواهد بود.",
+      "slug": "اسلاگ",
+      "priceType": "نوع قیمت",
+      "price": "قیمت",
+      "duration": "مدت",
+      "sessions": "جلسات",
+      "featured": "ویژه",
+      "active": "فعال",
+      "yes": "بله",
+      "no": "خیر",
+      "category": "دسته",
+      "priceRequest": "قیمت در صورت درخواست",
+      "min": "دقیقه",
+      "title": "عنوان",
+      "shortDesc": "توضیحات کوتاه",
+      "image": "تصویر کاور",
+      "notSet": "تنظیم نشده"
+    },
+    "errors": {
+      "generic": "خطایی رخ داد",
+      "titleRequired": "عنوان الزامی است",
+      "slugInvalid": "فرمت اسلاگ نامعتبر است",
+      "slugTaken": "این اسلاگ قبلاً استفاده شده است. اسلاگ دیگری انتخاب کنید.",
+      "priceInvalid": "قیمت باید عددی مثبت باشد",
+      "categoryRequired": "دسته الزامی است"
+    },
+    "toast": {
+      "creating": "در حال ایجاد خدمت…",
+      "created": "خدمت ایجاد شد.",
+      "saving": "در حال ذخیره خدمت…",
+      "updated": "خدمت به‌روزرسانی شد.",
+      "error": "ایجاد خدمت ممکن نشد."
     }
   }
 }

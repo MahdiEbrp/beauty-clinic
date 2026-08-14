@@ -34,14 +34,14 @@ export interface FilesActionsState {
   saveContent: (content: string) => Promise<void>;
 }
 
-async function postJson(url: string, body: unknown): Promise<void> {
+async function postJson(url: string, body: unknown): Promise<Response> {
   const response = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
     body: JSON.stringify(body),
   });
-  if (!response.ok) throw new Error("action_failed");
+  return response;
 }
 
 async function patchJson(url: string, body: unknown): Promise<void> {
@@ -129,21 +129,49 @@ export function useFilesActions(list: FilesListState): FilesActionsState {
   };
 
   const createFolder = async (name: string) => {
-    await withBusy(async () => {
-      await postJson("/api/v1/files/directory", { path: joinRel(path, name) });
-      setNewFolderOpen(false);
-      await refetch(path);
-      toast.success(t("files.toast.folderCreated"));
-    });
+    try {
+      const response = await postJson("/api/v1/files/directory", { path: joinRel(path, name) });
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as {
+          error?: { code?: string };
+        } | null;
+        if (payload?.error?.code === "CONFLICT") {
+          toast.error(t("files.toast.directoryExists", { name }));
+        } else {
+          toast.error(t("files.toast.error"));
+        }
+        return;
+      }
+    } catch {
+      toast.error(t("files.toast.error"));
+      return;
+    }
+    setNewFolderOpen(false);
+    await refetch(path);
+    toast.success(t("files.toast.folderCreated"));
   };
 
   const createFile = async (name: string) => {
-    await withBusy(async () => {
-      await postJson("/api/v1/files/file", { path: joinRel(path, name), content: "" });
-      setNewFileOpen(false);
-      await refetch(path);
-      toast.success(t("files.toast.fileCreated"));
-    });
+    try {
+      const response = await postJson("/api/v1/files/file", { path: joinRel(path, name), content: "" });
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as {
+          error?: { code?: string };
+        } | null;
+        if (payload?.error?.code === "CONFLICT") {
+          toast.error(t("files.toast.fileNameTaken", { name }));
+        } else {
+          toast.error(t("files.toast.error"));
+        }
+        return;
+      }
+    } catch {
+      toast.error(t("files.toast.error"));
+      return;
+    }
+    setNewFileOpen(false);
+    await refetch(path);
+    toast.success(t("files.toast.fileCreated"));
   };
 
   const renameEntry = async (entry: EntryMeta, newName: string) => {
