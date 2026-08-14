@@ -32,7 +32,7 @@ function CopyPicker({
     const qs = new URLSearchParams();
     if (pickPath) qs.set("path", pickPath);
     let cancelled = false;
-    fetch(`/api/v1/files?${qs.toString()}`, { credentials: "include" })
+    fetch(`/api/v1/files?${qs.toString()}`, { cache: "no-store", credentials: "include" })
       .then(async (response) => {
         if (!response.ok) throw new Error("load_failed");
         const payload = (await response.json()) as { data?: { entries?: EntryMeta[] } };

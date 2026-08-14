@@ -58,6 +58,7 @@ export function useFilesList(currentUser: AuthUser): FilesListState {
       setIsLoading(true);
       try {
         const response = await fetch("/api/v1/files/trash", {
+          cache: "no-store",
           credentials: "include",
         });
         if (!response.ok) throw new Error("load_failed");
@@ -93,6 +94,7 @@ export function useFilesList(currentUser: AuthUser): FilesListState {
       const qs = new URLSearchParams();
       if (path) qs.set("path", path);
       const response = await fetch(`/api/v1/files?${qs.toString()}`, {
+        cache: "no-store",
         credentials: "include",
       });
       if (pathRef.current !== path) return;
