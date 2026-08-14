@@ -136,6 +136,8 @@ export const serviceI18nSchema = z
     title: z.string().trim().min(1).max(256),
     shortDesc: z.string().trim().max(512).optional().nullable(),
     fullDesc: z.string().trim().max(4000).optional().nullable(),
+    seoTitle: z.string().trim().max(60).optional().nullable(),
+    seoDescription: z.string().trim().max(160).optional().nullable(),
   })
   .strict();
 

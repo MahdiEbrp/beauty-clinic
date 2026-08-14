@@ -166,6 +166,8 @@ export const servicesI18n = pgTable(
     title: text("title").notNull(),
     shortDesc: text("short_desc"),
     fullDesc: text("full_desc"),
+    seoTitle: text("seo_title"),
+    seoDescription: text("seo_description"),
   },
   (table) => [primaryKey({ columns: [table.serviceId, table.locale] })],
 );

@@ -75,6 +75,8 @@ export function mapServiceRow(
     title: tr.fa.title,
     shortDesc: tr.fa.shortDesc,
     fullDesc: tr.fa.fullDesc,
+    seoTitle: tr.fa.seoTitle,
+    seoDescription: tr.fa.seoDescription,
     translations: tr,
     images,
     faqs,

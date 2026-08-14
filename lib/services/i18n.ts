@@ -24,7 +24,13 @@ export function emptyGroupContent(): ServiceGroupContent {
 }
 
 export function emptyServiceContent(): ServiceContent {
-  return { title: "", shortDesc: null, fullDesc: null };
+  return {
+    title: "",
+    shortDesc: null,
+    fullDesc: null,
+    seoTitle: null,
+    seoDescription: null,
+  };
 }
 
 export function emptyFaqContent(): ServiceFaqContent {
@@ -97,6 +103,8 @@ export async function loadServiceTranslations(
       title: row.title,
       shortDesc: row.shortDesc,
       fullDesc: row.fullDesc,
+      seoTitle: row.seoTitle,
+      seoDescription: row.seoDescription,
     };
   }
   return map;
@@ -137,6 +145,8 @@ export async function upsertServiceTranslation(
     title: content.title ?? current?.title ?? "",
     shortDesc: content.shortDesc !== undefined ? content.shortDesc ?? null : (current?.shortDesc ?? null),
     fullDesc: content.fullDesc !== undefined ? content.fullDesc ?? null : (current?.fullDesc ?? null),
+    seoTitle: content.seoTitle !== undefined ? content.seoTitle ?? null : (current?.seoTitle ?? null),
+    seoDescription: content.seoDescription !== undefined ? content.seoDescription ?? null : (current?.seoDescription ?? null),
   };
   await tx
     .insert(servicesI18n)

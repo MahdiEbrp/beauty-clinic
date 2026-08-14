@@ -37,6 +37,8 @@ const serviceTranslation = {
   title: "Laser Hair Removal",
   shortDesc: "Permanent hair removal",
   fullDesc: null,
+  seoTitle: "Laser Hair Removal | Clinic",
+  seoDescription: null,
 };
 
 const validService = {

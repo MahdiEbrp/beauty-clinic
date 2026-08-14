@@ -51,6 +51,8 @@ export async function createService(
           title: translations.fa.title,
           shortDesc: translations.fa.shortDesc ?? null,
           fullDesc: translations.fa.fullDesc ?? null,
+          seoTitle: translations.fa.seoTitle ?? null,
+          seoDescription: translations.fa.seoDescription ?? null,
         },
         {
           serviceId: service.id,
@@ -58,6 +60,8 @@ export async function createService(
           title: translations.en.title,
           shortDesc: translations.en.shortDesc ?? null,
           fullDesc: translations.en.fullDesc ?? null,
+          seoTitle: translations.en.seoTitle ?? null,
+          seoDescription: translations.en.seoDescription ?? null,
         },
       ]);
 

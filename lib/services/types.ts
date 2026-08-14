@@ -95,6 +95,8 @@ export type ServiceContent = {
   title: string;
   shortDesc: string | null;
   fullDesc: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
 };
 
 /** Localized fields of a service FAQ. */
@@ -182,6 +184,8 @@ export type AdminService = {
   title: string;
   shortDesc: string | null;
   fullDesc: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
   translations: TranslatedContent<ServiceContent>;
   images: AdminServiceImage[];
   faqs: AdminServiceFaq[];

@@ -301,8 +301,8 @@ describe("createService", () => {
     isFeatured: false,
     displayOrder: 0,
     translations: {
-      fa: { title: "Botox Injection", shortDesc: null, fullDesc: null },
-      en: { title: "Botox Injection", shortDesc: null, fullDesc: null },
+      fa: { title: "Botox Injection", shortDesc: null, fullDesc: null, seoTitle: null, seoDescription: null },
+      en: { title: "Botox Injection", shortDesc: null, fullDesc: null, seoTitle: null, seoDescription: null },
     },
     images: [{ imageUrl: "/images/botox.webp", type: "gallery" as const, displayOrder: 1 }],
     faqs: [
