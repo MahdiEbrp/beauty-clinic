@@ -15,6 +15,7 @@ import {
 } from "@/src/db/schema";
 import { assertCategoryExists, assertSlugAvailable, isUniqueViolation, priceToColumn, uniqueSlugError } from "./helpers";
 import { upsertServiceTranslation } from "./i18n";
+import { bustPublicServiceTreeCache } from "./public-services";
 import type { Locale, ServiceContent } from "./types";
 
 export async function createService(
@@ -23,7 +24,7 @@ export async function createService(
   await assertCategoryExists(input.categoryId);
 
   try {
-    return await db.transaction(async (tx) => {
+    const result = await db.transaction(async (tx) => {
       const [service] = await tx
         .insert(services)
         .values({
@@ -97,6 +98,8 @@ export async function createService(
 
       return { id: service.id };
     });
+    await bustPublicServiceTreeCache();
+    return result;
   } catch (error) {
     if (error instanceof ApiError) throw error;
     if (isUniqueViolation(error)) throw uniqueSlugError("service");
@@ -174,6 +177,7 @@ export async function updateService(
         }
       }
     });
+    await bustPublicServiceTreeCache();
   } catch (error) {
     if (error instanceof ApiError) throw error;
     if (isUniqueViolation(error)) throw uniqueSlugError("service");
@@ -189,4 +193,5 @@ export async function deleteService(id: string): Promise<void> {
   if (!existing) throw new ApiError(404, "SERVICE_NOT_FOUND", "Service not found.");
 
   await db.delete(services).where(eq(services.id, id));
+  await bustPublicServiceTreeCache();
 }

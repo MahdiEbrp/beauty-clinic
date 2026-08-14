@@ -239,3 +239,58 @@ export type PublicCatalog = {
   groups: PublicCatalogEntry[];
   categories: PublicCatalogEntry[];
 };
+
+/** A localized FAQ attached to a public service. */
+export type PublicTreeFaq = {
+  question: string;
+  answer: string;
+  displayOrder: number;
+};
+
+/** A localized service in the public pricing tree. */
+export type PublicTreeService = {
+  id: string;
+  slug: string;
+  title: string;
+  shortDesc: string | null;
+  fullDesc: string | null;
+  price: number | null;
+  priceType: PriceType;
+  durationMin: number | null;
+  sessionsCount: number;
+  coverImage: string | null;
+  isFeatured: boolean;
+  images: ServiceDetailImage[];
+  faqs: PublicTreeFaq[];
+};
+
+/** A localized category with its active services. */
+export type PublicTreeCategory = {
+  slug: string;
+  icon: string | null;
+  title: string;
+  description: string | null;
+  services: PublicTreeService[];
+};
+
+/** A localized group with its active categories. */
+export type PublicTreeGroup = {
+  slug: string;
+  icon: string | null;
+  title: string;
+  description: string | null;
+  categories: PublicTreeCategory[];
+};
+
+/** Full localized service catalog for the public pricing experience. */
+export type PublicServiceTree = {
+  groups: PublicTreeGroup[];
+};
+
+/** A flattened service carrying its group/category context for the UI. */
+export type PublicServiceRow = PublicTreeService & {
+  groupSlug: string;
+  groupTitle: string;
+  categorySlug: string;
+  categoryTitle: string;
+};

@@ -232,7 +232,57 @@
       "towel": "Towel",
       "mat": "Mat"
     },
-    "disclaimer": "Please consult with a specialist before any treatment."
+    "disclaimer": "Please consult with a specialist before any treatment.",
+    "hero": {
+      "tagline": "Nafas Aesthetic Clinic",
+      "title": "Beauty with transparent pricing",
+      "description": "Every treatment is performed by our expert medical team with premium brands — and every price is listed honestly, with no surprises.",
+      "searchPlaceholder": "Search treatments or brands…",
+      "searchLabel": "Search treatments",
+      "clearSearch": "Clear search"
+    },
+    "trust": {
+      "rating": "4.9 clinic rating",
+      "experience": "10+ years of experience",
+      "experts": "Trusted specialists",
+      "clients": "1,200+ happy clients"
+    },
+    "sections": {
+      "featured": "Featured treatment",
+      "all": "All treatments"
+    },
+    "filters": {
+      "label": "Filters",
+      "category": "Category",
+      "price": "Price",
+      "sort": "Sort by",
+      "recommended": "Recommended",
+      "priceAsc": "Price: low to high",
+      "priceDesc": "Price: high to low",
+      "clear": "Clear all",
+      "apply": "Show results",
+      "allCategories": "All categories",
+      "anyPrice": "Any price",
+      "priceUnder": "Under {price}",
+      "priceBetween": "{from} to {to}",
+      "priceOver": "Over {price}",
+      "results": "{count, plural, one {# treatment} other {# treatments}}"
+    },
+    "detail": {
+      "overview": "About this treatment",
+      "beforeAfter": "Before & After",
+      "bookNote": "Get availability and a personalized quote",
+      "backToCatalog": "Back to all treatments",
+      "moreInfo": "Ask about this treatment when booking"
+    },
+    "empty": {
+      "title": "No treatments found",
+      "description": "Try a different search or clear the filters."
+    },
+    "cta": {
+      "book": "Book an appointment",
+      "details": "View details"
+    }
   },
   "servicesPage": {
     "meta": {

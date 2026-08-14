@@ -232,7 +232,57 @@
       "towel": "حوله",
       "mat": "زیرانداز"
     },
-    "disclaimer": "⚠️ لطفاً قبل از انجام هرگونه درمان، مشاوره تخصصی دریافت نمایید."
+    "disclaimer": "⚠️ لطفاً قبل از انجام هرگونه درمان، مشاوره تخصصی دریافت نمایید.",
+    "hero": {
+      "tagline": "کلینیک زیبایی نفس",
+      "title": "زیبایی با قیمت‌گذاری شفاف",
+      "description": "هر درمان توسط تیم پزشکی متخصص ما با بهترین برندها انجام می‌شود و قیمت هر خدمت به‌صورت شفاف و بدون سورپرایز اعلام می‌شود.",
+      "searchPlaceholder": "جستجوی درمان یا برند…",
+      "searchLabel": "جستجوی درمان‌ها",
+      "clearSearch": "پاک کردن جستجو"
+    },
+    "trust": {
+      "rating": "امتیاز ۴.۹ کلینیک",
+      "experience": "بیش از ۱۰ سال تجربه",
+      "experts": "متخصصان مورد اعتماد",
+      "clients": "بیش از ۱٬۲۰۰ مشتری راضی"
+    },
+    "sections": {
+      "featured": "درمان ویژه",
+      "all": "همه درمان‌ها"
+    },
+    "filters": {
+      "label": "فیلترها",
+      "category": "دسته‌بندی",
+      "price": "قیمت",
+      "sort": "مرتب‌سازی",
+      "recommended": "پیشنهادی",
+      "priceAsc": "قیمت: از کم به زیاد",
+      "priceDesc": "قیمت: از زیاد به کم",
+      "clear": "حذف همه",
+      "apply": "نمایش نتایج",
+      "allCategories": "همه دسته‌ها",
+      "anyPrice": "هر قیمتی",
+      "priceUnder": "کمتر از {price}",
+      "priceBetween": "{from} تا {to}",
+      "priceOver": "بیشتر از {price}",
+      "results": "{count, plural, one {# درمان} other {# درمان}}"
+    },
+    "detail": {
+      "overview": "درباره این درمان",
+      "beforeAfter": "قبل و بعد",
+      "bookNote": "دریافت نوبت و استعلام قیمت اختصاصی",
+      "backToCatalog": "بازگشت به همه درمان‌ها",
+      "moreInfo": "هنگام رزرو درباره این درمان سوال کنید"
+    },
+    "empty": {
+      "title": "درمانی یافت نشد",
+      "description": "جستجوی دیگری را امتحان کنید یا فیلترها را حذف کنید."
+    },
+    "cta": {
+      "book": "رزرو نوبت",
+      "details": "مشاهده جزئیات"
+    }
   },
   "servicesPage": {
     "meta": {
@@ -1086,6 +1136,61 @@
       "groups": "گروه‌های خدماتی",
       "categories": "دسته‌بندی‌ها",
       "services": "خدمات"
+    },
+    "add": "افزودن جدید",
+    "resultsLabel": "{count} خدمت",
+    "emptyState": "خدمتی یافت نشد",
+    "emptySearch": "هیچ خدمتی با جستجوی شما مطابقت ندارد",
+    "empty": "اولین خدمت را ایجاد کنید",
+    "filters": {
+      "search": "جستجو",
+      "placeholder": "جستجوی خدمات…",
+      "clearFilters": "حذف فیلترها"
+    },
+    "status": {
+      "all": "همه",
+      "active": "فعال",
+      "inactive": "غیرفعال"
+    },
+    "featured": {
+      "all": "همه",
+      "yes": "ویژه",
+      "no": "غیر ویژه"
+    },
+    "priceType": {
+      "fixed": "ثابت",
+      "from": "از",
+      "on_request": "استعلام قیمت"
+    },
+    "columns": {
+      "name": "نام",
+      "category": "دسته‌بندی",
+      "price": "قیمت",
+      "duration": "مدت زمان",
+      "featured": "ویژه",
+      "status": "وضعیت",
+      "actions": "عملیات"
+    },
+    "toasts": {
+      "syncing": "در حال همگام‌سازی…",
+      "success": "با موفقیت به‌روزرسانی شد",
+      "error": "خطا",
+      "generic": "خطایی رخ داد"
+    },
+    "dialogs": {
+      "confirm": "تأیید",
+      "cancel": "انصراف",
+      "done": "انجام شد"
+    },
+    "bulk": {
+      "activate": "فعال‌سازی",
+      "deactivate": "غیرفعال‌سازی",
+      "delete": "حذف",
+      "selected": "{count} انتخاب شده",
+      "selectedFiltered": "{count} انتخاب شده (فیلتر شده)",
+      "pageSelected": "صفحه انتخاب شد",
+      "apply": "اعمال",
+      "clear": "حذف"
     }
   },
   "serviceServices": {

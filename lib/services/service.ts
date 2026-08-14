@@ -28,5 +28,6 @@ export {
 export { listServiceCategories, findCategoryIds, listServiceCategoryOptions } from "./categories-admin";
 export { getCatalogSummary } from "./summary";
 export { getPublicCatalog } from "./public-catalog";
+export { getPublicServiceTree } from "./public-services";
 export type { AdminService } from "./types";
 export * from "./types";

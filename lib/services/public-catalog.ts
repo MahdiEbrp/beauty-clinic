@@ -15,6 +15,7 @@ import {
   loadCategoryTranslations,
   loadGroupTranslations,
 } from "./i18n";
+import { bustPublicServiceTreeCache } from "./public-services";
 
 /** TTL for the cached public catalog feed (seconds). */
 const CATALOG_TTL_SECS = 60;
@@ -111,8 +112,10 @@ async function loadCatalog(locale: Locale): Promise<PublicCatalog> {
 /**
  * Drop all cached catalog variants. Called after any create/update/delete of a
  * service group or category so the public feed reflects the change immediately
- * instead of waiting out the TTL.
+ * instead of waiting out the TTL. Also drops the full service tree, which is
+ * derived from the same group/category rows.
  */
 export async function bustPublicCatalogCache(): Promise<void> {
   await Promise.all(CATALOG_LOCALES.map((locale) => cacheDel(catalogCacheKey(locale))));
+  await bustPublicServiceTreeCache();
 }
