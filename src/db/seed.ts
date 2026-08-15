@@ -9,8 +9,11 @@ import {
   settings,
   userRoles,
   users,
+  rules,
+  rulesI18n,
 } from "./schema";
 import { seedServiceCatalog } from "./seed/service-catalog";
+import { RULES_SEED } from "./seed/rules";
 
 const ROLE_DEFS = [
   { key: "admin", name: "Admin", description: "Full platform access" },
@@ -31,6 +34,9 @@ const PERMISSION_DEFS = [
   { key: "services.read", name: "Read services", description: "View the service catalog" },
   { key: "services.write", name: "Write services", description: "Create and update the service catalog" },
   { key: "services.manage", name: "Manage services", description: "Deactivate and delete service catalog entries" },
+  { key: "rules.read", name: "Read rules", description: "View the clinic rules" },
+  { key: "rules.write", name: "Write rules", description: "Create and update clinic rules" },
+  { key: "rules.manage", name: "Manage rules", description: "Deactivate and delete clinic rules" },
   { key: "files.read", name: "Read files", description: "Browse and download the file manager" },
   { key: "files.write", name: "Write files", description: "Upload, create, edit and rename files" },
   { key: "files.manage", name: "Manage files", description: "Move files to trash, restore and delete" },
@@ -49,6 +55,8 @@ const ROLE_PERMISSIONS: Record<string, readonly string[]> = {
     "records.write",
     "services.read",
     "services.write",
+    "rules.read",
+    "rules.write",
     "files.read",
   ],
   receptionist: [
@@ -57,6 +65,7 @@ const ROLE_PERMISSIONS: Record<string, readonly string[]> = {
     "appointments.read",
     "appointments.write",
     "services.read",
+    "rules.read",
     "files.read",
     "files.write",
   ],
@@ -157,11 +166,43 @@ async function seed(): Promise<void> {
       });
   }
 
-  console.log("System settings seeded.");
+    console.log("System settings seeded.");
 
-  await seedServiceCatalog();
+    await seedServiceCatalog();
+  await seedRules();
 
   console.log("Seed complete.");
+}
+
+async function seedRules(): Promise<void> {
+  for (const def of RULES_SEED) {
+    const existing = await db.query.rules.findFirst({
+      where: eq(rules.slug, def.slug),
+      columns: { id: true },
+    });
+    if (existing) continue;
+    const [row] = await db
+      .insert(rules)
+      .values({
+        slug: def.slug,
+        icon: def.icon,
+        image: def.image,
+        color: def.color,
+        highlighted: def.highlighted,
+        displayOrder: def.displayOrder,
+        isActive: def.isActive,
+      })
+      .returning({ id: rules.id });
+    await db.insert(rulesI18n).values(
+      def.i18n.map((entry) => ({
+        ruleId: row.id,
+        locale: entry.locale,
+        name: entry.name,
+        description: entry.description,
+      })),
+    );
+  }
+  console.log("Rules seeded.");
 }
 
 seed()

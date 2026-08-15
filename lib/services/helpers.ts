@@ -3,6 +3,7 @@ import { and, eq, ne } from "drizzle-orm";
 import { ApiError } from "@/lib/api/errors";
 import { db } from "@/src/db";
 import {
+  rules,
   serviceCategories,
   serviceGroups,
   services,
@@ -158,28 +159,34 @@ export async function assertGroupExists(groupId: string): Promise<void> {
  * but checking first gives callers a clean 409 without a write attempt.
  */
 export async function assertSlugAvailable(
-  table: "services" | "service_groups" | "service_categories",
+  table: "services" | "service_groups" | "service_categories" | "rules",
   slug: string,
   excludeId?: string,
 ): Promise<void> {
   const target =
     table === "services"
       ? services
-      : table === "service_groups"
-        ? serviceGroups
-        : serviceCategories;
+      : table === "rules"
+        ? rules
+        : table === "service_groups"
+          ? serviceGroups
+          : serviceCategories;
   const idColumn =
     table === "services"
       ? services.id
-      : table === "service_groups"
-        ? serviceGroups.id
-        : serviceCategories.id;
+      : table === "rules"
+        ? rules.id
+        : table === "service_groups"
+          ? serviceGroups.id
+          : serviceCategories.id;
   const slugColumn =
     table === "services"
       ? services.slug
-      : table === "service_groups"
-        ? serviceGroups.slug
-        : serviceCategories.slug;
+      : table === "rules"
+        ? rules.slug
+        : table === "service_groups"
+          ? serviceGroups.slug
+          : serviceCategories.slug;
 
   const [conflict] = await db
     .select({ id: idColumn })
@@ -187,7 +194,7 @@ export async function assertSlugAvailable(
     .where(excludeId ? and(eq(slugColumn, slug), ne(idColumn, excludeId)) : eq(slugColumn, slug))
     .limit(1);
   if (conflict) {
-    const label = table === "services" ? "service" : table === "service_groups" ? "group" : "category";
+    const label = table === "services" ? "service" : table === "rules" ? "rule" : table === "service_groups" ? "group" : "category";
     throw uniqueSlugError(label);
   }
 }

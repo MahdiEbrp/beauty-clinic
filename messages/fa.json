@@ -338,20 +338,7 @@
     },
     "heading": "قوانین کلینیک",
     "description": "جهت ارائه خدمات بهتر، لطفاً موارد زیر را رعایت فرمایید.",
-    "respectAppointments": "رعایت نوبت‌دهی",
-    "respectAppointmentsDesc": "لطفاً در حفظ نظافت راهرو، آسانسور و مشاعات ساختمان نهایت همکاری را داشته باشید.",
-    "keepClean": "نظافت محیط",
-    "keepCleanDesc": "لطفاً از پارک خودرو در کوچه، مقابل درب همسایگان و ایجاد مزاحمت برای ساکنین خودداری نمایید.",
-    "parkingRules": "پارک خودرو",
-    "parkingRulesDesc": "لطفاً از پارک خودرو در کوچه، مقابل درب همسایگان و ایجاد مزاحمت برای ساکنین خودداری نمایید.",
-    "noUnnecessaryCompanions": "همراه داشتن همراه",
-    "noUnnecessaryCompanionsDesc": "به منظور حفظ آرامش محیط و رفاه سایر مراجعین، از همراه آوردن افراد غیرضروری و خصوصاً کودکان عزیز خودداری فرمایید.",
-    "waitTime": "زمان انتظار",
-    "waitTimeDesc": "ممکن است به دلیل زمان‌بر بودن برخی خدمات، تا حدود ۳ ساعت زمان انتظار وجود داشته باشد؛ لطفاً برنامه‌ریزی لازم را انجام دهید.",
-    "cancellationPolicy": "لغو یا تغییر نوبت",
-    "cancellationPolicyDesc": "در صورت عدم امکان حضور، خواهشمند است حداقل ۲۴ ساعت قبل جهت لغو یا جابه‌جایی نوبت اطلاع دهید.",
-    "quickContact": "سوالی دارید؟",
-    "callUs": "تماس بگیرید"
+    "empty": "هنوز قانونی ثبت نشده است."
   },
   "login": {
     "meta": {
@@ -458,7 +445,8 @@
       "openMenu": "باز کردن منو",
       "closeMenu": "بستن منو",
       "collapse": "جمع کردن سایدبار",
-      "expand": "باز کردن سایدبار"
+      "expand": "باز کردن سایدبار",
+      "rules": "قوانین"
     },
     "topbar": {
       "breadcrumbLabel": "مسیر داشبورد",
@@ -1494,13 +1482,27 @@
     "editHeading": "ویرایش خدمت",
     "editSubtitle": "جزئیات این خدمت را به‌روزرسانی کنید.",
     "steps": {
-      "category": { "name": "دسته" },
-      "identity": { "name": "شناسایی" },
-      "pricing": { "name": "قیمت‌گذاری" },
-      "appearance": { "name": "ظاهر" },
-      "localization": { "name": "بومی‌سازی" },
-      "seo": { "name": "سئو" },
-      "review": { "name": "بازبینی" }
+      "category": {
+        "name": "دسته"
+      },
+      "identity": {
+        "name": "شناسایی"
+      },
+      "pricing": {
+        "name": "قیمت‌گذاری"
+      },
+      "appearance": {
+        "name": "ظاهر"
+      },
+      "localization": {
+        "name": "بومی‌سازی"
+      },
+      "seo": {
+        "name": "سئو"
+      },
+      "review": {
+        "name": "بازبینی"
+      }
     },
     "nav": {
       "back": "بازگشت",
@@ -1635,6 +1637,107 @@
       "saving": "در حال ذخیره خدمت…",
       "updated": "خدمت به‌روزرسانی شد.",
       "error": "ایجاد خدمت ممکن نشد."
+    }
+  },
+  "dashboardRules": {
+    "meta": {
+      "title": "قوانین | کلینیک زیبایی نفس",
+      "description": "مدیریت قوانین و مقررات کلینیک."
+    },
+    "heading": "قوانین",
+    "description": "مدیریت قوانین عمومی و مقررات کلینیک.",
+    "addRule": {
+      "title": "افزودن قانون",
+      "subtitle": "ایجاد قانون جدید کلینیک."
+    },
+    "editRule": {
+      "title": "ویرایش قانون",
+      "subtitle": "به‌روزرسانی این قانون کلینیک."
+    },
+    "fields": {
+      "slug": {
+        "label": "Slug",
+        "placeholder": "e.g. respect-appointments",
+        "help": "Unique URL-friendly identifier (kebab-case)"
+      },
+      "icon": {
+        "label": "Icon",
+        "placeholder": "e.g. clock"
+      },
+      "image": {
+        "label": "Image",
+        "placeholder": "https://…"
+      },
+      "color": {
+        "label": "Color",
+        "placeholder": "e.g. peach"
+      },
+      "highlighted": {
+        "label": "Highlight on public page"
+      },
+      "displayOrder": {
+        "label": "Display order",
+        "help": "Lower numbers appear first."
+      },
+      "isActive": {
+        "label": "Active",
+        "help": "Show this rule on the public page."
+      },
+      "translations": {
+        "label": "Translations",
+        "fa": "Persian (FA)",
+        "en": "English (EN)"
+      },
+      "name": {
+        "label": "Name",
+        "placeholder": "Rule name"
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Brief description (optional)"
+      }
+    },
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "save": {
+      "create": "Create rule",
+      "update": "Update rule"
+    },
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "deleted": {
+      "title": "Rule deleted",
+      "description": "Rule has been deleted."
+    },
+    "updated": {
+      "title": "Rule updated",
+      "description": "Rule has been updated."
+    },
+    "created": {
+      "title": "Rule created",
+      "description": "Rule has been created."
+    },
+    "empty": {
+      "title": "No rules found",
+      "description": "No rules match your search."
+    },
+    "columns": {
+      "order": "ترتیب",
+      "actions": "عملیات"
+    },
+    "pagination": {
+      "prev": "قبلی",
+      "next": "بعدی"
+    },
+    "deleteConfirm": "این قانون حذف شود؟",
+    "deleteError": "حذف قانون ممکن نشد.",
+    "loadFailed": "بارگیری قوانین ممکن نشد.",
+    "edit": "ویرایش",
+    "form": {
+      "defaultIcon": "پیش‌فرض (ساعت)",
+      "saving": "در حال ذخیره…",
+      "saveError": "ذخیره قانون ممکن نشد."
     }
   }
 }

@@ -45,6 +45,7 @@ export interface MockDb {
     serviceGroups: { findFirst(opts: unknown): PromiseLike<Row | undefined> };
     serviceCategories: { findFirst(opts: unknown): PromiseLike<Row | undefined> };
     services: { findFirst(opts: unknown): PromiseLike<Row | undefined> };
+    rules: { findFirst(opts: unknown): PromiseLike<Row | undefined> };
   };
 }
 
@@ -127,6 +128,13 @@ export function createMockDb(): MockDb {
       services: {
         findFirst: (opts: unknown) =>
           new FindFirstBuilder(state, "services", opts as {
+            where?: unknown;
+            columns?: Record<string, boolean>;
+          }),
+      },
+      rules: {
+        findFirst: (opts: unknown) =>
+          new FindFirstBuilder(state, "rules", opts as {
             where?: unknown;
             columns?: Record<string, boolean>;
           }),

@@ -338,20 +338,7 @@
     },
     "heading": "Clinic Rules",
     "description": "To provide better services, please follow these guidelines.",
-    "respectAppointments": "Respect Appointments",
-    "respectAppointmentsDesc": "Please cooperate in maintaining the cleanliness of hallways, elevators and shared building spaces.",
-    "keepClean": "Keep Environment Clean",
-    "keepCleanDesc": "Please avoid parking in the alley, in front of neighbors' doors and causing inconvenience to residents.",
-    "parkingRules": "Parking Rules",
-    "parkingRulesDesc": "Please avoid parking in the alley, in front of neighbors' doors and causing inconvenience to residents.",
-    "noUnnecessaryCompanions": "Companion Policy",
-    "noUnnecessaryCompanionsDesc": "To maintain a peaceful environment and comfort of other patients, please avoid bringing unnecessary companions, especially children.",
-    "waitTime": "Wait Time",
-    "waitTimeDesc": "Due to the time-consuming nature of some services, wait times may be up to 3 hours. Please plan accordingly.",
-    "cancellationPolicy": "Cancellation Policy",
-    "cancellationPolicyDesc": "If you cannot attend, please inform us at least 24 hours in advance for cancellation or rescheduling.",
-    "quickContact": "Have a question?",
-    "callUs": "Call us"
+    "empty": "No rules available yet."
   },
   "login": {
     "meta": {
@@ -450,6 +437,7 @@
       "account": "Account",
       "overview": "Overview",
       "services": "Services",
+      "rules": "Rules",
       "users": "Users",
       "files": "Files",
       "viewSite": "View Website",
@@ -1494,13 +1482,27 @@
     "editHeading": "Edit Service",
     "editSubtitle": "Update the details of this service.",
     "steps": {
-      "category": { "name": "Category" },
-      "identity": { "name": "Identity" },
-      "pricing": { "name": "Pricing" },
-      "appearance": { "name": "Appearance" },
-      "localization": { "name": "Localization" },
-      "seo": { "name": "SEO" },
-      "review": { "name": "Review" }
+      "category": {
+        "name": "Category"
+      },
+      "identity": {
+        "name": "Identity"
+      },
+      "pricing": {
+        "name": "Pricing"
+      },
+      "appearance": {
+        "name": "Appearance"
+      },
+      "localization": {
+        "name": "Localization"
+      },
+      "seo": {
+        "name": "SEO"
+      },
+      "review": {
+        "name": "Review"
+      }
     },
     "nav": {
       "back": "Back",
@@ -1635,6 +1637,107 @@
       "saving": "Saving service…",
       "updated": "Service updated.",
       "error": "Could not create the service."
+    }
+  },
+  "dashboardRules": {
+    "meta": {
+      "title": "Rules | Nafas Beauty Clinic",
+      "description": "Manage clinic rules and policies."
+    },
+    "heading": "Rules",
+    "description": "Manage public clinic rules and policies.",
+    "addRule": {
+      "title": "Add Rule",
+      "subtitle": "Create a new clinic rule."
+    },
+    "editRule": {
+      "title": "Edit Rule",
+      "subtitle": "Update this clinic rule."
+    },
+    "fields": {
+      "slug": {
+        "label": "Slug",
+        "placeholder": "e.g. respect-appointments",
+        "help": "Unique URL-friendly identifier (kebab-case)"
+      },
+      "icon": {
+        "label": "Icon",
+        "placeholder": "e.g. clock"
+      },
+      "image": {
+        "label": "Image",
+        "placeholder": "https://…"
+      },
+      "color": {
+        "label": "Color",
+        "placeholder": "e.g. peach"
+      },
+      "highlighted": {
+        "label": "Highlight on public page"
+      },
+      "displayOrder": {
+        "label": "Display order",
+        "help": "Lower numbers appear first."
+      },
+      "isActive": {
+        "label": "Active",
+        "help": "Show this rule on the public page."
+      },
+      "translations": {
+        "label": "Translations",
+        "fa": "Persian (FA)",
+        "en": "English (EN)"
+      },
+      "name": {
+        "label": "Name",
+        "placeholder": "Rule name"
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Brief description (optional)"
+      }
+    },
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "save": {
+      "create": "Create rule",
+      "update": "Update rule"
+    },
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "deleted": {
+      "title": "Rule deleted",
+      "description": "Rule has been deleted."
+    },
+    "updated": {
+      "title": "Rule updated",
+      "description": "Rule has been updated."
+    },
+    "created": {
+      "title": "Rule created",
+      "description": "Rule has been created."
+    },
+    "empty": {
+      "title": "No rules found",
+      "description": "No rules match your search."
+    },
+    "columns": {
+      "order": "Order",
+      "actions": "Actions"
+    },
+    "pagination": {
+      "prev": "Prev",
+      "next": "Next"
+    },
+    "deleteConfirm": "Delete this rule?",
+    "deleteError": "Could not delete the rule.",
+    "loadFailed": "Failed to load rules.",
+    "edit": "Edit",
+    "form": {
+      "defaultIcon": "Default (Clock)",
+      "saving": "Saving…",
+      "saveError": "Failed to save the rule."
     }
   }
 }

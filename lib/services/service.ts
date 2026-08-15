@@ -29,5 +29,9 @@ export { listServiceCategories, findCategoryIds, listServiceCategoryOptions } fr
 export { getCatalogSummary } from "./summary";
 export { getPublicCatalog } from "./public-catalog";
 export { getPublicServiceTree } from "./public-services";
+export { getRule, createRule, updateRule, deleteRule } from "./rules";
+export { listRulesAdmin, findRuleIds, getRulesForPublic } from "./rules-admin";
+
+export type { PublicRule } from "./rules-types";
 export type { AdminService } from "./types";
 export * from "./types";
