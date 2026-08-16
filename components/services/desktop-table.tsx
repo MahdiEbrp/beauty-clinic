@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { AlertTriangle, RefreshCw, Star, Stethoscope } from "lucide-react";
-import Image from "next/image";
 import type { AdminService } from "@/lib/services/types";
 import { SelectionCheckbox, statusOf, statusClass, formatPrice } from "./helpers";
 import { ServiceRowSkeleton } from "./skeletons";
@@ -24,13 +23,11 @@ function ServiceIcon({ service }: { service: AdminService }) {
   return (
     <span className="relative inline-flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border-primary bg-accent-subtle/60 text-accent">
       {service.coverImage ? (
-        <Image
+        <img
           src={service.coverImage}
           alt={service.title}
-          fill
           sizes="48px"
-          unoptimized
-          className="object-cover"
+          className="h-full w-full object-cover"
         />
       ) : (
         <Stethoscope className="size-5" strokeWidth={1.75} aria-hidden="true" />

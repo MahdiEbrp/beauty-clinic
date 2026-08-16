@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     files: ["**/*.{js,mjs,jsx,ts,tsx,mts,cts}"],
     rules: {
       "max-lines": ["warn", { max: 300 }],
+      // Images intentionally use native <img> so pre-signed/third-party URLs
+      // load directly instead of through Next's image optimizer.
+      "@next/next/no-img-element": "off",
     },
   },
   // Security-focused rules that catch unsafe code patterns:

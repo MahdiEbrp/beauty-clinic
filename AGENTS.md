@@ -16,7 +16,7 @@ Full rulebook: `DESIGN_RULES.md` — read it before any UI/design work.
 - No hardcoded strings in JSX — always `t()` / `useTranslations`; every key in both `messages/en.json` and `messages/fa.json`.
 - Full RTL: logical properties (`start`/`end`, `ms`/`me`), `rtl-mirror` on directional icons; responsive from 4k down to 300px.
 - Interactives ≥ 44×44px; never remove focus rings (`focus-visible:outline-accent`).
-- Images with `next/image`; Persian digits via the `ss01` font feature (Estedad), never `Intl.NumberFormat` fa digits.
+- Images use native `<img>` (never `next/image`), so pre-signed/third-party URLs load directly in the browser; Persian digits via the `ss01` font feature (Estedad), never `Intl.NumberFormat` fa digits.
 - Lists/tables need dedicated empty + error states and skeleton loading.
 
 ## Routing conventions

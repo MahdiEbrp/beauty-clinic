@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { Check, Image as ImageIcon } from "lucide-react";
-import NextImage from "next/image";
 
 import GroupGlyph from "@/components/create-group/GroupGlyph";
 
@@ -112,13 +111,10 @@ export default function ReviewStep({
           </div>
           <div className="relative ms-auto flex size-16 shrink-0 overflow-hidden rounded-control border border-border-primary bg-surface-tertiary/40">
             {imageUrl.trim() ? (
-              <NextImage
+              <img
                 src={imageUrl.trim()}
                 alt={t("appearance.image")}
-                fill
-                sizes="4rem"
-                unoptimized
-                className="object-cover"
+                className="h-full w-full object-cover"
               />
             ) : (
               <ImageIcon className="m-auto size-5 text-content-tertiary" aria-hidden="true" />

@@ -2,7 +2,6 @@
 
 import { useRef, useState, useCallback, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getGalleryItems } from "@/data/gallery";
 import GalleryLightbox from "@/components/gallery/GalleryLightbox";
@@ -108,12 +107,11 @@ export default function Gallery() {
                   aria-label={t("gallery.viewImage", { title })}
                   className="relative rounded-panel overflow-hidden aspect-3/4 group border-4 border-surface-secondary shadow-elevation-1 snap-start shrink-0 w-[clamp(260px,80vw,320px)] p-0 bg-transparent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 >
-                  <Image
+                  <img
                     src={item.image}
                     alt={title}
-                    fill
                     sizes="(max-width: 640px) 80vw, 320px"
-                    className="object-cover transition-transform duration-600 group-hover:scale-105"
+                    className="h-full w-full object-cover transition-transform duration-600 group-hover:scale-105"
                   />
                 </button>
               );

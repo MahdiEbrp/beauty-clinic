@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { PublicTreeGroup } from "@/lib/services/types";
 import GroupGlyph from "@/components/create-group/GroupGlyph";
@@ -85,13 +84,12 @@ export default function HeroSlider({ groups, onExplore }: HeroSliderProps) {
               i === index ? "z-10 opacity-100" : "z-0 opacity-0",
             )}
           >
-            <Image
+            <img
               src={pricingImage(group.image)}
               alt=""
-              fill
               sizes="100vw"
-              priority={i === 0}
-              className="object-cover"
+              fetchPriority={i === 0 ? "high" : undefined}
+              className="h-full w-full object-cover"
             />
             {/* Consistent dark scrim: guarantees 4.5:1 on any backdrop */}
             <div

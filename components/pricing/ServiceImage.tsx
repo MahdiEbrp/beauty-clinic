@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -16,9 +15,9 @@ type ServiceImageProps = {
 };
 
 /**
- * Renders a service image with next/image. Remote (http/https) URLs are served
- * unoptimized — uploaded files live under /public so they render locally, but
- * an admin may paste an external URL and we never fail on it. A graceful
+ * Renders a service image with a native <img> tag. Remote (http/https) URLs are
+ * loaded directly by the browser (never run through Next's image optimizer, so
+ * they work for pre-signed/third-party hosts without configuration). A graceful
  * placeholder replaces broken or missing images.
  */
 export default function ServiceImage({
@@ -32,7 +31,6 @@ export default function ServiceImage({
 }: ServiceImageProps) {
   const [failed, setFailed] = useState(false);
   const hasSrc = Boolean(src);
-  const remote = hasSrc ? /^https?:\/\//.test(src as string) : false;
 
   if (!hasSrc || failed) {
     return (
@@ -49,30 +47,16 @@ export default function ServiceImage({
     );
   }
 
-  if (fill) {
-    return (
-      <Image
-        src={src as string}
-        alt={alt}
-        fill
-        sizes={sizes}
-        unoptimized={remote}
-        onError={() => setFailed(true)}
-        className={className}
-      />
-    );
-  }
-
+  const sizing = fill ? "h-full w-full" : "";
   return (
-    <Image
+    <img
       src={src as string}
       alt={alt}
-      width={width ?? 480}
-      height={height ?? 360}
+      width={fill ? undefined : (width ?? 480)}
+      height={fill ? undefined : (height ?? 360)}
       sizes={sizes}
-      unoptimized={remote}
       onError={() => setFailed(true)}
-      className={className}
+      className={cn("object-cover", sizing, className)}
     />
   );
 }

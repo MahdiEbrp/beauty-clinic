@@ -12,7 +12,6 @@ import {
   UserCheck,
   XCircle,
 } from "lucide-react";
-import NextImage from "next/image";
 
 import { Panel, PriceBadge } from "@/components/create-group/ui";
 import type { Locale, PriceType, ReviewExtra } from "../types";
@@ -143,13 +142,10 @@ export default function ReviewStep({
               {t("review.image")}
             </div>
             <div className="relative aspect-video w-full overflow-hidden rounded border">
-              <NextImage
+              <img
                 src={coverImage}
                 alt={t("review.image")}
-                fill
-                sizes="64px"
-                unoptimized
-                className="object-cover"
+                className="h-full w-full object-cover"
               />
             </div>
           </section>

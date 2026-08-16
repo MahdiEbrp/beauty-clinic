@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { ChevronLeft, ChevronRight, RotateCcw, RotateCw } from "lucide-react";
 import type { getGalleryItems } from "@/data/gallery";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -42,7 +41,7 @@ export default function GalleryLightbox({
         >
           <DialogTitle className="sr-only">{t(active.tKey)}</DialogTitle>
           <div className="relative animate-fade-in">
-            <Image
+            <img
               src={active.image}
               alt={t(active.tKey)}
               width={900}

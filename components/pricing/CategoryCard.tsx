@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import { CalendarPlus, Clock, Repeat } from "lucide-react";
 import GroupGlyph from "@/components/create-group/GroupGlyph";
 import { pricingImage } from "@/data/pricing-media";
@@ -43,12 +42,11 @@ export default function CategoryCard({ card, onBook }: CategoryCardProps) {
     <article className="group flex h-full flex-col overflow-hidden rounded-card border border-border-primary bg-primary-deep shadow-elevation-2 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-elevation-4">
       {/* Image band — fixed short height, not full-bleed */}
       <div className="relative h-44 shrink-0 overflow-hidden">
-        <Image
+        <img
           src={pricingImage(card.image)}
           alt=""
-          fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
         <div
           className="absolute inset-0 bg-linear-to-t from-primary-deep via-primary-deep/10 to-transparent"

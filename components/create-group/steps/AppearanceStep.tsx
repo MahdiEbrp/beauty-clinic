@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { Image as ImageIcon, RefreshCw } from "lucide-react";
-import NextImage from "next/image";
 
 import GroupGlyph from "../GroupGlyph";
 import { Field, Panel, inputClass } from "../ui";
@@ -76,13 +75,10 @@ export default function AppearanceStep({
           </div>
           <div className="relative mt-2 aspect-video w-full overflow-hidden rounded-control border border-surface-variant/60 bg-surface-tertiary/30 sm:aspect-auto sm:h-48 md:max-w-xl">
             {imageUrl.trim() ? (
-              <NextImage
+              <img
                 src={imageUrl.trim()}
                 alt={t("appearance.imagePreview")}
-                fill
-                sizes="(min-width: 768px) 36rem, 100vw"
-                unoptimized
-                className="object-cover"
+                className="h-full w-full object-cover"
               />
             ) : (
               <div className="flex h-full min-h-24 items-center justify-center gap-2 text-dash-caption text-content-tertiary">
