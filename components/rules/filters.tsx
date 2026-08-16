@@ -89,7 +89,7 @@ export function RulesFilters() {
         />
         {isLoading && <Loader2 className="pointer-events-none absolute inset-e-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-copper" strokeWidth={2} aria-label={t("dashboardRules.loading")} />}
       </div>
-      <div className="mt-2 flex items-center gap-2 overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] [scroll-snap-type-x:mandatory] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="mt-2 flex items-center gap-2 overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] [scroll-snap-type-x:mandatory] scrollbar-none [&::-webkit-scrollbar]:hidden">
         <FilterPill label={`${t("dashboardRules.status")}: ${statusLabel}`} active={status !== "all"}>
           {STATUS_OPTIONS.map((option) => (
             <DropdownMenuItem key={option.value} onSelect={() => setStatusFilter(option.value)} className="justify-between gap-3">

@@ -53,7 +53,7 @@ export default function HeroSlider({ groups, onExplore }: HeroSliderProps) {
 
   if (count === 0) {
     return (
-      <section className="relative aspect-[4/5] w-full overflow-hidden bg-primary-deep sm:aspect-video lg:aspect-[21/9]" />
+      <section className="relative aspect-4/5 w-full overflow-hidden bg-primary-deep sm:aspect-video lg:aspect-21/9" />
     );
   }
 
@@ -72,7 +72,7 @@ export default function HeroSlider({ groups, onExplore }: HeroSliderProps) {
         - Widens out to video/cinema ratios as screens grow.
         - min/max clamp keeps it sane on very short or very tall viewports.
       */}
-      <div className="relative aspect-[4/5] min-h-[420px] max-h-[720px] w-full sm:aspect-video md:max-h-[640px] lg:aspect-[21/9]">
+      <div className="relative aspect-4/5 min-h-105 max-h-180 w-full sm:aspect-video md:max-h-160 lg:aspect-21/9">
         {groups.map((group, i) => (
           <div
             key={group.slug}
@@ -95,7 +95,7 @@ export default function HeroSlider({ groups, onExplore }: HeroSliderProps) {
             />
             {/* Consistent dark scrim: guarantees 4.5:1 on any backdrop */}
             <div
-              className="absolute inset-0 bg-gradient-to-t from-primary-deep via-primary-deep/70 to-primary-deep/30"
+              className="absolute inset-0 bg-linear-to-t from-primary-deep via-primary-deep/70 to-primary-deep/30"
               aria-hidden="true"
             />
             <div
@@ -170,7 +170,7 @@ export default function HeroSlider({ groups, onExplore }: HeroSliderProps) {
             type="button"
             onClick={() => goTo(index - 1)}
             aria-label={t("pricing.hero.previous")}
-            className="absolute start-2 top-[38%] z-30 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-pill border border-content-contrast/40 bg-primary-deep/40 text-content-contrast shadow-elevation-3 backdrop-blur-md transition-all hover:border-content-contrast hover:bg-primary-deep/70 hover:shadow-elevation-4 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold sm:start-4 sm:top-1/2 sm:size-12"
+            className="absolute inset-s-2 top-[38%] z-30 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-pill border border-content-contrast/40 bg-primary-deep/40 text-content-contrast shadow-elevation-3 backdrop-blur-md transition-all hover:border-content-contrast hover:bg-primary-deep/70 hover:shadow-elevation-4 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold sm:inset-s-4 sm:top-1/2 sm:size-12"
           >
             <ChevronLeft className="size-5 rtl-mirror sm:size-6" aria-hidden="true" />
           </button>
@@ -178,7 +178,7 @@ export default function HeroSlider({ groups, onExplore }: HeroSliderProps) {
             type="button"
             onClick={() => goTo(index + 1)}
             aria-label={t("pricing.hero.next")}
-            className="absolute end-2 top-[38%] z-30 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-pill border border-content-contrast/40 bg-primary-deep/40 text-content-contrast shadow-elevation-3 backdrop-blur-md transition-all hover:border-content-contrast hover:bg-primary-deep/70 hover:shadow-elevation-4 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold sm:end-4 sm:top-1/2 sm:size-12"
+            className="absolute inset-e-2 top-[38%] z-30 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-pill border border-content-contrast/40 bg-primary-deep/40 text-content-contrast shadow-elevation-3 backdrop-blur-md transition-all hover:border-content-contrast hover:bg-primary-deep/70 hover:shadow-elevation-4 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold sm:inset-e-4 sm:top-1/2 sm:size-12"
           >
             <ChevronRight className="size-5 rtl-mirror sm:size-6" aria-hidden="true" />
           </button>

@@ -97,7 +97,7 @@ export default function ServiceDetail({
                 {gallery.map((image) => (
                   <div
                     key={`${image.imageUrl}-${image.displayOrder}`}
-                    className="relative aspect-[4/3] overflow-hidden rounded-control"
+                    className="relative aspect-4/3 overflow-hidden rounded-control"
                   >
                     <ServiceImage
                       src={image.imageUrl}

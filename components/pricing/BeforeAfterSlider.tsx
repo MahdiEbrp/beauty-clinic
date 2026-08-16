@@ -72,7 +72,7 @@ export default function BeforeAfterSlider({
       onPointerUp={stop}
       onPointerLeave={stop}
       onPointerCancel={stop}
-      className="relative aspect-[4/3] w-full touch-none select-none overflow-hidden rounded-control"
+      className="relative aspect-4/3 w-full touch-none select-none overflow-hidden rounded-control"
     >
       <ServiceImage
         src={after}
@@ -92,10 +92,10 @@ export default function BeforeAfterSlider({
         />
       </div>
 
-      <span className="absolute start-3 top-3 z-10 rounded-pill bg-surface-secondary/90 px-3 py-1 text-caption font-bold text-content-primary shadow-elevation-1">
+      <span className="absolute inset-s-3 top-3 z-10 rounded-pill bg-surface-secondary/90 px-3 py-1 text-caption font-bold text-content-primary shadow-elevation-1">
         {t("serviceDetail.labels.before")}
       </span>
-      <span className="absolute end-3 top-3 z-10 rounded-pill bg-surface-secondary/90 px-3 py-1 text-caption font-bold text-content-primary shadow-elevation-1">
+      <span className="absolute inset-e-3 top-3 z-10 rounded-pill bg-surface-secondary/90 px-3 py-1 text-caption font-bold text-content-primary shadow-elevation-1">
         {t("serviceDetail.labels.after")}
       </span>
 

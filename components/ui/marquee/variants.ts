@@ -49,12 +49,12 @@ export const marqueeContentVariants = cva(
 export const marqueeEdgeVariants = cva("pointer-events-none absolute z-10", {
   variants: {
     side: {
-      left: "top-0 left-0 h-full bg-gradient-to-r from-background to-transparent",
+      left: "top-0 left-0 h-full bg-linear-to-r from-background to-transparent",
       right:
-        "top-0 right-0 h-full bg-gradient-to-l from-background to-transparent",
-      top: "top-0 left-0 w-full bg-gradient-to-b from-background to-transparent",
+        "top-0 right-0 h-full bg-linear-to-l from-background to-transparent",
+      top: "top-0 left-0 w-full bg-linear-to-b from-background to-transparent",
       bottom:
-        "bottom-0 left-0 w-full bg-gradient-to-t from-background to-transparent",
+        "bottom-0 left-0 w-full bg-linear-to-t from-background to-transparent",
     },
     size: {
       default: "",

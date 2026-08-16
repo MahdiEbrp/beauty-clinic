@@ -8,7 +8,7 @@ import { pricingImage } from "@/data/pricing-media";
 import { formatNumber } from "@/lib/services/format";
 import type { CategoryCardData } from "./data";
 
-const MAX_CHIPS = 3;
+const MAX_CHIPS = 2;
 
 function priceBadge(
   card: CategoryCardData,
@@ -32,19 +32,6 @@ type CategoryCardProps = {
   onBook: () => void;
 };
 
-/**
- * Card for one category. Every content row below the image (title,
- * description, chip strip, meta row, button) reserves a FIXED height slot
- * rather than sizing to its own content, so a card with a short title and
- * one chip lands on the exact same baselines as a card with a two-line
- * title and three chips. Nothing shifts card-to-card in a grid row.
- *
- * The image band is intentionally short (11rem) rather than a full-bleed
- * photo background: these thumbnails are frequently reused across categories
- * and don't carry distinguishing information, so a large photo area was mostly
- * just scrim by the time text needed to sit on it. Shrinking it reclaims
- * that space for the content that actually differentiates each card.
- */
 export default function CategoryCard({ card, onBook }: CategoryCardProps) {
   const t = useTranslations();
 
@@ -91,20 +78,21 @@ export default function CategoryCard({ card, onBook }: CategoryCardProps) {
           {card.description ?? ""}
         </p>
 
-        {/* Chips: fixed single-row height, nowrap, overflow becomes "+N"
-            instead of wrapping — a card with 1 chip and a card with 3
-            occupy the exact same vertical space. */}
-        <div className="mb-3.5 flex h-8 items-center gap-1.5 overflow-hidden">
+        {/* Chips: max two topics in a wrap-friendly strip. The container
+            reserves a fixed min-height slot, so a card showing one chip
+            and a card showing two sit on the same baseline — long titles
+            truncate instead of forcing a cramped single-line squeeze. */}
+        <div className="mb-4 flex min-h-16 flex-wrap content-start gap-2 overflow-hidden">
           {chips.map((service) => (
             <span
               key={service.slug}
-              className="inline-flex shrink-0 items-center whitespace-nowrap rounded-full border border-white/20 bg-white/15 px-2.5 py-1 text-caption text-content-contrast/90"
+              className="inline-flex h-8 max-w-[calc(100%-0.5rem)] items-center rounded-full border border-white/15 bg-white/8 px-3 text-caption leading-none text-content-contrast/85 backdrop-blur-sm"
             >
-              {service.title}
+              <span className="truncate">{service.title}</span>
             </span>
           ))}
           {remaining > 0 ? (
-            <span className="inline-flex shrink-0 items-center whitespace-nowrap rounded-full border border-white/20 bg-copper px-2.5 py-1 text-caption font-bold text-content-contrast">
+            <span               className="inline-flex h-8 shrink-0 items-center rounded-full border border-copper/40 bg-copper/15 px-3 text-caption font-semibold leading-none text-copper">
               +{remaining}
             </span>
           ) : null}

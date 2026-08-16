@@ -97,7 +97,7 @@ function RulesAddFab() {
   return (
     <>
       <div
-        className="pointer-events-none fixed bottom-4 end-4 z-40 md:hidden"
+        className="pointer-events-none fixed bottom-4 inset-e-4 z-40 md:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <Link

@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
  *    and `animate-slide-up` tokens.
  * 3. Upstream positions the close button with `right-4` and aligns the header
  *    with `sm:text-left`. Both are physical properties and break in RTL, so they
- *    are `end-4` and `sm:text-start` here.
+ *    are `inset-e-4` and `sm:text-start` here.
  */
 
 function Dialog({

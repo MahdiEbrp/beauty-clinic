@@ -202,7 +202,7 @@ function SummaryRow({
       {icon && <span className="mt-0.5 shrink-0">{icon}</span>}
       <div className="min-w-0">
         <p className="text-dash-caption font-bold text-content-secondary">{label}</p>
-        <div className="text-dash-body break-words text-content-secondary">{value}</div>
+        <div className="text-dash-body wrap-break-word text-content-secondary">{value}</div>
       </div>
     </div>
   );

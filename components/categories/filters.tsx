@@ -118,7 +118,7 @@ export function CategoriesFilters() {
           />
         )}
       </div>
-      <div className="mt-2 flex items-center gap-2 overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="mt-2 flex items-center gap-2 overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden">
         <FilterPill
           label={`${t("serviceCategories.status")}: ${statusLabel}`}
           active={status !== "all"}

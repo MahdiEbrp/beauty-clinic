@@ -118,6 +118,8 @@ export default function PricingContent({ tree }: PricingContentProps) {
         )}
       </div>
 
+      <div aria-hidden="true" className="h-24 lg:hidden" />
+
       <MobileDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}

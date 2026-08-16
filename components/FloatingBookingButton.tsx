@@ -54,7 +54,7 @@ export default function FloatingBookingButton({
       // while it is faded out. Previously it stayed focusable, so keyboard users
       // could tab into an invisible control.
       inert={!visible}
-      className={`fixed bottom-6 inset-x-0 z-40 mx-auto w-fit bg-accent text-content-contrast px-10 py-5 rounded-pill shadow-elevation-4 flex items-center gap-3 font-extrabold text-body-lg transition-all duration-300 whitespace-nowrap border-2 border-copper isolate focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold md:px-14 md:py-6 md:text-xl md:min-h-17 ${
+      className={`fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] inset-x-0 z-40 mx-auto w-fit bg-accent text-content-contrast px-10 py-5 rounded-pill shadow-elevation-4 flex items-center gap-3 font-extrabold text-body-lg transition-all duration-300 whitespace-nowrap border-2 border-copper isolate focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold md:px-14 md:py-6 md:text-xl md:min-h-17 lg:bottom-6 ${
         visible
           ? "opacity-100 scale-100 translate-y-0"
           : "opacity-0 scale-90 translate-y-4 pointer-events-none"

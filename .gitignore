@@ -53,3 +53,4 @@ unproccess/
 
 # file manager internal metadata (trash, staged uploads)
 /.file-manager
+services.html

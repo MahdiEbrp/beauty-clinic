@@ -73,7 +73,7 @@ function SheetContent({
       <SheetPrimitive.Content
         data-slot="sheet-content"
         className={cn(
-          "fixed inset-y-0 end-0 z-100 flex h-full w-[85%] max-w-xs flex-col border-s border-border-primary bg-surface-secondary shadow-elevation-4 outline-none sm:max-w-sm data-[state=open]:animate-drawer-in-rtl rtl:data-[state=open]:animate-drawer-in",
+          "fixed inset-y-0 inset-e-0 z-100 flex h-full w-[85%] max-w-xs flex-col border-s border-border-primary bg-surface-secondary shadow-elevation-4 outline-none sm:max-w-sm data-[state=open]:animate-drawer-in-rtl rtl:data-[state=open]:animate-drawer-in",
           className,
         )}
         {...props}

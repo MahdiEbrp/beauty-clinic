@@ -107,11 +107,12 @@ export default function FilterToolbar({
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="relative w-full md:max-w-xl">
           <Search
-            className="pointer-events-none absolute start-4 top-1/2 size-5 -translate-y-1/2 text-copper"
+            className="pointer-events-none absolute inset-s-4 top-1/2 size-5 -translate-y-1/2 text-copper"
             strokeWidth={2}
             aria-hidden="true"
           />
           <input
+            id="pricing-search"
             type="search"
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
@@ -124,7 +125,7 @@ export default function FilterToolbar({
               type="button"
               onClick={() => onSearchChange("")}
               aria-label={t("pricing.hero.clearSearch")}
-              className="absolute end-3 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-full text-content-tertiary transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="absolute inset-e-3 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-full text-content-tertiary transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               <X className="size-4" aria-hidden="true" />
             </button>
@@ -145,7 +146,7 @@ export default function FilterToolbar({
               <option value="priceDesc">{t("pricing.filters.priceDesc")}</option>
             </select>
             <ChevronDown
-              className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-copper"
+              className="pointer-events-none absolute inset-e-3 top-1/2 size-4 -translate-y-1/2 text-copper"
               aria-hidden="true"
             />
           </div>
@@ -181,7 +182,7 @@ export default function FilterToolbar({
             <option value="priceDesc">{t("pricing.filters.priceDesc")}</option>
           </select>
           <ChevronDown
-            className="pointer-events-none absolute end-3 top-1/2 size-4 -translate-y-1/2 text-copper"
+            className="pointer-events-none absolute inset-e-3 top-1/2 size-4 -translate-y-1/2 text-copper"
             aria-hidden="true"
           />
         </div>

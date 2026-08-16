@@ -14,7 +14,7 @@ export function FilesMobileActions() {
   return (
     <>
       <div
-        className="pointer-events-none fixed bottom-4 end-4 z-40 flex flex-col items-end gap-2 md:hidden"
+        className="pointer-events-none fixed bottom-4 inset-e-4 z-40 flex flex-col items-end gap-2 md:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         {canWrite && view === "browse" && (

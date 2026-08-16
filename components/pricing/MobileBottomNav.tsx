@@ -20,7 +20,7 @@ export default function MobileBottomNav({ onOpenFilters }: MobileBottomNavProps)
   return (
     <nav
       aria-label={t("pricing.filters.label")}
-      className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-center gap-10 border-t border-border-primary bg-surface-secondary/90 px-6 py-3 shadow-[0_-4px_20px_rgba(57,9,10,0.08)] backdrop-blur-md lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-center gap-10 border-t border-border-primary bg-surface-secondary/90 px-6 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(57,9,10,0.08)] backdrop-blur-md lg:hidden"
     >
       <button
         type="button"
