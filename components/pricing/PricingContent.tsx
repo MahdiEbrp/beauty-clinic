@@ -1,168 +1,135 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { SearchX } from "lucide-react";
 import type { PublicServiceTree } from "@/lib/services/types";
 import BookingModal from "@/components/BookingModal";
 import FloatingBookingButton from "@/components/FloatingBookingButton";
-import FeaturedCard from "./FeaturedCard";
-import FilterBar from "./FilterBar";
-import GroupRail from "./GroupRail";
-import PricingHero from "./PricingHero";
-import ServiceDetail from "./ServiceDetail";
-import ServiceRowCard from "./ServiceRowCard";
+import CategoryCard from "./CategoryCard";
+import FilterToolbar from "./FilterToolbar";
+import HeroSlider from "./HeroSlider";
+import MobileBottomNav from "./MobileBottomNav";
+import MobileDrawer from "./MobileDrawer";
 import {
-  categoryOptions,
+  buildCategoryCards,
   defaultFilters,
-  filterRows,
-  flattenTree,
+  filterCards,
   priceBounds,
   type CatalogFilters,
 } from "./data";
 
+type PricingContentProps = {
+  tree: PublicServiceTree;
+};
+
 function EmptyState() {
   const t = useTranslations();
   return (
-    <div className="rounded-panel border border-dashed border-border-interactive bg-surface-secondary p-12 text-center">
+    <div className="rounded-panel border border-dashed border-border-interactive bg-surface-secondary px-6 py-16 text-center">
       <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-pill bg-surface-tertiary text-copper">
         <SearchX className="size-7" aria-hidden="true" />
       </div>
       <h3 className="mb-1 text-heading-3 font-bold text-accent">
         {t("pricing.empty.title")}
       </h3>
-      <p className="text-body text-content-secondary">
-        {t("pricing.empty.description")}
-      </p>
+      <p className="text-body text-content-secondary">{t("pricing.empty.description")}</p>
     </div>
   );
 }
 
-type PricingContentProps = {
-  tree: PublicServiceTree;
-};
-
-/** Services & pricing experience — catalog (state A) + expanded detail (state B). */
+/** Services & pricing — hero slider, filters, and the category-card grid. */
 export default function PricingContent({ tree }: PricingContentProps) {
-  const [activeGroupSlug, setActiveGroupSlug] = useState<string | null>(null);
-  const [query, setQuery] = useState("");
+  const t = useTranslations();
+  const [search, setSearch] = useState("");
   const [filters, setFilters] = useState<CatalogFilters>(defaultFilters);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
+  const gridRef = useRef<HTMLDivElement>(null);
 
-  const rows = useMemo(() => flattenTree(tree), [tree]);
-  const bounds = useMemo(() => priceBounds(rows), [rows]);
-  const categories = useMemo(() => categoryOptions(tree), [tree]);
-
-  const filtered = useMemo(
-    () =>
-      filterRows(rows, {
-        groupSlug: activeGroupSlug,
-        search: query,
-        categorySlug: filters.categorySlug,
-        priceBucket: filters.priceBucket,
-        sort: filters.sort,
-      }),
-    [rows, activeGroupSlug, query, filters],
-  );
-
-  const expanded = useMemo(
-    () => rows.find((row) => row.id === expandedId) ?? null,
-    [rows, expandedId],
-  );
-
-  const showFeatured =
-    !activeGroupSlug &&
-    !filters.categorySlug &&
-    !filters.priceBucket &&
-    !query.trim();
-  const featuredService = useMemo(
-    () => (showFeatured ? rows.find((row) => row.isFeatured) ?? rows[0] ?? null : null),
-    [rows, showFeatured],
-  );
-
-  const listRows = filtered;
+  const cards = useMemo(() => buildCategoryCards(tree), [tree]);
+  const bounds = useMemo(() => priceBounds(cards), [cards]);
+  const filtered = useMemo(() => filterCards(cards, filters, search), [cards, filters, search]);
 
   const activeCount =
-    (filters.categorySlug ? 1 : 0) + (filters.priceBucket ? 1 : 0);
+    (filters.groupSlug ? 1 : 0) + (filters.priceBucket ? 1 : 0);
 
   const updateFilters = (next: Partial<CatalogFilters>) => {
     setFilters((current) => ({ ...current, ...next }));
-    setExpandedId(null);
   };
 
-  const toggleRow = (id: string) =>
-    setExpandedId((current) => (current === id ? null : id));
+  const scrollToGrid = () => {
+    gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
-  useEffect(() => {
-    if (!expandedId) return;
-    const element = document.getElementById(`detail-${expandedId}`);
-    if (!element) return;
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    element.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "nearest" });
-  }, [expandedId]);
+  const exploreGroup = (slug: string) => {
+    updateFilters({ groupSlug: slug });
+    scrollToGrid();
+  };
 
   return (
     <div className="bg-surface-primary">
-      <PricingHero query={query} onQueryChange={setQuery} />
+      <HeroSlider groups={tree.groups} onExplore={exploreGroup} />
 
-      <div className="mx-auto max-w-content space-y-8 px-6 py-12">
-        <GroupRail
-          groups={tree.groups}
-          activeSlug={activeGroupSlug}
-          onSelect={(slug) => {
-            setActiveGroupSlug(slug);
-            setExpandedId(null);
-          }}
-        />
+      <div ref={gridRef} className="mx-auto max-w-content px-4 py-10 md:px-6 md:py-14">
+        <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div className="max-w-prose text-center md:text-start">
+            <h1 className="mb-3 text-heading-2 font-bold text-accent">
+              {t("pricing.sections.heading")}
+            </h1>
+            <p className="text-body text-content-secondary">
+              {t("pricing.sections.subheading")}
+            </p>
+          </div>
+          <p
+            role="status"
+            className="shrink-0 rounded-panel border border-border-primary bg-surface-secondary px-6 py-4 text-center text-heading-3 font-extrabold text-copper-strong md:self-center"
+          >
+            {t("pricing.filters.results", { count: filtered.length })}
+          </p>
+        </div>
 
-        <FilterBar
-          filters={filters}
-          onChange={updateFilters}
-          onClear={() => updateFilters(defaultFilters)}
-          categories={categories}
-          bounds={bounds}
-          activeCount={activeCount}
-          resultCount={filtered.length}
-        />
-
-        {featuredService ? (
-          <FeaturedCard
-            service={featuredService}
-            onExpand={() => toggleRow(featuredService.id)}
-            onBook={() => setBookingOpen(true)}
+        <div className="mb-10">
+          <FilterToolbar
+            search={search}
+            onSearchChange={setSearch}
+            sort={filters.sort}
+            onSortChange={(sort) => updateFilters({ sort })}
+            groups={tree.groups}
+            activeGroupSlug={filters.groupSlug}
+            onGroupSelect={(groupSlug) => updateFilters({ groupSlug })}
+            bounds={bounds}
+            priceBucket={filters.priceBucket}
+            onPriceBucketSelect={(priceBucket) => updateFilters({ priceBucket })}
+            activeCount={activeCount}
+            onClear={() => setFilters(defaultFilters)}
+            onOpenFilters={() => setDrawerOpen(true)}
           />
-        ) : null}
+        </div>
 
         {filtered.length === 0 ? (
           <EmptyState />
         ) : (
-          <ul className="space-y-4">
-            {listRows.map((row) => (
-              <li key={row.id}>
-                <ServiceRowCard
-                  service={row}
-                  expanded={row.id === expandedId}
-                  detailId={`detail-${row.id}`}
-                  onToggle={() => toggleRow(row.id)}
-                />
-                {expanded && row.id === expandedId ? (
-                  <ServiceDetail
-                    service={expanded}
-                    onBack={() => setExpandedId(null)}
-                    onBook={() => setBookingOpen(true)}
-                  />
-                ) : null}
-              </li>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+            {filtered.map((card) => (
+              <CategoryCard key={card.slug} card={card} onBook={() => setBookingOpen(true)} />
             ))}
-          </ul>
+          </div>
         )}
       </div>
 
-      <BookingModal
-        isOpen={bookingOpen}
-        onClose={() => setBookingOpen(false)}
+      <MobileDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        filters={filters}
+        groups={tree.groups}
+        bounds={bounds}
+        onChange={updateFilters}
+        onClear={() => setFilters(defaultFilters)}
       />
+      <MobileBottomNav onOpenFilters={() => setDrawerOpen(true)} />
+
+      <BookingModal isOpen={bookingOpen} onClose={() => setBookingOpen(false)} />
       <FloatingBookingButton onOpenBooking={() => setBookingOpen(true)} />
     </div>
   );

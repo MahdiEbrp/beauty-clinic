@@ -268,6 +268,7 @@ export type PublicTreeService = {
 export type PublicTreeCategory = {
   slug: string;
   icon: string | null;
+  image: string | null;
   title: string;
   description: string | null;
   services: PublicTreeService[];
@@ -277,6 +278,7 @@ export type PublicTreeCategory = {
 export type PublicTreeGroup = {
   slug: string;
   icon: string | null;
+  image: string | null;
   title: string;
   description: string | null;
   categories: PublicTreeCategory[];

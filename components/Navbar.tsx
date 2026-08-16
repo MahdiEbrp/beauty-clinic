@@ -102,8 +102,8 @@ export default function Navbar({ user }: { user: AuthUser | null }) {
     <header
       className={`fixed top-4 inset-x-4 z-50 rounded-pill shadow-elevation-1 transition-all duration-300 ${
         scrolled
-          ? "bg-surface-secondary/80 backdrop-blur-xl border border-border-primary/50"
-          : "bg-surface-secondary/60 backdrop-blur-md border border-border-primary/30"
+          ? "bg-surface-secondary/95 backdrop-blur-xl border border-border-primary shadow-elevation-2"
+          : "bg-surface-secondary/70 backdrop-blur-md border border-border-primary/40"
       }`}
     >
       <nav

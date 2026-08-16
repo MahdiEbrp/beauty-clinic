@@ -74,20 +74,23 @@ async function upsertGroup(group: SeedGroup): Promise<void> {
   }
 
   for (const category of group.categories) {
-    await upsertCategory(row.id, category);
+    await upsertCategory(row.id, category, group.image ?? null);
   }
 }
 
 async function upsertCategory(
   groupId: string,
   category: SeedCategory,
+  groupImage: string | null,
 ): Promise<void> {
+  const image = category.image ?? groupImage;
   const [row] = await db
     .insert(serviceCategories)
     .values({
       groupId,
       slug: category.slug,
       icon: category.icon ?? null,
+      image,
       displayOrder: category.displayOrder,
       isActive: true,
     })
@@ -96,6 +99,7 @@ async function upsertCategory(
       set: {
         groupId,
         icon: category.icon ?? null,
+        image,
         displayOrder: category.displayOrder,
         isActive: true,
       },

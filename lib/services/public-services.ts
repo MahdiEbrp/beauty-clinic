@@ -172,6 +172,7 @@ async function loadServiceTree(locale: Locale): Promise<PublicServiceTree> {
     list.push({
       slug: row.slug,
       icon: row.icon,
+      image: row.image,
       title: content.name,
       description: content.description,
       services: categoryServices,
@@ -188,6 +189,7 @@ async function loadServiceTree(locale: Locale): Promise<PublicServiceTree> {
     groups.push({
       slug: row.slug,
       icon: row.icon,
+      image: row.image,
       title: content.name,
       description: content.description,
       categories: groupCategories,

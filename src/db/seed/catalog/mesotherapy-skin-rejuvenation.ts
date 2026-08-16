@@ -4,6 +4,7 @@ import { svc, withSeo } from "./types";
 export const MESOTHERAPY_GROUP: SeedGroup = {
   slug: "mesotherapy-skin-rejuvenation",
   icon: "leaf",
+  image: "/images/gallery/microneedling.webp",
   displayOrder: 5,
   i18n: [
     {

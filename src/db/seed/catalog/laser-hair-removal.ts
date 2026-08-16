@@ -7,6 +7,7 @@ import { LASER_PERSONAL_KIT_CATEGORY } from "./laser-hair-personal-kit";
 export const LASER_HAIR_REMOVAL_GROUP: SeedGroup = {
   slug: "laser-hair-removal",
   icon: "spotlight",
+  image: "/images/gallery/laser-rejuv.webp",
   displayOrder: 6,
   i18n: [
     {

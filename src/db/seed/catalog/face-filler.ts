@@ -6,7 +6,7 @@ import { FILLER_UNDEREYE_CATEGORY } from "./face-filler-undereye";
 export const FACE_FILLER_GROUP: SeedGroup = {
   slug: "face-filler",
   icon: "Syringe",
-  image: "/images/services/filler.webp",
+  image: "/images/gallery/hydrafacial.webp",
   displayOrder: 0,
   i18n: [
     {

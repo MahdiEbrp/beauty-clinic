@@ -3,6 +3,7 @@ import type { SeedGroup } from "./types";
 export const SKIN_CARE_GROUP: SeedGroup = {
   slug: "skin-care",
   icon: "flower",
+  image: "/images/gallery/skin-care.webp",
   displayOrder: 9,
   i18n: [
     {

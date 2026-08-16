@@ -28,9 +28,6 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  turbopack: {
-    root: process.cwd(),
-  },
   // eslint-disable-next-line @typescript-eslint/require-await -- Next.js requires async headers()
   async headers() {
     const isDev = process.env.NODE_ENV !== "production";

@@ -26,6 +26,9 @@ export default function LocaleSwitcher({
   const targetName =
     new Intl.DisplayNames([locale], { type: "language" }).of(target) ?? target;
 
+  const localizedTarget =
+    new Intl.DisplayNames([target], { type: "language" }).of(locale) ?? locale;
+
   const handleSwitch = () => {
     // `usePathname` drops the fragment, so a user reading #contact would be
     // thrown back to the top of the page on switch. Re-attach it.
@@ -46,11 +49,15 @@ export default function LocaleSwitcher({
       aria-label={t("localeSwitcher.switchTo", { language: targetName })}
     >
       <Globe className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
-      {/* The chip reads in the target language, so it carries its own lang. */}
+      {/* Show the CURRENT language so the control reads as a locator, with the
+          switch target relayed via title/aria-label. */}
       {!compact && (
-        <span lang={target}>
-          {/* eslint-disable-next-line security/detect-object-injection -- guarded by isLocaleMetaKey(target) */}
-          {isLocaleMetaKey(target) ? localeMeta[target].short : target}
+        <span lang={locale}>
+          {/* eslint-disable-next-line security/detect-object-injection -- guarded by isLocaleMetaKey(locale) */}
+          {isLocaleMetaKey(locale) ? localeMeta[locale].short : locale}
+          <span className="sr-only">
+            {t("localeSwitcher.switchTo", { language: localizedTarget })}
+          </span>
         </span>
       )}
     </button>

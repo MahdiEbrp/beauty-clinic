@@ -59,6 +59,7 @@ export type SeedCategoryI18n = {
 export type SeedCategory = {
   slug: string;
   icon?: string;
+  image?: string;
   displayOrder: number;
   i18n: SeedCategoryI18n[];
   services: SeedService[];

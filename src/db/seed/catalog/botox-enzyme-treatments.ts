@@ -4,6 +4,7 @@ import { svc, withSeo } from "./types";
 export const BOTOX_ENZYME_GROUP: SeedGroup = {
   slug: "botox-enzyme-treatments",
   icon: "droplet",
+  image: "/images/gallery/skin-care.webp",
   displayOrder: 2,
   i18n: [
     {

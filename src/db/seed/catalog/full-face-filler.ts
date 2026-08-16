@@ -3,6 +3,7 @@ import type { SeedGroup } from "./types";
 export const FULL_FACE_FILLER_GROUP: SeedGroup = {
   slug: "full-face-filler",
   icon: "Sparkles",
+  image: "/images/gallery/hydrafacial.webp",
   displayOrder: 3,
   i18n: [
     {

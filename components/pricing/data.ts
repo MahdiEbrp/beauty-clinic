@@ -1,65 +1,79 @@
-import type {
-  PublicServiceRow,
-  PublicServiceTree,
-} from "@/lib/services/types";
+import type { PublicServiceTree, PublicTreeService } from "@/lib/services/types";
+import { groupDurationMin } from "@/data/pricing-media";
 
 export type SortKey = "recommended" | "priceAsc" | "priceDesc";
 export type PriceBucket = "low" | "mid" | "high";
 
 export type CatalogFilters = {
-  categorySlug: string | null;
+  groupSlug: string | null;
   priceBucket: PriceBucket | null;
   sort: SortKey;
 };
 
 export const defaultFilters: CatalogFilters = {
-  categorySlug: null,
+  groupSlug: null,
   priceBucket: null,
   sort: "recommended",
 };
 
-/** Flatten the group → category → service tree into row list (display order preserved). */
-export function flattenTree(tree: PublicServiceTree): PublicServiceRow[] {
-  const rows: PublicServiceRow[] = [];
+/** One card per service category, carrying its group context and price range. */
+export type CategoryCardData = {
+  slug: string;
+  title: string;
+  description: string | null;
+  icon: string | null;
+  image: string | null;
+  groupSlug: string;
+  groupTitle: string;
+  services: PublicTreeService[];
+  minPrice: number | null;
+  maxPrice: number | null;
+  optionsCount: number;
+  durationMin: number;
+};
+
+/** Build the category-card list (display order preserved) from the public tree. */
+export function buildCategoryCards(tree: PublicServiceTree): CategoryCardData[] {
+  const cards: CategoryCardData[] = [];
   for (const group of tree.groups) {
     for (const category of group.categories) {
-      for (const service of category.services) {
-        rows.push({
-          ...service,
-          groupSlug: group.slug,
-          groupTitle: group.title,
-          categorySlug: category.slug,
-          categoryTitle: category.title,
-        });
-      }
+      const prices = category.services
+        .map((service) =>
+          service.priceType === "on_request" || service.price === null
+            ? null
+            : service.price,
+        )
+        .filter((price): price is number => price !== null);
+
+      cards.push({
+        slug: category.slug,
+        title: category.title,
+        description: category.description,
+        icon: category.icon,
+        image: category.image ?? group.image,
+        groupSlug: group.slug,
+        groupTitle: group.title,
+        services: category.services,
+        minPrice: prices.length ? Math.min(...prices) : null,
+        maxPrice: prices.length ? Math.max(...prices) : null,
+        optionsCount: category.services.length,
+        durationMin: groupDurationMin(group.slug),
+      });
     }
   }
-  return rows;
+  return cards;
 }
 
-/** Deduplicated category options (slug → title) for the filter dropdown. */
-export function categoryOptions(
-  tree: PublicServiceTree,
-): { slug: string; title: string }[] {
-  const seen = new Map<string, string>();
-  for (const group of tree.groups) {
-    for (const category of group.categories) {
-      if (!seen.has(category.slug)) seen.set(category.slug, category.title);
-    }
-  }
-  return Array.from(seen, ([slug, title]) => ({ slug, title }));
-}
-
-/** Min/max of concrete prices (fixed/from), or null when unusable. */
+/** Min/max of concrete prices across all cards (fixed/from only). */
 export function priceBounds(
-  rows: PublicServiceRow[],
+  cards: CategoryCardData[],
 ): { min: number; max: number } | null {
   let min: number | null = null;
   let max: number | null = null;
-  for (const row of rows) {
-    if (row.priceType === "on_request" || row.price === null) continue;
-    min = min === null ? row.price : Math.min(min, row.price);
-    max = max === null ? row.price : Math.max(max, row.price);
+  for (const card of cards) {
+    if (card.minPrice === null || card.maxPrice === null) continue;
+    min = min === null ? card.minPrice : Math.min(min, card.minPrice);
+    max = max === null ? card.maxPrice : Math.max(max, card.maxPrice);
   }
   if (min === null || max === null || min === max) return null;
   return { min, max };
@@ -76,62 +90,41 @@ export function bucketRange(
   return { from: bounds.min + step, to: bounds.min + 2 * step };
 }
 
-function priceOrd(row: PublicServiceRow): number {
-  return row.priceType === "on_request" || row.price === null
-    ? Number.POSITIVE_INFINITY
-    : row.price;
-}
-
-function priceOrdDesc(row: PublicServiceRow): number {
-  return row.priceType === "on_request" || row.price === null
-    ? Number.POSITIVE_INFINITY
-    : -row.price;
-}
-
-export function matchesPriceBucket(
-  price: number | null,
-  priceType: string,
-  bucket: PriceBucket | null,
-  bounds: { min: number; max: number } | null,
-): boolean {
-  if (!bucket || !bounds) return true;
-  if (priceType === "on_request" || price === null) return false;
+function matchesBucket(minPrice: number | null, bucket: PriceBucket | null, bounds: { min: number; max: number } | null): boolean {
+  if (!bucket || !bounds || minPrice === null) return true;
   const range = bucketRange(bounds, bucket);
-  return price >= range.from && price <= range.to;
+  return minPrice >= range.from && minPrice <= range.to;
 }
 
-export function filterRows(
-  rows: PublicServiceRow[],
-  opts: {
-    groupSlug: string | null;
-    search: string;
-    categorySlug: string | null;
-    priceBucket: PriceBucket | null;
-    sort: SortKey;
-  },
-): PublicServiceRow[] {
-  const query = opts.search.trim().toLowerCase();
-  const bounds = priceBounds(rows);
+/** Filter + sort the category cards for the pricing grid. */
+export function filterCards(
+  cards: CategoryCardData[],
+  filters: CatalogFilters,
+  search: string,
+): CategoryCardData[] {
+  const query = search.trim().toLowerCase();
+  const bounds = priceBounds(cards);
 
-  const result = rows.filter((row) => {
-    if (opts.groupSlug && row.groupSlug !== opts.groupSlug) return false;
-    if (opts.categorySlug && row.categorySlug !== opts.categorySlug) return false;
-    if (!matchesPriceBucket(row.price, row.priceType, opts.priceBucket, bounds)) {
-      return false;
-    }
+  const result = cards.filter((card) => {
+    if (filters.groupSlug && card.groupSlug !== filters.groupSlug) return false;
+    if (!matchesBucket(card.minPrice, filters.priceBucket, bounds)) return false;
     if (query) {
-      const haystack = [row.title, row.shortDesc, row.categoryTitle, row.groupTitle]
+      const blob = [card.title, card.description, card.groupTitle]
         .filter(Boolean)
+        .concat(card.services.map((service) => `${service.title} ${service.shortDesc ?? ""}`))
         .join(" ")
         .toLowerCase();
-      if (!haystack.includes(query)) return false;
+      if (!blob.includes(query)) return false;
     }
     return true;
   });
 
-  if (opts.sort === "priceAsc") result.sort((a, b) => priceOrd(a) - priceOrd(b));
-  else if (opts.sort === "priceDesc") result.sort((a, b) => priceOrdDesc(a) - priceOrdDesc(b));
-  else result.sort((a, b) => Number(b.isFeatured) - Number(a.isFeatured));
+  if (filters.sort === "priceAsc") {
+    result.sort((a, b) => (a.minPrice ?? Infinity) - (b.minPrice ?? Infinity));
+  } else if (filters.sort === "priceDesc") {
+    result.sort((a, b) => (b.maxPrice ?? -Infinity) - (a.maxPrice ?? -Infinity));
+  }
+  // "recommended" keeps catalog order.
 
   return result;
 }

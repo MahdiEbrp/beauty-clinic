@@ -27,3 +27,17 @@ Full rulebook: `DESIGN_RULES.md` — read it before any UI/design work.
 - API routes live under `app/api/v1/`; wrap every handler with `withSecurity({ auth, permissions, validate, audit })` from `@/lib/api/security`, return `jsonOk`/`jsonError`, and use the uniform `{ error: { code, message } }` envelope; `export const runtime = "nodejs"` when touching the DB.
 - List endpoints are paginated (`page`/`perPage`/`search`/`status`); validate UUID ids before DB access.
 - Dashboard pages use `generateMetadata` + `getTranslations({ locale, namespace })`, canonical + `alternates.languages` for fa/en, and `robots: { index: false }`.
+
+## Security lint rules (`eslint-plugin-security`)
+
+Lint runs with `eslint --max-warnings=300` — security findings are treated as **errors you must fix, never disable with `eslint-disable`**. Prefer safe, dependency-free code; only use a targeted disable comment with the exact rule name when the pattern is genuinely safe (e.g. a fixed, closed key set) and add `-- safe: <reason>`.
+
+Ruleset in scope (docs live under `node_modules/eslint-plugin-security/docs/rules/`):
+
+- `detect-bidi-characters` — reject hidden Unicode (U+202E/U+202D etc.) that can spoof code/logic; keep direction-isolating characters like `…` (single char) out of identifiers and string literals.
+- `detect-buffer-noassert`, `detect-eval-with-expression`, `detect-new-buffer`, `detect-no-csrf-before-method-override`, `detect-non-literal-fs-filename`, `detect-non-literal-regexp`, `detect-non-literal-require`, `detect-object-injection`, `detect-possible-timing-attacks`, `detect-pseudoRandomBytes`, `detect-unsafe-regex`, `detect-disable-mustache-escape`, `detect-child-process`.
+
+Guidance:
+- No `eval`, `new Function`, raw `child_process`/`vm` shells, or non-literal regex/fs/require.
+- Dynamic lookups (e.g. `map[key]`) must be guarded by a safe fallback and, when the key set is fixed/typed, a scoped disable comment.
+- Prefer `crypto.randomBytes`/`randomUUID` for randomness; never time-comparable string comparisons on secrets.

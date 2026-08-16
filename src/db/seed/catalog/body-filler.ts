@@ -4,6 +4,7 @@ import { svc, withSeo } from "./types";
 export const BODY_FILLER_GROUP: SeedGroup = {
   slug: "body-filler",
   icon: "hand-coins",
+  image: "/images/hero-bg.webp",
   displayOrder: 1,
   i18n: [
     {
