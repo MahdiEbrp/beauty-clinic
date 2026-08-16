@@ -32,7 +32,7 @@ import type {
   TranslatedContent,
 } from "./types";
 
-const TREE_TTL_SECS = 60;
+const TREE_TTL_SECS = 7 * 24 * 60 * 60;
 const CACHE_PREFIX = "catalog:tree";
 const TREE_LOCALES: Locale[] = ["fa", "en"];
 

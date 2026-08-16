@@ -3,8 +3,9 @@ import { and, count, desc, eq, ilike, inArray, isNull, or, sql, type SQL } from 
 
 import { ApiError } from "@/lib/api/errors";
 import { hashPassword } from "@/lib/auth/password";
+import { revokeUserSessions } from "@/lib/auth/session";
 import { db } from "@/src/db";
-import { roles, sessions, userRoles, users } from "@/src/db/schema";
+import { roles, userRoles, users } from "@/src/db/schema";
 import type { UserStatusFilter } from "@/lib/validation/user";
 
 export type AdminUser = {
@@ -182,7 +183,7 @@ export async function updateUserStatus(
   await db.update(users).set(set).where(eq(users.id, userId));
 
   if (!isActive || isBanned) {
-    await db.delete(sessions).where(eq(sessions.userId, userId));
+    await revokeUserSessions(userId);
   }
 }
 
@@ -219,7 +220,7 @@ export async function changeUserPassword(
     .update(users)
     .set({ passwordHash: await hashPassword(password), passwordChangedAt: new Date(), mustChangePassword })
     .where(eq(users.id, userId));
-  await db.delete(sessions).where(eq(sessions.userId, userId));
+  await revokeUserSessions(userId);
 }
 
 export async function softDeleteUser(userId: string): Promise<void> {
@@ -231,7 +232,7 @@ export async function softDeleteUser(userId: string): Promise<void> {
   if (!existing) throw new ApiError(404, "USER_NOT_FOUND", "User not found.");
 
   await db.update(users).set({ deletedAt: new Date() }).where(eq(users.id, userId));
-  await db.delete(sessions).where(eq(sessions.userId, userId));
+  await revokeUserSessions(userId);
 }
 
 function temporaryPassword(): string {

@@ -6,6 +6,7 @@ import { db } from "@/src/db";
 import { rules, rulesI18n } from "@/src/db/schema";
 import { assertSlugAvailable, isUniqueViolation, uniqueSlugError } from "./helpers";
 import { emptyRuleContent, loadRulesTranslations, upsertRuleTranslation } from "./i18n-rules";
+import { bustPublicRulesCache } from "./rules-admin";
 import type { AdminRule, RuleContent } from "./rules-types";
 import type { Locale } from "./types";
 
@@ -82,6 +83,7 @@ export async function createRule(
       return { id: row.id };
     });
 
+    await bustPublicRulesCache();
     return result;
   } catch (error) {
     if (error instanceof ApiError) throw error;
@@ -120,6 +122,7 @@ export async function updateRule(
         }
       }
     });
+    await bustPublicRulesCache();
   } catch (error) {
     if (error instanceof ApiError) throw error;
     if (isUniqueViolation(error)) throw uniqueSlugError("rule");
@@ -137,4 +140,5 @@ export async function deleteRule(id: string): Promise<void> {
   }
 
   await db.delete(rules).where(eq(rules.id, id));
+  await bustPublicRulesCache();
 }

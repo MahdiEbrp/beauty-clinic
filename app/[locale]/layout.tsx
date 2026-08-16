@@ -7,7 +7,7 @@ import { Direction as DirectionPrimitive } from "radix-ui";
 import { routing } from "@/src/i18n/routing";
 import { canonicalUrl, dirForLocale } from "@/lib/site";
 import { getClinicData } from "@/data/clinic";
-import { getSession } from "@/lib/auth/dal";
+import { getSessionCached } from "@/lib/auth/dal";
 import AppChrome from "@/components/AppChrome";
 import JsonLd from "@/components/JsonLd";
 import DirSetter from "@/components/DirSetter";
@@ -54,7 +54,7 @@ export default async function LocaleLayout({
   const messages = await getMessages({ locale });
   const t = await getTranslations({ locale, namespace: "a11y" });
   const clinicData = await getClinicData();
-  const session = await getSession();
+  const session = await getSessionCached();
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>

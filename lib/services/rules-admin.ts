@@ -1,11 +1,25 @@
+import "server-only";
+
 import { and, count, eq, ilike, or, sql, type SQL } from "drizzle-orm";
 
+import { cacheDel, cacheWrap } from "@/lib/cache";
 import type { RuleStatusFilter } from "@/lib/validation/rules";
 import { db } from "@/src/db";
 import { rules, rulesI18n } from "@/src/db/schema";
 import { loadRulesTranslations } from "./i18n-rules";
 import type { AdminRule, ListRulesResult, PublicRule } from "./rules-types";
 import type { Locale } from "./types";
+
+/** TTL for the cached public rules feed (seconds). */
+const RULES_TTL_SECS = 7 * 24 * 60 * 60;
+
+const CACHE_PREFIX = "rules:public";
+const RULES_LOCALES: Locale[] = ["fa", "en"];
+const RULES_STATUSES = ["active", "inactive", "all"] as const;
+
+function publicRulesCacheKey(locale: Locale, status: string): string {
+  return `${CACHE_PREFIX}:${locale}:${status}`;
+}
 
 function emptyRuleContent() {
   return { name: "", description: null };
@@ -108,12 +122,28 @@ export async function findRuleIds(opts: {
   return rows.map((row) => row.id);
 }
 
-/** Fetch all active rules localized for the given locale (public site). */
+/**
+ * Active rules localized for the given locale (public site).
+ *
+ * Cached per-locale/status with a 7-day TTL so repeat visits (and concurrent
+ * requests) hit the shared cache instead of Postgres. Mutations call
+ * `bustPublicRulesCache()` to invalidate it immediately, so admin edits still
+ * appear without waiting out the TTL.
+ */
 export async function getRulesForPublic(
   locale: Locale,
   opts: { status?: "active" | "inactive" | "all" } = {},
 ): Promise<PublicRule[]> {
   const status = opts.status ?? "active";
+  return cacheWrap(publicRulesCacheKey(locale, status), RULES_TTL_SECS, () =>
+    loadPublicRules(locale, status),
+  );
+}
+
+async function loadPublicRules(
+  locale: Locale,
+  status: "active" | "inactive" | "all",
+): Promise<PublicRule[]> {
   const where =
     status === "active"
       ? eq(rules.isActive, true)
@@ -145,4 +175,13 @@ export async function getRulesForPublic(
       displayOrder: row.displayOrder,
     };
   });
+}
+
+/** Drop all cached public-rules variants. */
+export async function bustPublicRulesCache(): Promise<void> {
+  await Promise.all(
+    RULES_LOCALES.flatMap((locale) =>
+      RULES_STATUSES.map((status) => cacheDel(publicRulesCacheKey(locale, status))),
+    ),
+  );
 }

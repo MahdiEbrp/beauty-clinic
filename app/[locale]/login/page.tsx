@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { siteUrl, localizedHref } from "@/lib/site";
-import { getSession } from "@/lib/auth/dal";
+import { getSessionCached } from "@/lib/auth/dal";
 import LoginForm from "@/components/LoginForm";
 
 export async function generateMetadata({
@@ -28,7 +28,7 @@ export async function generateMetadata({
 }
 
 export default async function LoginPage() {
-  const session = await getSession();
+  const session = await getSessionCached();
   if (session) {
     const locale = await getLocale();
     redirect(localizedHref(locale, "/dashboard"));

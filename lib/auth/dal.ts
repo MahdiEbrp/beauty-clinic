@@ -5,17 +5,24 @@ import { and, desc, eq, gt, isNull } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { cacheGet, cacheSet } from "@/lib/cache";
 import { db } from "@/src/db";
 import { permissions, rolePermissions, roles, sessions, userRoles, users } from "@/src/db/schema";
 import { getLocale } from "next-intl/server";
 import { localizedHref } from "@/lib/site";
-import { decryptSession, SESSION_COOKIE } from "./jwt";
+import { sessionCacheKey } from "./session";
+import { decryptSession, SESSION_COOKIE, type SessionClaims } from "./jwt";
 import { describeDevice, type DeviceKind } from "./device";
 import { hasPermission, hasRole, type RoleKey } from "./rbac";
 
 // Only write the activity heartbeat when the last write is at least this old,
 // so a busy user doesn't turn every page load into a DB write.
 const LAST_SEEN_THROTTLE_MS = 5 * 60 * 1000;
+
+// Freshness window for the public-shell session cache (getSessionCached).
+// Short by design: only positive lookups are cached, and the entry is keyed by
+// sessionId so it can be invalidated on logout/revoke/deactivation.
+const SESSION_CACHE_TTL_SECS = 30;
 
 export type AuthUser = {
   id: string;
@@ -51,12 +58,12 @@ async function clearInvalidSession(): Promise<void> {
   cookieStore.delete(SESSION_COOKIE);
 }
 
-export const getSession = cache(async (): Promise<AuthSession | null> => {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(SESSION_COOKIE)?.value;
-  const claims = await decryptSession(token);
-  if (!claims) return null;
-
+/**
+ * Resolve a session's claims against the database (session row, user row, and
+ * the user's roles/permissions). Returns null when any check fails. Each
+ * failing path cleans up the invalid session row and cookie.
+ */
+async function loadSession(claims: SessionClaims): Promise<AuthSession | null> {
   const session = await db.query.sessions.findFirst({
     where: and(eq(sessions.id, claims.sessionId), isNull(sessions.revokedAt)),
   });
@@ -134,7 +141,42 @@ export const getSession = cache(async (): Promise<AuthSession | null> => {
       mustChangePassword: user.mustChangePassword,
     },
   };
+}
+
+export const getSession = cache(async (): Promise<AuthSession | null> => {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE)?.value;
+  const claims = await decryptSession(token);
+  if (!claims) return null;
+  return loadSession(claims);
 });
+
+/**
+ * Cached variant of getSession for the public UI shell (navbar auth state,
+ * login/register already-authenticated redirects) where a few seconds of
+ * staleness is acceptable.
+ *
+ * Only successful lookups are cached — a "no session" result is never stored,
+ * so logging out is never masked by a stale logged-in entry. The entry is keyed
+ * by sessionId and invalidated on logout, explicit revoke, deactivation/ban
+ * and password change (see lib/auth/session.ts). Authorization on protected
+ * routes and API handlers never uses this path: requireAuth and withSecurity
+ * call the uncached getSession directly.
+ */
+export async function getSessionCached(): Promise<AuthSession | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE)?.value;
+  const claims = await decryptSession(token);
+  if (!claims) return null;
+
+  const key = sessionCacheKey(claims.sessionId);
+  const cached = await cacheGet<AuthSession>(key);
+  if (cached) return cached;
+
+  const session = await loadSession(claims);
+  if (session) await cacheSet(key, session, SESSION_CACHE_TTL_SECS);
+  return session;
+}
 
 /**
  * The user's non-expired, non-revoked sessions, most recently active first,

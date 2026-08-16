@@ -9,6 +9,8 @@ vi.mock("@/src/db", async () => {
   return { db: createMockDb() };
 });
 
+vi.mock("server-only", () => ({}));
+
 import { db } from "@/src/db";
 import { ApiError } from "@/lib/api/errors";
 import { listUsers, updateUserStatus } from "./service";

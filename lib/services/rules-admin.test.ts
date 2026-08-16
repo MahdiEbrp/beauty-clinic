@@ -11,7 +11,7 @@ vi.mock("@/src/db", async () => {
 vi.mock("server-only", () => ({}));
 
 import { db } from "@/src/db";
-import { listRulesAdmin, findRuleIds } from "./rules-admin";
+import { listRulesAdmin, findRuleIds, getRulesForPublic, bustPublicRulesCache } from "./rules-admin";
 
 const mockDb = db as unknown as MockDb;
 const UUID = () => randomUUID();
@@ -87,5 +87,34 @@ describe("rules-admin service", () => {
     const bySlug = await listRulesAdmin({ page: 1, perPage: 10, search: "respect" });
     expect(bySlug.items).toHaveLength(1);
     expect(bySlug.items[0].slug).toBe("respect-time");
+  });
+});
+
+describe("getRulesForPublic caching", () => {
+  const rulesSelectCount = () =>
+    mockDb.log.filter((entry) => entry.type === "select" && entry.table === "rules").length;
+
+  it("serves repeated reads from the cache without hitting the DB", async () => {
+    seedRule({ slug: "cache-me" }, "Cache Me");
+
+    const first = await getRulesForPublic("fa");
+    expect(first).toHaveLength(1);
+    expect(rulesSelectCount()).toBeGreaterThan(0);
+
+    const before = rulesSelectCount();
+    const second = await getRulesForPublic("fa");
+    expect(second).toEqual(first);
+    expect(rulesSelectCount()).toBe(before);
+  });
+
+  it("busts the cache so the next read re-queries the DB", async () => {
+    seedRule({ slug: "bust-me" }, "Bust Me");
+
+    await getRulesForPublic("fa");
+    const before = rulesSelectCount();
+
+    await bustPublicRulesCache();
+    await getRulesForPublic("fa");
+    expect(rulesSelectCount()).toBe(before + 1);
   });
 });

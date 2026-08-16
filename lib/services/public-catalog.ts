@@ -18,7 +18,7 @@ import {
 import { bustPublicServiceTreeCache } from "./public-services";
 
 /** TTL for the cached public catalog feed (seconds). */
-const CATALOG_TTL_SECS = 60;
+const CATALOG_TTL_SECS = 7 * 24 * 60 * 60;
 
 const CACHE_PREFIX = "catalog";
 const CATALOG_LOCALES: Locale[] = ["fa", "en"];
