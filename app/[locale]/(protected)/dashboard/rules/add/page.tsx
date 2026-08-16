@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import CreateRulesForm from "@/components/rules/CreateRulesForm";
+import CreateRuleForm from "@/components/create-rule/CreateRuleForm";
 import { requirePermission } from "@/lib/auth/dal";
 import { siteUrl } from "@/lib/site";
 
@@ -13,11 +13,11 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "dashboardRules" });
+  const t = await getTranslations({ locale, namespace: "rulesWizard" });
 
   return {
-    title: t("addRule.title"),
-    description: t("addRule.subtitle"),
+    title: t("meta.title"),
+    description: t("meta.description"),
     alternates: {
       canonical: `${siteUrl}/${locale}${ROUTE}`,
       languages: {
@@ -31,5 +31,5 @@ export async function generateMetadata({
 
 export default async function AddRulePage() {
   await requirePermission("rules.write");
-  return <CreateRulesForm />;
+  return <CreateRuleForm />;
 }

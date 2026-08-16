@@ -1,3 +1,5 @@
+"use client";
+
 import { createElement } from "react";
 import { DynamicIcon, type IconName } from "lucide-react/dynamic";
 import { Sparkles } from "lucide-react";

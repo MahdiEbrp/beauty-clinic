@@ -176,11 +176,6 @@ async function seed(): Promise<void> {
 
 async function seedRules(): Promise<void> {
   for (const def of RULES_SEED) {
-    const existing = await db.query.rules.findFirst({
-      where: eq(rules.slug, def.slug),
-      columns: { id: true },
-    });
-    if (existing) continue;
     const [row] = await db
       .insert(rules)
       .values({
@@ -192,15 +187,35 @@ async function seedRules(): Promise<void> {
         displayOrder: def.displayOrder,
         isActive: def.isActive,
       })
+      .onConflictDoUpdate({
+        target: rules.slug,
+        set: {
+          icon: def.icon,
+          image: def.image,
+          color: def.color,
+          highlighted: def.highlighted,
+          displayOrder: def.displayOrder,
+          isActive: def.isActive,
+        },
+      })
       .returning({ id: rules.id });
-    await db.insert(rulesI18n).values(
-      def.i18n.map((entry) => ({
-        ruleId: row.id,
-        locale: entry.locale,
-        name: entry.name,
-        description: entry.description,
-      })),
-    );
+    for (const entry of def.i18n) {
+      await db
+        .insert(rulesI18n)
+        .values({
+          ruleId: row.id,
+          locale: entry.locale,
+          name: entry.name,
+          description: entry.description,
+        })
+        .onConflictDoUpdate({
+          target: [rulesI18n.ruleId, rulesI18n.locale],
+          set: {
+            name: entry.name,
+            description: entry.description,
+          },
+        });
+    }
   }
   console.log("Rules seeded.");
 }

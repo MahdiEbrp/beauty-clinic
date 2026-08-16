@@ -25,13 +25,15 @@ export default function IconPickerDialog({
   onOpenChange,
   selected,
   onSelect,
+  ns = "groupWizard",
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   selected: string;
   onSelect: (key: string) => void;
+  ns?: string;
 }) {
-  const t = useTranslations("groupWizard");
+  const t = useTranslations(ns);
   const [search, setSearch] = useState("");
 
   const query = search.trim();

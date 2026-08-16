@@ -1642,102 +1642,224 @@
   "dashboardRules": {
     "meta": {
       "title": "قوانین | کلینیک زیبایی نفس",
-      "description": "مدیریت قوانین و مقررات کلینیک."
+      "description": "قوانین و مقررات نمایش‌داده‌شده در سایت عمومی را مدیریت کنید."
     },
     "heading": "قوانین",
-    "description": "مدیریت قوانین عمومی و مقررات کلینیک.",
-    "addRule": {
-      "title": "افزودن قانون",
-      "subtitle": "ایجاد قانون جدید کلینیک."
-    },
-    "editRule": {
-      "title": "ویرایش قانون",
-      "subtitle": "به‌روزرسانی این قانون کلینیک."
-    },
-    "fields": {
-      "slug": {
-        "label": "Slug",
-        "placeholder": "e.g. respect-appointments",
-        "help": "Unique URL-friendly identifier (kebab-case)"
-      },
-      "icon": {
-        "label": "Icon",
-        "placeholder": "e.g. clock"
-      },
-      "image": {
-        "label": "Image",
-        "placeholder": "https://…"
-      },
-      "color": {
-        "label": "Color",
-        "placeholder": "e.g. peach"
-      },
-      "highlighted": {
-        "label": "Highlight on public page"
-      },
-      "displayOrder": {
-        "label": "Display order",
-        "help": "Lower numbers appear first."
-      },
-      "isActive": {
-        "label": "Active",
-        "help": "Show this rule on the public page."
-      },
-      "translations": {
-        "label": "Translations",
-        "fa": "Persian (FA)",
-        "en": "English (EN)"
-      },
-      "name": {
-        "label": "Name",
-        "placeholder": "Rule name"
-      },
-      "description": {
-        "label": "Description",
-        "placeholder": "Brief description (optional)"
-      }
-    },
-    "status": "Status",
-    "active": "Active",
-    "inactive": "Inactive",
-    "save": {
-      "create": "Create rule",
-      "update": "Update rule"
-    },
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "deleted": {
-      "title": "Rule deleted",
-      "description": "Rule has been deleted."
-    },
-    "updated": {
-      "title": "Rule updated",
-      "description": "Rule has been updated."
-    },
-    "created": {
-      "title": "Rule created",
-      "description": "Rule has been created."
-    },
-    "empty": {
-      "title": "No rules found",
-      "description": "No rules match your search."
-    },
-    "columns": {
-      "order": "ترتیب",
+    "resultsLabel": "قانون",
+    "add": "افزودن قانون جدید",
+    "addShort": "افزودن قانون",
+    "select": "انتخاب",
+    "done": "انجام شد",
+    "search": "جستجوی قوانین",
+    "searchPlaceholder": "جستجو با اسلاگ یا نام…",
+    "status": "وضعیت",
+    "statusAll": "همه",
+    "clearFilters": "پاک‌کردن فیلترها",
+    "error": "بارگذاری قوانین ممکن نشد. دوباره تلاش کنید.",
+    "retry": "تلاش مجدد",
+    "loading": "در حال بارگذاری قوانین…",
+    "empty": "هیچ قانونی یافت نشد.",
+    "emptySearch": "هیچ قانونی با جستجوی شما مطابقت ندارد.",
+    "table": {
+      "rule": "قانون",
+      "slug": "اسلاگ",
+      "highlighted": "برجسته",
+      "displayOrder": "ترتیب",
+      "status": "وضعیت",
       "actions": "عملیات"
     },
-    "pagination": {
-      "prev": "قبلی",
-      "next": "بعدی"
+    "statuses": {
+      "active": "فعال",
+      "inactive": "غیرفعال"
     },
-    "deleteConfirm": "این قانون حذف شود؟",
-    "deleteError": "حذف قانون ممکن نشد.",
-    "loadFailed": "بارگیری قوانین ممکن نشد.",
-    "edit": "ویرایش",
-    "form": {
-      "defaultIcon": "پیش‌فرض (ساعت)",
-      "saving": "در حال ذخیره…",
-      "saveError": "ذخیره قانون ممکن نشد."
+    "actions": {
+      "edit": "ویرایش",
+      "activate": "فعال‌سازی",
+      "deactivate": "غیرفعال‌سازی",
+      "menu": "عملیات قانون",
+      "delete": "حذف قانون",
+      "deleteConfirm": "حذف {name}؟"
+    },
+    "deactivateDialog": {
+      "title": "غیرفعال‌سازی {name}؟",
+      "description": "قانون از صفحهٔ قوانین عمومی مخفی می‌شود. در هر زمان می‌توان آن را دوباره فعال کرد."
+    },
+    "dialog": {
+      "cancel": "انصراف",
+      "confirm": "تأیید",
+      "close": "بستن"
+    },
+    "pagination": {
+      "showing": "نمایش {from}–{to} از {total}",
+      "previous": "قبلی",
+      "next": "بعدی",
+      "pageInfo": "صفحهٔ {page} از {totalPages}"
+    },
+    "errors": {
+      "action": "عملیات انجام نشد. دوباره تلاش کنید."
+    },
+    "bulk": {
+      "selected": "{count} قانون انتخاب شد",
+      "selectedFiltered": "هر {count} نتیجهٔ فیلترشده انتخاب شد",
+      "activate": "فعال‌سازی",
+      "deactivate": "غیرفعال‌سازی",
+      "delete": "حذف قوانین",
+      "apply": "اعمال عملیات",
+      "clear": "پاک‌کردن انتخاب",
+      "pageSelected": "همهٔ قوانین این صفحه انتخاب شدند.",
+      "selectFiltered": "انتخاب هر {count} نتیجهٔ فیلترشده",
+      "selectGroup": "انتخاب {name}",
+      "selectPage": "انتخاب قوانین این صفحه",
+      "confirm": {
+        "delete": "حذف قوانین انتخاب‌شده؟",
+        "deactivate": "غیرفعال‌سازی قوانین انتخاب‌شده؟"
+      },
+      "confirmDescription": "این عملیات روی قوانین انتخاب‌شده اعمال می‌شود و ممکن است وضعیت نمایش آن‌ها را تغییر دهد.",
+      "resultTitle": "نتیجهٔ عملیات گروهی",
+      "resultDescription": "عملیات با نتیجهٔ زیر انجام شد.",
+      "requested": "{count} قانون درخواست شد",
+      "succeeded": "{count} موفق",
+      "failed": "{count} ناموفق",
+      "failureCount": "{count} عملیات ناموفق بود."
+    },
+    "toast": {
+      "syncing": "در حال به‌روزرسانی قوانین…",
+      "success": "قانون به‌روزرسانی شد.",
+      "deleted": "قانون حذف شد.",
+      "error": "عملیات انجام نشد. دوباره تلاش کنید."
+    }
+  },
+  "rulesWizard": {
+    "meta": {
+      "title": "افزودن قانون | کلینیک زیبایی نفس",
+      "description": "ایجاد قانون جدید کلینیک با محتوای دوزبانه."
+    },
+    "metaEdit": {
+      "title": "ویرایش قانون | کلینیک زیبایی نفس",
+      "description": "به‌روزرسانی یک قانون کلینیک."
+    },
+    "back": "بازگشت به قوانین",
+    "heading": "ایجاد قانون",
+    "subtitle": "قانونی اضافه کنید که بیماران بتوانند در صفحهٔ قوانین عمومی بخوانند.",
+    "editHeading": "ویرایش قانون",
+    "editSubtitle": "جزئیات این قانون کلینیک را به‌روزرسانی کنید.",
+    "steps": {
+      "identity": {
+        "name": "شناسایی",
+        "desc": "تعریف قانون",
+        "fullDesc": "هویت اصلی این قانون را تعریف کنید."
+      },
+      "appearance": {
+        "name": "ظاهر",
+        "desc": "ایجاد هویت بصری",
+        "fullDesc": "به این قانون هویت بصری بدهید."
+      },
+      "localization": {
+        "name": "بومی‌سازی",
+        "desc": "افزودن محتوای دوزبانه",
+        "fullDesc": "نام و توضیحات را به هر دو زبان پیکربندی کنید."
+      },
+      "review": {
+        "name": "بازبینی",
+        "desc": "تأیید همه موارد",
+        "fullDesc": "تنظیمات خود را بازبینی و تأیید کنید."
+      }
+    },
+    "language": {
+      "label": "زبان",
+      "en": "انگلیسی (EN)",
+      "fa": "فارسی (FA)",
+      "editing": "در حال ویرایش: {lang}",
+      "enSection": "انگلیسی (پایه)",
+      "faSection": "فارسی (FA)"
+    },
+    "identity": {
+      "ruleName": "نام قانون",
+      "ruleNamePlaceholder": "مثلاً احترام به وقت",
+      "ruleNameHint": "نام را در هر زبان وارد کنید. نام انگلیسی اسلاگ زیر را به‌صورت خودکار تولید می‌کند.",
+      "slug": "اسلاگ",
+      "slugHint": "در آدرس عمومی استفاده می‌شود. حروف کوچک، اعداد و خط تیره.",
+      "slugPrefix": "/rules/",
+      "editManual": "ویرایش دستی",
+      "resetAuto": "بازگشت به خودکار",
+      "auto": "خودکار",
+      "custom": "دستی",
+      "active": "وضعیت فعال",
+      "activeHint": "این قانون در صفحهٔ قوانین عمومی نمایش داده شود.",
+      "activeLabel": "فعال",
+      "inactiveLabel": "غیرفعال",
+      "displayOrder": "ترتیب نمایش",
+      "displayOrderHint": "اعداد کوچک‌تر ابتدا نمایش داده می‌شوند.",
+      "highlighted": "برجسته‌سازی در صفحهٔ عمومی",
+      "highlightedHint": "با یک کارت رنگی توجه را به این قانون جلب کنید.",
+      "highlightedLabel": "برجسته"
+    },
+    "appearance": {
+      "icon": "آیکون قانون",
+      "iconHint": "برای این قانون یک آیکون انتخاب کنید.",
+      "change": "تغییر آیکون",
+      "color": "رنگ کمکی",
+      "colorHint": "رنگ کمکی آیکون قانون را انتخاب کنید.",
+      "image": "تصویر",
+      "imageHint": "برای نمایش کنار این قانون، یک آدرس تصویر وارد کنید.",
+      "imagePlaceholder": "https://example.com/image.jpg",
+      "imagePreview": "پیش‌نمایش"
+    },
+    "localization": {
+      "title": "محتوای دوزبانه",
+      "name": "نام",
+      "namePlaceholder": "نام قانون را به {lang} وارد کنید",
+      "description": "توضیحات",
+      "descriptionPlaceholder": "توضیحات کوتاه به {lang} وارد کنید",
+      "descriptionHint": "در صفحهٔ قوانین عمومی نمایش داده می‌شود."
+    },
+    "review": {
+      "title": "آمادهٔ انتشار",
+      "description": "جزئیات قانون خود را بازبینی کنید. پس از ایجاد، این قانون در صفحهٔ قوانین عمومی نمایش داده می‌شود.",
+      "identity": "شناسایی",
+      "appearance": "ظاهر",
+      "localization": "بومی‌سازی",
+      "ruleName": "نام قانون",
+      "slug": "اسلاگ",
+      "visibility": "وضعیت نمایش",
+      "icon": "آیکون",
+      "color": "رنگ",
+      "image": "تصویر",
+      "imageSet": "تصویر تنظیم شده",
+      "notProvided": "—",
+      "notSet": "تنظیم نشده",
+      "english": "انگلیسی",
+      "persian": "فارسی",
+      "submit": "ایجاد قانون",
+      "creating": "در حال ایجاد…"
+    },
+    "nav": {
+      "back": "بازگشت",
+      "continue": "ادامه",
+      "create": "ایجاد قانون",
+      "save": "ذخیره تغییرات",
+      "stepOf": "مرحلهٔ {current} از {total}"
+    },
+    "iconPicker": {
+      "title": "انتخاب آیکون",
+      "searchPlaceholder": "جستجوی آیکون…",
+      "empty": "هیچ آیکونی با جستجوی شما مطابقت ندارد.",
+      "resultCount": "نمایش {shown} از {count} آیکون."
+    },
+    "errors": {
+      "slugRequired": "اسلاگ با فرمت kebab-case الزامی است.",
+      "nameRequired": "در هر دو زبان نام را پر کنید.",
+      "setupError": "هنگام آماده‌سازی فرم خطایی رخ داد.",
+      "slugTaken": "این اسلاگ قبلاً استفاده شده است. اسلاگ دیگری انتخاب کنید.",
+      "createFailed": "ایجاد قانون ممکن نشد. {message}",
+      "generic": "این فیلدها پیش از ادامه نیاز به توجه دارند."
+    },
+    "toast": {
+      "creating": "در حال ایجاد قانون…",
+      "created": "قانون ایجاد شد.",
+      "saving": "در حال ذخیره قانون…",
+      "updated": "قانون به‌روزرسانی شد.",
+      "error": "ایجاد قانون ممکن نشد."
     }
   }
 }

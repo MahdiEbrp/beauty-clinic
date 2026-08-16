@@ -1,51 +1,18 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { getTranslations } from "next-intl/server";
-import {
-  Clock,
-  Sparkles,
-  Car,
-  Users,
-  Hourglass,
-  CalendarX,
-  Shield,
-  FileText,
-  MapPin,
-  Phone,
-  Calendar as CalendarIcon,
-  UserCheck,
-  CreditCard,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+
+import GroupGlyph from "@/components/create-group/GroupGlyph";
 import { siteUrl } from "@/lib/site";
 import { getRulesForPublic } from "@/lib/services/rules-admin";
 import type { PublicRule } from "@/lib/services/rules-types";
 import type { Locale } from "@/lib/services/types";
-
-const iconMap: Record<string, LucideIcon> = {
-  clock: Clock,
-  sparkles: Sparkles,
-  car: Car,
-  users: Users,
-  hourglass: Hourglass,
-  calendarX: CalendarX,
-  shield: Shield,
-  fileText: FileText,
-  mapPin: MapPin,
-  phone: Phone,
-  calendar: CalendarIcon,
-  userCheck: UserCheck,
-  creditCard: CreditCard,
-};
 
 interface RuleCardProps {
   rule: PublicRule;
 }
 
 function RuleCard({ rule }: RuleCardProps) {
-  const Icon = iconMap[rule.icon ?? ""] ?? Clock;
-  const colorClass = colorMap[rule.color ?? "default"] ?? colorMap.default;
-
   return (
     <article
       className="bg-surface-secondary border border-border-primary rounded-panel p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-elevation-2"
@@ -54,10 +21,8 @@ function RuleCard({ rule }: RuleCardProps) {
         : {})}
     >
       <div className="flex items-start gap-4">
-        <div
-          className={`w-12 h-12 ${colorClass} rounded-control flex items-center justify-center shrink-0 border border-border-primary`}
-        >
-          <Icon className="w-6 h-6" strokeWidth={2} aria-hidden="true" />
+        <div className="w-14 h-14 bg-surface-primary text-copper rounded-control flex items-center justify-center shrink-0 border border-border-primary">
+          <GroupGlyph name={rule.icon ?? "Sparkles"} className="w-6 h-6" strokeWidth={2} />
         </div>
         <div>
           <h2 className="text-body-lg font-bold text-accent mb-2">
@@ -73,16 +38,6 @@ function RuleCard({ rule }: RuleCardProps) {
     </article>
   );
 }
-
-const colorMap: Record<string, string> = {
-  peach: "text-peach bg-peach/10",
-  gold: "text-gold bg-gold/10",
-  copper: "text-copper bg-copper/10",
-  rose: "text-rose bg-rose/10",
-  sand: "text-sand bg-sand/10",
-  accent: "text-accent bg-accent/10",
-  default: "text-accent bg-accent/10",
-};
 
 interface RulesContentProps {
   locale: string;

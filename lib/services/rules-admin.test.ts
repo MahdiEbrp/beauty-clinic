@@ -22,7 +22,7 @@ function makeRule(overrides: Partial<Row> = {}): Row {
     slug: "rule-slug",
     icon: "clock",
     image: null,
-    color: "peach",
+    color: "copper",
     highlighted: false,
     displayOrder: 0,
     isActive: true,

@@ -1642,102 +1642,224 @@
   "dashboardRules": {
     "meta": {
       "title": "Rules | Nafas Beauty Clinic",
-      "description": "Manage clinic rules and policies."
+      "description": "Manage the rules and policies shown on your public site."
     },
     "heading": "Rules",
-    "description": "Manage public clinic rules and policies.",
-    "addRule": {
-      "title": "Add Rule",
-      "subtitle": "Create a new clinic rule."
-    },
-    "editRule": {
-      "title": "Edit Rule",
-      "subtitle": "Update this clinic rule."
-    },
-    "fields": {
-      "slug": {
-        "label": "Slug",
-        "placeholder": "e.g. respect-appointments",
-        "help": "Unique URL-friendly identifier (kebab-case)"
-      },
-      "icon": {
-        "label": "Icon",
-        "placeholder": "e.g. clock"
-      },
-      "image": {
-        "label": "Image",
-        "placeholder": "https://…"
-      },
-      "color": {
-        "label": "Color",
-        "placeholder": "e.g. peach"
-      },
-      "highlighted": {
-        "label": "Highlight on public page"
-      },
-      "displayOrder": {
-        "label": "Display order",
-        "help": "Lower numbers appear first."
-      },
-      "isActive": {
-        "label": "Active",
-        "help": "Show this rule on the public page."
-      },
-      "translations": {
-        "label": "Translations",
-        "fa": "Persian (FA)",
-        "en": "English (EN)"
-      },
-      "name": {
-        "label": "Name",
-        "placeholder": "Rule name"
-      },
-      "description": {
-        "label": "Description",
-        "placeholder": "Brief description (optional)"
-      }
-    },
+    "resultsLabel": "rules",
+    "add": "Add new rule",
+    "addShort": "Add rule",
+    "select": "Select",
+    "done": "Done",
+    "search": "Search rules",
+    "searchPlaceholder": "Search by slug or name...",
     "status": "Status",
-    "active": "Active",
-    "inactive": "Inactive",
-    "save": {
-      "create": "Create rule",
-      "update": "Update rule"
-    },
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "deleted": {
-      "title": "Rule deleted",
-      "description": "Rule has been deleted."
-    },
-    "updated": {
-      "title": "Rule updated",
-      "description": "Rule has been updated."
-    },
-    "created": {
-      "title": "Rule created",
-      "description": "Rule has been created."
-    },
-    "empty": {
-      "title": "No rules found",
-      "description": "No rules match your search."
-    },
-    "columns": {
-      "order": "Order",
+    "statusAll": "All",
+    "clearFilters": "Clear filters",
+    "error": "Couldn't load the rules. Please try again.",
+    "retry": "Retry",
+    "loading": "Loading rules...",
+    "empty": "No rules found.",
+    "emptySearch": "No rules match your search.",
+    "table": {
+      "rule": "Rule",
+      "slug": "Slug",
+      "highlighted": "Highlighted",
+      "displayOrder": "Order",
+      "status": "Status",
       "actions": "Actions"
     },
-    "pagination": {
-      "prev": "Prev",
-      "next": "Next"
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive"
     },
-    "deleteConfirm": "Delete this rule?",
-    "deleteError": "Could not delete the rule.",
-    "loadFailed": "Failed to load rules.",
-    "edit": "Edit",
-    "form": {
-      "defaultIcon": "Default (Clock)",
-      "saving": "Saving…",
-      "saveError": "Failed to save the rule."
+    "actions": {
+      "edit": "Edit",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "menu": "Open rule actions",
+      "delete": "Delete rule",
+      "deleteConfirm": "Delete {name}?"
+    },
+    "deactivateDialog": {
+      "title": "Deactivate {name}?",
+      "description": "The rule will be hidden from the public rules page. It can be reactivated anytime."
+    },
+    "dialog": {
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "close": "Close"
+    },
+    "pagination": {
+      "showing": "Showing {from}–{to} of {total}",
+      "previous": "Previous",
+      "next": "Next",
+      "pageInfo": "Page {page} of {totalPages}"
+    },
+    "errors": {
+      "action": "The action failed. Please try again."
+    },
+    "bulk": {
+      "selected": "{count} rules selected",
+      "selectedFiltered": "All {count} filtered results selected",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete rules",
+      "apply": "Apply action",
+      "clear": "Clear selection",
+      "pageSelected": "All rules on this page are selected.",
+      "selectFiltered": "Select all {count} filtered results",
+      "selectGroup": "Select {name}",
+      "selectPage": "Select rules on this page",
+      "confirm": {
+        "delete": "Delete the selected rules?",
+        "deactivate": "Deactivate the selected rules?"
+      },
+      "confirmDescription": "This action will be applied to the selected rules and may change their visibility.",
+      "resultTitle": "Bulk action result",
+      "resultDescription": "The action completed with the following outcome.",
+      "requested": "{count} rules requested",
+      "succeeded": "{count} succeeded",
+      "failed": "{count} failed",
+      "failureCount": "{count} operations failed."
+    },
+    "toast": {
+      "syncing": "Updating rules...",
+      "success": "Rule updated.",
+      "deleted": "Rule deleted.",
+      "error": "The action failed. Please try again."
+    }
+  },
+  "rulesWizard": {
+    "meta": {
+      "title": "Add Rule | Nafas Beauty Clinic",
+      "description": "Create a new clinic rule with bilingual content."
+    },
+    "metaEdit": {
+      "title": "Edit Rule | Nafas Beauty Clinic",
+      "description": "Update an existing clinic rule."
+    },
+    "back": "Back to Rules",
+    "heading": "Create Rule",
+    "subtitle": "Add a rule your patients can read on the public rules page.",
+    "editHeading": "Edit Rule",
+    "editSubtitle": "Update the details of this clinic rule.",
+    "steps": {
+      "identity": {
+        "name": "Identity",
+        "desc": "Define the rule",
+        "fullDesc": "Define the basic identity of this rule."
+      },
+      "appearance": {
+        "name": "Appearance",
+        "desc": "Create its visual identity",
+        "fullDesc": "Give this rule a visual identity."
+      },
+      "localization": {
+        "name": "Localization",
+        "desc": "Add bilingual content",
+        "fullDesc": "Configure language-specific names and descriptions."
+      },
+      "review": {
+        "name": "Review",
+        "desc": "Confirm everything",
+        "fullDesc": "Review and confirm your settings."
+      }
+    },
+    "language": {
+      "label": "Language",
+      "en": "English (EN)",
+      "fa": "Persian (FA)",
+      "editing": "Editing: {lang}",
+      "enSection": "English (Base)",
+      "faSection": "Persian (FA)"
+    },
+    "identity": {
+      "ruleName": "Rule Name",
+      "ruleNamePlaceholder": "e.g. Respect Appointments",
+      "ruleNameHint": "Enter the name in each language. The English name auto-generates the slug below.",
+      "slug": "Slug",
+      "slugHint": "Used in the public URL. Lowercase letters, numbers and hyphens.",
+      "slugPrefix": "/rules/",
+      "editManual": "Edit manually",
+      "resetAuto": "Reset to auto",
+      "auto": "Auto",
+      "custom": "Custom",
+      "active": "Active Status",
+      "activeHint": "Show this rule on the public rules page.",
+      "activeLabel": "Active",
+      "inactiveLabel": "Inactive",
+      "displayOrder": "Display Order",
+      "displayOrderHint": "Lower numbers appear first.",
+      "highlighted": "Highlight on public page",
+      "highlightedHint": "Draw attention to this rule with an accent card.",
+      "highlightedLabel": "Highlighted"
+    },
+    "appearance": {
+      "icon": "Rule icon",
+      "iconHint": "Choose an icon for this rule.",
+      "change": "Change icon",
+      "color": "Accent color",
+      "colorHint": "Pick the accent color used for the rule icon.",
+      "image": "Image",
+      "imageHint": "Paste an image URL to display alongside this rule.",
+      "imagePlaceholder": "https://example.com/image.jpg",
+      "imagePreview": "Preview"
+    },
+    "localization": {
+      "title": "Bilingual Content",
+      "name": "Name",
+      "namePlaceholder": "Enter the rule name in {lang}",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter a short description in {lang}",
+      "descriptionHint": "Shown on the public rules page."
+    },
+    "review": {
+      "title": "Ready to Publish",
+      "description": "Review your rule details below. Once created, this rule will appear on the public rules page.",
+      "identity": "Identity",
+      "appearance": "Appearance",
+      "localization": "Localization",
+      "ruleName": "Rule Name",
+      "slug": "Slug",
+      "visibility": "Visibility",
+      "icon": "Icon",
+      "color": "Color",
+      "image": "Image",
+      "imageSet": "Image set",
+      "notProvided": "—",
+      "notSet": "Not set",
+      "english": "English",
+      "persian": "Persian",
+      "submit": "Create Rule",
+      "creating": "Creating…"
+    },
+    "nav": {
+      "back": "Back",
+      "continue": "Continue",
+      "create": "Create Rule",
+      "save": "Save Changes",
+      "stepOf": "Step {current} of {total}"
+    },
+    "iconPicker": {
+      "title": "Choose an icon",
+      "searchPlaceholder": "Search icons…",
+      "empty": "No icons match your search.",
+      "resultCount": "Showing {shown} of {count} icons."
+    },
+    "errors": {
+      "slugRequired": "A kebab-case slug is required.",
+      "nameRequired": "Fill in the name in both languages.",
+      "setupError": "Something went wrong while preparing the form.",
+      "slugTaken": "This slug is already in use. Choose another one.",
+      "createFailed": "Could not create the rule. {message}",
+      "generic": "These fields need attention before continuing."
+    },
+    "toast": {
+      "creating": "Creating rule…",
+      "created": "Rule created.",
+      "saving": "Saving rule…",
+      "updated": "Rule updated.",
+      "error": "Could not create the rule."
     }
   }
 }

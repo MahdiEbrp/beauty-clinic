@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
-import CreateRulesForm from "@/components/rules/CreateRulesForm";
+import CreateRuleForm from "@/components/create-rule/CreateRuleForm";
 import { ApiError } from "@/lib/api/errors";
 import { requirePermission } from "@/lib/auth/dal";
 import { getRule } from "@/lib/services/service";
@@ -16,12 +16,12 @@ export async function generateMetadata({
   params: Promise<{ locale: string; id: string }>;
 }): Promise<Metadata> {
   const { locale, id } = await params;
-  const t = await getTranslations({ locale, namespace: "dashboardRules" });
+  const t = await getTranslations({ locale, namespace: "rulesWizard" });
   const canonical = `${siteUrl}/${locale}${ROUTE}/${id}/edit`;
 
   return {
-    title: t("editRule.title"),
-    description: t("editRule.subtitle"),
+    title: t("metaEdit.title"),
+    description: t("metaEdit.description"),
     alternates: {
       canonical,
       languages: {
@@ -48,5 +48,5 @@ export default async function EditRulePage({
     throw error;
   }
 
-  return <CreateRulesForm rule={rule} />;
+  return <CreateRuleForm rule={rule} />;
 }

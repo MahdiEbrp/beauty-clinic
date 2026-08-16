@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import RulesListContent from "@/components/rules/RulesListContent";
+import { RulesContent } from "@/components/rules";
 import { requirePermission } from "@/lib/auth/dal";
 import { listRulesAdmin } from "@/lib/services/service";
 import { siteUrl } from "@/lib/site";
@@ -38,5 +38,5 @@ export default async function ManageRulesPage() {
     status: "all",
   });
 
-  return <RulesListContent user={session.user} initialData={initialData} />;
+  return <RulesContent user={session.user} initialData={initialData} />;
 }
