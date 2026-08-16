@@ -47,7 +47,7 @@ export default function ServiceImage({
     );
   }
 
-  const sizing = fill ? "h-full w-full" : "";
+  const sizing = fill ? "absolute inset-0 h-full w-full" : "";
   return (
     <img
       src={src as string}

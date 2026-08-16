@@ -89,7 +89,7 @@ export default function HeroSlider({ groups, onExplore }: HeroSliderProps) {
               alt=""
               sizes="100vw"
               fetchPriority={i === 0 ? "high" : undefined}
-              className="h-full w-full object-cover"
+              className="absolute inset-0 h-full w-full object-cover"
             />
             {/* Consistent dark scrim: guarantees 4.5:1 on any backdrop */}
             <div
