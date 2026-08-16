@@ -2,10 +2,11 @@ import "server-only";
 
 import { and, count, eq, ilike, or, sql, type SQL } from "drizzle-orm";
 
-import { cacheDel, cacheWrap } from "@/lib/cache";
+import { cacheWrap } from "@/lib/cache";
 import type { RuleStatusFilter } from "@/lib/validation/rules";
 import { db } from "@/src/db";
 import { rules, rulesI18n } from "@/src/db/schema";
+import { bumpContentVersion, getContentVersion } from "./content-version";
 import { loadRulesTranslations } from "./i18n-rules";
 import type { AdminRule, ListRulesResult, PublicRule } from "./rules-types";
 import type { Locale } from "./types";
@@ -14,11 +15,8 @@ import type { Locale } from "./types";
 const RULES_TTL_SECS = 7 * 24 * 60 * 60;
 
 const CACHE_PREFIX = "rules:public";
-const RULES_LOCALES: Locale[] = ["fa", "en"];
-const RULES_STATUSES = ["active", "inactive", "all"] as const;
-
-function publicRulesCacheKey(locale: Locale, status: string): string {
-  return `${CACHE_PREFIX}:${locale}:${status}`;
+function publicRulesCacheKey(locale: Locale, version: number): string {
+  return `${CACHE_PREFIX}:v${version}:${locale}`;
 }
 
 function emptyRuleContent() {
@@ -135,7 +133,8 @@ export async function getRulesForPublic(
   opts: { status?: "active" | "inactive" | "all" } = {},
 ): Promise<PublicRule[]> {
   const status = opts.status ?? "active";
-  return cacheWrap(publicRulesCacheKey(locale, status), RULES_TTL_SECS, () =>
+  const version = await getContentVersion();
+  return cacheWrap(publicRulesCacheKey(locale, version), RULES_TTL_SECS, () =>
     loadPublicRules(locale, status),
   );
 }
@@ -177,11 +176,7 @@ async function loadPublicRules(
   });
 }
 
-/** Drop all cached public-rules variants. */
+/** Invalidate all versioned public content caches (rules, catalog, tree). */
 export async function bustPublicRulesCache(): Promise<void> {
-  await Promise.all(
-    RULES_LOCALES.flatMap((locale) =>
-      RULES_STATUSES.map((status) => cacheDel(publicRulesCacheKey(locale, status))),
-    ),
-  );
+  await bumpContentVersion();
 }

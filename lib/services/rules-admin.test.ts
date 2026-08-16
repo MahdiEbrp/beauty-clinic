@@ -117,4 +117,18 @@ describe("getRulesForPublic caching", () => {
     await getRulesForPublic("fa");
     expect(rulesSelectCount()).toBe(before + 1);
   });
+
+  it("busts every locale at once via the shared content version", async () => {
+    seedRule({ slug: "shared-bust" }, "Shared Bust");
+
+    await getRulesForPublic("fa");
+    const before = rulesSelectCount();
+    await getRulesForPublic("en");
+
+    // Every cached locale is versioned together, so one bump re-queries all.
+    await bustPublicRulesCache();
+    await getRulesForPublic("fa");
+    await getRulesForPublic("en");
+    expect(rulesSelectCount()).toBe(before + 3);
+  });
 });

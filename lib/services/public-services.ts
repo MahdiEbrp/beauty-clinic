@@ -1,6 +1,6 @@
 import "server-only";
 
-import { cacheDel, cacheWrap } from "@/lib/cache";
+import { cacheWrap } from "@/lib/cache";
 import { db } from "@/src/db";
 import {
   serviceCategories,
@@ -9,6 +9,7 @@ import {
   serviceImages,
   services,
 } from "@/src/db/schema";
+import { bumpContentVersion, getContentVersion } from "./content-version";
 import {
   emptyFaqContent,
   emptyGroupContent,
@@ -34,10 +35,9 @@ import type {
 
 const TREE_TTL_SECS = 7 * 24 * 60 * 60;
 const CACHE_PREFIX = "catalog:tree";
-const TREE_LOCALES: Locale[] = ["fa", "en"];
 
-function treeCacheKey(locale: Locale): string {
-  return `${CACHE_PREFIX}:${locale}`;
+function treeCacheKey(locale: Locale, version: number): string {
+  return `${CACHE_PREFIX}:v${version}:${locale}`;
 }
 
 /** Picks the requested locale with a fallback to the other one. */
@@ -73,7 +73,8 @@ const faqIsPresent = (content: ServiceFaqContent) => Boolean(content.question);
  * `bustPublicServiceTreeCache()`.
  */
 export async function getPublicServiceTree(locale: Locale): Promise<PublicServiceTree> {
-  return cacheWrap(treeCacheKey(locale), TREE_TTL_SECS, () => loadServiceTree(locale));
+  const version = await getContentVersion();
+  return cacheWrap(treeCacheKey(locale, version), TREE_TTL_SECS, () => loadServiceTree(locale));
 }
 
 async function loadServiceTree(locale: Locale): Promise<PublicServiceTree> {
@@ -199,7 +200,7 @@ async function loadServiceTree(locale: Locale): Promise<PublicServiceTree> {
   return { groups };
 }
 
-/** Drop all cached service-tree variants. */
+/** Invalidate all versioned public content caches (rules, catalog, tree). */
 export async function bustPublicServiceTreeCache(): Promise<void> {
-  await Promise.all(TREE_LOCALES.map((locale) => cacheDel(treeCacheKey(locale))));
+  await bumpContentVersion();
 }

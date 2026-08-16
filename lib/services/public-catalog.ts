@@ -1,8 +1,9 @@
 import "server-only";
 
-import { cacheWrap, cacheDel } from "@/lib/cache";
+import { cacheWrap } from "@/lib/cache";
 import { db } from "@/src/db";
 import { serviceCategories, serviceGroups } from "@/src/db/schema";
+import { bumpContentVersion, getContentVersion } from "./content-version";
 import type {
   Locale,
   PublicCatalog,
@@ -15,16 +16,14 @@ import {
   loadCategoryTranslations,
   loadGroupTranslations,
 } from "./i18n";
-import { bustPublicServiceTreeCache } from "./public-services";
 
 /** TTL for the cached public catalog feed (seconds). */
 const CATALOG_TTL_SECS = 7 * 24 * 60 * 60;
 
 const CACHE_PREFIX = "catalog";
-const CATALOG_LOCALES: Locale[] = ["fa", "en"];
 
-function catalogCacheKey(locale: Locale): string {
-  return `${CACHE_PREFIX}:${locale}`;
+function catalogCacheKey(locale: Locale, version: number): string {
+  return `${CACHE_PREFIX}:v${version}:${locale}`;
 }
 
 /** Picks the requested locale from a pair of translations with a fallback. */
@@ -52,7 +51,8 @@ function pick(
  * the service catalog call `bustPublicCatalogCache()` to invalidate it.
  */
 export async function getPublicCatalog(locale: Locale): Promise<PublicCatalog> {
-  return cacheWrap(catalogCacheKey(locale), CATALOG_TTL_SECS, () => loadCatalog(locale));
+  const version = await getContentVersion();
+  return cacheWrap(catalogCacheKey(locale, version), CATALOG_TTL_SECS, () => loadCatalog(locale));
 }
 
 async function loadCatalog(locale: Locale): Promise<PublicCatalog> {
@@ -110,12 +110,12 @@ async function loadCatalog(locale: Locale): Promise<PublicCatalog> {
 }
 
 /**
- * Drop all cached catalog variants. Called after any create/update/delete of a
- * service group or category so the public feed reflects the change immediately
- * instead of waiting out the TTL. Also drops the full service tree, which is
- * derived from the same group/category rows.
+ * Invalidate all versioned public content caches (rules, catalog, tree).
+ * Called after any create/update/delete of a service group or category so the
+ * public feed reflects the change immediately instead of waiting out the TTL.
+ * The single version bump covers both the catalog and the derived service tree
+ * in one atomic step.
  */
 export async function bustPublicCatalogCache(): Promise<void> {
-  await Promise.all(CATALOG_LOCALES.map((locale) => cacheDel(catalogCacheKey(locale))));
-  await bustPublicServiceTreeCache();
+  await bumpContentVersion();
 }
