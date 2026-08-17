@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import {
-  Wind,
   Mail,
   Lock,
   Eye,
@@ -15,6 +14,7 @@ import {
 } from "lucide-react";
 import { loginSchema } from "@/lib/validation/user";
 import { toFieldErrors } from "@/lib/validation/field-errors";
+import BrandLogo from "@/components/BrandLogo";
 
 const fieldClass =
   "w-full bg-form-input-bg border border-form-input-border rounded-control py-3 px-4 text-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
@@ -103,7 +103,7 @@ export default function LoginForm() {
       <div className="max-w-content mx-auto px-6">
         <div className="bg-surface-secondary border border-border-primary rounded-panel shadow-elevation-2 p-8 sm:p-12 max-w-prose mx-auto relative overflow-hidden">
           <div className="w-14 h-14 bg-surface-tertiary text-copper rounded-control flex items-center justify-center mb-6 border border-border-primary">
-            <Wind className="w-7 h-7" strokeWidth={2} aria-hidden="true" />
+            <BrandLogo alt={t("site.name")} className="max-h-7 h-auto" />
           </div>
 
           <h1 className="text-heading-1 font-bold text-accent mb-4">

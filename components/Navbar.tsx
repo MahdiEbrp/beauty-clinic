@@ -2,11 +2,12 @@
 import { useState, useEffect, useRef } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Link, usePathname, useRouter } from "@/src/i18n/navigation";
-import { Wind, Menu, X, User, LogOut } from "lucide-react";
+import { Menu, X, User, LogOut } from "lucide-react";
 import { getNavItems, getRouteNavItems } from "@/data/navigation";
 import type { AuthUser } from "@/lib/auth/dal";
 import LocaleSwitcher from "./LocaleSwitcher";
 import NavbarAuth from "@/components/navigation/NavbarAuth";
+import BrandLogo from "@/components/BrandLogo";
 const MENU_ID = "primary-mobile-menu";
 function initials(name: string): string {
   return name
@@ -115,7 +116,7 @@ export default function Navbar({ user }: { user: AuthUser | null }) {
           href="/"
           className="text-xl font-black flex items-center gap-2 text-accent no-underline whitespace-nowrap rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
-          <Wind className="w-6 h-6 text-copper" strokeWidth={2} aria-hidden="true" />
+          <BrandLogo alt={t("site.name")} className="h-8" />
           <span>{t("site.name")}</span>
         </Link>
 

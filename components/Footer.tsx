@@ -1,9 +1,9 @@
 "use client";
 
 import { useTranslations, useLocale } from "next-intl";
-import { Wind } from "lucide-react";
 import { navigationKeys, routeNavigationKeys } from "@/data/navigation";
 import { Link, usePathname } from "@/src/i18n/navigation";
+import BrandLogo from "@/components/BrandLogo";
 import type { ClinicData } from "@/data/clinic";
 
 interface FooterProps {
@@ -41,7 +41,7 @@ export default function Footer({ clinic }: FooterProps) {
         <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr] gap-8">
           <div>
             <div className="text-xl font-black flex items-center gap-2 mb-6 text-footer-heading">
-              <Wind className="w-6 h-6 text-gold" strokeWidth={2} aria-hidden="true" />
+              <BrandLogo alt={t("site.name")} className="h-8" />
               <span>{t("site.name")}</span>
             </div>
             <p className="max-w-xs text-footer-muted">{t("site.footerDesc")}</p>

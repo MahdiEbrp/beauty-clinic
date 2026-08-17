@@ -6,9 +6,9 @@ import {
   MessageCircle,
   Navigation,
   Map,
-  Wind,
   CalendarPlus,
 } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
 import type { ClinicData } from "@/data/clinic";
 
 interface ContactProps {
@@ -156,10 +156,9 @@ export default function Contact({ onOpenBooking, clinic }: ContactProps) {
             <div className="col-span-2 bg-accent text-content-contrast rounded-panel p-8 flex flex-col items-center justify-center text-center shadow-elevation-1 aspect-video relative overflow-hidden">
               <div className="absolute inset-0 bg-linear-to-br from-accent to-accent-hover opacity-90" />
               <div className="relative z-10">
-                <Wind
-                  className="w-10 h-10 text-gold mx-auto mb-3"
-                  strokeWidth={2}
-                  aria-hidden="true"
+                <BrandLogo
+                  alt={t("site.name")}
+                  className="h-10 mx-auto mb-3"
                 />
                 <h3 className="text-content-contrast font-bold text-xl mb-2">
                   {t("contact.clinicName")}

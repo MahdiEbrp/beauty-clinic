@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/navigation";
-import { Menu, Search, Wind, X } from "lucide-react";
+import { Menu, Search, X } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { SidebarNavItem } from "./SidebarSections";
 import {
@@ -91,11 +92,7 @@ export function MobileHeader({
           href="/dashboard"
           className="flex items-center gap-2 text-accent no-underline min-w-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
-          <Wind
-            className="w-6 h-6 text-copper shrink-0"
-            strokeWidth={2}
-            aria-hidden="true"
-          />
+          <BrandLogo alt={t("site.shortName")} className="h-7" />
           <span className="text-dash-body font-black">
             {t("site.shortName")}
           </span>
@@ -194,11 +191,7 @@ export function MobileHeader({
               onClick={() => onToggleMenu(false)}
               className="flex items-center gap-2 text-accent no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
-              <Wind
-                className="w-6 h-6 text-copper"
-                strokeWidth={2}
-                aria-hidden="true"
-              />
+              <BrandLogo alt={t("site.name")} className="h-8" />
               <span className="text-dash-title font-black truncate">
                 {t("site.name")}
               </span>

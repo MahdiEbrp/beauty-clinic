@@ -7,7 +7,8 @@ import {
   usePathname,
   useRouter,
 } from "@/src/i18n/navigation";
-import { LayoutDashboard, Sparkles, Users, Files, Wind, Shield } from "lucide-react";
+import { LayoutDashboard, Sparkles, Users, Files, Shield } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { SidebarNavItem } from "@/components/dashboard/SidebarSections";
 import {
@@ -101,11 +102,7 @@ export default function DashboardShell({
       aria-label={collapsed ? t("site.name") : undefined}
       title={collapsed ? t("site.name") : undefined}
     >
-      <Wind
-        className="w-6 h-6 text-copper shrink-0"
-        strokeWidth={2}
-        aria-hidden="true"
-      />
+      <BrandLogo alt={t("site.name")} className={collapsed ? "w-8 h-auto" : "h-8"} />
       {!collapsed && (
         <span className="text-dash-title font-black truncate">
           {t("site.name")}

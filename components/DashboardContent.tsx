@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useTranslations, useFormatter } from "next-intl";
 import { useRouter } from "@/src/i18n/navigation";
 import {
-  Wind,
   LogOut,
   Monitor,
   Smartphone,
@@ -13,6 +12,7 @@ import {
   ShieldCheck,
   Loader2,
 } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
 import type { AuthUser, ActiveSession } from "@/lib/auth/dal";
 import { RelativeTime } from "@/components/ui/relative-time";
 import {
@@ -85,7 +85,7 @@ export default function DashboardContent({
           <span className="absolute inset-0 rounded-full bg-copper/15 animate-breath" />
           <span className="absolute inset-0 rounded-full border border-copper/40" />
           <span className="absolute inset-2 rounded-full bg-surface-tertiary border border-border-primary flex items-center justify-center">
-            <Wind className="w-6 h-6 text-copper" strokeWidth={2} />
+            <BrandLogo alt="" className="h-6" />
           </span>
         </div>
 
