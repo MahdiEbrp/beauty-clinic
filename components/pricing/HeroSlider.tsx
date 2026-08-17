@@ -86,7 +86,7 @@ export default function HeroSlider({ groups, onExplore }: HeroSliderProps) {
           >
             <img
               src={pricingImage(group.image)}
-              alt=""
+              alt={group.title}
               sizes="100vw"
               fetchPriority={i === 0 ? "high" : undefined}
               className="absolute inset-0 h-full w-full object-cover"

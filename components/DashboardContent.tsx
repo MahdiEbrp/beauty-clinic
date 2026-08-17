@@ -85,7 +85,7 @@ export default function DashboardContent({
           <span className="absolute inset-0 rounded-full bg-copper/15 animate-breath" />
           <span className="absolute inset-0 rounded-full border border-copper/40" />
           <span className="absolute inset-2 rounded-full bg-surface-tertiary border border-border-primary flex items-center justify-center">
-            <BrandLogo alt="" className="h-6" />
+            <BrandLogo alt={t("site.name")} className="h-6" />
           </span>
         </div>
 

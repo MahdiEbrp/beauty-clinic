@@ -6,19 +6,17 @@ export default function RulesLoading() {
           <div className="h-12 w-48 bg-surface-tertiary rounded-control animate-pulse mb-4" />
           <div className="h-6 w-72 bg-surface-tertiary rounded-control animate-pulse" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {Array.from({ length: 6 }).map((_, i) => (
+        <div className="grid grid-cols-1 gap-6 lg:gap-8">
+          {Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
-              className="bg-surface-secondary border border-border-primary rounded-panel p-8"
+              className="flex flex-col overflow-hidden rounded-card border border-border-primary bg-primary-deep shadow-elevation-2 lg:flex-row"
             >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-surface-tertiary rounded-control animate-pulse shrink-0" />
-                <div className="h-6 w-40 bg-surface-tertiary rounded-control animate-pulse" />
-              </div>
-              <div className="space-y-2">
-                <div className="h-4 w-full bg-surface-tertiary rounded-control animate-pulse" />
-                <div className="h-4 w-2/3 bg-surface-tertiary rounded-control animate-pulse" />
+              <div className="h-44 shrink-0 bg-white/10 animate-pulse lg:h-auto lg:w-2/5 xl:w-1/3" />
+              <div className="flex flex-1 flex-col gap-3 px-6 pb-6 pt-5 lg:p-8">
+                <div className="h-7 w-2/5 bg-white/10 animate-pulse rounded-control" />
+                <div className="h-4 w-full bg-white/10 animate-pulse rounded-control" />
+                <div className="h-4 w-3/4 bg-white/10 animate-pulse rounded-control" />
               </div>
             </div>
           ))}

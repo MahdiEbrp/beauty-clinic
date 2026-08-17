@@ -356,7 +356,10 @@
     },
     "heading": "Clinic Rules",
     "description": "To provide better services, please follow these guidelines.",
-    "empty": "No rules available yet."
+    "empty": "No rules available yet.",
+    "card": {
+      "highlighted": "Important"
+    }
   },
   "login": {
     "meta": {
