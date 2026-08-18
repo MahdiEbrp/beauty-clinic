@@ -14,7 +14,7 @@ interface RuleCardProps {
  * A wide, single-column rule card following the pricing CategoryCard visual
  * language: dark panel, image band with gradient + glassy icon chip and a
  * copper "important" badge, and a contrast body. The image is locked to a
- * fixed 3:2 (600×400) box that cover-fits, so it never stretches or upscales.
+ * fixed 16:9 box that cover-fits, so it never stretches or upscales.
  */
 export default async function RuleCard({
   rule,
@@ -28,15 +28,15 @@ export default async function RuleCard({
         rule.highlighted ? "rule-card-important" : ""
       }`}
     >
-      {/* Image band — fixed 3:2 (600×400) box. `aspect-[3/2]` pins the ratio at
-          every breakpoint and `lg:self-start` stops the row layout from
-          stretching the box to the body height; cover-fit never distorts. */}
-      <div className="relative aspect-[3/2] shrink-0 overflow-hidden lg:w-1/2 lg:self-start">
+      {/* Image band — fixed 16:9 box. `aspect-video` pins the ratio at every
+          breakpoint and `lg:self-start` stops the row layout from stretching
+          the box to the body height; cover-fit never distorts. */}
+      <div className="relative aspect-video shrink-0 overflow-hidden lg:w-1/3 lg:self-start">
         <img
           src={pricingImage(rule.image)}
           alt={rule.name}
-          width={600}
-          height={400}
+          width={640}
+          height={360}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
         <div
