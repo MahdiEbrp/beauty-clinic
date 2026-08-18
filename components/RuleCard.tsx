@@ -13,9 +13,8 @@ interface RuleCardProps {
 /**
  * A wide, single-column rule card following the pricing CategoryCard visual
  * language: dark panel, image band with gradient + glassy icon chip and a
- * copper "important" badge, and a contrast body. The pricing card is built for
- * a narrow multi-column grid, so the band moves to a full-height side panel on
- * large screens to fill the wider rule row.
+ * copper "important" badge, and a contrast body. The image is locked to a
+ * fixed 3:2 (600×400) box that cover-fits, so it never stretches or upscales.
  */
 export default async function RuleCard({
   rule,
@@ -29,12 +28,15 @@ export default async function RuleCard({
         rule.highlighted ? "rule-card-important" : ""
       }`}
     >
-      {/* Image band — short hero on mobile, full-height side panel on lg+ */}
-      <div className="relative h-44 shrink-0 overflow-hidden lg:h-auto lg:w-2/5 xl:w-1/3">
+      {/* Image band — fixed 3:2 (600×400) box. `aspect-[3/2]` pins the ratio at
+          every breakpoint and `lg:self-start` stops the row layout from
+          stretching the box to the body height; cover-fit never distorts. */}
+      <div className="relative aspect-[3/2] shrink-0 overflow-hidden lg:w-1/2 lg:self-start">
         <img
           src={pricingImage(rule.image)}
           alt={rule.name}
-          sizes="(max-width: 1024px) 100vw, 40vw"
+          width={600}
+          height={400}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
         <div
