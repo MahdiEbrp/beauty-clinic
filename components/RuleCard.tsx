@@ -24,7 +24,11 @@ export default async function RuleCard({
   const t = await getTranslations({ locale, namespace: "rules" });
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-card border border-border-primary bg-primary-deep shadow-elevation-2 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-elevation-4 lg:flex-row">
+    <article
+      className={`group flex flex-col overflow-hidden rounded-card border border-border-primary bg-primary-deep shadow-elevation-2 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-elevation-4 lg:flex-row ${
+        rule.highlighted ? "rule-card-important" : ""
+      }`}
+    >
       {/* Image band — short hero on mobile, full-height side panel on lg+ */}
       <div className="relative h-44 shrink-0 overflow-hidden lg:h-auto lg:w-2/5 xl:w-1/3">
         <img

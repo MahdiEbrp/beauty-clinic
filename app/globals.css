@@ -389,6 +389,34 @@
   }
 }
 
+/* Important-rule attention pulse — a copper ring expanding off the card edge on
+   the light page surface, carrying the elevation shadow so the card keeps its
+   resting depth. Token-derived via color-mix(); reduced-motion is handled by the
+   blanket rule above. */
+@keyframes important-pulse {
+  0% {
+    box-shadow:
+      0 0 0 0 color-mix(in srgb, var(--copper) 60%, transparent),
+      var(--shadow-md);
+  }
+
+  70% {
+    box-shadow:
+      0 0 0 16px color-mix(in srgb, var(--copper) 0%, transparent),
+      var(--shadow-md);
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 0 color-mix(in srgb, var(--copper) 0%, transparent),
+      var(--shadow-md);
+  }
+}
+
+.rule-card-important {
+  animation: important-pulse 2.5s ease-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

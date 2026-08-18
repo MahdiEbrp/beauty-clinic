@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, count, eq, ilike, or, sql, type SQL } from "drizzle-orm";
+import { and, count, desc, eq, ilike, or, sql, type SQL } from "drizzle-orm";
 
 import { cacheWrap } from "@/lib/cache";
 import type { RuleStatusFilter } from "@/lib/validation/rules";
@@ -154,7 +154,7 @@ async function loadPublicRules(
     .select()
     .from(rules)
     .where(where)
-    .orderBy(rules.displayOrder, rules.createdAt);
+    .orderBy(desc(rules.highlighted), rules.displayOrder, rules.createdAt);
 
   const ids = rows.map((row) => row.id);
   const trMap = await loadRulesTranslations(ids);

@@ -90,6 +90,16 @@ describe("rules-admin service", () => {
   });
 });
 
+describe("getRulesForPublic ordering", () => {
+  it("puts highlighted rules first, then displayOrder", async () => {
+    seedRule({ slug: "normal", highlighted: false, displayOrder: 1 }, "Normal");
+    seedRule({ slug: "important", highlighted: true, displayOrder: 2 }, "Important");
+
+    const rules = await getRulesForPublic("fa");
+    expect(rules.map((r) => r.slug)).toEqual(["important", "normal"]);
+  });
+});
+
 describe("getRulesForPublic caching", () => {
   const rulesSelectCount = () =>
     mockDb.log.filter((entry) => entry.type === "select" && entry.table === "rules").length;
