@@ -15,11 +15,6 @@
     "description": "صفحه‌ای که به دنبال آن هستید وجود ندارد یا منتقل شده است.",
     "goHome": "بازگشت به خانه"
   },
-  "tabs": {
-    "services": "خدمات",
-    "groups": "گروه‌ها",
-    "categories": "دسته‌بندی‌ها"
-  },
   "nav": {
     "home": "خانه",
     "services": "خدمات",
@@ -51,16 +46,6 @@
   "marquee": {
     "label": "ویژگی‌های کلینیک"
   },
-  "marqueeItems": {
-    "clearSkin": "پوست شفاف",
-    "lastingYouth": "جوانی ماندگار",
-    "expertise": "تخصص پزشکی",
-    "technology": "تکنولوژی پیشرفته"
-  },
-  "services": {
-    "heading": "تخصص ما، زیبایی شماست",
-    "description": "هر خدمت با دقت توسط متخصصان مجرب ما و با جدیدترین فناوری‌های روز دنیا طراحی شده است."
-  },
   "servicesIntro": {
     "label": "خدمات ما",
     "previous": "خدمات قبلی",
@@ -69,14 +54,6 @@
     "goToSlide": "رفتن به {title}",
     "slideName": "اسلاید فعلی: {title}",
     "see": "دیدن {title}"
-  },
-  "about": {
-    "heading1": "آنجا که علم",
-    "heading2": "با زیبایی پیوند می‌خورد",
-    "description": "در کلینیک نفس، باور داریم هر فردی شایسته درخشش است. ما دانش پزشکی پیشرفته را با رویکردی کل‌نگر به زیبایی تلفیق می‌کنیم.",
-    "stat1Label": "مشتری راضی",
-    "stat2Label": "سال تجربه",
-    "stat3Label": "خدمت"
   },
   "gallery": {
     "heading": "گالری تحول‌ها",
@@ -126,12 +103,6 @@
     "quickAccessNav": "پیوندهای دسترسی سریع",
     "socialHeading": "شبکه‌های اجتماعی",
     "socialNav": "پیوندهای شبکه‌های اجتماعی"
-  },
-  "galleryItems": {
-    "hydrafacial": "خدمت هیدرافیشیال",
-    "laserRejuv": "جوان‌سازی پوست با لیزر",
-    "microneedling": "میکرونیدلینگ",
-    "skinCare": "مراقبت پوست"
   },
   "jsonLd": {
     "description": "کلینیک تخصصی زیبایی نفس، ارائه‌دهنده خدمات فیشیال، لیزر، خدمات ضد پیری، فرم‌دهی بدن و خدمات سلامتی."
@@ -476,7 +447,8 @@
       "closeMenu": "بستن منو",
       "collapse": "جمع کردن سایدبار",
       "expand": "باز کردن سایدبار",
-      "rules": "قوانین"
+      "rules": "قوانین",
+      "landing": "لندینگ"
     },
     "topbar": {
       "breadcrumbLabel": "مسیر داشبورد",
@@ -1890,6 +1862,228 @@
       "saving": "در حال ذخیره قانون…",
       "updated": "قانون به‌روزرسانی شد.",
       "error": "ایجاد قانون ممکن نشد."
+    }
+  },
+  "landingAdmin": {
+    "meta": {
+      "title": "لندینگ | کلینیک زیبایی نفس",
+      "description": "مدیریت صفحه اصلی عمومی: هیرو، نوار متحرک، سرویسها، آمار درباره ما و گالری."
+    },
+    "backToHub": "بازگشت به لندینگ",
+    "backToServices": "بازگشت به خدمات",
+    "resultsLabel": "مورد",
+    "add": "افزودن",
+    "search": "جستجوی آیتمها",
+    "searchPlaceholder": "جستجوی آیتمها...",
+    "status": "وضعیت",
+    "statusAll": "همه",
+    "statuses": {
+      "active": "فعال",
+      "inactive": "غیرفعال"
+    },
+    "clearFilters": "حذف فیلترها",
+    "loading": "در حال بارگذاری...",
+    "empty": "هنوز آیتمی وجود ندارد.",
+    "emptySearch": "هیچ آیتمی با جستجوی شما مطابقت ندارد.",
+    "errorTitle": "بارگذاری آیتمها ناموفق بود",
+    "errorDescription": "هنگام بارگذاری لیست خطایی رخ داد. لطفاً دوباره تلاش کنید.",
+    "retry": "تلاش دوباره",
+    "selectAllPage": "انتخاب همه آیتمهای این صفحه",
+    "selectRow": "انتخاب آیتم",
+    "table": {
+      "title": "عنوان",
+      "meta": "جزئیات",
+      "order": "ترتیب",
+      "status": "وضعیت"
+    },
+    "actions": {
+      "edit": "ویرایش",
+      "activate": "فعالسازی",
+      "deactivate": "غیرفعالسازی",
+      "menu": "باز کردن عملیات آیتم",
+      "delete": "حذف آیتم",
+      "deleteConfirm": "حذف «{name}»؟"
+    },
+    "deactivateDialog": {
+      "title": "غیرفعالسازی «{name}»؟",
+      "description": "این آیتم از صفحه عمومی مخفی میشود و میتوانید هر زمان دوباره فعالش کنید."
+    },
+    "dialog": {
+      "cancel": "انصراف",
+      "confirm": "تأیید",
+      "done": "انجام شد"
+    },
+    "pagination": {
+      "showing": "نمایش {from} تا {to} از {total}",
+      "previous": "قبلی",
+      "next": "بعدی",
+      "pageInfo": "صفحه {page} از {totalPages}"
+    },
+    "bulk": {
+      "selected": "{count} آیتم انتخاب شد",
+      "selectedFiltered": "هر {count} نتیجه فیلترشده انتخاب شد",
+      "activate": "فعالسازی",
+      "deactivate": "غیرفعالسازی",
+      "delete": "حذف آیتمها",
+      "apply": "اعمال عملیات",
+      "clear": "پاک کردن انتخاب",
+      "pageSelected": "همه آیتمهای این صفحه انتخاب شدند.",
+      "selectFiltered": "انتخاب همه {count} نتیجه فیلترشده",
+      "confirm": {
+        "delete": "آیتمهای انتخابشده حذف شوند؟",
+        "deactivate": "آیتمهای انتخابشده غیرفعال شوند؟"
+      },
+      "confirmDescription": "این عملیات روی آیتمهای انتخابشده اعمال میشود و ممکن است نمایانیشان تغییر کند.",
+      "resultTitle": "عملیات گروهی انجام شد",
+      "resultPartialTitle": "عملیات گروهی با خطا انجام شد",
+      "resultDescription": "{count} آیتم بهروزرسانی شد.",
+      "resultPartialDescription": "{succeeded} آیتم موفق بود، {failed} ناموفق."
+    },
+    "toast": {
+      "syncing": "در حال بهروزرسانی آیتمها...",
+      "success": "آیتم بهروزرسانی شد.",
+      "deleted": "آیتم حذف شد.",
+      "error": "عملیات ناموفق بود. لطفاً دوباره تلاش کنید."
+    },
+    "hub": {
+      "heading": "لندینگ",
+      "subheading": "صفحه اصلی عمومی",
+      "published": "منتشرشده",
+      "sectionsLabel": "بخشهای لندینگ",
+      "hero": {
+        "title": "هیرو",
+        "description": "تیتر، توضیح کوتاه و دکمههای دعوت به اقدام"
+      },
+      "settings": {
+        "title": "تنظیمات",
+        "description": "سئو و عنوان بخشها"
+      }
+    },
+    "collections": {
+      "marquee": {
+        "heading": "نوار متحرک",
+        "description": "آیتمهای اعلان متحرک",
+        "metaTitle": "نوار متحرک | لندینگ | کلینیک زیبایی نفس",
+        "metaDescription": "مدیریت آیتمهای نوار متحرک نمایشدادهشده در صفحه اصلی."
+      },
+      "services": {
+        "heading": "معرفی سرویسها",
+        "description": "کارتهای معرفی بخش سرویسها",
+        "metaTitle": "معرفی سرویسها | لندینگ | کلینیک زیبایی نفس",
+        "metaDescription": "مدیریت کارتهای معرفی سرویسها در صفحه اصلی."
+      },
+      "stats": {
+        "heading": "آمار درباره ما",
+        "description": "اعداد نمایشدادهشده در بخش درباره ما",
+        "metaTitle": "آمار درباره ما | لندینگ | کلینیک زیبایی نفس",
+        "metaDescription": "مدیریت آمارهای بخش درباره ما در صفحه اصلی."
+      },
+      "gallery": {
+        "heading": "گالری",
+        "description": "تصاویر بخش گالری",
+        "metaTitle": "گالری | لندینگ | کلینیک زیبایی نفس",
+        "metaDescription": "مدیریت تصاویر گالری صفحه اصلی."
+      }
+    }
+  },
+  "landingForm": {
+    "meta": {
+      "title": "افزودن آیتم | لندینگ | کلینیک زیبایی نفس",
+      "description": "ایجاد یک آیتم جدید برای صفحه اصلی."
+    },
+    "metaEdit": {
+      "title": "ویرایش آیتم | لندینگ | کلینیک زیبایی نفس",
+      "description": "ویرایش یک آیتم صفحه اصلی."
+    },
+    "back": "بازگشت",
+    "heading": "آیتم جدید",
+    "subtitle": "جزئیات زیر را پر کنید تا آیتم جدیدی در صفحه اصلی منتشر شود.",
+    "editHeading": "ویرایش آیتم",
+    "editSubtitle": "جزئیات آیتم را بهروزرسانی و تغییرات را ذخیره کنید.",
+    "save": "ذخیره",
+    "saving": "در حال ذخیره...",
+    "cancel": "انصراف",
+    "language": {
+      "label": "زبان",
+      "en": "انگلیسی",
+      "fa": "فارسی",
+      "editing": "ویرایش به {lang}"
+    },
+    "sections": {
+      "content": "محتوا",
+      "hero": "هیرو",
+      "seo": "سئو",
+      "sections": "عنوان بخشها",
+      "sectionKeys": {
+        "services": "خدمات",
+        "about": "درباره ما",
+        "gallery": "گالری",
+        "contact": "تماس"
+      }
+    },
+    "fields": {
+      "icon": "آیکون",
+      "iconHint": "آیکون اختیاری که کنار آیتم نمایش داده میشود.",
+      "iconChoose": "انتخاب آیکون",
+      "imageUrl": "آدرس تصویر",
+      "imageUrlHint": "آدرس مستقیم تصویر (امضاشده یا عمومی).",
+      "preview": "پیشنمایش",
+      "displayOrder": "ترتیب نمایش",
+      "displayOrderHint": "اعداد کوچکتر زودتر نمایش داده میشوند.",
+      "active": "فعال",
+      "activeHint": "آیتمهای غیرفعال از صفحه عمومی مخفی میشوند.",
+      "text": "متن",
+      "textPlaceholder": "متن اعلان",
+      "title": "عنوان",
+      "titlePlaceholder": "عنوان آیتم",
+      "description": "توضیحات",
+      "descriptionHint": "متن طولانیتر (اختیاری).",
+      "descriptionPlaceholder": "توضیحات این آیتم...",
+      "ctaLabel": "متن دکمه",
+      "ctaLabelHint": "متن دعوت به اقدام (اختیاری؛ در غیر این صورت از عنوان کارت استفاده میشود).",
+      "ctaLabelPlaceholder": "مثلاً رزرو وقت",
+      "value": "مقدار",
+      "valueHint": "عدد مورد نظر برای نمایش.",
+      "label": "برچسب",
+      "labelPlaceholder": "مثلاً مشتریان راضی",
+      "plus": "نمایش علامت مثبت",
+      "plusHint": "یک + به عدد اضافه میکند.",
+      "compact": "قالب فشرده",
+      "compactHint": "اعداد بزرگ را بهصورت فشرده نشان میدهد.",
+      "alt": "متن جایگزین",
+      "altPlaceholder": "توضیح کوتاه تصویر",
+      "caption": "زیرنویس",
+      "captionHint": "زیرنویس اختیاری کنار تصویر.",
+      "captionPlaceholder": "زیرنویس اختیاری",
+      "tagline": "تیزر کوتاه",
+      "taglineHint": "متن کوتاه بالای عنوان.",
+      "taglinePlaceholder": "تیزر کوتاه",
+      "ctaLabel1": "دکمه اصلی",
+      "ctaLabel1Placeholder": "متن دکمه اصلی",
+      "ctaLabel2": "دکمه ثانویه",
+      "ctaLabel2Placeholder": "متن دکمه ثانویه",
+      "seoTitle": "عنوان سئو",
+      "seoTitleHint": "در نتایج جستجو برای صفحه اصلی نمایش داده میشود.",
+      "seoTitlePlaceholder": "عنوان سئو (اختیاری)",
+      "seoDescription": "توضیحات سئو",
+      "seoDescriptionHint": "در نتایج جستجو برای صفحه اصلی نمایش داده میشود.",
+      "seoDescriptionPlaceholder": "توضیحات سئو (اختیاری)",
+      "heading": "عنوان",
+      "headingPlaceholder": "عنوان بخش",
+      "headingMissingHint": "این بخش هنوز ردیفی ندارد — هنگام ذخیره ایجاد میشود."
+    },
+    "errors": {
+      "bothLocalesRequired": "لطفاً فیلدهای الزامی را در هر دو زبان پر کنید.",
+      "valueRequired": "لطفاً یک مقدار عددی وارد کنید.",
+      "imageRequired": "لطفاً آدرس تصویر را وارد کنید.",
+      "heroRequired": "عنوان و هر دو دکمه را در هر دو زبان پر کنید."
+    },
+    "toast": {
+      "creating": "در حال ایجاد آیتم...",
+      "saving": "در حال ذخیره تغییرات...",
+      "created": "آیتم ایجاد شد.",
+      "updated": "تغییرات ذخیره شد.",
+      "error": "مشکلی پیش آمد. لطفاً دوباره تلاش کنید."
     }
   }
 }

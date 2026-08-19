@@ -15,11 +15,6 @@
     "description": "The page you are looking for does not exist or has been moved.",
     "goHome": "Go Home"
   },
-  "tabs": {
-    "services": "Services",
-    "groups": "Groups",
-    "categories": "Categories"
-  },
   "nav": {
     "home": "Home",
     "services": "Services",
@@ -51,16 +46,6 @@
   "marquee": {
     "label": "Clinic highlights"
   },
-  "marqueeItems": {
-    "clearSkin": "Clear Skin",
-    "lastingYouth": "Lasting Youth",
-    "expertise": "Medical Expertise",
-    "technology": "Advanced Technology"
-  },
-  "services": {
-    "heading": "Our Expertise, Your Beauty",
-    "description": "Each service is meticulously designed by our experts using the latest technology."
-  },
   "servicesIntro": {
     "label": "Our services",
     "previous": "Previous services",
@@ -69,14 +54,6 @@
     "goToSlide": "Go to {title}",
     "slideName": "The current slide shows: {title}",
     "see": "See {title}"
-  },
-  "about": {
-    "heading1": "Where Science",
-    "heading2": "Meets Beauty",
-    "description": "At Nafas Clinic, we believe everyone deserves to shine. We combine advanced medical knowledge with a holistic approach to beauty.",
-    "stat1Label": "Happy Clients",
-    "stat2Label": "Years Experience",
-    "stat3Label": "Services"
   },
   "gallery": {
     "heading": "Transformation Gallery",
@@ -126,12 +103,6 @@
     "quickAccessNav": "Quick access links",
     "socialHeading": "Social Media",
     "socialNav": "Social media links"
-  },
-  "galleryItems": {
-    "hydrafacial": "HydraFacial Service",
-    "laserRejuv": "Laser Skin Rejuvenation",
-    "microneedling": "Microneedling",
-    "skinCare": "Skin Care"
   },
   "jsonLd": {
     "description": "Nafas Aesthetic Clinic offering specialized facials, laser services, anti-aging therapy, body contouring, and wellness services."
@@ -476,7 +447,8 @@
       "openMenu": "Open menu",
       "closeMenu": "Close menu",
       "collapse": "Collapse sidebar",
-      "expand": "Expand sidebar"
+      "expand": "Expand sidebar",
+      "landing": "Landing"
     },
     "topbar": {
       "breadcrumbLabel": "Dashboard breadcrumb",
@@ -1890,6 +1862,228 @@
       "saving": "Saving rule…",
       "updated": "Rule updated.",
       "error": "Could not create the rule."
+    }
+  },
+  "landingAdmin": {
+    "meta": {
+      "title": "Landing Page | Nafas Beauty Clinic",
+      "description": "Manage the public landing page: hero, marquee, services intro, about stats and gallery."
+    },
+    "backToHub": "Back to landing",
+    "backToServices": "Back to services",
+    "resultsLabel": "items",
+    "add": "Add new",
+    "search": "Search items",
+    "searchPlaceholder": "Search items...",
+    "status": "Status",
+    "statusAll": "All",
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "clearFilters": "Clear filters",
+    "loading": "Loading...",
+    "empty": "No items found yet.",
+    "emptySearch": "No items match your search.",
+    "errorTitle": "Couldn't load items",
+    "errorDescription": "Something went wrong while loading the list. Please try again.",
+    "retry": "Retry",
+    "selectAllPage": "Select all items on this page",
+    "selectRow": "Select item",
+    "table": {
+      "title": "Title",
+      "meta": "Details",
+      "order": "Order",
+      "status": "Status"
+    },
+    "actions": {
+      "edit": "Edit",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "menu": "Open item actions",
+      "delete": "Delete item",
+      "deleteConfirm": "Delete {name}?"
+    },
+    "deactivateDialog": {
+      "title": "Deactivate {name}?",
+      "description": "The item will be hidden from the public page. It can be reactivated anytime."
+    },
+    "dialog": {
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "done": "Done"
+    },
+    "pagination": {
+      "showing": "Showing {from}–{to} of {total}",
+      "previous": "Previous",
+      "next": "Next",
+      "pageInfo": "Page {page} of {totalPages}"
+    },
+    "bulk": {
+      "selected": "{count} items selected",
+      "selectedFiltered": "All {count} filtered results selected",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete items",
+      "apply": "Apply action",
+      "clear": "Clear selection",
+      "pageSelected": "All items on this page are selected.",
+      "selectFiltered": "Select all {count} filtered results",
+      "confirm": {
+        "delete": "Delete the selected items?",
+        "deactivate": "Deactivate the selected items?"
+      },
+      "confirmDescription": "This action will be applied to the selected items and may change their visibility.",
+      "resultTitle": "Bulk action completed",
+      "resultPartialTitle": "Bulk action completed with errors",
+      "resultDescription": "{count} items were updated.",
+      "resultPartialDescription": "{succeeded} items succeeded, {failed} failed."
+    },
+    "toast": {
+      "syncing": "Updating items...",
+      "success": "Item updated.",
+      "deleted": "Item deleted.",
+      "error": "The action failed. Please try again."
+    },
+    "hub": {
+      "heading": "Landing Page",
+      "subheading": "public homepage",
+      "published": "Published",
+      "sectionsLabel": "Landing sections",
+      "hero": {
+        "title": "Hero",
+        "description": "Headline, tagline and call-to-action buttons"
+      },
+      "settings": {
+        "title": "Settings",
+        "description": "SEO and section headings"
+      }
+    },
+    "collections": {
+      "marquee": {
+        "heading": "Marquee",
+        "description": "Scrolling announcement items",
+        "metaTitle": "Marquee | Landing | Nafas Beauty Clinic",
+        "metaDescription": "Manage the marquee announcement items shown on the landing page."
+      },
+      "services": {
+        "heading": "Services Intro",
+        "description": "Feature cards for the services section",
+        "metaTitle": "Services Intro | Landing | Nafas Beauty Clinic",
+        "metaDescription": "Manage the services intro cards shown on the landing page."
+      },
+      "stats": {
+        "heading": "About Stats",
+        "description": "Numbers displayed in the about section",
+        "metaTitle": "About Stats | Landing | Nafas Beauty Clinic",
+        "metaDescription": "Manage the about statistics shown on the landing page."
+      },
+      "gallery": {
+        "heading": "Gallery",
+        "description": "Images displayed in the gallery section",
+        "metaTitle": "Gallery | Landing | Nafas Beauty Clinic",
+        "metaDescription": "Manage the gallery images shown on the landing page."
+      }
+    }
+  },
+  "landingForm": {
+    "meta": {
+      "title": "Add item | Landing | Nafas Beauty Clinic",
+      "description": "Create a new landing page item."
+    },
+    "metaEdit": {
+      "title": "Edit item | Landing | Nafas Beauty Clinic",
+      "description": "Edit a landing page item."
+    },
+    "back": "Back",
+    "heading": "New item",
+    "subtitle": "Fill in the details below to publish a new item on the landing page.",
+    "editHeading": "Edit item",
+    "editSubtitle": "Update the item details and save your changes.",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "language": {
+      "label": "Language",
+      "en": "English",
+      "fa": "Persian",
+      "editing": "Editing {lang}"
+    },
+    "sections": {
+      "content": "Content",
+      "hero": "Hero",
+      "seo": "SEO",
+      "sections": "Section headings",
+      "sectionKeys": {
+        "services": "Services",
+        "about": "About",
+        "gallery": "Gallery",
+        "contact": "Contact"
+      }
+    },
+    "fields": {
+      "icon": "Icon",
+      "iconHint": "An optional icon shown next to the item.",
+      "iconChoose": "Choose icon",
+      "imageUrl": "Image URL",
+      "imageUrlHint": "A direct image URL (pre-signed or public).",
+      "preview": "Preview",
+      "displayOrder": "Display order",
+      "displayOrderHint": "Lower numbers appear first.",
+      "active": "Active",
+      "activeHint": "Inactive items are hidden from the public page.",
+      "text": "Text",
+      "textPlaceholder": "Announcement text",
+      "title": "Title",
+      "titlePlaceholder": "Item title",
+      "description": "Description",
+      "descriptionHint": "Optional longer text.",
+      "descriptionPlaceholder": "Describe this item...",
+      "ctaLabel": "Button label",
+      "ctaLabelHint": "Optional call-to-action text (the card title is used otherwise).",
+      "ctaLabelPlaceholder": "e.g. Book now",
+      "value": "Value",
+      "valueHint": "The numeric value to display.",
+      "label": "Label",
+      "labelPlaceholder": "e.g. Happy clients",
+      "plus": "Show plus sign",
+      "plusHint": "Appends a + to the number.",
+      "compact": "Compact format",
+      "compactHint": "Formats large numbers in a compact way.",
+      "alt": "Alt text",
+      "altPlaceholder": "Short description of the image",
+      "caption": "Caption",
+      "captionHint": "Optional caption shown with the image.",
+      "captionPlaceholder": "Optional caption",
+      "tagline": "Tagline",
+      "taglineHint": "A short eyebrow text above the title.",
+      "taglinePlaceholder": "Short tagline",
+      "ctaLabel1": "Primary button",
+      "ctaLabel1Placeholder": "Primary button label",
+      "ctaLabel2": "Secondary button",
+      "ctaLabel2Placeholder": "Secondary button label",
+      "seoTitle": "SEO title",
+      "seoTitleHint": "Shown in search results for the landing page.",
+      "seoTitlePlaceholder": "Optional SEO title",
+      "seoDescription": "SEO description",
+      "seoDescriptionHint": "Shown in search results for the landing page.",
+      "seoDescriptionPlaceholder": "Optional SEO description",
+      "heading": "Heading",
+      "headingPlaceholder": "Section heading",
+      "headingMissingHint": "This section has no row yet — it will be created when you save."
+    },
+    "errors": {
+      "bothLocalesRequired": "Please fill in the required fields in both languages.",
+      "valueRequired": "Please enter a numeric value.",
+      "imageRequired": "Please provide an image URL.",
+      "heroRequired": "Fill in title and both buttons in both languages."
+    },
+    "toast": {
+      "creating": "Creating item...",
+      "saving": "Saving changes...",
+      "created": "Item created.",
+      "updated": "Changes saved.",
+      "error": "Something went wrong. Please try again."
     }
   }
 }

@@ -7,7 +7,7 @@ import {
   usePathname,
   useRouter,
 } from "@/src/i18n/navigation";
-import { LayoutDashboard, Sparkles, Users, Files, Shield } from "lucide-react";
+import { LayoutDashboard, Sparkles, Users, Files, Shield, LayoutTemplate } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { SidebarNavItem } from "@/components/dashboard/SidebarSections";
@@ -45,7 +45,10 @@ export default function DashboardShell({
   const navItems: SidebarNavItem[] = [
     { key: "overview", href: "/dashboard", icon: LayoutDashboard },
     ...(canViewServices
-      ? [{ key: "services", href: "/dashboard/services", icon: Sparkles }]
+      ? [
+          { key: "services", href: "/dashboard/services", icon: Sparkles },
+          { key: "landing", href: "/dashboard/landing", icon: LayoutTemplate },
+        ]
       : []),
     ...(canViewRules
       ? [{ key: "rules", href: "/dashboard/rules", icon: Shield }]
