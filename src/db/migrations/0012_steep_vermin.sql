@@ -1,0 +1,1 @@
+ALTER TABLE "landing_services" ADD COLUMN "image" text;

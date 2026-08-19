@@ -61,6 +61,15 @@
     "heading": "تخصص ما، زیبایی شماست",
     "description": "هر خدمت با دقت توسط متخصصان مجرب ما و با جدیدترین فناوری‌های روز دنیا طراحی شده است."
   },
+  "servicesIntro": {
+    "label": "خدمات ما",
+    "previous": "خدمات قبلی",
+    "next": "خدمات بعدی",
+    "counter": "{current} / {total}",
+    "goToSlide": "رفتن به {title}",
+    "slideName": "اسلاید فعلی: {title}",
+    "see": "دیدن {title}"
+  },
   "about": {
     "heading1": "آنجا که علم",
     "heading2": "با زیبایی پیوند می‌خورد",

@@ -10,10 +10,12 @@ import {
 } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import type { ClinicData } from "@/data/clinic";
+import type { PublicLanding } from "@/lib/landing";
 
 interface ContactProps {
   onOpenBooking: () => void;
   clinic?: ClinicData;
+  landing?: PublicLanding | null;
 }
 
 const socialPill =
@@ -34,8 +36,9 @@ const DEFAULT_MAPS = {
   google: "https://www.google.com/maps/search/?api=1&query=Andisheh+Phase+2",
 } as const;
 
-export default function Contact({ onOpenBooking, clinic }: ContactProps) {
+export default function Contact({ onOpenBooking, clinic, landing }: ContactProps) {
   const t = useTranslations();
+  const section = landing?.contact;
 
   const socials = [
     { key: "rubika", href: clinic?.social.rubika ?? DEFAULT_SOCIAL.rubika },
@@ -48,9 +51,11 @@ export default function Contact({ onOpenBooking, clinic }: ContactProps) {
       <div className="relative max-w-content mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-heading-1 text-accent mb-4">
-            {t("contact.heading1")} {t("contact.heading2")}
+            {section?.heading ?? `${t("contact.heading1")} ${t("contact.heading2")}`}
           </h2>
-          <p className="text-content-secondary">{t("contact.description")}</p>
+          <p className="text-content-secondary">
+            {section?.description ?? t("contact.description")}
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">

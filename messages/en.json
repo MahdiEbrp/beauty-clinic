@@ -61,6 +61,15 @@
     "heading": "Our Expertise, Your Beauty",
     "description": "Each service is meticulously designed by our experts using the latest technology."
   },
+  "servicesIntro": {
+    "label": "Our services",
+    "previous": "Previous services",
+    "next": "Next services",
+    "counter": "{current} / {total}",
+    "goToSlide": "Go to {title}",
+    "slideName": "The current slide shows: {title}",
+    "see": "See {title}"
+  },
   "about": {
     "heading1": "Where Science",
     "heading2": "Meets Beauty",

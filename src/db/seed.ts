@@ -13,6 +13,7 @@ import {
   rulesI18n,
 } from "./schema";
 import { seedServiceCatalog } from "./seed/service-catalog";
+import { seedLanding } from "./seed/landing";
 import { RULES_SEED } from "./seed/rules";
 
 const ROLE_DEFS = [
@@ -168,8 +169,9 @@ async function seed(): Promise<void> {
 
     console.log("System settings seeded.");
 
-    await seedServiceCatalog();
+  await seedServiceCatalog();
   await seedRules();
+  await seedLanding();
 
   console.log("Seed complete.");
 }

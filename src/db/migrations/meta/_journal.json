@@ -71,6 +71,27 @@
       "when": 1787340000000,
       "tag": "0009_stormy_rules",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1787050235451,
+      "tag": "0010_high_jackal",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1787054641782,
+      "tag": "0011_talented_red_skull",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1787118053886,
+      "tag": "0012_steep_vermin",
+      "breakpoints": true
     }
   ]
 }

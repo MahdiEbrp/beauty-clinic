@@ -1,26 +1,28 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { marqueeItems } from "@/data/marquee";
+import { iconForMarquee } from "@/data/landing-icons";
 import { Marquee, MarqueeContent, MarqueeItem } from "@/components/ui/marquee";
+import type { PublicLanding } from "@/lib/landing";
+
+interface MarqueeBannerProps {
+  landing: PublicLanding | null;
+}
 
 /**
- * Scrolling brand banner.
+ * Scrolling brand banner. Marquee item text is DB-driven (localized via
+ * `landing_marquee_items_i18n`); icons are static lucide glyphs.
  *
- * `autoFill` is required: without it the track is only as wide as its content
- * (~850px), so viewports wider than two tracks showed an empty gap scrolling
- * past. autoFill also makes the scroll rate equal `speed` in px/sec at every
- * viewport width, instead of drifting with the container size.
- *
- * `speed={34}` reproduces the previous 25s/850px cadence.
- *
- * Accessibility: the moving copy is marked `aria-hidden` and the same phrases
- * are exposed once to assistive tech via the `sr-only` list below, so autoFill's
- * repetition is never read out. `pauseOnHover` + `pauseOnKeyboard` satisfy
- * WCAG 2.2.2 (Pause, Stop, Hide) for motion lasting more than 5 seconds.
+ * `autoFill` ensures the track fills wide viewports and makes scroll rate equal
+ * `speed` in px/sec everywhere. Accessibility: the moving copy is `aria-hidden`
+ * and exposed once via `sr-only`; `pauseOnHover`/`pauseOnKeyboard` satisfy
+ * WCAG 2.2.2.
  */
-export default function MarqueeBanner() {
-  const t = useTranslations();
+export default function MarqueeBanner({ landing }: MarqueeBannerProps) {
+  const t = useTranslations("marquee");
+  const items = landing?.marqueeItems ?? [];
+
+  if (items.length === 0) return null;
 
   return (
     <Marquee
@@ -29,12 +31,12 @@ export default function MarqueeBanner() {
       gap="3rem"
       pauseOnHover
       pauseOnKeyboard
-      aria-label={t("marquee.label")}
+      aria-label={t("label")}
       className="bg-accent text-surface-primary py-5 rounded-none focus-visible:ring-inset focus-visible:ring-gold/70"
     >
       <MarqueeContent>
-        {marqueeItems.map((item) => {
-          const Icon = item.icon;
+        {items.map((item) => {
+          const Icon = iconForMarquee(item.icon);
           return (
             <MarqueeItem
               key={item.key}
@@ -42,17 +44,19 @@ export default function MarqueeBanner() {
               className="flex items-center gap-4 text-body-lead font-semibold tracking-wide"
             >
               <Icon className="w-5 h-5 text-gold shrink-0" strokeWidth={2} />
-              <span>{t(`marqueeItems.${item.key}`)}</span>
+              <span>{item.text}</span>
             </MarqueeItem>
           );
         })}
       </MarqueeContent>
 
-      <ul className="sr-only">
-        {marqueeItems.map((item) => (
-          <li key={item.key}>{t(`marqueeItems.${item.key}`)}</li>
-        ))}
-      </ul>
+      {items.length > 0 && (
+        <ul className="sr-only">
+          {items.map((item) => (
+            <li key={item.key}>{item.text}</li>
+          ))}
+        </ul>
+      )}
     </Marquee>
   );
 }

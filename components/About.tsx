@@ -1,13 +1,19 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import { stats } from "@/data/stats";
 import Reveal from "@/components/motion/reveal";
 import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import Counter from "@/components/motion/counter";
+import type { PublicLanding } from "@/lib/landing";
 
-export default function About() {
-  const t = useTranslations();
+interface AboutProps {
+  landing: PublicLanding | null;
+}
+
+export default function About({ landing }: AboutProps) {
+  const section = landing?.about;
+  const stats = landing?.aboutStats ?? [];
+
+  if (!section) return null;
 
   return (
     <section id="about" className="py-24 relative bg-surface-primary overflow-hidden">
@@ -16,7 +22,6 @@ export default function About() {
       <div className="relative max-w-content mx-auto px-6">
         <Reveal direction="end">
           <div className="bg-surface-secondary border border-border-primary rounded-feature p-8 md:p-16 grid grid-cols-1 md:grid-cols-[1.2fr_0.8fr] gap-8 items-center shadow-elevation-1 relative overflow-hidden">
-            {/* Decorative glow orb behind stats */}
             <div
               className="absolute -bottom-20 -inset-e-20 w-80 h-80 rounded-full animate-float-slower opacity-30 pointer-events-none"
               aria-hidden="true"
@@ -24,18 +29,13 @@ export default function About() {
               <div className="glow-gold w-full h-full" />
             </div>
 
-            {/* Grain texture inside the card */}
             <div className="grain absolute inset-0 rounded-feature pointer-events-none" aria-hidden="true" />
 
             <div className="relative">
-              <h2 className="text-heading-1 mb-6 text-accent">
-                {t("about.heading1")}
-                <br />
-                {t("about.heading2")}
-              </h2>
-              <p className="text-body-lead text-content-secondary">
-                {t("about.description")}
-              </p>
+              <h2 className="text-heading-1 mb-6 text-accent">{section.heading}</h2>
+              {section.description ? (
+                <p className="text-body-lead text-content-secondary">{section.description}</p>
+              ) : null}
             </div>
 
             <Stagger
@@ -55,7 +55,7 @@ export default function About() {
                       />
                     </h3>
                     <span className="text-caption text-content-secondary block">
-                      {t(`about.${stat.key}Label`)}
+                      {stat.label}
                     </span>
                   </div>
                 </StaggerItem>
