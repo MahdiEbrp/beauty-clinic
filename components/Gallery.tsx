@@ -107,7 +107,7 @@ export default function Gallery({ landing }: GalleryProps) {
                   setLightboxIndex(index);
                 }}
                 aria-label={t("viewImage", { title: item.alt })}
-                className="relative rounded-panel overflow-hidden aspect-3/4 group border-4 border-surface-secondary shadow-elevation-1 snap-start shrink-0 w-[clamp(260px,80vw,320px)] p-0 bg-transparent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="relative rounded-panel overflow-hidden aspect-4/5 sm:aspect-video lg:aspect-21/9 group border-4 border-surface-secondary shadow-elevation-1 snap-start shrink-0 w-[clamp(260px,80vw,320px)] p-0 bg-transparent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <img
                   src={item.imageUrl}
