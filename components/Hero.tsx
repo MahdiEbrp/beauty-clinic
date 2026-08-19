@@ -57,8 +57,6 @@ export default function Hero({ landing }: HeroProps) {
       id="home"
       className="hero-bg min-h-dvh flex items-center relative pt-24 overflow-hidden"
     >
-      <div className="hero-overlay absolute inset-0 z-0" />
-
       {data?.image ? (
         <img
           src={data.image}
@@ -67,6 +65,8 @@ export default function Hero({ landing }: HeroProps) {
           className="absolute inset-0 z-0 h-full w-full object-cover"
         />
       ) : null}
+
+      <div className="hero-overlay absolute inset-0 z-0" aria-hidden="true" />
 
       <div
         className="absolute top-[15%] inset-e-[10%] w-72 h-72 rounded-full animate-float-slow opacity-60 pointer-events-none z-1"
