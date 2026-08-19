@@ -33,7 +33,7 @@ const LOCALES: Locale[] = ["en", "fa"];
 function forLocale<T>(map: Record<Locale, T>): Array<{ locale: Locale; content: T }> {
   return LOCALES.map((locale) => ({
     locale,
-    // eslint-disable-next-line security/detect-object-injection -- safe: fixed closed locale keys
+
     content: map[locale],
   }));
 }

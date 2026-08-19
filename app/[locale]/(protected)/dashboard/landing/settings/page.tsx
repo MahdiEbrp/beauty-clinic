@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
-import SettingsForm from "@/components/landing-admin/SettingsForm";
+import SettingsWizard from "@/components/landing-admin/wizard/SettingsWizard";
 import { ApiError } from "@/lib/api/errors";
 import { requirePermission } from "@/lib/auth/dal";
 import { getLandingSettings } from "@/lib/landing/admin";
@@ -42,5 +42,5 @@ export default async function LandingSettingsPage() {
     throw error;
   }
 
-  return <SettingsForm settings={settings} />;
+  return <SettingsWizard settings={settings} />;
 }

@@ -103,7 +103,7 @@ export default function AddUserModal({
   };
 
   const errorText = (field: keyof AddUserValues) => {
-    // eslint-disable-next-line security/detect-object-injection -- typed react-hook-form field access
+
     if (!form.formState.errors[field]) return null;
     if (field === "fullName") return t("users.form.errors.fullName");
     if (field === "email")

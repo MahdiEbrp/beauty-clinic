@@ -59,7 +59,7 @@ export function mimeFromName(name: string): string {
   const dot = name.lastIndexOf(".");
   if (dot <= 0 || dot === name.length - 1) return "application/octet-stream";
   const ext = name.slice(dot + 1).toLowerCase();
-  // eslint-disable-next-line security/detect-object-injection -- fixed extension lookup map with safe fallback
+
   return MIME_BY_EXT[ext] ?? "application/octet-stream";
 }
 

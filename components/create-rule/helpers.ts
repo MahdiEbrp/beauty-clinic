@@ -22,7 +22,7 @@ export function slugify(input: string): string {
     .replace(/^-|-$/g, "");
 }
 
-// eslint-disable-next-line security/detect-unsafe-regex -- safe kebab-case pattern
+
 const KEBAB_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export function isKebabSlug(value: string): boolean {

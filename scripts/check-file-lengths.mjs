@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* eslint-disable security/detect-non-literal-fs-filename -- directory walker iterates dynamic paths by design */
 /**
  * Fails when any .ts/.tsx file exceeds MAX_LINES lines.
  * Keeps the codebase readable and each module focused.

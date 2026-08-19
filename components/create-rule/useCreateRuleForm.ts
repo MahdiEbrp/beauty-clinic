@@ -45,7 +45,7 @@ export function useCreateRuleForm(initialRule?: AdminRule) {
 
   const effectiveSlug = slugManual ? slugDraft : slugify(content.en.name);
   const currentStepKey = STEPS.find((s) => s.id === step)?.key ?? "identity";
-  // eslint-disable-next-line security/detect-object-injection -- fixed locale keys
+
   const currentContent = content[lang];
 
   const goTo = (next: number) => {

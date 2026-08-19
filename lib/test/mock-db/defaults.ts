@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-object-injection -- mock rows are indexed by dynamic schema column keys */
 import { randomUUID } from "node:crypto";
 
 import { Table } from "drizzle-orm";

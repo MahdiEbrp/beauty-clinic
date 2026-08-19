@@ -23,7 +23,7 @@ function StatusBadge({ category }: { category: AdminServiceCategory }) {
   const state = statusOf(category);
   return (
     <span
-      className={`inline-flex items-center rounded-pill border px-2.5 py-1 text-dash-caption font-bold ${/* eslint-disable-line security/detect-object-injection -- typed status class lookup */ statusClass[state]}`}
+      className={`inline-flex items-center rounded-pill border px-2.5 py-1 text-dash-caption font-bold ${ statusClass[state]}`}
     >
       {t(`serviceCategories.statuses.${state}`)}
     </span>

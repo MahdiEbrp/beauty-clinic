@@ -1,6 +1,5 @@
 "use client";
 
-/* eslint-disable security/detect-object-injection -- cache is keyed by a closed union of orientations, not user input */
 import * as React from "react";
 import type {
   ContentElement,

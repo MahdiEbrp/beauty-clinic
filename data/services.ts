@@ -21,6 +21,6 @@ export const serviceIconMap: Record<string, LucideIcon> = {
 };
 
 export function iconForCatalog(icon: string | null): LucideIcon {
-  // eslint-disable-next-line security/detect-object-injection -- fixed icon map with safe fallback
+
   return (icon ? serviceIconMap[icon] : undefined) ?? Sparkles;
 }

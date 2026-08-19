@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
-import HeroForm from "@/components/landing-admin/HeroForm";
+import HeroWizard from "@/components/landing-admin/wizard/HeroWizard";
 import { ApiError } from "@/lib/api/errors";
 import { requirePermission } from "@/lib/auth/dal";
 import { getLandingHero } from "@/lib/landing/admin";
@@ -43,5 +43,5 @@ export default async function LandingHeroPage() {
   }
   if (!hero) notFound();
 
-  return <HeroForm hero={hero} />;
+  return <HeroWizard hero={hero} />;
 }

@@ -2084,6 +2084,55 @@
       "created": "Item created.",
       "updated": "Changes saved.",
       "error": "Something went wrong. Please try again."
+    },
+    "nav": {
+      "back": "Back",
+      "continue": "Continue",
+      "create": "Create item",
+      "save": "Save changes",
+      "stepOf": "Step {current} of {total}"
+    },
+    "steps": {
+      "content": {
+        "name": "Content"
+      },
+      "appearance": {
+        "name": "Appearance"
+      },
+      "settings": {
+        "name": "Settings"
+      },
+      "review": {
+        "name": "Review"
+      },
+      "seo": {
+        "name": "SEO"
+      },
+      "sections": {
+        "name": "Section headings"
+      }
+    },
+    "review": {
+      "title": "Almost done!",
+      "description": "Review the details below, then publish your changes.",
+      "notProvided": "Not provided",
+      "english": "English",
+      "persian": "Persian",
+      "content": "Content",
+      "appearance": "Appearance",
+      "settings": "Settings",
+      "icon": "Icon",
+      "image": "Image",
+      "order": "Display order",
+      "active": "Active",
+      "inactive": "Inactive",
+      "value": "Value",
+      "plus": "Show plus sign",
+      "compact": "Compact mode",
+      "seo": "SEO",
+      "sections": "Sections",
+      "yes": "Yes",
+      "no": "No"
     }
   }
 }

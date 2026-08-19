@@ -36,7 +36,7 @@ function ServiceCard({ service }: { service: AdminService }) {
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
           <h3 className="truncate text-dash-body font-semibold text-accent">{service.title}</h3>
-          <span className={`shrink-0 rounded-pill border px-2 py-0.5 text-dash-caption font-bold ${statusClass[state]}` /* eslint-disable-line security/detect-object-injection */}>
+          <span className={`shrink-0 rounded-pill border px-2 py-0.5 text-dash-caption font-bold ${statusClass[state]}` }>
             {t(`serviceServices.statuses.${state}`)}
           </span>
         </div>

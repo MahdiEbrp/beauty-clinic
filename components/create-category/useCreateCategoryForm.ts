@@ -60,9 +60,9 @@ export function useCreateCategoryForm(
       { id: 5, key: "seo" },
       { id: 6, key: "review" },
     ].find((s) => s.id === step)?.key ?? "group";
-  // eslint-disable-next-line security/detect-object-injection -- fixed locale keys
+
   const currentContent = content[lang];
-  // eslint-disable-next-line security/detect-object-injection -- fixed locale keys
+
   const currentSeo = seo[lang];
   const seoFaIncomplete = !seo.fa.title.trim() || !seo.fa.description.trim();
 

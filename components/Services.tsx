@@ -65,7 +65,7 @@ export default function Services({ landing }: ServicesProps) {
     );
   }
 
-  // eslint-disable-next-line security/detect-object-injection -- clamped index into a bounded card list, safe
+
   const current = cards[index];
 
   return (

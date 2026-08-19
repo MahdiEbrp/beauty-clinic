@@ -10,6 +10,6 @@ export const marqueeIconMap: Record<string, LucideIcon> = {
 };
 
 export function iconForMarquee(key: string | null): LucideIcon {
-  // eslint-disable-next-line security/detect-object-injection -- fixed icon map with safe fallback
+
   return (key ? marqueeIconMap[key] : undefined) ?? Sparkles;
 }

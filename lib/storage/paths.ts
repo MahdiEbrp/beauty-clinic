@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-non-literal-fs-filename -- paths here are the resolved root/abs values produced by this same module's guards */
 import fs from "node:fs/promises";
 import path from "node:path";
 

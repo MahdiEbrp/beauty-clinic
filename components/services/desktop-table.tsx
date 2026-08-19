@@ -13,7 +13,7 @@ function StatusBadge({ service }: { service: AdminService }) {
   const t = useTranslations();
   const state = statusOf(service);
   return (
-    <span className={`inline-flex items-center rounded-pill border px-2.5 py-1 text-dash-caption font-bold ${statusClass[state]}` /* eslint-disable-line security/detect-object-injection */}>
+    <span className={`inline-flex items-center rounded-pill border px-2.5 py-1 text-dash-caption font-bold ${statusClass[state]}` }>
       {t(`serviceServices.statuses.${state}`)}
     </span>
   );

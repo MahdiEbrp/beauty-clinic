@@ -67,7 +67,7 @@ export default function Gallery({ landing }: GalleryProps) {
 
   if (items.length === 0) return null;
 
-  // eslint-disable-next-line security/detect-object-injection -- clamped numeric index
+
   const active = lightboxIndex === null ? null : items[lightboxIndex];
 
   return (

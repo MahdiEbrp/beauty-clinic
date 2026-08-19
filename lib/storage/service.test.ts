@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-non-literal-fs-filename -- tests operate on dynamic temp directories by design */
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";

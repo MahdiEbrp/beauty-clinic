@@ -46,7 +46,7 @@ function MobileCard({ row }: { row: AdminServiceGroup }) {
           </p>
           <div className="mt-1 flex flex-wrap items-center gap-1.5">
             <span
-              className={`inline-flex items-center gap-1.5 rounded-pill border px-2 py-0.5 text-dash-caption font-bold ${/* eslint-disable-line security/detect-object-injection -- typed status class lookup */ statusClass[state]}`}
+              className={`inline-flex items-center gap-1.5 rounded-pill border px-2 py-0.5 text-dash-caption font-bold ${ statusClass[state]}`}
             >
               <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
               {t(`serviceGroups.statuses.${state}`)}

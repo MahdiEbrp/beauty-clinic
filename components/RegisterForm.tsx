@@ -47,7 +47,7 @@ export default function RegisterForm() {
   };
 
   const fieldError = (field: string) => {
-    // eslint-disable-next-line security/detect-object-injection -- typed field-errors record access
+
     if (!errors[field]?.length) return null;
     switch (field) {
       case "fullName":

@@ -41,7 +41,7 @@ function CategoryCard({ category }: { category: AdminServiceCategory }) {
             {category.name}
           </h3>
           <span
-            className={`shrink-0 rounded-pill border px-2 py-0.5 text-dash-caption font-bold ${/* eslint-disable-line security/detect-object-injection -- typed status class lookup */ statusClass[state]}`}
+            className={`shrink-0 rounded-pill border px-2 py-0.5 text-dash-caption font-bold ${ statusClass[state]}`}
           >
             {t(`serviceCategories.statuses.${state}`)}
           </span>

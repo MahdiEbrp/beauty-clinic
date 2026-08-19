@@ -47,9 +47,9 @@ export function useCreateGroupForm(initialGroup?: AdminServiceGroup) {
 
   const effectiveSlug = slugManual ? slugDraft : slugify(content.en.name);
   const currentStepKey = STEPS.find((s) => s.id === step)?.key ?? "identity";
-  // eslint-disable-next-line security/detect-object-injection -- fixed locale keys
+
   const currentContent = content[lang];
-  // eslint-disable-next-line security/detect-object-injection -- fixed locale keys
+
   const currentSeo = seo[lang];
   const seoFaIncomplete = !seo.fa.title.trim() || !seo.fa.description.trim();
 

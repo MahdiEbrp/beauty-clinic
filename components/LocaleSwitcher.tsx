@@ -50,7 +50,7 @@ export default function LocaleSwitcher({
           full name relayed via title/aria-label. */}
       {!compact && (
         <span lang={target}>
-          {/* eslint-disable-next-line security/detect-object-injection -- guarded by isLocaleMetaKey(target) */}
+          {}
           {isLocaleMetaKey(target) ? localeMeta[target].short : target}
         </span>
       )}

@@ -56,7 +56,7 @@ export default function HeroSlider({ groups, onExplore }: HeroSliderProps) {
     );
   }
 
-  // eslint-disable-next-line security/detect-object-injection -- array index into a bounded group list, safe
+
   const current = groups[index];
 
   return (

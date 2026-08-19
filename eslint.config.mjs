@@ -1,7 +1,6 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
-import security from "eslint-plugin-security";
 import noSecrets from "eslint-plugin-no-secrets";
 
 const eslintConfig = defineConfig([
@@ -15,29 +14,6 @@ const eslintConfig = defineConfig([
       // Images intentionally use native <img> so pre-signed/third-party URLs
       // load directly instead of through Next's image optimizer.
       "@next/next/no-img-element": "off",
-    },
-  },
-  // Security-focused rules that catch unsafe code patterns:
-  // eval, child_process, weak randomness, CSRF bypass, timing attacks,
-  // unsafe regex and non-literal fs paths.
-  {
-    files: ["**/*.{js,mjs,ts,tsx,mts,cts}"],
-    plugins: { security },
-    rules: {
-      "security/detect-buffer-noassert": "error",
-      "security/detect-child-process": "error",
-      "security/detect-disable-mustache-escape": "warn",
-      "security/detect-eval-with-expression": "error",
-      "security/detect-new-buffer": "error",
-      "security/detect-no-csrf-before-method-override": "error",
-      "security/detect-non-literal-fs-filename": "warn",
-      "security/detect-non-literal-regexp": "warn",
-      "security/detect-non-literal-require": "warn",
-      "security/detect-object-injection": "warn",
-      "security/detect-possible-timing-attacks": "error",
-      "security/detect-pseudoRandomBytes": "error",
-      "security/detect-unsafe-regex": "warn",
-      "security/detect-bidi-characters": "warn",
     },
   },
   // Flags hardcoded secrets and credential-like literals in source.

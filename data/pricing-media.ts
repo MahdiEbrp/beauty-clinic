@@ -20,7 +20,7 @@ const GROUP_DURATION: Record<string, number> = {
 };
 
 export function groupDurationMin(slug: string | null): number {
-  // eslint-disable-next-line security/detect-object-injection -- fixed static map with safe fallback
+
   return (slug ? GROUP_DURATION[slug] : undefined) ?? 45;
 }
 

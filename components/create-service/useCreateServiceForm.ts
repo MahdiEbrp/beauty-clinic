@@ -78,9 +78,9 @@ export function useCreateServiceForm(
   const currentStepKey = STEPS.find((s) => s.id === step)?.key ?? "category";
   const selectedCategory =
     categoryOptions.find((option) => option.id === categoryId) ?? null;
-  // eslint-disable-next-line security/detect-object-injection -- fixed locale keys
+
   const currentContent = content[lang];
-  // eslint-disable-next-line security/detect-object-injection -- fixed locale keys
+
   const currentSeo = seo[lang];
   const seoFaIncomplete = !seo.fa.title.trim() || !seo.fa.description.trim();
 
@@ -145,7 +145,7 @@ export function useCreateServiceForm(
     toast.error(t("errors.generic"));
   }
 
-  
+
   const handleCreate = async () => {
     setServerError(null);
     setPriceError(null);

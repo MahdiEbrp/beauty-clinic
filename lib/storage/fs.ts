@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-non-literal-fs-filename -- every fs call receives an absolute path already resolved by resolveSafePath/realPathWithin */
 import fs from "node:fs/promises";
 import path from "node:path";
 
