@@ -28,7 +28,7 @@ function ServiceCardIcon({ service }: { service: AdminService }) {
 
 function ServiceCard({ service }: { service: AdminService }) {
   const t = useTranslations();
-  const { canWrite, isSyncing } = useServices();
+  const { canWrite, isSyncing, currency } = useServices();
   const state = statusOf(service);
   return (
     <article className={`flex items-start gap-3 rounded-card border border-border-primary bg-surface-secondary p-3.5 ${isSyncing(service.id) ? "opacity-60" : ""}`}>
@@ -43,7 +43,7 @@ function ServiceCard({ service }: { service: AdminService }) {
         <p dir="ltr" className="mt-0.5 truncate text-end text-dash-caption text-content-tertiary">{service.slug}</p>
         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-dash-caption text-content-secondary">
           {service.categoryName && <span>{service.categoryName}</span>}
-          <span>{service.price ? formatPrice(service.price) : t("serviceServices.price_on_request")}</span>
+          <span>{service.price ? formatPrice(service.price, currency) : t("serviceServices.price_on_request")}</span>
           {service.isFeatured && (
             <span className="inline-flex items-center gap-1 text-amber-400">
               <Star className="size-3" />

@@ -30,9 +30,13 @@ function ServicesMobileAdd() {
   );
 }
 
-export function ServicesContent({ user, initialData }: { user: AuthUser; initialData: ServicesResult }) {
+export function ServicesContent({
+  user,
+  initialData,
+  currency,
+}: { user: AuthUser; initialData: ServicesResult; currency: string }) {
   return (
-    <ServicesProvider user={user} initialData={initialData}>
+    <ServicesProvider user={user} initialData={initialData} currency={currency}>
       <ServicesHeader />
       <div className="mt-4 space-y-4">
         <ServicesFilters />

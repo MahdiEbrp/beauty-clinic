@@ -12,13 +12,13 @@ const MAX_CHIPS = 2;
 function priceBadge(
   card: CategoryCardData,
   t: ReturnType<typeof useTranslations>,
+  currency: string,
 ): string {
   const { minPrice, maxPrice } = card;
   if (minPrice === null || maxPrice === null) {
     return t("serviceDetail.labels.onRequest");
   }
   const hasFrom = card.services.some((service) => service.priceType === "from");
-  const currency = t("common.currency");
   const value = `${formatNumber(minPrice)} ${currency}`;
   if (minPrice === maxPrice) {
     return hasFrom ? `${t("pricing.card.from")} ${value}` : value;
@@ -29,14 +29,15 @@ function priceBadge(
 type CategoryCardProps = {
   card: CategoryCardData;
   onBook: () => void;
+  currency: string;
 };
 
-export default function CategoryCard({ card, onBook }: CategoryCardProps) {
+export default function CategoryCard({ card, onBook, currency }: CategoryCardProps) {
   const t = useTranslations();
 
   const chips = card.services.slice(0, MAX_CHIPS);
   const remaining = card.services.length - chips.length;
-  const priceLabel = priceBadge(card, t);
+  const priceLabel = priceBadge(card, t, currency);
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-card border border-border-primary bg-primary-deep shadow-elevation-2 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-elevation-4">

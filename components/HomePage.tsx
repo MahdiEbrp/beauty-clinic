@@ -33,6 +33,7 @@ export default function HomePage({ clinicData }: HomePageProps) {
       <BookingModal
         isOpen={bookingOpen}
         onClose={() => setBookingOpen(false)}
+        clinic={clinicData}
       />
     </>
   );

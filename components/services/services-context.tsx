@@ -11,24 +11,28 @@ import { useServicesBulk } from "./use-services-bulk";
 
 export type ServicesContextValue = ServicesListState &
   ServicesActionsState &
-  ServicesBulkState;
+  ServicesBulkState & {
+    currency: string;
+  };
 
 const ServicesContext = createContext<ServicesContextValue | null>(null);
 
 export function ServicesProvider({
   user,
   initialData,
+  currency,
   children,
 }: {
   user: AuthUser;
   initialData: ServicesResult;
+  currency: string;
   children: React.ReactNode;
 }) {
   const list = useServicesList(user, initialData);
   const actions = useServicesActions(list);
   const bulk = useServicesBulk(list, actions);
   return (
-    <ServicesContext.Provider value={{ ...list, ...actions, ...bulk }}>
+    <ServicesContext.Provider value={{ ...list, ...actions, ...bulk, currency }}>
       {children}
     </ServicesContext.Provider>
   );

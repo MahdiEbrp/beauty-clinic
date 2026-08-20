@@ -8,6 +8,13 @@ import { settings, type Setting } from "@/src/db/schema";
 /** Shared cache key for the system-wide settings map (see lib/settings/loader.ts). */
 export const SYSTEM_SETTINGS_CACHE_KEY = "settings:system";
 
+/**
+ * Cache key for the full system-settings dataset (rows + per-locale values).
+ * This data barely changes, so the public loader caches it hard; every admin
+ * mutation busts it (and the map key above) to keep edits instant.
+ */
+export const SYSTEM_SETTINGS_DATASET_CACHE_KEY = "settings:system:full";
+
 export type PaginatedResponse = {
   items: Setting[];
   total: number;
@@ -54,6 +61,7 @@ export async function upsertSetting(
       })
       .returning();
     await cacheDel(SYSTEM_SETTINGS_CACHE_KEY);
+    await cacheDel(SYSTEM_SETTINGS_DATASET_CACHE_KEY);
     return row;
   }
 
@@ -147,6 +155,7 @@ export async function deleteSetting(
       .delete(settings)
       .where(and(eq(settings.scope, "system"), eq(settings.key, key)));
     await cacheDel(SYSTEM_SETTINGS_CACHE_KEY);
+    await cacheDel(SYSTEM_SETTINGS_DATASET_CACHE_KEY);
   } else {
     const userId = opts?.userId;
     if (!userId) throw new Error("userId is required for user-scoped delete");

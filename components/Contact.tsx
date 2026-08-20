@@ -1,13 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import {
-  MapPin,
-  MessageCircle,
-  Navigation,
-  Map,
-  CalendarPlus,
-} from "lucide-react";
+import { MapPin, MessageCircle, Navigation, Map, CalendarPlus } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import type { ClinicData } from "@/data/clinic";
 import type { PublicLanding } from "@/lib/landing";
@@ -24,152 +18,121 @@ const socialPill =
 const mapTile =
   "bg-surface-secondary border border-border-interactive rounded-panel p-6 flex flex-col items-center justify-center text-center hover:bg-surface-tertiary transition-all group shadow-elevation-1 aspect-square focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 
-const DEFAULT_SOCIAL = {
-  rubika: "https://rubika.ir/nafasclinic",
-  bale: "https://ble.ir/nafasclinic",
-  instagram: "https://instagram.com/nafasclinic",
-} as const;
-
-const DEFAULT_MAPS = {
-  neshan: "https://nshn.ir/rbvg0k2xLMq4",
-  // eslint-disable-next-line no-secrets/no-secrets -- public Google Maps search URL, not a secret
-  google: "https://www.google.com/maps/search/?api=1&query=Andisheh+Phase+2",
-} as const;
-
 export default function Contact({ onOpenBooking, clinic, landing }: ContactProps) {
   const t = useTranslations();
   const section = landing?.contact;
 
-  const socials = [
-    { key: "rubika", href: clinic?.social.rubika ?? DEFAULT_SOCIAL.rubika },
-    { key: "bale", href: clinic?.social.bale ?? DEFAULT_SOCIAL.bale },
-    { key: "instagram", href: clinic?.social.instagram ?? DEFAULT_SOCIAL.instagram },
-  ] as const;
+  const content = clinic?.content;
+  const socials = clinic?.social ?? [];
+  const address = clinic?.address;
+  const maps = clinic?.maps;
 
   return (
-    <section id="contact" className="py-24 relative bg-surface-primary">
-      <div className="relative max-w-content mx-auto px-6">
-        <div className="text-center mb-16">
+    <section id="contact" className="relative bg-surface-primary py-24">
+      <div className="relative mx-auto max-w-content px-6">
+        <div className="mb-16 text-center">
           <h2 className="text-heading-1 text-accent mb-4">
-            {section?.heading ?? `${t("contact.heading1")} ${t("contact.heading2")}`}
+            {section?.heading ?? ""}
           </h2>
-          <p className="text-content-secondary">
-            {section?.description ?? t("contact.description")}
-          </p>
+          <p className="text-content-secondary">{section?.description ?? ""}</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-          <div className="bg-surface-secondary border border-border-primary rounded-feature p-8 md:p-12 flex flex-col justify-center shadow-elevation-1">
-            <div className="flex items-start gap-4 mb-8">
-              <div className="w-12 h-12 bg-surface-primary text-copper rounded-control flex items-center justify-center shrink-0 border border-border-primary">
-                <MapPin className="w-6 h-6" strokeWidth={2} aria-hidden="true" />
+        <div className="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-2">
+          <div className="flex flex-col justify-center rounded-feature border border-border-primary bg-surface-secondary p-8 shadow-elevation-1 md:p-12">
+            <div className="mb-8 flex items-start gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-control border border-border-primary bg-surface-primary text-copper">
+                <MapPin className="h-6 w-6" strokeWidth={2} aria-hidden="true" />
               </div>
               <div>
-                <h3 className="text-body-lg font-bold text-accent mb-2">
-                  {t("contact.addressTitle")}
+                <h3 className="mb-2 text-body-lg font-bold text-accent">
+                  {content?.addressTitle ?? ""}
                 </h3>
-                <p className="text-content-secondary leading-relaxed">
-                  {t("contact.address")}
+                <p className="leading-relaxed text-content-secondary">
+                  {address?.streetAddress ?? ""}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-start gap-4 mb-8">
-              <div className="w-12 h-12 bg-surface-primary text-copper rounded-control flex items-center justify-center shrink-0 border border-border-primary">
-                <MessageCircle
-                  className="w-6 h-6"
-                  strokeWidth={2}
-                  aria-hidden="true"
-                />
-              </div>
-              <div>
-                <h3 className="text-body-lg font-bold text-accent mb-3">
-                  {t("contact.socialTitle")}
-                </h3>
-                <div className="flex flex-wrap gap-3">
-                  {socials.map((social) => (
-                    <a
-                      key={social.key}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={socialPill}
-                    >
-                      <MessageCircle
-                        className="w-4 h-4"
-                        strokeWidth={2}
-                        aria-hidden="true"
-                      />
-                      {t(`contact.${social.key}`)}
-                      <span className="sr-only">
-                        {" "}
-                        ({t("contact.opensInNewTab")})
-                      </span>
-                    </a>
-                  ))}
+            {socials.length > 0 && (
+              <div className="mb-8 flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-control border border-border-primary bg-surface-primary text-copper">
+                  <MessageCircle className="h-6 w-6" strokeWidth={2} aria-hidden="true" />
+                </div>
+                <div>
+                  <h3 className="mb-3 text-body-lg font-bold text-accent">
+                    {content?.socialTitle ?? ""}
+                  </h3>
+                  <div className="flex flex-wrap gap-3">
+                    {socials.map((social) => (
+                      <a
+                        key={social.url}
+                        href={social.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={socialPill}
+                      >
+                        <MessageCircle className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+                        {social.label}
+                        <span className="sr-only"> ({content?.opensInNewTab ?? ""})</span>
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             <button
               type="button"
               onClick={onOpenBooking}
-              className="inline-flex items-center justify-center gap-3 px-10 py-5 text-body-lg min-h-15 bg-accent text-content-contrast rounded-pill font-bold border border-copper transition-all duration-300 hover:bg-accent-hover hover:-translate-y-0.5 hover:shadow-elevation-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-95 w-full mt-4"
+              className="mt-4 inline-flex min-h-15 w-full items-center justify-center gap-3 rounded-pill border border-copper bg-accent px-10 py-5 text-body-lg font-bold text-content-contrast transition-all duration-300 hover:-translate-y-0.5 hover:bg-accent-hover hover:shadow-elevation-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-95"
             >
-              <CalendarPlus className="w-6 h-6" strokeWidth={2} aria-hidden="true" />
-              {t("contact.bookingTitle")}
+              <CalendarPlus className="h-6 w-6" strokeWidth={2} aria-hidden="true" />
+              {content?.bookingTitle ?? ""}
             </button>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <a
-              href={clinic?.maps.neshan ?? DEFAULT_MAPS.neshan}
+              href={maps?.neshan}
               target="_blank"
               rel="noopener noreferrer"
               className={mapTile}
             >
               <Navigation
-                className="w-12 h-12 text-copper mb-4 group-hover:scale-110 transition-transform"
+                className="mb-4 h-12 w-12 text-copper transition-transform group-hover:scale-110"
                 strokeWidth={1.5}
                 aria-hidden="true"
               />
-              <h3 className="text-accent font-bold mb-2 text-body-lg">
-                {t("contact.neshanMap")}
+              <h3 className="mb-2 text-body-lg font-bold text-accent">
+                {content?.neshanMap ?? ""}
               </h3>
-              <p className="text-xs text-content-secondary">
-                {t("contact.neshanDesc")}
-              </p>
+              <p className="text-xs text-content-secondary">{content?.neshanDesc ?? ""}</p>
             </a>
             <a
-              href={clinic?.maps.google ?? DEFAULT_MAPS.google}
+              href={maps?.google}
               target="_blank"
               rel="noopener noreferrer"
               className={mapTile}
             >
               <Map
-                className="w-12 h-12 text-copper mb-4 group-hover:scale-110 transition-transform"
+                className="mb-4 h-12 w-12 text-copper transition-transform group-hover:scale-110"
                 strokeWidth={1.5}
                 aria-hidden="true"
               />
-              <h3 className="text-accent font-bold mb-2 text-body-lg">
-                {t("contact.googleMap")}
+              <h3 className="mb-2 text-body-lg font-bold text-accent">
+                {content?.googleMap ?? ""}
               </h3>
-              <p className="text-xs text-content-secondary">
-                {t("contact.googleMapDesc")}
-              </p>
+              <p className="text-xs text-content-secondary">{content?.googleMapDesc ?? ""}</p>
             </a>
-            <div className="col-span-2 bg-accent text-content-contrast rounded-panel p-8 flex flex-col items-center justify-center text-center shadow-elevation-1 aspect-video relative overflow-hidden">
+            <div className="relative col-span-2 flex flex-col items-center justify-center overflow-hidden rounded-panel bg-accent p-8 text-center text-content-contrast shadow-elevation-1">
               <div className="absolute inset-0 bg-linear-to-br from-accent to-accent-hover opacity-90" />
               <div className="relative z-10">
-                <BrandLogo
-                  alt={t("site.name")}
-                  className="h-10 mx-auto mb-3"
-                />
-                <h3 className="text-content-contrast font-bold text-xl mb-2">
-                  {t("contact.clinicName")}
+                <BrandLogo alt={t("site.name")} className="mx-auto mb-3 h-10" />
+                <h3 className="mb-2 text-xl font-bold text-content-contrast">
+                  {content?.clinicName ?? ""}
                 </h3>
-                <p className="text-content-contrast/80 text-body-sm">
-                  {t("contact.clinicAddress")}
+                <p className="text-body-sm text-content-contrast/80">
+                  {address ? `${address.addressLocality}، ${address.addressRegion}` : ""}
                 </p>
               </div>
             </div>

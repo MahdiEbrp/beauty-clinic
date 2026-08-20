@@ -53,7 +53,7 @@ export default async function LocaleLayout({
 
   const messages = await getMessages({ locale });
   const t = await getTranslations({ locale, namespace: "a11y" });
-  const clinicData = await getClinicData();
+  const clinicData = await getClinicData(locale as Parameters<typeof getClinicData>[0]);
   const session = await getSessionCached();
 
   return (

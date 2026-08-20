@@ -7,7 +7,7 @@ import {
   usePathname,
   useRouter,
 } from "@/src/i18n/navigation";
-import { LayoutDashboard, Sparkles, Users, Files, Shield, LayoutTemplate } from "lucide-react";
+import { LayoutDashboard, Sparkles, Users, Files, Shield, LayoutTemplate, Settings } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { SidebarNavItem } from "@/components/dashboard/SidebarSections";
@@ -41,6 +41,7 @@ export default function DashboardShell({
   const canViewFiles = user.permissions.includes("files.read");
   const canViewServices = user.permissions.includes("services.read");
   const canViewRules = user.permissions.includes("rules.read");
+  const canViewSettings = user.permissions.includes("settings.read");
 
   const navItems: SidebarNavItem[] = [
     { key: "overview", href: "/dashboard", icon: LayoutDashboard },
@@ -55,6 +56,9 @@ export default function DashboardShell({
       : []),
     ...(canViewUsers ? [{ key: "users", href: "/dashboard/users", icon: Users }] : []),
     ...(canViewFiles ? [{ key: "files", href: "/dashboard/files", icon: Files }] : []),
+    ...(canViewSettings
+      ? [{ key: "settings", href: "/dashboard/settings", icon: Settings }]
+      : []),
   ];
 
   useEffect(() => {

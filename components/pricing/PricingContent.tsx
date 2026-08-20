@@ -4,6 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { SearchX } from "lucide-react";
 import type { PublicServiceTree } from "@/lib/services/types";
+import type { ClinicData } from "@/data/clinic";
 import BookingModal from "@/components/BookingModal";
 import FloatingBookingButton from "@/components/FloatingBookingButton";
 import CategoryCard from "./CategoryCard";
@@ -21,6 +22,8 @@ import {
 
 type PricingContentProps = {
   tree: PublicServiceTree;
+  currency: string;
+  clinic?: ClinicData;
 };
 
 function EmptyState() {
@@ -39,7 +42,7 @@ function EmptyState() {
 }
 
 /** Services & pricing — hero slider, filters, and the category-card grid. */
-export default function PricingContent({ tree }: PricingContentProps) {
+export default function PricingContent({ tree, currency, clinic }: PricingContentProps) {
   const t = useTranslations();
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState<CatalogFilters>(defaultFilters);
@@ -112,7 +115,12 @@ export default function PricingContent({ tree }: PricingContentProps) {
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
             {filtered.map((card) => (
-              <CategoryCard key={card.slug} card={card} onBook={() => setBookingOpen(true)} />
+              <CategoryCard
+                key={card.slug}
+                card={card}
+                currency={currency}
+                onBook={() => setBookingOpen(true)}
+              />
             ))}
           </div>
         )}
@@ -131,7 +139,7 @@ export default function PricingContent({ tree }: PricingContentProps) {
       />
       <MobileBottomNav onOpenFilters={() => setDrawerOpen(true)} />
 
-      <BookingModal isOpen={bookingOpen} onClose={() => setBookingOpen(false)} />
+      <BookingModal isOpen={bookingOpen} onClose={() => setBookingOpen(false)} clinic={clinic} currency={currency} />
       <FloatingBookingButton onOpenBooking={() => setBookingOpen(true)} />
     </div>
   );

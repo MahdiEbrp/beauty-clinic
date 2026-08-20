@@ -32,7 +32,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function Page() {
-  const clinicData = await getClinicData();
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const clinicData = await getClinicData(locale as Parameters<typeof getClinicData>[0]);
   return <HomePage clinicData={clinicData} />;
 }

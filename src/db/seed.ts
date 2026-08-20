@@ -7,6 +7,9 @@ import {
   roles,
   rolePermissions,
   settings,
+  settingsI18n,
+  socialLinks,
+  socialLinksI18n,
   userRoles,
   users,
   rules,
@@ -15,90 +18,14 @@ import {
 import { seedServiceCatalog } from "./seed/service-catalog";
 import { seedLanding } from "./seed/landing";
 import { RULES_SEED } from "./seed/rules";
-
-const ROLE_DEFS = [
-  { key: "admin", name: "Admin", description: "Full platform access" },
-  { key: "doctor", name: "Doctor", description: "Clinical staff" },
-  { key: "receptionist", name: "Receptionist", description: "Front desk staff" },
-  { key: "customer", name: "Customer", description: "Clinic client" },
-] as const;
-
-const PERMISSION_DEFS = [
-  { key: "users.read", name: "Read users", description: "View user profiles" },
-  { key: "users.write", name: "Write users", description: "Create and update users" },
-  { key: "users.manage", name: "Manage users", description: "Ban, disable, and assign roles" },
-  { key: "appointments.read", name: "Read appointments", description: "View appointments" },
-  { key: "appointments.write", name: "Write appointments", description: "Create and update appointments" },
-  { key: "appointments.manage", name: "Manage appointments", description: "Cancel and reschedule appointments" },
-  { key: "records.read", name: "Read records", description: "View medical records" },
-  { key: "records.write", name: "Write records", description: "Create and update medical records" },
-  { key: "services.read", name: "Read services", description: "View the service catalog" },
-  { key: "services.write", name: "Write services", description: "Create and update the service catalog" },
-  { key: "services.manage", name: "Manage services", description: "Deactivate and delete service catalog entries" },
-  { key: "rules.read", name: "Read rules", description: "View the clinic rules" },
-  { key: "rules.write", name: "Write rules", description: "Create and update clinic rules" },
-  { key: "rules.manage", name: "Manage rules", description: "Deactivate and delete clinic rules" },
-  { key: "files.read", name: "Read files", description: "Browse and download the file manager" },
-  { key: "files.write", name: "Write files", description: "Upload, create, edit and rename files" },
-  { key: "files.manage", name: "Manage files", description: "Move files to trash, restore and delete" },
-  { key: "settings.manage", name: "Manage settings", description: "Change platform settings" },
-] as const;
-
-const ALL_PERMISSIONS = PERMISSION_DEFS.map((p) => p.key);
-
-const ROLE_PERMISSIONS: Record<string, readonly string[]> = {
-  admin: ALL_PERMISSIONS,
-  doctor: [
-    "users.read",
-    "appointments.read",
-    "appointments.write",
-    "records.read",
-    "records.write",
-    "services.read",
-    "services.write",
-    "rules.read",
-    "rules.write",
-    "files.read",
-  ],
-  receptionist: [
-    "users.read",
-    "users.write",
-    "appointments.read",
-    "appointments.write",
-    "services.read",
-    "rules.read",
-    "files.read",
-    "files.write",
-  ],
-  customer: [],
-};
-
-const SYSTEM_SETTINGS = [
-  // Placeholder phone — replace with the real clinic number before going live.
-  { key: "contact.phone", value: "+989120000000", type: "string" },
-  { key: "contact.address_full", value: "اندیشه فاز دو - میدان مادر - ابتدای بلوار نیلوفر نبش بنفشه هفتم - پلاک ۳۹ - طبقه دو", type: "string" },
-  { key: "contact.city", value: "اندیشه", type: "string" },
-  { key: "contact.province", value: "تهران", type: "string" },
-  { key: "contact.country", value: "IR", type: "string" },
-  { key: "contact.map_neshan", value: "https://nshn.ir/rbvg0k2xLMq4", type: "string" },
-  // eslint-disable-next-line no-secrets/no-secrets -- public Google Maps search URL, not a secret
-  { key: "contact.map_google", value: "https://www.google.com/maps/search/?api=1&query=Andisheh+Phase+2", type: "string" },
-  { key: "social.rubika", value: "https://rubika.ir/nafasclinic", type: "string" },
-  { key: "social.bale", value: "https://ble.ir/nafasclinic", type: "string" },
-  { key: "social.instagram", value: "https://instagram.com/nafasclinic", type: "string" },
-  {
-    key: "clinic.opening_hours",
-    value: [
-      {
-        days: ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday"],
-        opens: "09:00",
-        closes: "19:00",
-      },
-      { days: ["Thursday"], opens: "09:00", closes: "14:00" },
-    ],
-    type: "array",
-  },
-] as const;
+import {
+  ROLE_DEFS,
+  PERMISSION_DEFS,
+  ALL_PERMISSIONS,
+  ROLE_PERMISSIONS,
+  SYSTEM_SETTINGS,
+  SOCIAL_LINKS,
+} from "./seed/definitions";
 
 async function seed(): Promise<void> {
   for (const def of ROLE_DEFS) {
@@ -158,16 +85,56 @@ async function seed(): Promise<void> {
   }
 
   for (const def of SYSTEM_SETTINGS) {
-    await db
+    const [row] = await db
       .insert(settings)
       .values({ scope: "system", key: def.key, value: def.value, type: def.type })
       .onConflictDoNothing({
         target: settings.key,
         where: sql`${settings.scope} = 'system'`,
-      });
+      })
+      .returning({ id: settings.id });
+
+    const translations = "translations" in def ? def.translations : undefined;
+    if (row && translations) {
+      const entries = (
+        [
+          { locale: "fa", value: translations.fa },
+          { locale: "en", value: translations.en },
+        ] as const
+      )
+        .filter((entry) => entry.value !== undefined)
+        .map((entry) => ({ settingId: row.id, locale: entry.locale, value: entry.value }));
+      if (entries.length > 0) {
+        await db
+          .insert(settingsI18n)
+          .values(entries)
+          .onConflictDoNothing({ target: [settingsI18n.settingId, settingsI18n.locale] });
+      }
+    }
   }
 
-    console.log("System settings seeded.");
+  console.log("System settings seeded.");
+
+  for (const def of SOCIAL_LINKS) {
+    const [row] = await db
+      .insert(socialLinks)
+      .values({
+        url: def.url,
+        imageUrl: def.imageUrl,
+        displayOrder: def.displayOrder,
+      })
+      .onConflictDoNothing({ target: socialLinks.url })
+      .returning({ id: socialLinks.id });
+
+    if (row) {
+      await db.insert(socialLinksI18n).values([
+        { socialLinkId: row.id, locale: "fa", label: def.labelFa },
+        { socialLinkId: row.id, locale: "en", label: def.labelEn },
+      ]);
+    }
+  }
+
+  console.log("Social links seeded.");
 
   await seedServiceCatalog();
   await seedRules();

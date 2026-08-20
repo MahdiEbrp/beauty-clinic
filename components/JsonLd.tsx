@@ -1,6 +1,7 @@
 import { getTranslations, getLocale } from "next-intl/server";
 import { getClinicData } from "@/data/clinic";
 import { canonicalUrl, siteUrl } from "@/lib/site";
+import type { Locale } from "@/lib/services/types";
 
 function safeJsonLd(value: unknown): string {
   return JSON.stringify(value)
@@ -13,7 +14,7 @@ export default async function JsonLd() {
   const locale = await getLocale();
   const tSite = await getTranslations({ locale, namespace: "site" });
   const tJsonLd = await getTranslations({ locale, namespace: "jsonLd" });
-  const clinic = await getClinicData();
+  const clinic = await getClinicData(locale as Locale);
 
   const schema = {
     "@context": "https://schema.org",
@@ -35,7 +36,7 @@ export default async function JsonLd() {
       opens: slot.opens,
       closes: slot.closes,
     })),
-    sameAs: [clinic.social.rubika, clinic.social.bale, clinic.social.instagram],
+    sameAs: clinic.social.map((link) => link.url),
   };
 
   return (

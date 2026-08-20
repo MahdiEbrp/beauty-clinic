@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import BookingForm from "./BookingForm";
+import type { ClinicData } from "@/data/clinic";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +14,8 @@ import {
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
+  clinic?: ClinicData;
+  currency?: string;
 }
 
 /**
@@ -21,7 +24,7 @@ interface BookingModalProps {
  * to the trigger on close, body scroll lock, and `aria-hidden` on the rest of
  * the page.
  */
-export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
+export default function BookingModal({ isOpen, onClose, clinic }: BookingModalProps) {
   const t = useTranslations();
 
   return (
@@ -39,7 +42,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <BookingForm />
+        <BookingForm clinic={clinic} />
       </DialogContent>
     </Dialog>
   );

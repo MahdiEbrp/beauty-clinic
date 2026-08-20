@@ -65,26 +65,6 @@
     "goToImage": "Go to image {number}",
     "viewImage": "View {title} larger"
   },
-  "contact": {
-    "heading1": "Address &",
-    "heading2": "Contact",
-    "description": "Nafas Aesthetic Clinic, at your service",
-    "addressTitle": "Clinic Address",
-    "address": "Andisheh Phase 2 - Madar Square - Niloufar Blvd - No. 39 - 2nd Floor",
-    "socialTitle": "Social Media",
-    "rubika": "Rubika Channel",
-    "bale": "Bale Channel",
-    "instagram": "Instagram",
-    "bookingTitle": "Online Booking",
-    "neshanMap": "Neshan Map",
-    "neshanDesc": "Navigate with Neshan App",
-    "googleMap": "Google Maps",
-    "googleMapDesc": "Navigate with Google Maps",
-    "clinicName": "Nafas Beauty Clinic",
-    "clinicAddress": "Madar Square, Andisheh Phase 2",
-    "selectService": "Select a service...",
-    "opensInNewTab": "opens in a new tab"
-  },
   "booking": {
     "title": "Booking Form",
     "description": "Please enter your information and our team will contact you shortly.",
@@ -108,8 +88,6 @@
     "description": "Nafas Aesthetic Clinic offering specialized facials, laser services, anti-aging therapy, body contouring, and wellness services."
   },
   "common": {
-    "currency": "Toman",
-    "priceNote": "All prices are in Toman.",
     "empty": "No data available.",
     "error": "Failed to load data.",
     "retry": "Try again",
@@ -448,7 +426,8 @@
       "closeMenu": "Close menu",
       "collapse": "Collapse sidebar",
       "expand": "Expand sidebar",
-      "landing": "Landing"
+      "landing": "Landing",
+      "settings": "Settings"
     },
     "topbar": {
       "breadcrumbLabel": "Dashboard breadcrumb",
@@ -2133,6 +2112,389 @@
       "sections": "Sections",
       "yes": "Yes",
       "no": "No"
+    }
+  },
+  "settingsAdmin": {
+    "meta": {
+      "title": "Settings | Nafas Beauty Clinic",
+      "description": "Manage system-wide clinic settings."
+    },
+    "back": "Back to Dashboard",
+    "heading": "System Settings",
+    "resultsLabel": "settings",
+    "add": "Add Setting",
+    "socialLinks": "Social Links",
+    "search": "Search settings",
+    "searchPlaceholder": "Search by key or value...",
+    "loading": "Loading...",
+    "status": "Status",
+    "statusAll": "All",
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "clearFilters": "Clear filters",
+    "types": {
+      "string": "String",
+      "number": "Number",
+      "boolean": "Boolean",
+      "object": "Object",
+      "array": "Array",
+      "localized": "Localized"
+    },
+    "localized": "Localized",
+    "orderLabel": "Order: {order}",
+    "table": {
+      "key": "Key",
+      "type": "Type",
+      "value": "Value",
+      "order": "Order",
+      "status": "Status"
+    },
+    "actions": {
+      "menu": "Open actions",
+      "edit": "Edit",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete",
+      "deleteConfirm": "Delete \"{key}\"?"
+    },
+    "deactivateDialog": {
+      "title": "Deactivate \"{key}\"?",
+      "description": "This setting will stop applying on the public site."
+    },
+    "bulk": {
+      "selected": "{count} selected",
+      "selectedFiltered": "All {count} filtered settings selected",
+      "pageSelected": "All settings on this page are selected.",
+      "selectFiltered": "Select all {count} filtered settings",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete",
+      "apply": "Apply",
+      "clear": "Clear",
+      "confirm": {
+        "activate": "Activate selected settings?",
+        "deactivate": "Deactivate selected settings?",
+        "delete": "Delete selected settings?"
+      },
+      "confirmDescription": "This action applies to all selected settings.",
+      "resultTitle": "Done",
+      "resultPartialTitle": "Some items failed",
+      "resultDescription": "{count} settings updated successfully.",
+      "resultPartialDescription": "{succeeded} succeeded, {failed} failed."
+    },
+    "dialog": {
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "done": "Done"
+    },
+    "toast": {
+      "syncing": "Syncing...",
+      "success": "Changes saved",
+      "error": "Something went wrong",
+      "deleted": "Setting deleted"
+    },
+    "pagination": {
+      "showing": "Showing {from}–{to} of {total}",
+      "previous": "Previous",
+      "next": "Next",
+      "pageInfo": "Page {page} of {totalPages}"
+    },
+    "empty": "No system settings yet.",
+    "emptySearch": "No settings match your filters.",
+    "errorTitle": "Could not load settings",
+    "errorDescription": "Something went wrong while loading the settings list.",
+    "retry": "Try again",
+    "selectPage": "Select all on page",
+    "selectRow": "Select this setting"
+  },
+  "settingWizard": {
+    "meta": {
+      "title": "Add Setting | Nafas Beauty Clinic",
+      "description": "Create a new system setting."
+    },
+    "back": "Back to Settings",
+    "heading": "Create Setting",
+    "subtitle": "Add a system-wide setting used across the public site.",
+    "editHeading": "Edit Setting",
+    "editSubtitle": "Update this system setting.",
+    "steps": {
+      "identity": {
+        "name": "Identity",
+        "desc": "Key & type",
+        "fullDesc": "Define the key and value type."
+      },
+      "value": {
+        "name": "Value",
+        "desc": "Set the value",
+        "fullDesc": "Provide the value for this setting."
+      },
+      "settings": {
+        "name": "Settings",
+        "desc": "Order & status",
+        "fullDesc": "Configure display order and status."
+      },
+      "review": {
+        "name": "Review",
+        "desc": "Confirm everything",
+        "fullDesc": "Review and confirm your setting."
+      }
+    },
+    "language": {
+      "label": "Language",
+      "en": "English (EN)",
+      "fa": "Persian (FA)",
+      "editing": "Editing: {lang}",
+      "enSection": "English (Base)",
+      "faSection": "Persian (FA)"
+    },
+    "identity": {
+      "key": "Key",
+      "keyHint": "Lowercase letters, numbers, dots and underscores. Example: clinic.opening_hours",
+      "type": "Value type",
+      "typeHint": "How this setting's value is stored and edited.",
+      "typeOptions": {
+        "string": "String",
+        "number": "Number",
+        "boolean": "Boolean",
+        "object": "Object",
+        "array": "Array",
+        "localized": "Localized"
+      },
+      "typeHints": {
+        "string": "A single line of text.",
+        "number": "A numeric value.",
+        "boolean": "A true/false switch.",
+        "object": "Structured data as JSON object.",
+        "array": "A list of values as JSON array.",
+        "localized": "Different values per language (fa / en)."
+      }
+    },
+    "value": {
+      "faLabel": "Persian value",
+      "enLabel": "English value",
+      "stringLabel": "Value",
+      "numberLabel": "Value",
+      "booleanLabel": "Value",
+      "booleanTrue": "Enabled (true)",
+      "booleanFalse": "Disabled (false)",
+      "jsonLabel": "Value (JSON)",
+      "jsonHint": "Valid JSON only. Example: [\"09:00\", \"19:00\"]"
+    },
+    "settings": {
+      "displayOrder": "Display Order",
+      "displayOrderHint": "Lower numbers appear first in lists.",
+      "active": "Active",
+      "activeHint": "Apply this setting on the public site."
+    },
+    "review": {
+      "title": "Ready to Save",
+      "description": "Review your setting below. Once saved, it applies site-wide.",
+      "identity": "Identity",
+      "value": "Value",
+      "settings": "Settings",
+      "key": "Key",
+      "type": "Type",
+      "displayOrder": "Display Order",
+      "active": "Status",
+      "activeYes": "Active",
+      "activeNo": "Inactive",
+      "fa": "Persian",
+      "en": "English",
+      "true": "true",
+      "false": "false"
+    },
+    "errors": {
+      "keyInvalid": "Use lowercase letters, numbers, dots and underscores only.",
+      "valueRequired": "A value is required.",
+      "numberInvalid": "Enter a valid number.",
+      "jsonInvalid": "Enter valid JSON.",
+      "localizedRequired": "Provide at least one language.",
+      "orderInvalid": "Enter a valid order number.",
+      "keyTaken": "This key is already in use."
+    },
+    "toast": {
+      "creating": "Creating setting...",
+      "saving": "Saving changes...",
+      "created": "Setting created",
+      "updated": "Setting updated",
+      "error": "Something went wrong"
+    },
+    "nav": {
+      "back": "Back",
+      "continue": "Continue",
+      "create": "Create Setting",
+      "save": "Save Changes",
+      "stepOf": "Step {current} of {total}"
+    }
+  },
+  "socialAdmin": {
+    "meta": {
+      "title": "Social Links | Nafas Beauty Clinic",
+      "description": "Manage the social network links shown on the site."
+    },
+    "back": "Back to Settings",
+    "heading": "Social Links",
+    "resultsLabel": "links",
+    "add": "Add Link",
+    "search": "Search links",
+    "searchPlaceholder": "Search by label or URL...",
+    "loading": "Loading...",
+    "status": "Status",
+    "statusAll": "All",
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "clearFilters": "Clear filters",
+    "glyph": "link",
+    "orderLabel": "Order: {order}",
+    "table": {
+      "label": "Label",
+      "url": "URL",
+      "order": "Order",
+      "status": "Status"
+    },
+    "actions": {
+      "menu": "Open actions",
+      "edit": "Edit",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete",
+      "deleteConfirm": "Delete \"{name}\"?"
+    },
+    "deactivateDialog": {
+      "title": "Deactivate \"{name}\"?",
+      "description": "This link will disappear from the public site."
+    },
+    "bulk": {
+      "selected": "{count} selected",
+      "selectedFiltered": "All {count} filtered links selected",
+      "pageSelected": "All links on this page are selected.",
+      "selectFiltered": "Select all {count} filtered links",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete",
+      "apply": "Apply",
+      "clear": "Clear",
+      "confirm": {
+        "activate": "Activate selected links?",
+        "deactivate": "Deactivate selected links?",
+        "delete": "Delete selected links?"
+      },
+      "confirmDescription": "This action applies to all selected links.",
+      "resultTitle": "Done",
+      "resultPartialTitle": "Some items failed",
+      "resultDescription": "{count} links updated successfully.",
+      "resultPartialDescription": "{succeeded} succeeded, {failed} failed."
+    },
+    "dialog": {
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "done": "Done"
+    },
+    "toast": {
+      "syncing": "Syncing...",
+      "success": "Changes saved",
+      "error": "Something went wrong",
+      "deleted": "Link deleted"
+    },
+    "pagination": {
+      "showing": "Showing {from}–{to} of {total}",
+      "previous": "Previous",
+      "next": "Next",
+      "pageInfo": "Page {page} of {totalPages}"
+    },
+    "empty": "No social links yet.",
+    "emptySearch": "No links match your filters.",
+    "errorTitle": "Could not load links",
+    "errorDescription": "Something went wrong while loading the links list.",
+    "retry": "Try again",
+    "selectPage": "Select all on page",
+    "selectRow": "Select this link"
+  },
+  "socialWizard": {
+    "meta": {
+      "title": "Add Social Link | Nafas Beauty Clinic",
+      "description": "Add a social network link for the clinic."
+    },
+    "back": "Back to Social Links",
+    "heading": "Create Social Link",
+    "subtitle": "Add a social network link shown in the contact and footer sections.",
+    "editHeading": "Edit Social Link",
+    "editSubtitle": "Update this social link.",
+    "steps": {
+      "identity": {
+        "name": "Identity",
+        "desc": "Labels & URL",
+        "fullDesc": "Define the labels, URL and image."
+      },
+      "settings": {
+        "name": "Settings",
+        "desc": "Order & status",
+        "fullDesc": "Configure display order and status."
+      },
+      "review": {
+        "name": "Review",
+        "desc": "Confirm everything",
+        "fullDesc": "Review and confirm your link."
+      }
+    },
+    "language": {
+      "label": "Language",
+      "en": "English (EN)",
+      "fa": "Persian (FA)",
+      "editing": "Editing: {lang}",
+      "enSection": "English (Base)",
+      "faSection": "Persian (FA)"
+    },
+    "identity": {
+      "labelFa": "Label (Persian)",
+      "labelEn": "Label (English)",
+      "url": "URL",
+      "urlHint": "Must be a valid http(s) URL.",
+      "imageUrl": "Image URL",
+      "imageUrlHint": "Optional icon/logo image shown next to the link.",
+      "preview": "Preview"
+    },
+    "settings": {
+      "displayOrder": "Display Order",
+      "displayOrderHint": "Lower numbers appear first in lists.",
+      "active": "Active",
+      "activeHint": "Show this link on the public site."
+    },
+    "review": {
+      "title": "Ready to Save",
+      "description": "Review your social link below.",
+      "identity": "Identity",
+      "url": "URL",
+      "image": "Image",
+      "fa": "Persian label",
+      "en": "English label",
+      "displayOrder": "Display Order",
+      "active": "Status",
+      "activeYes": "Active",
+      "activeNo": "Inactive"
+    },
+    "errors": {
+      "urlInvalid": "Enter a valid http(s) URL.",
+      "labelRequired": "A label is required in both languages.",
+      "orderInvalid": "Enter a valid order number."
+    },
+    "toast": {
+      "creating": "Creating link...",
+      "saving": "Saving changes...",
+      "created": "Link created",
+      "updated": "Link updated",
+      "error": "Something went wrong"
+    },
+    "nav": {
+      "back": "Back",
+      "continue": "Continue",
+      "create": "Create Link",
+      "save": "Save Changes",
+      "stepOf": "Step {current} of {total}"
     }
   }
 }

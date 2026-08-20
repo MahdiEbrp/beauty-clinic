@@ -1,4 +1,5 @@
 import { relations, sql } from "drizzle-orm";
+import { localeEnum } from "./service-catalog";
 import {
   boolean,
   index,
@@ -169,6 +170,8 @@ export const settings = pgTable(
     key: text("key").notNull(),
     value: jsonb("value").notNull(),
     type: text("type"),
+    isActive: boolean("is_active").notNull().default(true),
+    displayOrder: integer("display_order").notNull().default(0),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -181,6 +184,19 @@ export const settings = pgTable(
       .where(sql`${table.scope} = 'system'`),
     index("settings_user_id_idx").on(table.userId),
   ],
+);
+
+/** Per-locale values for `type = "localized"` settings (e.g. clinic address). */
+export const settingsI18n = pgTable(
+  "settings_i18n",
+  {
+    settingId: uuid("setting_id")
+      .notNull()
+      .references(() => settings.id, { onDelete: "cascade", onUpdate: "cascade" }),
+    locale: localeEnum("locale").notNull(),
+    value: jsonb("value").notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.settingId, table.locale] })],
 );
 
 export const settingsRelations = relations(settings, ({ one }) => ({

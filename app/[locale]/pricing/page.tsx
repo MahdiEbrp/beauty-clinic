@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import PricingContent from "@/components/pricing/PricingContent";
 import { getPublicServiceTree } from "@/lib/services/service";
+import { getClinicData } from "@/data/clinic";
 import type { Locale } from "@/lib/services/types";
 import { siteUrl } from "@/lib/site";
 
@@ -38,6 +39,7 @@ export default async function PricingPage({
 }) {
   const { locale } = await params;
   const tree = await getPublicServiceTree(locale as Locale);
+  const clinic = await getClinicData(locale as Locale);
 
-  return <PricingContent tree={tree} />;
+  return <PricingContent tree={tree} currency={clinic.currency} clinic={clinic} />;
 }

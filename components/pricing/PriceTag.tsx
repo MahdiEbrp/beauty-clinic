@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 type PriceTagProps = {
   price: number | null;
   priceType: PriceType;
+  currency: string;
   className?: string;
   labelClassName?: string;
 };
@@ -20,6 +21,7 @@ type PriceTagProps = {
 export default function PriceTag({
   price,
   priceType,
+  currency,
   className,
   labelClassName,
 }: PriceTagProps) {
@@ -37,14 +39,14 @@ export default function PriceTag({
         <span className={cn("text-caption font-semibold", labelClassName)}>
           {t("serviceDetail.labels.from")}
         </span>{" "}
-        {value} {t("common.currency")}
+        {value} {currency}
       </span>
     );
   }
 
   return (
     <span className={className}>
-      {value} {t("common.currency")}
+      {value} {currency}
     </span>
   );
 }

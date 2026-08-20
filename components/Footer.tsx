@@ -13,12 +13,6 @@ interface FooterProps {
 const linkClass =
   "text-footer-muted text-body-sm no-underline hover:text-gold transition-colors inline-flex items-center min-h-11 rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold";
 
-const DEFAULT_SOCIAL = {
-  rubika: "https://rubika.ir/nafasclinic",
-  bale: "https://ble.ir/nafasclinic",
-  instagram: "https://instagram.com/nafasclinic",
-} as const;
-
 export default function Footer({ clinic }: FooterProps) {
   const t = useTranslations();
   const locale = useLocale();
@@ -29,11 +23,8 @@ export default function Footer({ clinic }: FooterProps) {
     return isHomePage ? anchor : `/${anchor}`;
   };
 
-  const socials = [
-    { key: "rubika", href: clinic?.social.rubika ?? DEFAULT_SOCIAL.rubika },
-    { key: "bale", href: clinic?.social.bale ?? DEFAULT_SOCIAL.bale },
-    { key: "instagram", href: clinic?.social.instagram ?? DEFAULT_SOCIAL.instagram },
-  ] as const;
+  const socials = clinic?.social ?? [];
+  const opensInNewTab = clinic?.content.opensInNewTab;
 
   return (
     <footer className="bg-footer-bg text-footer-text pt-16 mt-16">
@@ -77,18 +68,15 @@ export default function Footer({ clinic }: FooterProps) {
             </h3>
             <ul className="list-none flex flex-col">
               {socials.map((social) => (
-                <li key={social.key}>
+                <li key={social.url}>
                   <a
-                    href={social.href}
+                    href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={linkClass}
                   >
-                    {t(`contact.${social.key}`)}
-                    <span className="sr-only">
-                      {" "}
-                      ({t("contact.opensInNewTab")})
-                    </span>
+                    {social.label}
+                    <span className="sr-only"> ({opensInNewTab})</span>
                   </a>
                 </li>
               ))}

@@ -62,7 +62,7 @@ function ServicesErrorState() {
 
 export function ServicesDesktopTable() {
   const t = useTranslations();
-  const { data, isLoading, hasLoadFailed, canWrite, selectedIds, allVisibleSelected, selectAllRef, toggleServiceSelection, togglePageSelection } = useServices();
+  const { data, isLoading, hasLoadFailed, canWrite, selectedIds, allVisibleSelected, selectAllRef, toggleServiceSelection, togglePageSelection, currency } = useServices();
 
   if (hasLoadFailed) {
     return (
@@ -126,11 +126,11 @@ export function ServicesDesktopTable() {
                   <td className="px-3 py-4">
                     <span className="text-dash-body-sm text-content-secondary">{service.categoryName ?? "—"}</span>
                   </td>
-                  <td className="px-3 py-4 text-center">
-                    <span dir="ltr" className="text-dash-body-sm text-accent">
-                      {service.price ? formatPrice(service.price) : t("serviceServices.price_on_request")}
-                    </span>
-                  </td>
+<td className="px-3 py-4 text-center">
+                      <span dir="ltr" className="text-dash-body-sm text-accent">
+                        {service.price ? formatPrice(service.price, currency) : t("serviceServices.price_on_request")}
+                      </span>
+                    </td>
                   <td className="px-3 py-4 text-center">
                     <span className="text-dash-body-sm text-content-secondary">
                       {service.durationMin ? `${Number(service.durationMin)} ${t("serviceServices.durationUnit")}` : "—"}

@@ -18,6 +18,7 @@ type ServiceDetailProps = {
   service: PublicServiceRow;
   onBack: () => void;
   onBook: () => void;
+  currency: string;
 };
 
 /** Expanded state B — full detail for one treatment. */
@@ -25,6 +26,7 @@ export default function ServiceDetail({
   service,
   onBack,
   onBook,
+  currency,
 }: ServiceDetailProps) {
   const t = useTranslations();
 
@@ -50,11 +52,12 @@ export default function ServiceDetail({
           </p>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-3">
-          <PriceTag
-            price={service.price}
-            priceType={service.priceType}
-            className="text-heading-3 font-extrabold text-copper-deep"
-          />
+<PriceTag
+              price={service.price}
+              priceType={service.priceType}
+              currency={currency}
+              className="text-heading-3 font-extrabold text-copper-deep"
+            />
           <ServiceMeta
             durationMin={service.durationMin}
             sessionsCount={service.sessionsCount}

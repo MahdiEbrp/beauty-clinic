@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { CheckCircle } from "lucide-react";
 import { usePublicCatalog } from "@/lib/hooks/use-public-catalog";
+import type { ClinicData } from "@/data/clinic";
 
 const fieldClass =
   "w-full bg-form-input-bg border border-form-input-border rounded-control py-3 px-4 text-body text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
@@ -10,10 +11,11 @@ const fieldClass =
 const labelClass =
   "block text-caption font-medium text-content-secondary mb-2";
 
-export default function BookingForm() {
+export default function BookingForm({ clinic }: { clinic?: ClinicData }) {
   const t = useTranslations();
   const catalog = usePublicCatalog();
   const serviceOptions = catalog?.groups ?? [];
+  const selectService = clinic?.content.selectService ?? t("booking.service");
 
   return (
     <form
@@ -62,7 +64,7 @@ export default function BookingForm() {
           defaultValue=""
         >
           <option value="" disabled>
-            {t("contact.selectService")}
+            {selectService}
           </option>
           {serviceOptions.map((option) => (
             <option key={option.slug} value={option.slug}>

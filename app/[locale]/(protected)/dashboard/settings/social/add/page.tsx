@@ -1,0 +1,35 @@
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+
+import CreateSocialLinkForm from "@/components/create-social/CreateSocialLinkForm";
+import { requirePermission } from "@/lib/auth/dal";
+import { siteUrl } from "@/lib/site";
+
+const ROUTE = "/dashboard/settings/social/add";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "socialWizard" });
+
+  return {
+    title: t("meta.title"),
+    description: t("meta.description"),
+    alternates: {
+      canonical: `${siteUrl}/${locale}${ROUTE}`,
+      languages: {
+        fa: `${siteUrl}/fa${ROUTE}`,
+        en: `${siteUrl}/en${ROUTE}`,
+      },
+    },
+    robots: { index: false, follow: false },
+  };
+}
+
+export default async function SocialLinksAddPage() {
+  await requirePermission("settings.write");
+  return <CreateSocialLinkForm />;
+}

@@ -65,26 +65,6 @@
     "goToImage": "رفتن به تصویر {number}",
     "viewImage": "مشاهده بزرگ‌تر {title}"
   },
-  "contact": {
-    "heading1": "آدرس و ارتباط",
-    "heading2": "با ما",
-    "description": "کلینیک تخصصی زیبایی نفس، در خدمت زیبایی شما",
-    "addressTitle": "آدرس کلینیک",
-    "address": "اندیشه فاز دو - میدان مادر - ابتدای بلوار نیلوفر نبش بنفشه هفتم - پلاک ۳۹ - طبقه دو",
-    "socialTitle": "شبکه‌های اجتماعی",
-    "rubika": "کانال روبیکا",
-    "bale": "کانال بله",
-    "instagram": "اینستاگرام",
-    "bookingTitle": "درخواست نوبت آنلاین",
-    "neshanMap": "نقشه نشان",
-    "neshanDesc": "مسیریابی با اپلیکیشن نشان",
-    "googleMap": "نقشه گوگل",
-    "googleMapDesc": "مسیریابی با Google Maps",
-    "clinicName": "کلینیک زیبایی نفس",
-    "clinicAddress": "میدان مادر، اندیشه فاز دو",
-    "selectService": "یک خدمت را انتخاب کنید...",
-    "opensInNewTab": "در تب جدید باز می‌شود"
-  },
   "booking": {
     "title": "فرم درخواست نوبت",
     "description": "لطفاً اطلاعات خود را وارد کنید تا همکاران ما در اسرع وقت با شما تماس بگیرند.",
@@ -108,8 +88,6 @@
     "description": "کلینیک تخصصی زیبایی نفس، ارائه‌دهنده خدمات فیشیال، لیزر، خدمات ضد پیری، فرم‌دهی بدن و خدمات سلامتی."
   },
   "common": {
-    "currency": "تومان",
-    "priceNote": "تمامی قیمت‌ها به تومان می‌باشد.",
     "empty": "داده‌ای موجود نیست.",
     "error": "بارگذاری با خطا مواجه شد.",
     "retry": "تلاش مجدد",
@@ -448,7 +426,8 @@
       "collapse": "جمع کردن سایدبار",
       "expand": "باز کردن سایدبار",
       "rules": "قوانین",
-      "landing": "لندینگ"
+      "landing": "لندینگ",
+      "settings": "تنظیمات"
     },
     "topbar": {
       "breadcrumbLabel": "مسیر داشبورد",
@@ -2133,6 +2112,389 @@
       "sections": "بخش‌ها",
       "yes": "بله",
       "no": "خیر"
+    }
+  },
+  "settingsAdmin": {
+    "meta": {
+      "title": "تنظیمات | کلینیک زیبایی نفس",
+      "description": "مدیریت تنظیمات کلینیک."
+    },
+    "back": "بازگشت به داشبورد",
+    "heading": "تنظیمات سیستم",
+    "resultsLabel": "تنظیمات",
+    "add": "افزودن تنظیمات",
+    "socialLinks": "لینک‌های اجتماعی",
+    "search": "جستجوی تنظیمات",
+    "searchPlaceholder": "جستجو بر اساس کلید یا مقدار...",
+    "loading": "در حال بارگذاری...",
+    "status": "وضعیت",
+    "statusAll": "همه",
+    "statuses": {
+      "active": "فعال",
+      "inactive": "غیرفعال"
+    },
+    "clearFilters": "پاک کردن فیلترها",
+    "types": {
+      "string": "متن",
+      "number": "عدد",
+      "boolean": "بولی",
+      "object": "شیء",
+      "array": "آرایه",
+      "localized": "چندزبانه"
+    },
+    "localized": "چندزبانه",
+    "orderLabel": "ترتیب: {order}",
+    "table": {
+      "key": "کلید",
+      "type": "نوع",
+      "value": "مقدار",
+      "order": "ترتیب",
+      "status": "وضعیت"
+    },
+    "actions": {
+      "menu": "باز کردن منوی عملیات",
+      "edit": "ویرایش",
+      "activate": "فعال‌سازی",
+      "deactivate": "غیرفعال‌سازی",
+      "delete": "حذف",
+      "deleteConfirm": "حذف \"{key}\"؟"
+    },
+    "deactivateDialog": {
+      "title": "غیرفعال‌سازی \"{key}\"؟",
+      "description": "این تنظیم دیگر در سایت عمومی اعمال نمی‌شود."
+    },
+    "bulk": {
+      "selected": "{count} انتخاب شده",
+      "selectedFiltered": "همه {count} تنظیمات فیلترشده انتخاب شدند",
+      "pageSelected": "همه تنظیمات این صفحه انتخاب شدند.",
+      "selectFiltered": "انتخاب همه {count} تنظیمات فیلترشده",
+      "activate": "فعال‌سازی",
+      "deactivate": "غیرفعال‌سازی",
+      "delete": "حذف",
+      "apply": "اعمال",
+      "clear": "پاک کردن",
+      "confirm": {
+        "activate": "فعال‌سازی تنظیمات انتخاب شده؟",
+        "deactivate": "غیرفعال‌سازی تنظیمات انتخاب شده؟",
+        "delete": "حذف تنظیمات انتخاب شده؟"
+      },
+      "confirmDescription": "این عملیات روی تمام تنظیمات انتخاب شده اعمال می‌شود.",
+      "resultTitle": "انجام شد",
+      "resultPartialTitle": "برخی موارد ناموفق بودند",
+      "resultDescription": "{count} تنظیمات با موفقیت به‌روزرسانی شدند.",
+      "resultPartialDescription": "{succeeded} موفق، {failed} ناموفق."
+    },
+    "dialog": {
+      "cancel": "انصراف",
+      "confirm": "تأیید",
+      "done": "انجام"
+    },
+    "toast": {
+      "syncing": "در حال همگام‌سازی...",
+      "success": "تغییرات ذخیره شد",
+      "error": "خطایی رخ داد",
+      "deleted": "تنظیمات حذف شد"
+    },
+    "pagination": {
+      "showing": "نمایش {from}–{to} از {total}",
+      "previous": "قبلی",
+      "next": "بعدی",
+      "pageInfo": "صفحه {page} از {totalPages}"
+    },
+    "empty": "هنوز تنظیمات سیستمی وجود ندارد.",
+    "emptySearch": "تنظیماتی با فیلترهای شما یافت نشد.",
+    "errorTitle": "بارگذاری تنظیمات ناموفق بود",
+    "errorDescription": "خطایی در بارگذاری لیست تنظیمات رخ داد.",
+    "retry": "تلاش مجدد",
+    "selectPage": "انتخاب همه در صفحه",
+    "selectRow": "انتخاب این تنظیم"
+  },
+  "settingWizard": {
+    "meta": {
+      "title": "افزودن لینک شبکه اجتماعی | کلینیک زیبایی نفس",
+      "description": "افزودن لینک شبکه اجتماعی کلینیک"
+    },
+    "back": "بازگشت به شبکه‌های اجتماعی",
+    "heading": "ایجاد لینک شبکه اجتماعی",
+    "subtitle": "افزودن لینک شبکه اجتماعی برای نمایش در بخش تماس و فوتر.",
+    "editHeading": "ویرایش لینک شبکه اجتماعی",
+    "editSubtitle": "به‌روزرسانی این لینک.",
+    "steps": {
+      "identity": {
+        "name": "شناسه",
+        "desc": "کلید و نوع",
+        "fullDesc": "کلید و نوع مقدار را تعریف کنید."
+      },
+      "value": {
+        "name": "مقدار",
+        "desc": "تعیین مقدار",
+        "fullDesc": "مقدار این تنظیم را وارد کنید."
+      },
+      "settings": {
+        "name": "تنظیمات",
+        "desc": "ترتیب و وضعیت",
+        "fullDesc": "ترتیب نمایش و وضعیت را پیکربندی کنید."
+      },
+      "review": {
+        "name": "مرور",
+        "desc": "تأیید همه موارد",
+        "fullDesc": "تنظیمات خود را مرور و تأیید کنید."
+      }
+    },
+    "language": {
+      "label": "زبان",
+      "en": "English (EN)",
+      "fa": "Persian (FA)",
+      "editing": "در حال ویرایش: {lang}",
+      "enSection": "انگلیسی (پایه)",
+      "faSection": "فارسی (FA)"
+    },
+    "identity": {
+      "key": "کلید تنظیمات",
+      "keyHint": "شناسه منحصر به فرد (مثال: contact.phone)",
+      "type": "نوع مقدار",
+      "typeHint": "نوع داده برای اعتبارسنجی و ویرایش",
+      "typeHints": {
+        "array": "لیست مقادیر (JSON)",
+        "boolean": "درست/نادرست",
+        "localized": "متن چندزبانه (JSON با کلیدهای fa/en)",
+        "number": "عدد صحیح یا اعشاری",
+        "object": "شیء JSON",
+        "string": "متن ساده"
+      },
+      "typeOptions": {
+        "array": "آرایه",
+        "boolean": "بولی",
+        "localized": "چندزبانه",
+        "number": "عدد",
+        "object": "شیء",
+        "string": "متن"
+      }
+    },
+    "settings": {
+      "displayOrder": "ترتیب نمایش",
+      "displayOrderHint": "اعداد کوچک‌تر ابتدا نمایش داده می‌شوند.",
+      "active": "فعال",
+      "activeHint": "نمایش این لینک در سایت عمومی."
+    },
+    "review": {
+      "title": "آماده ذخیره",
+      "description": "تنظیمات خود را مرور کنید. پس از ذخیره، در کل سایت اعمال می‌شود.",
+      "identity": "شناسه",
+      "value": "مقدار",
+      "settings": "تنظیمات",
+      "key": "کلید",
+      "type": "نوع",
+      "displayOrder": "ترتیب نمایش",
+      "active": "وضعیت",
+      "activeYes": "فعال",
+      "activeNo": "غیرفعال",
+      "fa": "فارسی",
+      "en": "انگلیسی",
+      "true": "درست",
+      "false": "نادرست"
+    },
+    "errors": {
+      "jsonInvalid": "JSON نامعتبر است",
+      "keyInvalid": "کلید نامعتبر است. فقط حروف، اعداد، خط‌فاصله و نقطه مجازند",
+      "keyTaken": "این کلید قبلاً استفاده شده است",
+      "localizedRequired": "حداقل یک ترجمه (فارسی یا انگلیسی) الزامی است",
+      "numberInvalid": "باید یک عدد معتبر باشد",
+      "orderInvalid": "باید یک عدد صحیح باشد",
+      "valueRequired": "مقدار الزامی است"
+    },
+    "toast": {
+      "creating": "در حال ایجاد لینک...",
+      "saving": "در حال ذخیره تغییرات...",
+      "created": "لینک ایجاد شد",
+      "updated": "لینک به‌روزرسانی شد",
+      "error": "خطایی رخ داد"
+    },
+    "nav": {
+      "back": "بازگشت",
+      "continue": "ادامه",
+      "create": "ایجاد لینک",
+      "save": "ذخیره تغییرات",
+      "stepOf": "مرحله {current} از {total}"
+    },
+    "value": {
+      "booleanFalse": "نادرست",
+      "booleanLabel": "بولی",
+      "booleanTrue": "درست",
+      "enLabel": "مقدار انگلیسی",
+      "faLabel": "مقدار فارسی",
+      "jsonHint": "JSON معتبر وارد کنید",
+      "jsonLabel": "مقدار JSON",
+      "numberLabel": "مقدار عددی",
+      "stringLabel": "مقدار متنی"
+    }
+  },
+  "socialAdmin": {
+    "meta": {
+      "title": "لینک‌های اجتماعی | کلینیک زیبایی نفس",
+      "description": "مدیریت لینک‌های شبکه‌های اجتماعی نمایش داده شده در سایت."
+    },
+    "back": "بازگشت به تنظیمات",
+    "heading": "لینک‌های اجتماعی",
+    "resultsLabel": "لینک‌ها",
+    "add": "افزودن لینک",
+    "search": "جستجوی لینک‌ها",
+    "searchPlaceholder": "جستجو بر اساس برچسب یا آدرس...",
+    "loading": "در حال بارگذاری...",
+    "status": "وضعیت",
+    "statusAll": "همه",
+    "statuses": {
+      "active": "فعال",
+      "inactive": "غیرفعال"
+    },
+    "clearFilters": "پاک کردن فیلترها",
+    "glyph": "لینک",
+    "orderLabel": "ترتیب: {order}",
+    "table": {
+      "label": "برچسب",
+      "url": "آدرس",
+      "order": "ترتیب",
+      "status": "وضعیت"
+    },
+    "actions": {
+      "menu": "باز کردن منوی عملیات",
+      "edit": "ویرایش",
+      "activate": "فعال‌سازی",
+      "deactivate": "غیرفعال‌سازی",
+      "delete": "حذف",
+      "deleteConfirm": "حذف \"{name}\"؟"
+    },
+    "deactivateDialog": {
+      "title": "غیرفعال‌سازی \"{name}\"؟",
+      "description": "این لینک از سایت عمومی مخفی می‌شود."
+    },
+    "bulk": {
+      "selected": "{count} انتخاب شده",
+      "selectedFiltered": "همه {count} لینک‌های فیلترشده انتخاب شدند",
+      "pageSelected": "همه لینک‌های این صفحه انتخاب شدند.",
+      "selectFiltered": "انتخاب همه {count} لینک‌های فیلترشده",
+      "activate": "فعال‌سازی",
+      "deactivate": "غیرفعال‌سازی",
+      "delete": "حذف",
+      "apply": "اعمال",
+      "clear": "پاک کردن",
+      "confirm": {
+        "activate": "فعال‌سازی لینک‌های انتخاب شده؟",
+        "deactivate": "غیرفعال‌سازی لینک‌های انتخاب شده؟",
+        "delete": "حذف لینک‌های انتخاب شده؟"
+      },
+      "confirmDescription": "این عملیات روی تمام لینک‌های انتخاب شده اعمال می‌شود.",
+      "resultTitle": "انجام شد",
+      "resultPartialTitle": "برخی موارد ناموفق بودند",
+      "resultDescription": "{count} لینک با موفقیت به‌روزرسانی شدند.",
+      "resultPartialDescription": "{succeeded} موفق، {failed} ناموفق."
+    },
+    "dialog": {
+      "cancel": "انصراف",
+      "confirm": "تأیید",
+      "done": "انجام"
+    },
+    "toast": {
+      "syncing": "در حال همگام‌سازی...",
+      "success": "تغییرات ذخیره شد",
+      "error": "خطایی رخ داد",
+      "deleted": "لینک حذف شد"
+    },
+    "pagination": {
+      "showing": "نمایش {from}–{to} از {total}",
+      "previous": "قبلی",
+      "next": "بعدی",
+      "pageInfo": "صفحه {page} از {totalPages}"
+    },
+    "empty": "هنوز لینک اجتماعی وجود ندارد.",
+    "emptySearch": "لینکی با فیلترهای شما یافت نشد.",
+    "errorTitle": "بارگذاری لینک‌ها ناموفق بود",
+    "errorDescription": "خطایی در بارگذاری لیست لینک‌ها رخ داد.",
+    "retry": "تلاش مجدد",
+    "selectPage": "انتخاب همه در صفحه",
+    "selectRow": "انتخاب این لینک"
+  },
+  "socialWizard": {
+    "meta": {
+      "title": "افزودن لینک شبکه اجتماعی | کلینیک زیبایی نفس",
+      "description": "افزودن لینک شبکه اجتماعی کلینیک"
+    },
+    "back": "بازگشت به شبکه‌های اجتماعی",
+    "heading": "ایجاد لینک شبکه اجتماعی",
+    "subtitle": "افزودن لینک شبکه اجتماعی برای نمایش در بخش تماس و فوتر.",
+    "editHeading": "ویرایش لینک شبکه اجتماعی",
+    "editSubtitle": "به‌روزرسانی این لینک.",
+    "steps": {
+      "identity": {
+        "name": "شناسه",
+        "desc": "نام‌ها و آدرس",
+        "fullDesc": "نام‌ها، آدرس و تصویر را تعریف کنید."
+      },
+      "settings": {
+        "name": "تنظیمات",
+        "desc": "ترتیب و وضعیت",
+        "fullDesc": "ترتیب نمایش و وضعیت را پیکربندی کنید."
+      },
+      "review": {
+        "name": "مرور",
+        "desc": "تأیید همه موارد",
+        "fullDesc": "لینک خود را مرور و تأیید کنید."
+      }
+    },
+    "language": {
+      "label": "زبان",
+      "en": "English (EN)",
+      "fa": "Persian (FA)",
+      "editing": "در حال ویرایش: {lang}",
+      "enSection": "انگلیسی (پایه)",
+      "faSection": "فارسی (FA)"
+    },
+    "identity": {
+      "labelFa": "نام (فارسی)",
+      "labelEn": "نام (انگلیسی)",
+      "url": "آدرس",
+      "urlHint": "باید یک آدرس معتبر http(s) باشد.",
+      "imageUrl": "آدرس تصویر",
+      "imageUrlHint": "تصویر نماد/لوگوی اختیاری کنار لینک.",
+      "preview": "پیش‌نمایش"
+    },
+    "settings": {
+      "displayOrder": "ترتیب نمایش",
+      "displayOrderHint": "اعداد کوچک‌تر ابتدا نمایش داده می‌شوند.",
+      "active": "فعال",
+      "activeHint": "نمایش این لینک در سایت عمومی."
+    },
+    "review": {
+      "title": "آماده ذخیره",
+      "description": "لینک شبکه اجتماعی خود را مرور کنید.",
+      "identity": "شناسه",
+      "url": "آدرس",
+      "image": "تصویر",
+      "fa": "نام فارسی",
+      "en": "نام انگلیسی",
+      "displayOrder": "ترتیب نمایش",
+      "active": "وضعیت",
+      "activeYes": "فعال",
+      "activeNo": "غیرفعال"
+    },
+    "errors": {
+      "urlInvalid": "یک آدرس معتبر http(s) وارد کنید.",
+      "labelRequired": "نام در هر دو زبان الزامی است.",
+      "orderInvalid": "یک عدد ترتیب معتبر وارد کنید."
+    },
+    "toast": {
+      "creating": "در حال ایجاد لینک...",
+      "saving": "در حال ذخیره تغییرات...",
+      "created": "لینک ایجاد شد",
+      "updated": "لینک به‌روزرسانی شد",
+      "error": "خطایی رخ داد"
+    },
+    "nav": {
+      "back": "بازگشت",
+      "continue": "ادامه",
+      "create": "ایجاد لینک",
+      "save": "ذخیره تغییرات",
+      "stepOf": "مرحله {current} از {total}"
     }
   }
 }
