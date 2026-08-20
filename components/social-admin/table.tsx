@@ -1,7 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { ChevronLeft, ChevronRight, Loader2, MoreVertical, Pencil, Power, PowerOff, RefreshCw, Trash2 } from "lucide-react";
+import { useRouter } from "@/src/i18n/navigation";
+import { Loader2, MoreVertical, Pencil, Power, PowerOff, RefreshCw, Trash2 } from "lucide-react";
 import type { AdminSocialLink } from "@/lib/social/admin";
 import { statusClass, statusOf } from "./helpers";
 import { useSocialLinks } from "./social-context";
@@ -45,6 +46,7 @@ export function StatusBadge({ link }: { link: AdminSocialLink }) {
 
 export function RowActions({ row }: { row: AdminSocialLink }) {
   const t = useTranslations();
+  const router = useRouter();
   const { canWrite, canManage, isSyncing, runAction, setConfirm } = useSocialLinks();
   const state = statusOf(row);
   const disabled = isSyncing(row.id);
@@ -69,7 +71,7 @@ export function RowActions({ row }: { row: AdminSocialLink }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuGroup>
-          {canWrite && menuButton("edit", "socialAdmin.actions.edit", () => undefined, false)}
+          {canWrite && menuButton("edit", "socialAdmin.actions.edit", () => void router.push(`/dashboard/settings/social/${row.id}/edit`), false)}
           {canWrite &&
             (state === "active"
               ? menuButton("deactivate", "socialAdmin.actions.deactivate", () => setConfirm({ kind: "row", action: "deactivate", link: row }))

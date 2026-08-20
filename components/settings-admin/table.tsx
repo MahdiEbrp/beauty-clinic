@@ -1,7 +1,8 @@
 "use client";
 
 import { useTranslations, useLocale } from "next-intl";
-import { ChevronLeft, ChevronRight, Loader2, MoreVertical, Pencil, Power, PowerOff, RefreshCw, Settings as SettingsIcon, Trash2 } from "lucide-react";
+import { useRouter } from "@/src/i18n/navigation";
+import { Loader2, MoreVertical, Pencil, Power, PowerOff, RefreshCw, Settings as SettingsIcon, Trash2 } from "lucide-react";
 import type { AdminSetting } from "@/lib/settings/admin";
 import { previewValue, statusClass, statusOf } from "./helpers";
 import { useSettings } from "./settings-context";
@@ -53,6 +54,7 @@ export function StatusBadge({ setting }: { setting: AdminSetting }) {
 
 export function RowActions({ row }: { row: AdminSetting }) {
   const t = useTranslations();
+  const router = useRouter();
   const { canWrite, canManage, isSyncing, runAction, setConfirm } = useSettings();
   const state = statusOf(row);
   const disabled = isSyncing(row.id);
@@ -77,7 +79,7 @@ export function RowActions({ row }: { row: AdminSetting }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuGroup>
-          {canWrite && menuButton("edit", "settingsAdmin.actions.edit", () => undefined, false)}
+          {canWrite && menuButton("edit", "settingsAdmin.actions.edit", () => void router.push(`/dashboard/settings/${row.id}/edit`), false)}
           {canWrite &&
             (state === "active"
               ? menuButton("deactivate", "settingsAdmin.actions.deactivate", () => setConfirm({ kind: "row", action: "deactivate", setting: row }))

@@ -4,7 +4,6 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/navigation";
 import { ArrowLeft, Plus, Settings as SettingsIcon } from "lucide-react";
 import { useSettings } from "./settings-context";
-import type { AuthUser } from "@/lib/auth/dal";
 
 export function SettingsHeader() {
   const t = useTranslations();

@@ -1,6 +1,6 @@
 "use client";
 
-import { SocialLinksProvider, useSocialLinks } from "./social-context";
+import { SocialLinksProvider } from "./social-context";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { SocialLinksListState } from "./use-social-links-list";
 import { SocialHeader } from "./header";

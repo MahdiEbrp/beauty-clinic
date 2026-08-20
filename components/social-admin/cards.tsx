@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { AdminSocialLink } from "@/lib/social/admin";
 import { useSocialLinks } from "./social-context";
 import { LinkGlyph, StatusBadge, RowActions } from "./table";
 import { SelectionCheckbox } from "@/components/services/helpers";

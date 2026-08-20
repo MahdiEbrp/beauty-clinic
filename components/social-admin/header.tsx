@@ -4,7 +4,6 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/navigation";
 import { ArrowLeft, Plus } from "lucide-react";
 import { useSocialLinks } from "./social-context";
-import type { AuthUser } from "@/lib/auth/dal";
 
 export function SocialHeader() {
   const t = useTranslations();

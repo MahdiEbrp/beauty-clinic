@@ -1,6 +1,6 @@
 "use client";
 
-import { SettingsProvider, useSettings } from "./settings-context";
+import { SettingsProvider } from "./settings-context";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { SettingsListState } from "./use-settings-list";
 import { SettingsHeader } from "./header";

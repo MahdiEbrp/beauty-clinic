@@ -3,7 +3,6 @@
 import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 import { useSettings } from "./settings-context";
-import type { AuthUser } from "@/lib/auth/dal";
 
 export function SelectionBar() {
   const t = useTranslations();

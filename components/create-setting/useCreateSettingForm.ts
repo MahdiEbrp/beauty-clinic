@@ -80,8 +80,10 @@ export function useCreateSettingForm(initialSetting?: AdminSetting) {
   }
 
   function buildPayload() {
+    // The update schema is strict and rejects "type" — it's immutable after
+    // creation, so only send it on create. Edit PATCHes omit it entirely.
     const base = {
-      type,
+      ...(mode === "create" ? { type } : {}),
       isActive,
       displayOrder: Number(displayOrder) || 0,
     };

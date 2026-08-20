@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { Settings as SettingsIcon } from "lucide-react";
-import type { AdminSetting } from "@/lib/settings/admin";
 import { useSettings } from "./settings-context";
 import { SettingValue, StatusBadge, TypeBadge, RowActions } from "./table";
 import { SelectionCheckbox } from "@/components/services/helpers";
