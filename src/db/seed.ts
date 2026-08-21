@@ -16,6 +16,7 @@ import {
   rulesI18n,
 } from "./schema";
 import { seedServiceCatalog } from "./seed/service-catalog";
+import { seedCareGuides } from "./seed/care-guides";
 import { seedLanding } from "./seed/landing";
 import { RULES_SEED } from "./seed/rules";
 import {
@@ -148,6 +149,7 @@ async function seed(): Promise<void> {
   console.log("Social links seeded.");
 
   await seedServiceCatalog();
+  await seedCareGuides();
   await seedRules();
   await seedLanding();
 

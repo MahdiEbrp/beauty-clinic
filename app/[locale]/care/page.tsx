@@ -29,6 +29,11 @@ export async function generateMetadata({
   };
 }
 
-export default function CarePage() {
-  return <CareContent />;
+interface CarePageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export default async function CarePage({ params }: CarePageProps) {
+  const { locale } = await params;
+  return <CareContent locale={locale} />;
 }

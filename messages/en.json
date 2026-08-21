@@ -258,54 +258,9 @@
     },
     "heading": "Care Guide",
     "description": "Following these instructions will improve your results",
-    "preCare": {
-      "heading": "Pre-Injection Instructions",
-      "description": "Important tips before visiting for filler, botox and other beauty services",
-      "noAlcohol": "Avoid Alcohol",
-      "noAlcoholDesc": "Avoid consuming alcohol at least 24 to 48 hours before your visit.",
-      "noBloodThinners": "Avoid Blood Thinners",
-      "noBloodThinnersDesc": "Avoid medications like aspirin, ibuprofen, naproxen, Vitamin E, omega-3 and some herbal supplements for 3 to 7 days before.",
-      "noHeavyExercise": "Avoid Heavy Exercise",
-      "noHeavyExerciseDesc": "On the day of your visit, avoid heavy exercise, sauna and hot baths.",
-      "noMakeup": "No Heavy Makeup",
-      "noMakeupDesc": "Please come without heavy makeup.",
-      "discloseConditions": "Disclose Medical Conditions",
-      "discloseConditionsDesc": "If you have active cold sores, infection, pregnancy, nursing, drug allergies or specific conditions, please inform the clinic before your appointment.",
-      "drinkWater": "Drink Plenty of Water",
-      "drinkWaterDesc": "Drinking plenty of water from one day before injection is recommended, especially for filler injection."
-    },
-    "postCare": {
-      "heading": "Post-Filler Care",
-      "description": "Important tips after filler injection to maintain results and prevent complications",
-      "noHeat": "Avoid Extreme Heat",
-      "noHeatDesc": "Avoid exposing the treated area to extreme heat such as solarium or sauna.",
-      "noMakeup48h": "No Makeup for 48 Hours",
-      "noMakeup48hDesc": "Avoid applying makeup for 48 hours.",
-      "noAlcoholWeek": "No Alcohol for One Week",
-      "noAlcoholWeekDesc": "Strictly avoid alcoholic beverages for one week.",
-      "noSmokingWeek": "No Smoking for One Week",
-      "noSmokingWeekDesc": "Avoid smoking for one week.",
-      "noHeavyExercise48h": "No Heavy Exercise for 48 Hours",
-      "noHeavyExercise48hDesc": "Avoid heavy exercises for the first 48 hours.",
-      "takeCephalexin": "Take Cephalexin",
-      "takeCephalexinDesc": "Take Cephalexin every 8 hours for three days.",
-      "vitaminC": "Take Vitamin C & Water",
-      "vitaminCDesc": "Take Vitamin C and water for one week.",
-      "contactDoctor": "Contact Your Doctor",
-      "contactDoctorDesc": "If you experience severe pain or bruising in the first hours, inform your doctor immediately."
-    },
-    "durability": {
-      "heading": "Filler Durability",
-      "description": "Important notes about filler longevity",
-      "bodyCompatibility": "Body Compatibility with Brand",
-      "bodyCompatibilityDesc": "Each brand is different. If someone had good results with a brand, it doesn't guarantee the same for you.",
-      "areaDurability": "Durability by Facial Area",
-      "areaDurabilityDesc": "High-use areas like lips have less durability than chin, and smile line durability is less than angle filler.",
-      "aftercareImportance": "Importance of Aftercare",
-      "aftercareImportanceDesc": "Durability depends on your care and following post-injection instructions.",
-      "firstTimerNote": "Important Note for First-Timers",
-      "firstTimerNoteDesc": "First-time patients need a 20-day adaptation period for the gel to adjust. Gel absorption is natural and you need at least two sessions for desired results."
-    }
+    "empty": "No care guides are available yet.",
+    "highlighted": "Important",
+    "notProvided": "No description available."
   },
   "rules": {
     "meta": {
@@ -427,7 +382,8 @@
       "collapse": "Collapse sidebar",
       "expand": "Expand sidebar",
       "landing": "Landing",
-      "settings": "Settings"
+      "settings": "Settings",
+      "care": "Care Guide"
     },
     "topbar": {
       "breadcrumbLabel": "Dashboard breadcrumb",
@@ -2495,6 +2451,413 @@
       "create": "Create Link",
       "save": "Save Changes",
       "stepOf": "Step {current} of {total}"
+    }
+  },
+  "careHub": {
+    "meta": {
+      "title": "Care Guide | Nafas Beauty Clinic",
+      "description": "Manage care guides and their items."
+    },
+    "heading": "Care Guides",
+    "subtitle": "Organize pre and post treatment care instructions for your patients.",
+    "sectionTitle": "Management",
+    "manage": "Manage",
+    "addNew": "Add New",
+    "guides": {
+      "name": "Care Guides",
+      "description": "Create care guide sections and control their visibility and order.",
+      "featureIcon": "Icon & slug",
+      "featureItems": "Bilingual name & description"
+    },
+    "items": {
+      "name": "Care Guide Items",
+      "description": "Add individual care instructions under each guide, with optional detail.",
+      "featureHighlight": "Highlight important items",
+      "featureGuide": "Linked to a guide"
+    }
+  },
+  "careManage": {
+    "describe": "Back to Care"
+  },
+  "careGuides": {
+    "meta": {
+      "title": "Care Guides | Nafas Beauty Clinic",
+      "description": "Manage care guides, their visibility and ordering."
+    },
+    "heading": "Care Guides",
+    "resultsLabel": "guides",
+    "add": "Add new guide",
+    "addShort": "Add guide",
+    "select": "Select",
+    "done": "Done",
+    "search": "Search care guides",
+    "searchPlaceholder": "Search by slug or name...",
+    "status": "Status",
+    "statusAll": "All",
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "clearFilters": "Clear filters",
+    "error": "Couldn't load care guides. Please try again.",
+    "retry": "Retry",
+    "loading": "Loading care guides...",
+    "empty": "No care guides found.",
+    "emptySearch": "No care guides match your search.",
+    "table": {
+      "guide": "Guide",
+      "slug": "Slug",
+      "items": "Items",
+      "displayOrder": "Order",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "actions": {
+      "edit": "Edit",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "menu": "Open care guide actions",
+      "delete": "Delete guide",
+      "deleteConfirm": "Delete {name}?"
+    },
+    "deactivateDialog": {
+      "title": "Deactivate {name}?",
+      "description": "The guide will be hidden from the public care page. It can be reactivated anytime."
+    },
+    "dialog": {
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "close": "Close"
+    },
+    "pagination": {
+      "showing": "Showing {from}–{to} of {total}",
+      "previous": "Previous",
+      "next": "Next",
+      "pageInfo": "Page {page} of {totalPages}"
+    },
+    "bulk": {
+      "selected": "{count} guides selected",
+      "selectedFiltered": "All {count} filtered results selected",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete guides",
+      "apply": "Apply action",
+      "clear": "Clear selection",
+      "pageSelected": "All guides on this page are selected.",
+      "selectFiltered": "Select all {count} filtered results",
+      "selectGuide": "Select {name}",
+      "selectPage": "Select guides on this page",
+      "confirm": {
+        "delete": "Delete the selected guides?",
+        "deactivate": "Deactivate the selected guides?"
+      },
+      "confirmDescription": "This action will be applied to the selected guides and may change their visibility.",
+      "resultTitle": "Bulk action result",
+      "resultDescription": "The action completed with the following outcome.",
+      "requested": "{count} guides requested",
+      "succeeded": "{count} succeeded",
+      "failed": "{count} failed",
+      "failureCount": "{count} operations failed."
+    },
+    "toast": {
+      "syncing": "Updating care guides...",
+      "success": "Care guide updated.",
+      "deleted": "Care guide deleted.",
+      "error": "The action failed. Please try again."
+    }
+  },
+  "careGuideItems": {
+    "meta": {
+      "title": "Care Guide Items | Nafas Beauty Clinic",
+      "description": "Manage care guide items, their guides and ordering."
+    },
+    "heading": "Care Guide Items",
+    "resultsLabel": "items",
+    "add": "Add new item",
+    "addShort": "Add item",
+    "select": "Select",
+    "done": "Done",
+    "search": "Search items",
+    "searchPlaceholder": "Search by title...",
+    "status": "Status",
+    "statusAll": "All",
+    "guide": "Guide",
+    "guideAll": "All guides",
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "clearFilters": "Clear filters",
+    "error": "Couldn't load care guide items. Please try again.",
+    "retry": "Retry",
+    "loading": "Loading care guide items...",
+    "empty": "No care guide items found.",
+    "emptySearch": "No care guide items match your search.",
+    "table": {
+      "item": "Item",
+      "guide": "Guide",
+      "displayOrder": "Order",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "actions": {
+      "edit": "Edit",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "menu": "Open item actions",
+      "delete": "Delete item",
+      "deleteConfirm": "Delete {name}?"
+    },
+    "deactivateDialog": {
+      "title": "Deactivate {name}?",
+      "description": "The item will be hidden from the public care page. It can be reactivated anytime."
+    },
+    "dialog": {
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "close": "Close"
+    },
+    "pagination": {
+      "showing": "Showing {from}–{to} of {total}",
+      "previous": "Previous",
+      "next": "Next",
+      "pageInfo": "Page {page} of {totalPages}"
+    },
+    "bulk": {
+      "selected": "{count} items selected",
+      "selectedFiltered": "All {count} filtered results selected",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete items",
+      "apply": "Apply action",
+      "clear": "Clear selection",
+      "pageSelected": "All items on this page are selected.",
+      "selectFiltered": "Select all {count} filtered results",
+      "selectItem": "Select {name}",
+      "selectPage": "Select items on this page",
+      "confirm": {
+        "delete": "Delete the selected items?",
+        "deactivate": "Deactivate the selected items?"
+      },
+      "confirmDescription": "This action will be applied to the selected items and may change their visibility.",
+      "resultTitle": "Bulk action result",
+      "resultDescription": "The action completed with the following outcome.",
+      "requested": "{count} items requested",
+      "succeeded": "{count} succeeded",
+      "failed": "{count} failed",
+      "failureCount": "{count} operations failed."
+    },
+    "toast": {
+      "syncing": "Updating care guide items...",
+      "success": "Care guide item updated.",
+      "deleted": "Care guide item deleted.",
+      "error": "The action failed. Please try again."
+    }
+  },
+  "guideWizard": {
+    "meta": {
+      "title": "Add Care Guide | Nafas Beauty Clinic",
+      "description": "Create a new care guide with bilingual content."
+    },
+    "metaEdit": {
+      "title": "Edit Care Guide | Nafas Beauty Clinic",
+      "description": "Update an existing care guide."
+    },
+    "back": "Back to Care Guides",
+    "heading": "Create Care Guide",
+    "subtitle": "Add a care guide section.",
+    "editHeading": "Edit Care Guide",
+    "editSubtitle": "Update the details of this care guide.",
+    "steps": {
+      "identity": {
+        "name": "Identity"
+      },
+      "appearance": {
+        "name": "Appearance"
+      },
+      "localization": {
+        "name": "Localization"
+      },
+      "review": {
+        "name": "Review"
+      }
+    },
+    "language": {
+      "label": "Language",
+      "en": "English (EN)",
+      "fa": "Persian (FA)",
+      "editing": "Editing: {lang}",
+      "enSection": "English (Base)",
+      "faSection": "Persian (FA)"
+    },
+    "identity": {
+      "groupName": "Guide Name",
+      "groupNamePlaceholder": "e.g. Pre-Injection Instructions",
+      "groupNameHint": "Enter the name in each language. The English name auto-generates the slug below.",
+      "slug": "Slug",
+      "slugHint": "Used in the public URL. Lowercase letters, numbers and hyphens.",
+      "slugPrefix": "/care/",
+      "editManual": "Edit manually",
+      "resetAuto": "Reset to auto",
+      "auto": "Auto",
+      "custom": "Custom",
+      "active": "Active Status",
+      "activeHint": "Make this guide visible to customers.",
+      "activeLabel": "Active",
+      "inactiveLabel": "Inactive",
+      "displayOrder": "Display Order",
+      "displayOrderHint": "Lower numbers appear first."
+    },
+    "appearance": {
+      "title": "Icon",
+      "hint": "Choose an icon for this care guide.",
+      "badge": "Appearance",
+      "icon": "Choose icon"
+    },
+    "localization": {
+      "title": "Bilingual Content",
+      "name": "Name",
+      "namePlaceholder": "Enter the guide name in {lang}",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter a short description in {lang}",
+      "descriptionHint": "Shown on the public care page."
+    },
+    "review": {
+      "title": "Ready to Launch",
+      "description": "Review your care guide details below.",
+      "identity": "Identity",
+      "localization": "Localization",
+      "guideName": "Guide Name",
+      "slug": "Slug",
+      "visibility": "Visibility",
+      "icon": "Icon",
+      "notProvided": "—",
+      "notSet": "Not set",
+      "english": "English",
+      "persian": "Persian"
+    },
+    "nav": {
+      "back": "Back",
+      "continue": "Continue",
+      "create": "Create Guide",
+      "save": "Save Changes",
+      "stepOf": "Step {current} of {total}"
+    },
+    "iconPicker": {
+      "title": "Choose an icon",
+      "searchPlaceholder": "Search icons…",
+      "empty": "No icons match your search.",
+      "resultCount": "Showing {shown} of {count} icons."
+    },
+    "errors": {
+      "slugRequired": "A kebab-case slug is required.",
+      "nameRequired": "Fill in the name in both languages.",
+      "slugTaken": "This slug is already in use. Choose another one.",
+      "generic": "These fields need attention before continuing."
+    },
+    "toast": {
+      "creating": "Creating care guide…",
+      "created": "Care guide created.",
+      "saving": "Saving care guide…",
+      "updated": "Care guide updated.",
+      "error": "Could not create the guide."
+    }
+  },
+  "guideItemWizard": {
+    "meta": {
+      "title": "Add Care Guide Item | Nafas Beauty Clinic",
+      "description": "Create a new care guide item with bilingual content."
+    },
+    "metaEdit": {
+      "title": "Edit Care Guide Item | Nafas Beauty Clinic",
+      "description": "Update an existing care guide item."
+    },
+    "back": "Back to Care Guide Items",
+    "heading": "Create Care Guide Item",
+    "subtitle": "Add a care instruction under a guide.",
+    "editHeading": "Edit Care Guide Item",
+    "editSubtitle": "Update the details of this item.",
+    "steps": {
+      "guide": {
+        "name": "Guide"
+      },
+      "identity": {
+        "name": "Identity"
+      },
+      "localization": {
+        "name": "Localization"
+      },
+      "review": {
+        "name": "Review"
+      }
+    },
+    "language": {
+      "label": "Language",
+      "en": "English (EN)",
+      "fa": "Persian (FA)",
+      "editing": "Editing: {lang}",
+      "enSection": "English (Base)",
+      "faSection": "Persian (FA)"
+    },
+    "guide": {
+      "title": "Care Guide",
+      "hint": "Choose the guide this item belongs to.",
+      "badge": "Guide",
+      "emptyTitle": "No care guides yet",
+      "emptyDescription": "Create a care guide before adding items.",
+      "createGuide": "Create a guide"
+    },
+    "identity": {
+      "title": "Item Title",
+      "titlePlaceholder": "e.g. Avoid Alcohol",
+      "displayOrder": "Display Order",
+      "displayOrderHint": "Lower numbers appear first in the guide.",
+      "highlighted": "Highlighted",
+      "highlightedHint": "Emphasize this item (e.g. important first-timer notes).",
+      "active": "Active Status",
+      "activeHint": "Make this item visible to customers.",
+      "activeLabel": "Active",
+      "inactiveLabel": "Inactive",
+      "highlightedLabel": "Highlighted",
+      "normalLabel": "Standard"
+    },
+    "localization": {
+      "title": "Bilingual Content",
+      "titlePlaceholder": "Enter the item title in {lang}",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter a short description in {lang}",
+      "descriptionHint": "Optional detail shown under the item."
+    },
+    "review": {
+      "title": "Ready to Save",
+      "description": "Review your care guide item details below.",
+      "identity": "Identity",
+      "localization": "Localization",
+      "guide": "Care Guide",
+      "visibility": "Visibility",
+      "featured": "Highlight",
+      "notProvided": "—",
+      "english": "English",
+      "persian": "Persian"
+    },
+    "nav": {
+      "back": "Back",
+      "continue": "Continue",
+      "create": "Create Item",
+      "save": "Save Changes",
+      "stepOf": "Step {current} of {total}"
+    },
+    "errors": {
+      "guideRequired": "Select a care guide.",
+      "titleRequired": "Fill in the title in both languages.",
+      "generic": "These fields need attention before continuing."
+    },
+    "toast": {
+      "creating": "Creating care guide item…",
+      "created": "Care guide item created.",
+      "saving": "Saving care guide item…",
+      "updated": "Care guide item updated.",
+      "error": "Could not create the item."
     }
   }
 }

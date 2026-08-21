@@ -32,6 +32,36 @@ export { getPublicServiceTree } from "./public-services";
 export { getRule, createRule, updateRule, deleteRule } from "./rules";
 export { listRulesAdmin, findRuleIds, getRulesForPublic } from "./rules-admin";
 
+export {
+  getCareGuide,
+  listCareGuidesAdmin,
+  findGuideIds,
+  listGuideOptions,
+  createCareGuide,
+  updateCareGuide,
+  deleteCareGuide,
+} from "./care-guides";
+export { getCareGuidesForPublic } from "./care-guides-admin";
+export {
+  getCareGuideItem,
+  listCareGuideItemsAdmin,
+  findCareGuideItemIds,
+  createCareGuideItem,
+  updateCareGuideItem,
+  deleteCareGuideItem,
+} from "./care-guide-items";
+
 export type { PublicRule } from "./rules-types";
+export type {
+  AdminCareGuide,
+  AdminCareGuideItem,
+  CareGuideContent,
+  CareGuideItemContent,
+  ListCareGuidesResult,
+  ListCareGuideItemsResult,
+  PublicCareGuide,
+  PublicCareGuideItem,
+  CareGuideOption,
+} from "./care-guides-types";
 export type { AdminService } from "./types";
 export * from "./types";

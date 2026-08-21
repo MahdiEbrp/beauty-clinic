@@ -3,6 +3,7 @@ import { and, eq, ne } from "drizzle-orm";
 import { ApiError } from "@/lib/api/errors";
 import { db } from "@/src/db";
 import {
+  careGuides,
   rules,
   serviceCategories,
   serviceGroups,
@@ -159,7 +160,7 @@ export async function assertGroupExists(groupId: string): Promise<void> {
  * but checking first gives callers a clean 409 without a write attempt.
  */
 export async function assertSlugAvailable(
-  table: "services" | "service_groups" | "service_categories" | "rules",
+  table: "services" | "service_groups" | "service_categories" | "rules" | "care_guides",
   slug: string,
   excludeId?: string,
 ): Promise<void> {
@@ -168,25 +169,31 @@ export async function assertSlugAvailable(
       ? services
       : table === "rules"
         ? rules
-        : table === "service_groups"
-          ? serviceGroups
-          : serviceCategories;
+        : table === "care_guides"
+          ? careGuides
+          : table === "service_groups"
+            ? serviceGroups
+            : serviceCategories;
   const idColumn =
     table === "services"
       ? services.id
       : table === "rules"
         ? rules.id
-        : table === "service_groups"
-          ? serviceGroups.id
-          : serviceCategories.id;
+        : table === "care_guides"
+          ? careGuides.id
+          : table === "service_groups"
+            ? serviceGroups.id
+            : serviceCategories.id;
   const slugColumn =
     table === "services"
       ? services.slug
       : table === "rules"
         ? rules.slug
-        : table === "service_groups"
-          ? serviceGroups.slug
-          : serviceCategories.slug;
+        : table === "care_guides"
+          ? careGuides.slug
+          : table === "service_groups"
+            ? serviceGroups.slug
+            : serviceCategories.slug;
 
   const [conflict] = await db
     .select({ id: idColumn })
@@ -194,7 +201,16 @@ export async function assertSlugAvailable(
     .where(excludeId ? and(eq(slugColumn, slug), ne(idColumn, excludeId)) : eq(slugColumn, slug))
     .limit(1);
   if (conflict) {
-    const label = table === "services" ? "service" : table === "rules" ? "rule" : table === "service_groups" ? "group" : "category";
+    const label =
+      table === "services"
+        ? "service"
+        : table === "rules"
+          ? "rule"
+          : table === "care_guides"
+            ? "care guide"
+            : table === "service_groups"
+              ? "group"
+              : "category";
     throw uniqueSlugError(label);
   }
 }
