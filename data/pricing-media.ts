@@ -6,6 +6,7 @@
  * listed here — group/category images come from the database
  * (`service_groups.image` / `service_categories.image`).
  */
+import { IMG } from "@/lib/images";
 
 const GROUP_DURATION: Record<string, number> = {
   "face-filler": 45,
@@ -25,7 +26,7 @@ export function groupDurationMin(slug: string | null): number {
 }
 
 /** Neutral backdrop when a group/category has no image in the database. */
-const DEFAULT_IMAGE = "/images/hero-bg.webp";
+const DEFAULT_IMAGE = IMG.fallback;
 
 /** Resolve a DB image URL, falling back to a single brand-safe backdrop. */
 export function pricingImage(image: string | null | undefined): string {

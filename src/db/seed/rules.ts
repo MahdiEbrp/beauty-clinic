@@ -1,5 +1,6 @@
 /** Seed data for the `rules` / `rules_i18n` tables. */
 import type { RuleContent } from "@/lib/services/rules-types";
+import { IMG } from "./images";
 
 export interface SeedRule {
   slug: string;
@@ -16,7 +17,7 @@ export const RULES_SEED: SeedRule[] = [
   {
     slug: "respect-appointments",
     icon: "clock",
-    image: null,
+    image: IMG.time,
     color: "gold",
     highlighted: false,
     displayOrder: 1,
@@ -39,7 +40,7 @@ export const RULES_SEED: SeedRule[] = [
   {
     slug: "keep-environment-clean",
     icon: "sparkles",
-    image: null,
+    image: IMG.clean,
     color: "copper",
     highlighted: false,
     displayOrder: 2,
@@ -62,7 +63,7 @@ export const RULES_SEED: SeedRule[] = [
   {
     slug: "parking-rules",
     icon: "car",
-    image: null,
+    image: IMG.car,
     color: "copper-strong",
     highlighted: false,
     displayOrder: 3,
@@ -85,7 +86,7 @@ export const RULES_SEED: SeedRule[] = [
   {
     slug: "companion-policy",
     icon: "users",
-    image: null,
+    image: IMG.companionPolicy,
     color: "copper-deep",
     highlighted: false,
     displayOrder: 4,
@@ -108,7 +109,7 @@ export const RULES_SEED: SeedRule[] = [
   {
     slug: "wait-time",
     icon: "hourglass",
-    image: null,
+    image: IMG.waiting,
     color: "accent",
     highlighted: false,
     displayOrder: 5,
@@ -131,7 +132,7 @@ export const RULES_SEED: SeedRule[] = [
   {
     slug: "cancellation-policy",
     icon: "calendar-x",
-    image: null,
+    image: IMG.cancellation,
     color: "accent",
     highlighted: true,
     displayOrder: 6,

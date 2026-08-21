@@ -1,6 +1,7 @@
 import { getTranslations, getLocale } from "next-intl/server";
 import { getClinicData } from "@/data/clinic";
 import { canonicalUrl, siteUrl } from "@/lib/site";
+import { IMG } from "@/lib/images";
 import type { Locale } from "@/lib/services/types";
 
 function safeJsonLd(value: unknown): string {
@@ -24,7 +25,7 @@ export default async function JsonLd() {
     description: tJsonLd("description"),
     url: canonicalUrl(locale),
     inLanguage: locale,
-    image: `${siteUrl}/images/hero-bg.webp`,
+    image: IMG.clinic,
     address: {
       "@type": "PostalAddress",
       ...clinic.address,

@@ -1,3 +1,5 @@
+import { IMG } from "@/lib/images";
+
 export const galleryKeys = [
   "hydrafacial",
   "laserRejuv",
@@ -8,10 +10,10 @@ export const galleryKeys = [
 export type GalleryKey = (typeof galleryKeys)[number];
 
 const galleryImages: Record<GalleryKey, string> = {
-  hydrafacial: "/images/gallery/hydrafacial.webp",
-  laserRejuv: "/images/gallery/laser-rejuv.webp",
-  microneedling: "/images/gallery/microneedling.webp",
-  skinCare: "/images/gallery/skin-care.webp",
+  hydrafacial: IMG.hydraulically,
+  laserRejuv: IMG.skinRejuvenation,
+  microneedling: IMG.microneedling,
+  skinCare: IMG.care,
 };
 
 /**
