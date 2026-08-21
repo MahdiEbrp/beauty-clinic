@@ -1,4 +1,6 @@
 import type { Locale } from "@/lib/services/types";
+import { IMG } from "./images";
+import { LANDING_GALLERY_ITEMS } from "./landing-gallery";
 
 export type Localized<T> = Record<Locale, T>;
 
@@ -55,7 +57,7 @@ export const LANDING_HERO_I18N: {
     ctaLabel2: string;
   }>;
 } = {
-  image: null,
+  image: IMG.clinic,
   taglineIcon: "Sparkles",
   i18n: {
     en: {
@@ -106,7 +108,7 @@ export const LANDING_SERVICE_CARDS: SeedServiceCard[] = [
   svc(
     "face-filler",
     "facial",
-    "/images/gallery/hydrafacial.webp",
+    IMG.filler,
     "Face Filler",
     "Enhance your natural beauty with subtle, elegant facial fillers. Restore lost volume, soften fine lines, and beautifully define your lips, cheeks, or chin — for a refreshed look that still feels like you.",
     "فیلر صورت",
@@ -142,7 +144,7 @@ export const LANDING_SERVICE_CARDS: SeedServiceCard[] = [
   svc(
     "mesotherapy-skin-rejuvenation",
     "rejuvenation",
-    "/images/gallery/microneedling.webp",
+    IMG.mesotherapy,
     "Mesotherapy & Skin Rejuvenation",
     "Refresh, hydrate, and revitalize your skin with personalized rejuvenation treatments designed to improve skin quality, elasticity, radiance, and overall vitality.",
     "مزوتراپی و جوان‌سازی پوست",
@@ -151,7 +153,7 @@ export const LANDING_SERVICE_CARDS: SeedServiceCard[] = [
   svc(
     "laser-hair-removal",
     "laser",
-    "/images/gallery/laser-rejuv.webp",
+    IMG.laserHairRemoval,
     "Laser Hair Removal",
     "Smooth, confident skin with personalized laser hair removal treatments tailored to your needs and target areas.",
     "لیزر موهای زائد",
@@ -178,7 +180,7 @@ export const LANDING_SERVICE_CARDS: SeedServiceCard[] = [
   svc(
     "skin-care",
     "wellness",
-    "/images/gallery/skin-care.webp",
+    IMG.care,
     "Skin Care",
     "Personalized skin treatments designed to refresh, refine, and rejuvenate your complexion — from advanced facials to microneedling and lifting treatments.",
     "مراقبت از پوست",
@@ -204,31 +206,6 @@ export const LANDING_ABOUT_STATS: SeedStat[] = [
     compact: false,
     plus: true,
     i18n: { en: { label: "Services" }, fa: { label: "خدمت" } },
-  },
-];
-
-export const LANDING_GALLERY_ITEMS: SeedGalleryItem[] = [
-  {
-    imageUrl: "/images/gallery/hydrafacial.webp",
-    i18n: {
-      en: { alt: "HydraFacial Service", caption: "HydraFacial Service" },
-      fa: { alt: "خدمت هیدرافیشیال", caption: "خدمت هیدرافیشیال" },
-    },
-  },
-  {
-    imageUrl: "/images/gallery/laser-rejuv.webp",
-    i18n: {
-      en: { alt: "Laser Skin Rejuvenation", caption: "Laser Skin Rejuvenation" },
-      fa: { alt: "جوان‌سازی پوست با لیزر", caption: "جوان‌سازی پوست با لیزر" },
-    },
-  },
-  {
-    imageUrl: "/images/gallery/microneedling.webp",
-    i18n: { en: { alt: "Microneedling", caption: "Microneedling" }, fa: { alt: "میکرونیدلینگ", caption: "میکرونیدلینگ" } },
-  },
-  {
-    imageUrl: "/images/gallery/skin-care.webp",
-    i18n: { en: { alt: "Skin Care", caption: "Skin Care" }, fa: { alt: "مراقبت پوست", caption: "مراقبت پوست" } },
   },
 ];
 

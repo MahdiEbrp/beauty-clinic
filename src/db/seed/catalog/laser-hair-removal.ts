@@ -3,11 +3,12 @@ import { LASER_FACE_AREAS_CATEGORY } from "./laser-hair-face-areas";
 import { LASER_OTHER_BODY_CATEGORY } from "./laser-hair-other-body";
 import { LASER_PACKAGES_CATEGORY } from "./laser-hair-packages";
 import { LASER_PERSONAL_KIT_CATEGORY } from "./laser-hair-personal-kit";
+import { IMG } from "../images";
 
 export const LASER_HAIR_REMOVAL_GROUP: SeedGroup = {
   slug: "laser-hair-removal",
   icon: "spotlight",
-  image: "/images/gallery/laser-rejuv.webp",
+  image: IMG.laserHairRemoval,
   displayOrder: 6,
   i18n: [
     {

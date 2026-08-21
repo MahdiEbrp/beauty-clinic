@@ -1,9 +1,10 @@
 import type { SeedGroup } from "./types";
+import { IMG } from "../images";
 
 export const TATTOO_REMOVAL_GROUP: SeedGroup = {
   slug: "tattoo-removal-skin-brightening",
   icon: "wand-sparkles",
-  image: "/images/gallery/laser-rejuv.webp",
+  image: IMG.pigmentation,
   displayOrder: 7,
   i18n: [
     {

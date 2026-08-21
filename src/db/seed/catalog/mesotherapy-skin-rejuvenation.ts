@@ -1,10 +1,11 @@
 import type { SeedGroup } from "./types";
 import { svc, withSeo } from "./types";
+import { IMG } from "../images";
 
 export const MESOTHERAPY_GROUP: SeedGroup = {
   slug: "mesotherapy-skin-rejuvenation",
   icon: "leaf",
-  image: "/images/gallery/microneedling.webp",
+  image: IMG.mesotherapy,
   displayOrder: 5,
   i18n: [
     {

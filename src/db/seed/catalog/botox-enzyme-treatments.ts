@@ -1,10 +1,11 @@
 import type { SeedGroup } from "./types";
 import { svc, withSeo } from "./types";
+import { IMG } from "../images";
 
 export const BOTOX_ENZYME_GROUP: SeedGroup = {
   slug: "botox-enzyme-treatments",
   icon: "droplet",
-  image: "/images/gallery/skin-care.webp",
+  image: IMG.botox,
   displayOrder: 2,
   i18n: [
     {

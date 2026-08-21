@@ -1,9 +1,10 @@
 import type { SeedGroup } from "./types";
+import { IMG } from "../images";
 
 export const FULL_FACE_FILLER_GROUP: SeedGroup = {
   slug: "full-face-filler",
   icon: "Sparkles",
-  image: "/images/gallery/hydrafacial.webp",
+  image: IMG.fullFiller,
   displayOrder: 3,
   i18n: [
     {

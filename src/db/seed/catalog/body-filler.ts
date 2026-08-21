@@ -1,10 +1,11 @@
 import type { SeedGroup } from "./types";
 import { svc, withSeo } from "./types";
+import { IMG } from "../images";
 
 export const BODY_FILLER_GROUP: SeedGroup = {
   slug: "body-filler",
   icon: "hand-coins",
-  image: "/images/hero-bg.webp",
+  image: IMG.bodyFiller,
   displayOrder: 1,
   i18n: [
     {

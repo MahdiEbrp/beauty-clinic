@@ -1,9 +1,10 @@
 import type { SeedGroup } from "./types";
+import { IMG } from "../images";
 
 export const HIFU_GROUP: SeedGroup = {
   slug: "hifu",
   icon: "scan-face",
-  image: "/images/gallery/microneedling.webp",
+  image: IMG.hifu,
   displayOrder: 8,
   i18n: [
     {
