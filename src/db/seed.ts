@@ -116,21 +116,32 @@ async function seed(): Promise<void> {
   console.log("System settings seeded.");
 
   for (const def of SOCIAL_LINKS) {
-    const [row] = await db
+    // Insert the link (no-op if the url already exists), then resolve its id by
+    // url so labels are backfilled even for rows seeded in an earlier run.
+    await db
       .insert(socialLinks)
       .values({
         url: def.url,
         imageUrl: def.imageUrl,
         displayOrder: def.displayOrder,
       })
-      .onConflictDoNothing({ target: socialLinks.url })
-      .returning({ id: socialLinks.id });
+      .onConflictDoNothing({ target: socialLinks.url });
 
-    if (row) {
-      await db.insert(socialLinksI18n).values([
-        { socialLinkId: row.id, locale: "fa", label: def.labelFa },
-        { socialLinkId: row.id, locale: "en", label: def.labelEn },
-      ]);
+    const [existing] = await db
+      .select({ id: socialLinks.id })
+      .from(socialLinks)
+      .where(eq(socialLinks.url, def.url));
+
+    if (existing) {
+      await db
+        .insert(socialLinksI18n)
+        .values([
+          { socialLinkId: existing.id, locale: "fa", label: def.labelFa },
+          { socialLinkId: existing.id, locale: "en", label: def.labelEn },
+        ])
+        .onConflictDoNothing({
+          target: [socialLinksI18n.socialLinkId, socialLinksI18n.locale],
+        });
     }
   }
 
