@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { CalendarPlus, Clock, Eye, Repeat } from "lucide-react";
+import { CalendarPlus, Clock, Eye, Repeat, ShoppingCart } from "lucide-react";
 import GroupGlyph from "@/components/create-group/GroupGlyph";
 import { pricingImage } from "@/data/pricing-media";
 import type { CategoryCardData } from "./data";
@@ -13,10 +13,18 @@ type CategoryCardProps = {
   card: CategoryCardData;
   onBook: () => void;
   onDetails: () => void;
+  /** Optional — the Add to cart button only renders when this is provided. */
+  onAddToCart?: () => void;
   currency: string;
 };
 
-export default function CategoryCard({ card, onBook, onDetails, currency }: CategoryCardProps) {
+export default function CategoryCard({
+  card,
+  onBook,
+  onDetails,
+  onAddToCart,
+  currency,
+}: CategoryCardProps) {
   const t = useTranslations();
 
   const chips = card.services.slice(0, MAX_CHIPS);
@@ -75,13 +83,12 @@ export default function CategoryCard({ card, onBook, onDetails, currency }: Cate
             </span>
           ))}
           {remaining > 0 ? (
-            <span               className="inline-flex h-8 shrink-0 items-center rounded-full border border-copper/40 bg-copper/15 px-3 text-caption font-semibold leading-none text-copper">
+            <span className="inline-flex h-8 shrink-0 items-center rounded-full border border-copper/40 bg-copper/15 px-3 text-caption font-semibold leading-none text-copper">
               +{remaining}
             </span>
           ) : null}
         </div>
 
-        {/* Meta row: fixed height, same across every card */}
         <div className="mb-4 flex h-5 items-center gap-4 text-caption text-content-contrast/75">
           <span className="inline-flex items-center gap-1.5">
             <Clock className="size-4" aria-hidden="true" />
@@ -92,28 +99,37 @@ export default function CategoryCard({ card, onBook, onDetails, currency }: Cate
             {t("pricing.card.options", { count: card.optionsCount })}
           </span>
         </div>
+        <div className="mt-auto">
+          <div className="mt-auto space-y-3">
+            <button
+              type="button"
+              onClick={onBook}
+              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-pill bg-copper px-5 text-body-sm font-bold whitespace-nowrap text-content-contrast shadow-elevation-2 transition-all hover:bg-copper-strong active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+            >
+              <CalendarPlus className="size-5 shrink-0" aria-hidden="true" />
+              <span>{t("pricing.cta.book")}</span>
+            </button>
 
-                        {/* Button: pinned to the bottom of the card via mt-auto, so even
-            if a future row's content is taller than expected, the CTA
-            still aligns across every card in the row. */}
-        <div className="mt-auto flex items-center gap-3">
-          <button
-            type="button"
-            onClick={onBook}
-            className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-pill bg-copper px-6 py-3 text-body-sm font-bold text-content-contrast shadow-elevation-2 transition-all hover:bg-copper-strong active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-          >
-            <CalendarPlus className="size-5" aria-hidden="true" />
-            {t("pricing.cta.book")}
-          </button>
-          <button
-            type="button"
-            onClick={onDetails}
-            aria-label={t("pricing.cta.details")}
-            className="inline-flex size-12 shrink-0 items-center justify-center rounded-pill border border-border-interactive bg-surface-secondary text-content-secondary transition-all hover:bg-surface-tertiary hover:text-accent active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            <Eye className="size-5" aria-hidden="true" />
-            <span className="sr-only">{t("pricing.cta.details")}</span>
-          </button>
+            <button
+              type="button"
+              onClick={onDetails}
+              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-pill border border-border-interactive bg-surface-secondary px-5 text-body-sm font-bold whitespace-nowrap text-accent transition-all hover:bg-surface-tertiary active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              <Eye className="size-5 shrink-0" aria-hidden="true" />
+              {t("pricing.cta.details")}
+            </button>
+
+            {onAddToCart ? (
+              <button
+                type="button"
+                onClick={onAddToCart}
+                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-pill border border-copper/40 bg-copper/10 px-5 text-body-sm font-bold whitespace-nowrap text-copper transition-all hover:bg-copper/20 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-copper"
+              >
+                <ShoppingCart className="size-5 shrink-0" aria-hidden="true" />
+                {t("pricing.cta.addToCart")}
+              </button>
+            ) : null}
+          </div>
         </div>
       </div>
     </article>
