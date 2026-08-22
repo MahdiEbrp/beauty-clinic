@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "@/src/i18n/navigation";
 import Hero from "@/components/Hero";
 import Marquee from "@/components/Marquee";
 import Services from "@/components/Services";
@@ -8,7 +8,6 @@ import About from "@/components/About";
 import Gallery from "@/components/Gallery";
 import Contact from "@/components/Contact";
 import FloatingBookingButton from "@/components/FloatingBookingButton";
-import BookingModal from "@/components/BookingModal";
 import type { ClinicData } from "@/data/clinic";
 import { usePublicLanding } from "@/lib/hooks/use-public-landing";
 
@@ -17,9 +16,9 @@ interface HomePageProps {
 }
 
 export default function HomePage({ clinicData }: HomePageProps) {
-  const [bookingOpen, setBookingOpen] = useState(false);
+  const router = useRouter();
   const landing = usePublicLanding();
-  const openBooking = () => setBookingOpen(true);
+  const openBooking = () => router.push("/booking");
 
   return (
     <>
@@ -29,12 +28,7 @@ export default function HomePage({ clinicData }: HomePageProps) {
       <About landing={landing} />
       <Gallery landing={landing} />
       <Contact landing={landing} onOpenBooking={openBooking} clinic={clinicData} />
-      <FloatingBookingButton onOpenBooking={openBooking} />
-      <BookingModal
-        isOpen={bookingOpen}
-        onClose={() => setBookingOpen(false)}
-        clinic={clinicData}
-      />
+      <FloatingBookingButton />
     </>
   );
 }

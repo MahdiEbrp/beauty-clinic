@@ -41,5 +41,5 @@ export default async function PricingPage({
   const tree = await getPublicServiceTree(locale as Locale);
   const clinic = await getClinicData(locale as Locale);
 
-  return <PricingContent tree={tree} currency={clinic.currency} clinic={clinic} />;
+  return <PricingContent tree={tree} currency={clinic.currency} />;
 }

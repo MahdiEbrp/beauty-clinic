@@ -7,7 +7,7 @@ import {
   usePathname,
   useRouter,
 } from "@/src/i18n/navigation";
-import { LayoutDashboard, Sparkles, Users, Files, Shield, LayoutTemplate, Settings, HeartPulse } from "lucide-react";
+import { LayoutDashboard, Sparkles, Users, Files, Shield, LayoutTemplate, Settings, HeartPulse, CalendarClock } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { SidebarNavItem } from "@/components/dashboard/SidebarSections";
@@ -43,6 +43,7 @@ export default function DashboardShell({
   const canViewRules = user.permissions.includes("rules.read");
   const canViewCare = user.permissions.includes("care-guides.read");
   const canViewSettings = user.permissions.includes("settings.read");
+  const canViewBookings = user.permissions.includes("appointments.read");
 
   const navItems: SidebarNavItem[] = [
     { key: "overview", href: "/dashboard", icon: LayoutDashboard },
@@ -60,6 +61,9 @@ export default function DashboardShell({
       : []),
     ...(canViewUsers ? [{ key: "users", href: "/dashboard/users", icon: Users }] : []),
     ...(canViewFiles ? [{ key: "files", href: "/dashboard/files", icon: Files }] : []),
+    ...(canViewBookings
+      ? [{ key: "bookings", href: "/dashboard/bookings", icon: CalendarClock }]
+      : []),
     ...(canViewSettings
       ? [{ key: "settings", href: "/dashboard/settings", icon: Settings }]
       : []),

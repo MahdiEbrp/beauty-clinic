@@ -3,15 +3,11 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { CalendarPlus } from "lucide-react";
+import { useRouter } from "@/src/i18n/navigation";
 
-interface FloatingBookingButtonProps {
-  onOpenBooking: () => void;
-}
-
-export default function FloatingBookingButton({
-  onOpenBooking,
-}: FloatingBookingButtonProps) {
+export default function FloatingBookingButton() {
   const t = useTranslations();
+  const router = useRouter();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -49,7 +45,7 @@ export default function FloatingBookingButton({
   return (
     <button
       type="button"
-      onClick={onOpenBooking}
+      onClick={() => router.push("/booking")}
       // `inert` removes the button from the tab order and the accessibility tree
       // while it is faded out. Previously it stayed focusable, so keyboard users
       // could tab into an invisible control.

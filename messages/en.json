@@ -66,8 +66,78 @@
     "viewImage": "View {title} larger"
   },
   "booking": {
-    "title": "Booking Form",
-    "description": "Please enter your information and our team will contact you shortly.",
+    "meta": {
+      "title": "Book an Appointment Online | Nafas Beauty Clinic",
+      "description": "Book your appointment online — pick a treatment, choose a time, and pay in a few simple steps."
+    },
+    "title": "Book an appointment",
+    "description": "Choose your treatment, reserve a time that suits you, and finalise your visit.",
+    "stepper": {
+      "label": "Booking steps",
+      "service": "Treatment",
+      "schedule": "Date & time",
+      "contact": "Contact",
+      "review": "Review & pay"
+    },
+    "appointment": {
+      "label": "Appointment",
+      "service": "Treatment",
+      "date": "Date & time",
+      "duration": "Duration",
+      "minutes": "min",
+      "consult": "Consultation",
+      "deposit": "Deposit",
+      "free": "No deposit",
+      "notSelected": "Not selected yet"
+    },
+    "schedule": {
+      "datePicker": "Pick a day",
+      "pickDate": "Select a day to see available times.",
+      "noSlots": "No times are available on this day — try another day.",
+      "available": "{count, plural, one {# time available} other {# times available}}",
+      "loading": "Checking available times…"
+    },
+    "contact": {
+      "fullName": "Full name",
+      "phone": "Phone number",
+      "email": "Email",
+      "emailOptional": "optional",
+      "notes": "Notes",
+      "notesOptional": "optional",
+      "submit": "Continue",
+      "errors": {
+        "name": "Full name is required.",
+        "phone": "Enter a valid phone number.",
+        "email": "Enter a valid email address.",
+        "submit": "Could not submit your booking. Please try again."
+      }
+    },
+    "review": {
+      "service": "Treatment",
+      "date": "Appointment",
+      "duration": "Duration",
+      "name": "Name",
+      "phone": "Phone",
+      "depositDue": "Amount due",
+      "freeLabel": "Amount",
+      "pay": "Pay deposit",
+      "confirm": "Confirm appointment",
+      "note": "Payment is simulated for now.",
+      "errors": {
+        "pay": "Payment failed. Please try again."
+      }
+    },
+    "confirmation": {
+      "title": "Appointment confirmed",
+      "description": "Thank you. Your appointment details have been saved.",
+      "service": "Treatment",
+      "reference": "Reference",
+      "pending": "Pending",
+      "status": "Status",
+      "statusPaid": "Paid",
+      "note": "Keep this reference to track your appointment.",
+      "home": "Back to home"
+    },
     "fullName": "Full Name",
     "phone": "Phone Number",
     "service": "Select Service",
@@ -76,7 +146,21 @@
     "close": "Close booking form",
     "namePlaceholder": "e.g. Maryam Ahmadi",
     "phonePlaceholder": "09120000000",
-    "messagePlaceholder": "Describe your skin concerns..."
+    "messagePlaceholder": "Describe your skin concerns...",
+    "errors": {
+      "slotFull": "This time slot has just been taken. Please pick another.",
+      "slotUnavailable": "This time slot is no longer available.",
+      "customerConflict": "You already have a booking at this time.",
+      "serviceUnavailable": "This treatment is not currently bookable.",
+      "pastSlot": "This time has already passed. Pick a future slot.",
+      "businessClosed": "The clinic is closed at the selected time.",
+      "invalidId": "The booking reference is invalid.",
+      "cancelled": "This booking was cancelled and can no longer be changed.",
+      "notFound": "We couldn't find that booking or treatment.",
+      "outsideWindow": "The selected date is outside the booking window.",
+      "tooFarAhead": "That date is too far in advance to book.",
+      "systemError": "Something went wrong. Please try again."
+    }
   },
   "footer": {
     "quickAccess": "Quick Access",
@@ -383,7 +467,8 @@
       "expand": "Expand sidebar",
       "landing": "Landing",
       "settings": "Settings",
-      "care": "Care Guide"
+      "care": "Care Guide",
+      "bookings": "Bookings"
     },
     "topbar": {
       "breadcrumbLabel": "Dashboard breadcrumb",
@@ -2858,6 +2943,62 @@
       "saving": "Saving care guide item…",
       "updated": "Care guide item updated.",
       "error": "Could not create the item."
+    }
+  },
+  "bookingAdmin": {
+    "meta": {
+      "title": "Bookings | Nafas Beauty Clinic",
+      "description": "Manage appointment slots and reservations."
+    },
+    "title": "Bookings",
+    "description": "Plan available slots and manage incoming reservations.",
+    "tabs": {
+      "label": "Bookings sections",
+      "calendar": "Calendar",
+      "reservations": "Reservations"
+    },
+    "calendar": {
+      "prevMonth": "Previous month",
+      "nextMonth": "Next month",
+      "calendarToggle": "Calendar type",
+      "jalali": "Jalali",
+      "gregorian": "Gregorian",
+      "today": "Today",
+      "loading": "Loading slots…",
+      "panel": {
+        "label": "Slots for this day",
+        "empty": "No slots for this day. Add one below.",
+        "capacity": "{booked} of {total} booked",
+        "add": "Add a slot",
+        "start": "Start",
+        "end": "End",
+        "capacityLabel": "Capacity",
+        "create": "Add slot",
+        "active": "Active",
+        "inactive": "Closed",
+        "deactivate": "Deactivate slot",
+        "activate": "Activate slot",
+        "remove": "Delete slot",
+        "errors": "Could not save the slot."
+      }
+    },
+    "reservations": {
+      "placeholder": "Search name, phone, service…",
+      "filterAll": "All statuses",
+      "status": {
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "paid": "Paid",
+        "cancelled": "Cancelled"
+      },
+      "refresh": "Refresh",
+      "empty": "No reservations yet.",
+      "changeStatus": "Change status",
+      "total": "{count} reservations",
+      "loading": "Loading…",
+      "error": "Could not load reservations.",
+      "prev": "Previous",
+      "next": "Next"
     }
   }
 }

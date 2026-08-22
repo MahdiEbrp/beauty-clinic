@@ -3,9 +3,8 @@
 import { useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { SearchX } from "lucide-react";
+import { useRouter } from "@/src/i18n/navigation";
 import type { PublicServiceTree } from "@/lib/services/types";
-import type { ClinicData } from "@/data/clinic";
-import BookingModal from "@/components/BookingModal";
 import FloatingBookingButton from "@/components/FloatingBookingButton";
 import CategoryCard from "./CategoryCard";
 import FilterToolbar from "./FilterToolbar";
@@ -23,7 +22,6 @@ import {
 type PricingContentProps = {
   tree: PublicServiceTree;
   currency: string;
-  clinic?: ClinicData;
 };
 
 function EmptyState() {
@@ -42,12 +40,12 @@ function EmptyState() {
 }
 
 /** Services & pricing — hero slider, filters, and the category-card grid. */
-export default function PricingContent({ tree, currency, clinic }: PricingContentProps) {
+export default function PricingContent({ tree, currency }: PricingContentProps) {
   const t = useTranslations();
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState<CatalogFilters>(defaultFilters);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [bookingOpen, setBookingOpen] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
 
   const cards = useMemo(() => buildCategoryCards(tree), [tree]);
@@ -119,7 +117,7 @@ export default function PricingContent({ tree, currency, clinic }: PricingConten
                 key={card.slug}
                 card={card}
                 currency={currency}
-                onBook={() => setBookingOpen(true)}
+                onBook={() => router.push(`/booking?service=${card.slug}`)}
               />
             ))}
           </div>
@@ -139,8 +137,7 @@ export default function PricingContent({ tree, currency, clinic }: PricingConten
       />
       <MobileBottomNav onOpenFilters={() => setDrawerOpen(true)} />
 
-      <BookingModal isOpen={bookingOpen} onClose={() => setBookingOpen(false)} clinic={clinic} currency={currency} />
-      <FloatingBookingButton onOpenBooking={() => setBookingOpen(true)} />
+      <FloatingBookingButton />
     </div>
   );
 }
