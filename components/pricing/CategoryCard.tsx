@@ -1,43 +1,27 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { CalendarPlus, Clock, Repeat } from "lucide-react";
+import { CalendarPlus, Clock, Eye, Repeat } from "lucide-react";
 import GroupGlyph from "@/components/create-group/GroupGlyph";
 import { pricingImage } from "@/data/pricing-media";
-import { formatNumber } from "@/lib/services/format";
 import type { CategoryCardData } from "./data";
+import { categoryPriceRange } from "./price-range";
 
 const MAX_CHIPS = 2;
-
-function priceBadge(
-  card: CategoryCardData,
-  t: ReturnType<typeof useTranslations>,
-  currency: string,
-): string {
-  const { minPrice, maxPrice } = card;
-  if (minPrice === null || maxPrice === null) {
-    return t("serviceDetail.labels.onRequest");
-  }
-  const hasFrom = card.services.some((service) => service.priceType === "from");
-  const value = `${formatNumber(minPrice)} ${currency}`;
-  if (minPrice === maxPrice) {
-    return hasFrom ? `${t("pricing.card.from")} ${value}` : value;
-  }
-  return `${formatNumber(minPrice)} – ${formatNumber(maxPrice)} ${currency}`;
-}
 
 type CategoryCardProps = {
   card: CategoryCardData;
   onBook: () => void;
+  onDetails: () => void;
   currency: string;
 };
 
-export default function CategoryCard({ card, onBook, currency }: CategoryCardProps) {
+export default function CategoryCard({ card, onBook, onDetails, currency }: CategoryCardProps) {
   const t = useTranslations();
 
   const chips = card.services.slice(0, MAX_CHIPS);
   const remaining = card.services.length - chips.length;
-  const priceLabel = priceBadge(card, t, currency);
+  const priceLabel = categoryPriceRange(card, t, currency);
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-card border border-border-primary bg-primary-deep shadow-elevation-2 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-elevation-4">
@@ -109,17 +93,28 @@ export default function CategoryCard({ card, onBook, currency }: CategoryCardPro
           </span>
         </div>
 
-        {/* Button: pinned to the bottom of the card via mt-auto, so even
+                        {/* Button: pinned to the bottom of the card via mt-auto, so even
             if a future row's content is taller than expected, the CTA
             still aligns across every card in the row. */}
-        <button
-          type="button"
-          onClick={onBook}
-          className="mt-auto inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-pill bg-copper px-6 py-3 text-body-sm font-bold text-content-contrast shadow-elevation-2 transition-all hover:bg-copper-strong active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-        >
-          <CalendarPlus className="size-5" aria-hidden="true" />
-          {t("pricing.cta.book")}
-        </button>
+        <div className="mt-auto flex items-center gap-3">
+          <button
+            type="button"
+            onClick={onBook}
+            className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-pill bg-copper px-6 py-3 text-body-sm font-bold text-content-contrast shadow-elevation-2 transition-all hover:bg-copper-strong active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+          >
+            <CalendarPlus className="size-5" aria-hidden="true" />
+            {t("pricing.cta.book")}
+          </button>
+          <button
+            type="button"
+            onClick={onDetails}
+            aria-label={t("pricing.cta.details")}
+            className="inline-flex size-12 shrink-0 items-center justify-center rounded-pill border border-border-interactive bg-surface-secondary text-content-secondary transition-all hover:bg-surface-tertiary hover:text-accent active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            <Eye className="size-5" aria-hidden="true" />
+            <span className="sr-only">{t("pricing.cta.details")}</span>
+          </button>
+        </div>
       </div>
     </article>
   );

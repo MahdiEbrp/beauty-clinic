@@ -228,7 +228,9 @@
       "overview": "About this service",
       "beforeAfter": "Before & After",
       "bookNote": "Get availability and a personalized quote",
-      "backToCatalog": "Back to all services"
+      "backToCatalog": "Back to all services",
+      "services": "Treatment options",
+      "noServices": "No services are available in this category right now."
     },
     "empty": {
       "title": "No services found",

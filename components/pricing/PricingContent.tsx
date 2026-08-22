@@ -7,6 +7,7 @@ import { useRouter } from "@/src/i18n/navigation";
 import type { PublicServiceTree } from "@/lib/services/types";
 import FloatingBookingButton from "@/components/FloatingBookingButton";
 import CategoryCard from "./CategoryCard";
+import CategoryDetailDialog from "./CategoryDetailDialog";
 import FilterToolbar from "./FilterToolbar";
 import HeroSlider from "./HeroSlider";
 import MobileBottomNav from "./MobileBottomNav";
@@ -17,6 +18,7 @@ import {
   filterCards,
   priceBounds,
   type CatalogFilters,
+  type CategoryCardData,
 } from "./data";
 
 type PricingContentProps = {
@@ -46,6 +48,7 @@ export default function PricingContent({ tree, currency }: PricingContentProps) 
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState<CatalogFilters>(defaultFilters);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [detailCard, setDetailCard] = useState<CategoryCardData | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
   const cards = useMemo(() => buildCategoryCards(tree), [tree]);
@@ -118,6 +121,7 @@ export default function PricingContent({ tree, currency }: PricingContentProps) 
                 card={card}
                 currency={currency}
                 onBook={() => router.push(`/booking?service=${card.slug}`)}
+                onDetails={() => setDetailCard(card)}
               />
             ))}
           </div>
@@ -137,6 +141,16 @@ export default function PricingContent({ tree, currency }: PricingContentProps) 
       />
       <MobileBottomNav onOpenFilters={() => setDrawerOpen(true)} />
 
+      <CategoryDetailDialog
+        open={detailCard !== null}
+        card={detailCard}
+        currency={currency}
+        onClose={() => setDetailCard(null)}
+        onBook={(serviceSlug) => {
+          setDetailCard(null);
+          router.push(`/booking?service=${serviceSlug}`);
+        }}
+      />
       <FloatingBookingButton />
     </div>
   );
