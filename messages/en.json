@@ -176,7 +176,9 @@
     "error": "Failed to load data.",
     "retry": "Try again",
     "back": "Go back",
-    "clear": "Clear"
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "save": "Save changes"
   },
   "pricing": {
     "meta": {
@@ -2952,60 +2954,342 @@
   },
   "bookingAdmin": {
     "meta": {
-      "title": "Bookings | Nafas Beauty Clinic",
-      "description": "Manage appointment slots and reservations."
+      "title": "Bookings Management | Nafas Beauty Clinic",
+      "description": "Manage reservations and availability slots."
     },
-    "title": "Bookings",
-    "description": "Plan available slots and manage incoming reservations.",
+    "title": "Bookings & Reservations",
+    "description": "Monitor reservations and manage availability slots.",
     "tabs": {
-      "label": "Bookings sections",
+      "label": "Bookings",
       "calendar": "Calendar",
       "reservations": "Reservations"
     },
-    "calendar": {
-      "prevMonth": "Previous month",
-      "nextMonth": "Next month",
-      "calendarToggle": "Calendar type",
-      "jalali": "Jalali",
-      "gregorian": "Gregorian",
-      "today": "Today",
-      "goToToday": "Go to today",
-      "slotsIndicator": "slots",
-      "loading": "Loading slots…",
-      "panel": {
-        "label": "Slots for this day",
-        "empty": "No slots for this day. Add one below.",
-        "capacity": "{booked} of {total} booked",
-        "add": "Add a slot",
-        "start": "Start",
-        "end": "End",
-        "capacityLabel": "Capacity",
-        "create": "Add slot",
-        "active": "Active",
-        "inactive": "Closed",
-        "deactivate": "Deactivate slot",
-        "activate": "Activate slot",
-        "remove": "Delete slot",
-        "errors": "Could not save the slot."
+    "performance": {
+      "title": "Overview",
+      "reservations": "Reservations",
+      "slots": "Availability Slots"
+    },
+    "hub": {
+      "title": "Management Hub",
+      "reservations": {
+        "name": "Reservations",
+        "description": "Customer booking requests.",
+        "featureCustomer": "Customer Details",
+        "featureStatus": "Status Workflow",
+        "featurePayment": "Payment Reference"
+      },
+      "slots": {
+        "name": "Availability",
+        "description": "Bookable time slots by date.",
+        "featureTime": "Date & Time",
+        "featureCapacity": "Capacity Control",
+        "featureService": "Service Mapping"
       }
     },
-    "reservations": {
-      "placeholder": "Search name, phone, service…",
-      "filterAll": "All statuses",
-      "status": {
-        "pending": "Pending",
-        "confirmed": "Confirmed",
-        "paid": "Paid",
-        "cancelled": "Cancelled"
+    "counts": {
+      "active": "{count} Active",
+      "total": "{count} Total"
+    },
+    "manage": "Manage",
+    "addNew": "Add New",
+    "back": "Back to Bookings",
+    "select": "Select"
+  },
+  "bookingReservations": {
+    "meta": {
+      "title": "Reservations | Nafas Beauty Clinic",
+      "description": "Manage customer reservations."
+    },
+    "heading": "Reservations",
+    "resultsLabel": "{count} Reservations",
+    "add": "Add Reservation",
+    "search": "Search reservations",
+    "searchPlaceholder": "Search by name, phone or service...",
+    "loading": "Loading",
+    "status": "Status",
+    "statusAll": "All",
+    "clearFilters": "Clear filters",
+    "statuses": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "paid": "Paid",
+      "cancelled": "Cancelled"
+    },
+    "errorTitle": "Something went wrong",
+    "errorDescription": "We couldn't load the reservations. Please try again.",
+    "retry": "Try again",
+    "selectPage": "Select all reservations on this page",
+    "selectRow": "Select this reservation",
+    "table": {
+      "customer": "Customer",
+      "service": "Service",
+      "date": "Date",
+      "amount": "Amount",
+      "status": "Status"
+    },
+    "empty": "No reservations yet.",
+    "emptySearch": "No reservations match your search.",
+    "pagination": {
+      "showing": "Showing {from}–{to} of {total}",
+      "previous": "Previous",
+      "next": "Next",
+      "pageInfo": "Page {page} of {totalPages}"
+    },
+    "actions": {
+      "edit": "Edit",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "menu": "Actions",
+      "deleteConfirm": "Delete this reservation?"
+    },
+    "bulk": {
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "selected": "{count} selected",
+      "selectedFiltered": "{count} selected (filtered)",
+      "selectFiltered": "Select all {count} filtered",
+      "pageSelected": "Page selected",
+      "apply": "Apply",
+      "clear": "Clear",
+      "confirmTitle": "{action} the selected reservations?",
+      "confirmDescription": "This action applies to all selected reservations.",
+      "resultTitle": "Bulk action completed",
+      "resultPartialTitle": "Partly completed",
+      "resultDescription": "{count} reservations updated successfully",
+      "resultPartialDescription": "{count} updated, {failed} failed"
+    },
+    "dialog": {
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "done": "Done"
+    },
+    "toast": {
+      "syncing": "Syncing...",
+      "success": "Reservation updated",
+      "deleted": "Reservation deleted",
+      "error": "Something went wrong"
+    },
+    "back": "Back to reservations",
+    "select": "Select"
+  },
+  "bookingSlots": {
+    "meta": {
+      "title": "Availability Slots | Nafas Beauty Clinic",
+      "description": "Manage bookable time slots."
+    },
+    "heading": "Availability Slots",
+    "resultsLabel": "{count} Slots",
+    "add": "Add Slot",
+    "search": "Search slots",
+    "searchPlaceholder": "Search by date, start or end time...",
+    "loading": "Loading",
+    "status": "Status",
+    "statusAll": "All",
+    "clearFilters": "Clear filters",
+    "statuses": {
+      "active": "Active",
+      "inactive": "Closed"
+    },
+    "errorTitle": "Something went wrong",
+    "errorDescription": "We couldn't load the slots. Please try again.",
+    "retry": "Try again",
+    "selectPage": "Select all slots on this page",
+    "selectRow": "Select this slot",
+    "table": {
+      "date": "Date",
+      "time": "Time",
+      "capacity": "Capacity",
+      "booked": "Booked",
+      "status": "Status"
+    },
+    "empty": "No slots yet.",
+    "emptySearch": "No slots match your search.",
+    "pagination": {
+      "showing": "Showing {from}–{to} of {total}",
+      "previous": "Previous",
+      "next": "Next",
+      "pageInfo": "Page {page} of {totalPages}"
+    },
+    "actions": {
+      "edit": "Edit",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete",
+      "menu": "Actions",
+      "deleteConfirm": "Delete this slot?"
+    },
+    "bulk": {
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete",
+      "selected": "{count} selected",
+      "selectedFiltered": "{count} selected (filtered)",
+      "selectFiltered": "Select all {count} filtered",
+      "pageSelected": "Page selected",
+      "apply": "Apply",
+      "clear": "Clear",
+      "confirmTitle": "{action} the selected slots?",
+      "confirmDescription": "This action applies to all selected slots.",
+      "resultTitle": "Bulk action completed",
+      "resultPartialTitle": "Partly completed",
+      "resultDescription": "{count} slots updated successfully",
+      "resultPartialDescription": "{count} updated, {failed} failed"
+    },
+    "dialog": {
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "done": "Done"
+    },
+    "toast": {
+      "syncing": "Syncing...",
+      "success": "Slot updated",
+      "deleted": "Slot deleted",
+      "error": "Something went wrong"
+    },
+    "select": "Select"
+  },
+  "reservationWizard": {
+    "title": {
+      "add": "Add Reservation",
+      "edit": "Edit Reservation"
+    },
+    "nav": {
+      "back": "Back",
+      "continue": "Continue",
+      "save": "Save Changes",
+      "stepOf": "Step {current} of {total}"
+    },
+    "review": {
+      "title": "Review Reservation",
+      "description": "Verify the details before finalizing."
+    },
+    "fields": {
+      "customerName": {
+        "label": "Customer Name",
+        "placeholder": "Enter full name"
       },
-      "refresh": "Refresh",
-      "empty": "No reservations yet.",
-      "changeStatus": "Change status",
-      "total": "{count} reservations",
-      "loading": "Loading…",
-      "error": "Could not load reservations.",
-      "prev": "Previous",
-      "next": "Next"
+      "phone": {
+        "label": "Phone",
+        "placeholder": "09xxxxxxxxx"
+      },
+      "email": {
+        "label": "Email (optional)",
+        "placeholder": "name@example.com"
+      },
+      "service": {
+        "label": "Service",
+        "placeholder": "Select a service"
+      },
+      "date": {
+        "label": "Date",
+        "placeholder": "Pick a date"
+      },
+      "time": {
+        "label": "Time",
+        "placeholder": "Select a time"
+      },
+      "notes": {
+        "label": "Notes (optional)",
+        "placeholder": "Any special requests…"
+      },
+      "currency": {
+        "label": "Currency"
+      }
+    },
+    "statuses": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "paid": "Paid",
+      "cancelled": "Cancelled"
+    },
+    "reviewData": {
+      "customer": "Customer",
+      "service": "Service",
+      "date": "Date",
+      "time": "Time",
+      "phone": "Phone",
+      "email": "Email",
+      "amount": "Amount"
+    },
+    "errors": {
+      "serviceRequired": "Choose a service.",
+      "slotRequired": "Choose a time slot.",
+      "loadSlots": "Couldn't load available slots."
+    },
+    "submit": {
+      "create": "Create Reservation",
+      "creating": "Creating…",
+      "save": "Save Changes",
+      "saving": "Saving…"
+    },
+    "toast": {
+      "created": "Reservation created.",
+      "updated": "Reservation updated.",
+      "error": "Could not save the reservation."
+    },
+    "steps": {
+      "details": "Details",
+      "review": "Review"
+    }
+  },
+  "slotWizard": {
+    "title": {
+      "add": "Add Availability Slot",
+      "edit": "Edit Slot"
+    },
+    "nav": {
+      "back": "Back",
+      "continue": "Continue",
+      "save": "Save Changes",
+      "stepOf": "Step {current} of {total}"
+    },
+    "fields": {
+      "service": {
+        "label": "Service (optional)",
+        "placeholder": "Leave empty for any service"
+      },
+      "date": {
+        "label": "Date",
+        "placeholder": "YYYY-MM-DD"
+      },
+      "startTime": {
+        "label": "Start Time",
+        "placeholder": "HH:MM"
+      },
+      "endTime": {
+        "label": "End Time",
+        "placeholder": "HH:MM"
+      },
+      "capacity": {
+        "label": "Capacity",
+        "hint": "Max bookings per slot"
+      }
+    },
+    "status": {
+      "label": "Status",
+      "active": "Active",
+      "inactive": "Closed"
+    },
+    "errors": {
+      "endBeforeStart": "End time must be after start time.",
+      "serviceUnavailable": "This service isn't available."
+    },
+    "submit": {
+      "create": "Create Slot",
+      "creating": "Creating…",
+      "save": "Save Changes",
+      "saving": "Saving…"
+    },
+    "toast": {
+      "created": "Slot created.",
+      "updated": "Slot updated.",
+      "error": "Could not save the slot."
+    },
+    "steps": {
+      "details": "Details",
+      "review": "Review"
     }
   }
 }

@@ -1,6 +1,6 @@
 import { jsonOk, withSecurity } from "@/lib/api/security";
-import { listBookings } from "@/lib/bookings/service";
-import { listBookingsQuerySchema } from "@/lib/validation/bookings";
+import { createBooking, listBookings } from "@/lib/bookings/service";
+import { createBookingSchema, listBookingsQuerySchema } from "@/lib/validation/bookings";
 
 export const runtime = "nodejs";
 
@@ -14,5 +14,19 @@ export const GET = withSecurity(
     const query = ctx.query ?? (() => { throw new Error("Query params are missing"); })();
     const result = await listBookings(query);
     return jsonOk(result);
+  },
+);
+
+export const POST = withSecurity(
+  {
+    auth: "required",
+    permissions: "appointments.write",
+    validate: { body: createBookingSchema },
+    audit: true,
+  },
+  async (_request, ctx) => {
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    const booking = await createBooking(body);
+    return jsonOk(booking, 201);
   },
 );

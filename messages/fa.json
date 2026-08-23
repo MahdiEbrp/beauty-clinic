@@ -176,7 +176,9 @@
     "error": "بارگذاری با خطا مواجه شد.",
     "retry": "تلاش مجدد",
     "back": "بازگشت",
-    "clear": "پاک کردن"
+    "clear": "پاک کردن",
+    "cancel": "انصراف",
+    "save": "ذخیره تغییرات"
   },
   "pricing": {
     "meta": {
@@ -2952,60 +2954,342 @@
   },
   "bookingAdmin": {
     "meta": {
-      "title": "نوبت‌ها | کلینیک زیبایی نفس",
-      "description": "مدیریت زمان‌های نوبت و رزروهای دریافتی."
+      "title": "مدیریت نوبت‌ها | کلینیک زیبایی نفس",
+      "description": "مدیریت رزروها و زمان‌های موجود."
     },
-    "title": "مدیریت نوبت‌ها",
-    "description": "زمان‌های آزاد را برنامه‌ریزی و رزروهای دریافتی را مدیریت کنید.",
+    "title": "نوبت‌ها و رزروها",
+    "description": "رزروها را پیگیری و زمان‌های آزاد را مدیریت کنید.",
     "tabs": {
-      "label": "بخش‌های نوبت",
+      "label": "نوبت‌ها",
       "calendar": "تقویم",
       "reservations": "رزروها"
     },
-    "calendar": {
-      "prevMonth": "ماه قبل",
-      "nextMonth": "ماه بعد",
-      "calendarToggle": "نوع تقویم",
-      "jalali": "شمسی",
-      "gregorian": "میلادی",
-      "today": "امروز",
-      "goToToday": "برو به امروز",
-      "slotsIndicator": "نوبت",
-      "loading": "در حال بارگذاری…",
-      "panel": {
-        "label": "نوبت‌های این روز",
-        "empty": "برای این روز نوبتی تعریف نشده؛ از پایین اضافه کنید.",
-        "capacity": "{booked} از {total} رزرو شده",
-        "add": "افزودن زمان نوبت",
-        "start": "شروع",
-        "end": "پایان",
-        "capacityLabel": "ظرفیت",
-        "create": "افزودن نوبت",
-        "active": "فعال",
-        "inactive": "بسته",
-        "deactivate": "غیرفعال کردن",
-        "activate": "فعال کردن",
-        "remove": "حذف نوبت",
-        "errors": "ذخیره‌سازی نوبت ناموفق بود."
+    "performance": {
+      "title": "نمای کلی",
+      "reservations": "رزروها",
+      "slots": "نوبت‌های آزاد"
+    },
+    "hub": {
+      "title": "مرکز مدیریت",
+      "reservations": {
+        "name": "رزروها",
+        "description": "درخواست‌های نوبت مشتریان.",
+        "featureCustomer": "اطلاعات مشتری",
+        "featureStatus": "گردش کار وضعیت",
+        "featurePayment": "کد پرداخت"
+      },
+      "slots": {
+        "name": "زمان‌بندی",
+        "description": "زمان‌های قابل رزرو به تفکیک تاریخ.",
+        "featureTime": "تاریخ و ساعت",
+        "featureCapacity": "کنترل ظرفیت",
+        "featureService": "نگاشت خدمت"
       }
     },
-    "reservations": {
-      "placeholder": "جستجوی نام، تلفن، خدمت…",
-      "filterAll": "همه وضعیت‌ها",
-      "status": {
-        "pending": "در انتظار",
-        "confirmed": "تأیید شده",
-        "paid": "پرداخت شده",
-        "cancelled": "لغو شده"
+    "counts": {
+      "active": "{count} فعال",
+      "total": "{count} کل"
+    },
+    "manage": "مدیریت",
+    "addNew": "افزودن",
+    "back": "بازگشت به نوبت‌ها",
+    "select": "انتخاب"
+  },
+  "bookingReservations": {
+    "meta": {
+      "title": "رزروها | کلینیک زیبایی نفس",
+      "description": "مدیریت رزروهای مشتریان."
+    },
+    "heading": "رزروها",
+    "resultsLabel": "{count} رزرو",
+    "add": "افزودن رزرو",
+    "search": "جستجوی رزروها",
+    "searchPlaceholder": "جستجو بر اساس نام، تلفن یا خدمت...",
+    "loading": "در حال بارگذاری",
+    "status": "وضعیت",
+    "statusAll": "همه",
+    "clearFilters": "پاک‌کردن فیلترها",
+    "statuses": {
+      "pending": "در انتظار",
+      "confirmed": "تأیید شده",
+      "paid": "پرداخت شده",
+      "cancelled": "لغو شده"
+    },
+    "errorTitle": "خطایی رخ داد",
+    "errorDescription": "بارگذاری رزروها ناموفق بود. دوباره تلاش کنید.",
+    "retry": "تلاش مجدد",
+    "selectPage": "انتخاب همه رزروهای این صفحه",
+    "selectRow": "انتخاب این رزرو",
+    "table": {
+      "customer": "مشتری",
+      "service": "خدمت",
+      "date": "تاریخ",
+      "amount": "مبلغ",
+      "status": "وضعیت"
+    },
+    "empty": "هنوز رزروی ثبت نشده است.",
+    "emptySearch": "هیچ رزروی با جستجوی شما مطابقت ندارد.",
+    "pagination": {
+      "showing": "نمایش {from}–{to} از {total}",
+      "previous": "قبلی",
+      "next": "بعدی",
+      "pageInfo": "صفحه {page} از {totalPages}"
+    },
+    "actions": {
+      "edit": "ویرایش",
+      "confirm": "تأیید",
+      "cancel": "لغو",
+      "delete": "حذف",
+      "menu": "عملیات",
+      "deleteConfirm": "حذف این رزرو؟"
+    },
+    "bulk": {
+      "confirm": "تأیید",
+      "cancel": "لغو",
+      "delete": "حذف",
+      "selected": "{count} انتخاب شده",
+      "selectedFiltered": "{count} انتخاب شده (فیلترشده)",
+      "selectFiltered": "انتخاب همه {count} فیلترشده",
+      "pageSelected": "صفحه انتخاب شد",
+      "apply": "اعمال",
+      "clear": "پاک‌کردن",
+      "confirmTitle": "{action} رزروهای انتخاب‌شده؟",
+      "confirmDescription": "این عملیات روی همه رزروهای انتخاب‌شده اعمال می‌شود.",
+      "resultTitle": "عملیات گروهی انجام شد",
+      "resultPartialTitle": "به‌صورت جزئی انجام شد",
+      "resultDescription": "{count} رزرو با موفقیت به‌روزرسانی شد",
+      "resultPartialDescription": "{count} به‌روزرسانی شد، {failed} ناموفق"
+    },
+    "dialog": {
+      "cancel": "انصراف",
+      "confirm": "تأیید",
+      "done": "انجام شد"
+    },
+    "toast": {
+      "syncing": "در حال همگام‌سازی...",
+      "success": "رزرو به‌روزرسانی شد",
+      "deleted": "رزرو حذف شد",
+      "error": "خطایی رخ داد"
+    },
+    "back": "بازگشت به رزروها",
+    "select": "انتخاب"
+  },
+  "bookingSlots": {
+    "meta": {
+      "title": "نوبت‌های آزاد | کلینیک زیبایی نفس",
+      "description": "مدیریت زمان‌های قابل رزرو."
+    },
+    "heading": "نوبت‌های آزاد",
+    "resultsLabel": "{count} نوبت",
+    "add": "افزودن نوبت",
+    "search": "جستجوی نوبت‌ها",
+    "searchPlaceholder": "جستجو بر اساس تاریخ، ساعت شروع یا پایان...",
+    "loading": "در حال بارگذاری",
+    "status": "وضعیت",
+    "statusAll": "همه",
+    "clearFilters": "پاک‌کردن فیلترها",
+    "statuses": {
+      "active": "فعال",
+      "inactive": "بسته"
+    },
+    "errorTitle": "خطایی رخ داد",
+    "errorDescription": "بارگذاری نوبت‌ها ناموفق بود. دوباره تلاش کنید.",
+    "retry": "تلاش مجدد",
+    "selectPage": "انتخاب همه نوبت‌های این صفحه",
+    "selectRow": "انتخاب این نوبت",
+    "table": {
+      "date": "تاریخ",
+      "time": "ساعت",
+      "capacity": "ظرفیت",
+      "booked": "رزرو شده",
+      "status": "وضعیت"
+    },
+    "empty": "هنوز نوبتی تعریف نشده است.",
+    "emptySearch": "هیچ نوبتی با جستجوی شما مطابقت ندارد.",
+    "pagination": {
+      "showing": "نمایش {from}–{to} از {total}",
+      "previous": "قبلی",
+      "next": "بعدی",
+      "pageInfo": "صفحه {page} از {totalPages}"
+    },
+    "actions": {
+      "edit": "ویرایش",
+      "activate": "فعال",
+      "deactivate": "غیرفعال",
+      "delete": "حذف",
+      "menu": "عملیات",
+      "deleteConfirm": "حذف این نوبت؟"
+    },
+    "bulk": {
+      "activate": "فعال",
+      "deactivate": "غیرفعال",
+      "delete": "حذف",
+      "selected": "{count} انتخاب شده",
+      "selectedFiltered": "{count} انتخاب شده (فیلترشده)",
+      "selectFiltered": "انتخاب همه {count} فیلترشده",
+      "pageSelected": "صفحه انتخاب شد",
+      "apply": "اعمال",
+      "clear": "پاک‌کردن",
+      "confirmTitle": "{action} نوبت‌های انتخاب‌شده؟",
+      "confirmDescription": "این عملیات روی همه نوبت‌های انتخاب‌شده اعمال می‌شود.",
+      "resultTitle": "عملیات گروهی انجام شد",
+      "resultPartialTitle": "به‌صورت جزئی انجام شد",
+      "resultDescription": "{count} نوبت با موفقیت به‌روزرسانی شد",
+      "resultPartialDescription": "{count} به‌روزرسانی شد، {failed} ناموفق"
+    },
+    "dialog": {
+      "cancel": "انصراف",
+      "confirm": "تأیید",
+      "done": "انجام شد"
+    },
+    "toast": {
+      "syncing": "در حال همگام‌سازی...",
+      "success": "نوبت به‌روزرسانی شد",
+      "deleted": "نوبت حذف شد",
+      "error": "خطایی رخ داد"
+    },
+    "select": "انتخاب"
+  },
+  "reservationWizard": {
+    "title": {
+      "add": "افزودن رزرو",
+      "edit": "ویرایش رزرو"
+    },
+    "nav": {
+      "back": "بازگشت",
+      "continue": "ادامه",
+      "save": "ذخیره",
+      "stepOf": "مرحله {current} از {total}"
+    },
+    "review": {
+      "title": "بررسی رزرو",
+      "description": "جزئیات را قبل از نهایی‌سازی بررسی کنید."
+    },
+    "fields": {
+      "customerName": {
+        "label": "نام مشتری",
+        "placeholder": "نام کامل"
       },
-      "refresh": "به‌روزرسانی",
-      "empty": "هنوز رزروی ثبت نشده است.",
-      "changeStatus": "تغییر وضعیت",
-      "total": "{count} رزرو",
-      "loading": "در حال بارگذاری…",
-      "error": "بارگذاری رزروها ناموفق بود.",
-      "prev": "قبلی",
-      "next": "بعدی"
+      "phone": {
+        "label": "تلفن",
+        "placeholder": "09xxxxxxxxx"
+      },
+      "email": {
+        "label": "ایمیل (اختیاری)",
+        "placeholder": "name@example.com"
+      },
+      "service": {
+        "label": "خدمت",
+        "placeholder": "خدمتی را انتخاب کنید"
+      },
+      "date": {
+        "label": "تاریخ",
+        "placeholder": "انتخاب تاریخ"
+      },
+      "time": {
+        "label": "ساعت",
+        "placeholder": "زمان را انتخاب کنید"
+      },
+      "notes": {
+        "label": "یادداشت (اختیاری)",
+        "placeholder": "درخواست‌های ویژه…"
+      },
+      "currency": {
+        "label": "ارزش پولی"
+      }
+    },
+    "statuses": {
+      "pending": "در انتظار",
+      "confirmed": "تأیید شده",
+      "paid": "پرداخت شده",
+      "cancelled": "لغو شده"
+    },
+    "reviewData": {
+      "customer": "مشتری",
+      "service": "خدمت",
+      "date": "تاریخ",
+      "time": "ساعت",
+      "phone": "تلفن",
+      "email": "ایمیل",
+      "amount": "مبلغ"
+    },
+    "errors": {
+      "serviceRequired": "خدمتی انتخاب کنید.",
+      "slotRequired": "زمان‌بندی انتخاب کنید.",
+      "loadSlots": "بارگذاری اسلات‌ها انجام نشد."
+    },
+    "submit": {
+      "create": "ثبت رزرو",
+      "creating": "در حال ثبت...",
+      "save": "ذخیره",
+      "saving": "در حال ذخیره..."
+    },
+    "toast": {
+      "created": "رزرو ثبت شد.",
+      "updated": "رزرو به‌روزرسانی شد.",
+      "error": "ذخیره رزرو انجام نشد."
+    },
+    "steps": {
+      "details": "جزئیات",
+      "review": "بازبینی"
+    }
+  },
+  "slotWizard": {
+    "title": {
+      "add": "افزودن نوبت آزاد",
+      "edit": "ویرایش نوبت"
+    },
+    "nav": {
+      "back": "بازگشت",
+      "continue": "ادامه",
+      "save": "ذخیره",
+      "stepOf": "مرحله {current} از {total}"
+    },
+    "fields": {
+      "service": {
+        "label": "خدمت (اختیاری)",
+        "placeholder": "خالی بگذارید برای همه خدمات"
+      },
+      "date": {
+        "label": "تاریخ",
+        "placeholder": "YYYY-MM-DD"
+      },
+      "startTime": {
+        "label": "ساعت شروع",
+        "placeholder": "HH:MM"
+      },
+      "endTime": {
+        "label": "ساعت پایان",
+        "placeholder": "HH:MM"
+      },
+      "capacity": {
+        "label": "ظرفیت",
+        "hint": "حداکثر رزرو در هر نوبت"
+      }
+    },
+    "status": {
+      "label": "وضعیت",
+      "active": "فعال",
+      "inactive": "بسته"
+    },
+    "errors": {
+      "endBeforeStart": "ساعت پایان باید بعد از شروع باشد.",
+      "serviceUnavailable": "این خدمت در دسترس نیست."
+    },
+    "submit": {
+      "create": "ایجاد نوبت",
+      "creating": "در حال ایجاد...",
+      "save": "ذخیره",
+      "saving": "در حال ذخیره..."
+    },
+    "toast": {
+      "created": "نوبت ایجاد شد.",
+      "updated": "نوبت به‌روزرسانی شد.",
+      "error": "ذخیره نوبت انجام نشد."
+    },
+    "steps": {
+      "details": "جزئیات",
+      "review": "بازبینی"
     }
   }
 }

@@ -100,11 +100,96 @@ export const listBookingsQuerySchema = z
   })
   .strict();
 
+export type ListBookingsQuery = z.infer<typeof listBookingsQuerySchema>;
+
+/**
+ * Paginated admin slot list (separate from the date-range calendar fetch).
+ */
+export const listSlotsAdminQuerySchema = z
+  .object({
+    page: z.coerce.number().int().min(1).max(100000).default(1),
+    perPage: z.coerce.number().int().min(1).max(100).default(20),
+    search: z.string().trim().max(100).optional(),
+    status: z.enum(["all", "active", "inactive"]).default("all"),
+  })
+  .strict();
+
+export type ListSlotsAdminQuery = z.infer<typeof listSlotsAdminQuerySchema>;
+
+/**
+ * Bulk actions for the reservations admin list.
+ */
+export const bulkBookingsSchema = z
+  .object({
+    action: z.enum(["confirm", "cancel", "delete"]),
+    scope: z.enum(["page", "filtered"]),
+    ids: z.array(z.uuid()).max(100).optional(),
+    filters: listBookingsQuerySchema
+      .pick({ search: true, status: true })
+      .optional(),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    if (value.scope === "page" && (!value.ids || value.ids.length === 0)) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["ids"],
+        message: "Select at least one reservation.",
+      });
+    }
+  });
+
+export type BulkBookingsInput = z.infer<typeof bulkBookingsSchema>;
+
+/**
+ * Bulk actions for the slots admin list.
+ */
+export const bulkSlotsSchema = z
+  .object({
+    action: z.enum(["activate", "deactivate", "delete"]),
+    scope: z.enum(["page", "filtered"]),
+    ids: z.array(z.uuid()).max(100).optional(),
+    filters: listSlotsAdminQuerySchema
+      .pick({ search: true, status: true })
+      .optional(),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    if (value.scope === "page" && (!value.ids || value.ids.length === 0)) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["ids"],
+        message: "Select at least one slot.",
+      });
+    }
+  });
+
+export type BulkSlotsInput = z.infer<typeof bulkSlotsSchema>;
+
+/**
+ * Admin update for an existing reservation: editable customer fields + status.
+ */
+export const updateBookingAdminSchema = z
+  .object({
+    fullName: z.string().trim().min(2).max(160).optional(),
+    phone: z
+      .string()
+      .trim()
+      .regex(/^[0-9+][0-9\s()-]{6,19}$/, "Enter a valid phone number")
+      .max(24)
+      .optional(),
+    email: z.email().trim().max(254).optional().nullable(),
+    notes: z.string().trim().max(1000).optional().nullable(),
+    status: bookingStatusSchema.optional(),
+  })
+  .strict();
+
+export type UpdateBookingAdminInput = z.infer<typeof updateBookingAdminSchema>;
+
+export type CreateBookingInput = z.infer<typeof createBookingSchema>;
 export type CreateSlotInput = z.infer<typeof createSlotSchema>;
 export type CreateSlotsInput = z.infer<typeof createSlotsSchema>;
 export type UpdateSlotInput = z.infer<typeof updateSlotSchema>;
 export type ListSlotsQuery = z.infer<typeof listSlotsQuerySchema>;
 export type AvailableSlotsQuery = z.infer<typeof availableSlotsQuerySchema>;
-export type CreateBookingInput = z.infer<typeof createBookingSchema>;
 export type BookingStatusUpdateInput = z.infer<typeof bookingStatusUpdateSchema>;
-export type ListBookingsQuery = z.infer<typeof listBookingsQuerySchema>;

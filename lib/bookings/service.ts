@@ -216,6 +216,39 @@ export async function updateBookingStatus(id: string, status: BookingStatus): Pr
   return row;
 }
 
+/** Admin edit of an existing reservation (customer fields + optional status). */
+export async function updateBookingDetails(
+  id: string,
+  patch: {
+    fullName?: string;
+    phone?: string;
+    email?: string | null;
+    notes?: string | null;
+    status?: BookingStatus;
+  },
+): Promise<BookingSummary> {
+  const set: Record<string, unknown> = { updatedAt: new Date() };
+  if (patch.fullName !== undefined) set.fullName = patch.fullName;
+  if (patch.phone !== undefined) set.phone = patch.phone;
+  if (patch.email !== undefined) set.email = patch.email ?? null;
+  if (patch.notes !== undefined) set.notes = patch.notes ?? null;
+  if (patch.status !== undefined) set.status = patch.status;
+  const [row] = await db.update(bookings).set(set).where(eq(bookings.id, id)).returning();
+  if (!row) throw new ApiError(404, "BOOKING_NOT_FOUND", "Booking not found.");
+  return row;
+}
+
+/** Admin hard-delete of a booking. */
+export async function deleteBooking(id: string): Promise<void> {
+  const [exists] = await db
+    .select({ id: bookings.id })
+    .from(bookings)
+    .where(eq(bookings.id, id))
+    .limit(1);
+  if (!exists) throw new ApiError(404, "BOOKING_NOT_FOUND", "Booking not found.");
+  await db.delete(bookings).where(eq(bookings.id, id));
+}
+
 /**
  * Idempotent mock payment: charges `totalAmount` and marks the booking paid.
  * A second call with the same booking returns the existing reference.

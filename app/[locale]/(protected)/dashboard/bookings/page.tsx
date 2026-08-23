@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 
 import BookingsHub from "@/components/bookings-admin/BookingsHub";
 import { requirePermission } from "@/lib/auth/dal";
+import { getBookingsPerformance } from "@/lib/bookings/performance";
 import { siteUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/bookings";
@@ -31,5 +32,6 @@ export async function generateMetadata({
 
 export default async function BookingsPage() {
   await requirePermission("appointments.read");
-  return <BookingsHub />;
+  const data = await getBookingsPerformance();
+  return <BookingsHub data={data} />;
 }

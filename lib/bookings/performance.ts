@@ -1,0 +1,42 @@
+import "server-only";
+
+import { sql } from "drizzle-orm";
+
+import { db } from "@/src/db";
+import { bookingSlots, bookings } from "@/src/db/schema";
+
+export type BookingsPerformance = {
+  reservations: { total: number; active: number };
+  slots: { total: number; active: number };
+};
+
+/**
+ * Overview counts for the bookings management hub.
+ * Two sequential aggregate queries (never parallel fan-outs) keep the pool calm.
+ */
+export async function getBookingsPerformance(): Promise<BookingsPerformance> {
+  const [bookingRow] = await db
+    .select({
+      total: sql<number>`count(*)::int`,
+      active: sql<number>`count(*) filter (where ${bookings.status} in ('confirmed','paid'))::int`,
+    })
+    .from(bookings);
+
+  const [slotRow] = await db
+    .select({
+      total: sql<number>`count(*)::int`,
+      active: sql<number>`count(*) filter (where ${bookingSlots.isActive})::int`,
+    })
+    .from(bookingSlots);
+
+  return {
+    reservations: {
+      total: Number(bookingRow?.total ?? 0),
+      active: Number(bookingRow?.active ?? 0),
+    },
+    slots: {
+      total: Number(slotRow?.total ?? 0),
+      active: Number(slotRow?.active ?? 0),
+    },
+  };
+}
