@@ -19,7 +19,7 @@ export default function BookingsHub() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 md:space-y-8">
       <header className="rounded-panel border border-border-primary bg-surface-secondary px-5 py-4 shadow-elevation-1 sm:px-6">
         <h1 className="text-dash-display font-bold text-accent">{t("title")}</h1>
         <p className="mt-1 text-dash-body-sm text-content-secondary">{t("description")}</p>
@@ -28,7 +28,7 @@ export default function BookingsHub() {
       <div
         role="tablist"
         aria-label={t("tabs.label")}
-        className="inline-flex items-center gap-1 rounded-pill border border-border-primary bg-surface-secondary p-1"
+        className="flex w-full items-center gap-1 rounded-pill border border-border-primary bg-surface-secondary p-1 sm:inline-flex sm:w-auto"
       >
         {tabs.map((item) => (
           <button
@@ -38,7 +38,7 @@ export default function BookingsHub() {
             aria-selected={tab === item.key}
             onClick={() => setTab(item.key)}
             className={cn(
-              "inline-flex min-h-11 items-center gap-2 rounded-pill px-5 text-dash-body-sm font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+              "inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-pill px-5 text-dash-body-sm font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:flex-none",
               tab === item.key
                 ? "bg-accent text-content-contrast shadow-elevation-1"
                 : "text-content-secondary hover:text-accent",

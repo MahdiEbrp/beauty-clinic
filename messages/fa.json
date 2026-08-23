@@ -2969,6 +2969,8 @@
       "jalali": "شمسی",
       "gregorian": "میلادی",
       "today": "امروز",
+      "goToToday": "برو به امروز",
+      "slotsIndicator": "نوبت",
       "loading": "در حال بارگذاری…",
       "panel": {
         "label": "نوبت‌های این روز",

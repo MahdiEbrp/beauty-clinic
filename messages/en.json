@@ -2969,6 +2969,8 @@
       "jalali": "Jalali",
       "gregorian": "Gregorian",
       "today": "Today",
+      "goToToday": "Go to today",
+      "slotsIndicator": "slots",
       "loading": "Loading slots…",
       "panel": {
         "label": "Slots for this day",

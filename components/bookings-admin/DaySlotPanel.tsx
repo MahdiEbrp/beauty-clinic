@@ -72,7 +72,7 @@ export default function DaySlotPanel({ dateKey, slots, onChanged }: DaySlotPanel
         </span>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-3">
         {slots.length === 0 ? (
           <div className="rounded-control border border-dashed border-border-interactive bg-surface-primary px-4 py-8 text-center text-dash-body-sm text-content-secondary">
             {t("empty")}
@@ -82,7 +82,7 @@ export default function DaySlotPanel({ dateKey, slots, onChanged }: DaySlotPanel
             <div
               key={slot.id}
               className={cn(
-                "flex items-center justify-between gap-3 rounded-control border px-3 py-2",
+                "flex items-center justify-between gap-3 rounded-control border px-4 py-3",
                 slot.isActive
                   ? "border-border-primary bg-surface-primary"
                   : "border-border-primary bg-surface-tertiary/50 opacity-70",
@@ -135,7 +135,7 @@ export default function DaySlotPanel({ dateKey, slots, onChanged }: DaySlotPanel
           <CalendarPlus className="size-4" aria-hidden="true" />
           {t("add")}
         </p>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 sm:grid-cols-3">
           <label className="block">
             <span className="mb-1 block text-dash-caption text-content-tertiary">{t("start")}</span>
             <input
@@ -176,7 +176,7 @@ export default function DaySlotPanel({ dateKey, slots, onChanged }: DaySlotPanel
           type="button"
           onClick={() => void addSlot()}
           disabled={saving}
-          className="mt-4 inline-flex min-h-12 items-center justify-center gap-2 rounded-pill bg-copper px-6 text-dash-body-sm font-bold text-content-contrast shadow-elevation-1 transition-all hover:bg-copper-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60"
+          className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-pill bg-copper px-6 text-dash-body-sm font-bold text-content-contrast shadow-elevation-1 transition-all hover:bg-copper-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
         >
           {saving ? (
             <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
