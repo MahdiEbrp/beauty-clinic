@@ -53,20 +53,21 @@ export async function updateGalleryItem(
     .set({ imageUrl: draft.imageUrl, displayOrder: draft.displayOrder, isActive: draft.isActive })
     .where(eq(landingGalleryItems.id, id));
   if (draft.translations) {
+    const translations = draft.translations;
     await eachLocale((l) =>
       db
         .insert(landingGalleryItemsI18n)
         .values({
           galleryItemId: id,
           locale: l,
-          alt: draft.translations![l].alt,
-          caption: draft.translations![l].caption ?? null,
+          alt: translations[l].alt,
+          caption: translations[l].caption ?? null,
         })
         .onConflictDoUpdate({
           target: [landingGalleryItemsI18n.galleryItemId, landingGalleryItemsI18n.locale],
           set: {
-            alt: draft.translations![l].alt,
-            caption: draft.translations![l].caption ?? null,
+            alt: translations[l].alt,
+            caption: translations[l].caption ?? null,
           },
         }),
     );

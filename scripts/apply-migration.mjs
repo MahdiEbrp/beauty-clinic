@@ -16,7 +16,7 @@ async function main() {
   );`;
   try {
     await sql`ALTER TABLE settings_i18n ADD CONSTRAINT settings_i18n_setting_id_settings_id_fk FOREIGN KEY (setting_id) REFERENCES settings(id) ON DELETE cascade ON UPDATE cascade;`;
-  } catch (e) {
+  } catch {
     console.log('FK already exists, skipping');
   }
   console.log('settings_i18n created');
@@ -38,7 +38,7 @@ async function main() {
   );`;
   try {
     await sql`ALTER TABLE social_links_i18n ADD CONSTRAINT social_links_i18n_social_link_id_social_links_id_fk FOREIGN KEY (social_link_id) REFERENCES social_links(id) ON DELETE cascade ON UPDATE cascade;`;
-  } catch (e) {
+  } catch {
     console.log('FK already exists, skipping');
   }
   await sql`CREATE INDEX IF NOT EXISTS social_links_active_order_idx ON social_links USING btree (is_active, display_order);`;

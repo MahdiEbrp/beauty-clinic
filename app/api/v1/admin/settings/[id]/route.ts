@@ -2,7 +2,6 @@ import { jsonError, jsonOk, withSecurity } from "@/lib/api/security";
 import {
   deleteSystemSetting,
   getSystemSettingById,
-  setSystemSettingActive,
   updateSystemSetting,
 } from "@/lib/settings/admin";
 import { updateSettingSchema } from "@/lib/validation/settings-admin";

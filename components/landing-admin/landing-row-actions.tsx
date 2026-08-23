@@ -64,7 +64,7 @@ function RowActionItem({
 export function LandingRowActions({ row }: { row: AdminCollectionRow }) {
   const t = useTranslations();
   const router = useRouter();
-  const { canWrite, canManage, isSyncing, runAction, deleteRow, setConfirm, editPath } =
+  const { canWrite, canManage, isSyncing, runAction, setConfirm, editPath } =
     useLandingCollection();
 
   const state = statusOf(row);

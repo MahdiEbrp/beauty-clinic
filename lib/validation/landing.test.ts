@@ -23,6 +23,7 @@ const marqueePayload = {
   },
 };
 
+// eslint-disable-next-line no-secrets/no-secrets
 describe("landingListQuerySchema", () => {
   it("applies defaults for page, perPage and status", () => {
     const result = landingListQuerySchema.safeParse({});
@@ -69,6 +70,7 @@ describe("createMarqueeItemSchema", () => {
   });
 
   it("rejects a payload without translations", () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { translations: _t, ...rest } = marqueePayload;
     expect(createMarqueeItemSchema.safeParse(rest).success).toBe(false);
   });
@@ -159,6 +161,7 @@ describe("createGalleryItemSchema", () => {
   });
 
   it("rejects a payload without imageUrl or alt", () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { imageUrl: _i, ...noUrl } = {
       imageUrl: "https://cdn.example.com/gallery/1.jpg",
       displayOrder: 2,
@@ -237,6 +240,7 @@ describe("updateSettingsSchema", () => {
   });
 });
 
+// eslint-disable-next-line no-secrets/no-secrets
 describe("bulkLandingCollectionSchema", () => {
   it("accepts a page-scoped bulk delete with ids", () => {
     const result = bulkLandingCollectionSchema.safeParse({

@@ -22,7 +22,6 @@ import { RULES_SEED } from "./seed/rules";
 import {
   ROLE_DEFS,
   PERMISSION_DEFS,
-  ALL_PERMISSIONS,
   ROLE_PERMISSIONS,
   SYSTEM_SETTINGS,
   SOCIAL_LINKS,

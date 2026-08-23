@@ -100,9 +100,11 @@ export function useRulesActions(list: RulesListState): RulesActionsState {
     confirm?.kind === "row"
       ? confirm.action === "deactivate"
         ? t("dashboardRules.deactivateDialog.description")
-        : t("dashboardRules.bulk.confirmDescription")
+        : // eslint-disable-next-line no-secrets/no-secrets
+          t("dashboardRules.bulk.confirmDescription")
       : confirm
-        ? t("dashboardRules.bulk.confirmDescription")
+        ? // eslint-disable-next-line no-secrets/no-secrets
+          t("dashboardRules.bulk.confirmDescription")
         : "";
 
   return {

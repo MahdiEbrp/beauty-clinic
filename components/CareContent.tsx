@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 import {
   ArrowUpRight,
   BookOpen,
-  Check,
   HeartPulse,
   Sparkles,
 } from "lucide-react";

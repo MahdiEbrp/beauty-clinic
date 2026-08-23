@@ -59,13 +59,14 @@ export async function updateStat(id: string, draft: Partial<StatDraft>): Promise
     })
     .where(eq(landingAboutStats.id, id));
   if (draft.translations) {
+    const translations = draft.translations;
     await eachLocale((l) =>
       db
         .insert(landingAboutStatsI18n)
-        .values({ statId: id, locale: l, label: draft.translations![l].label })
+        .values({ statId: id, locale: l, label: translations[l].label })
         .onConflictDoUpdate({
           target: [landingAboutStatsI18n.statId, landingAboutStatsI18n.locale],
-          set: { label: draft.translations![l].label },
+          set: { label: translations[l].label },
         }),
     );
   }

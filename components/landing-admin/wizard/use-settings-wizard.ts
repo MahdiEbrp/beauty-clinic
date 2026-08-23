@@ -96,7 +96,7 @@ export function useSettingsWizard({ settings }: { settings: AdminLandingSettings
     }));
 
   const setLangSectionField = (key: string, field: keyof SectionContent, next: string) =>
-    patchSection(key, lang, { [field]: next } as Partial<SectionContent>);
+    patchSection(key, lang, { [field]: next });
 
   const handleSubmit = async () => {
     setServerError(null);

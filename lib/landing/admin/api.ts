@@ -130,7 +130,7 @@ export function landingCollectionItemPatch(key: LandingCollectionKey) {
   return async (_request: Request, ctx: ApiCtx) => {
     const id = ctx.params?.id;
     if (!id || !z.uuid().safeParse(id).success) return invalidId(key);
-    await updateFor(key, id, asBody(ctx) as UpdateDraft);
+    await updateFor(key, id, asBody(ctx));
     return jsonOk({ ok: true });
   };
 }

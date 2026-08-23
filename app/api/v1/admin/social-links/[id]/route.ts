@@ -2,7 +2,6 @@ import { jsonError, jsonOk, withSecurity } from "@/lib/api/security";
 import {
   deleteSocialLink,
   getSocialLinkById,
-  setSocialLinkActive,
   updateSocialLink,
 } from "@/lib/social/admin";
 import { updateSocialLinkSchema } from "@/lib/validation/social-links";

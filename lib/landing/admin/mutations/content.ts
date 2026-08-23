@@ -42,8 +42,9 @@ export async function updateHero(draft: HeroDraft): Promise<void> {
     .set({ image: draft.image, taglineIcon: draft.taglineIcon })
     .where(eq(landingHero.id, hero.id));
   if (draft.translations) {
+    const translations = draft.translations;
     await eachLocale((l) => {
-      const c = draft.translations![l];
+      const c = translations[l];
       return db
         .insert(landingHeroI18n)
         .values({
@@ -85,8 +86,9 @@ export type LandingSettingsInput = {
 export async function updateSettings(input: LandingSettingsInput): Promise<void> {
   const pageId = await findHomePageId();
   if (input.seo) {
+    const seo = input.seo;
     await eachLocale((l) => {
-      const c = input.seo![l];
+      const c = seo[l];
       return db
         .insert(landingPagesI18n)
         .values({

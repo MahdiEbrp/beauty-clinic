@@ -65,22 +65,23 @@ export async function updateServiceCard(
     })
     .where(eq(landingServices.id, id));
   if (draft.translations) {
+    const translations = draft.translations;
     await eachLocale((l) =>
       db
         .insert(landingServicesI18n)
         .values({
           landingServiceId: id,
           locale: l,
-          title: draft.translations![l].title,
-          description: draft.translations![l].description ?? null,
-          ctaLabel: draft.translations![l].ctaLabel ?? null,
+          title: translations[l].title,
+          description: translations[l].description ?? null,
+          ctaLabel: translations[l].ctaLabel ?? null,
         })
         .onConflictDoUpdate({
           target: [landingServicesI18n.landingServiceId, landingServicesI18n.locale],
           set: {
-            title: draft.translations![l].title,
-            description: draft.translations![l].description ?? null,
-            ctaLabel: draft.translations![l].ctaLabel ?? null,
+            title: translations[l].title,
+            description: translations[l].description ?? null,
+            ctaLabel: translations[l].ctaLabel ?? null,
           },
         }),
     );

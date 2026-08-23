@@ -52,13 +52,14 @@ export async function updateMarqueeItem(id: string, draft: Partial<MarqueeDraft>
     })
     .where(eq(landingMarqueeItems.id, id));
   if (draft.translations) {
+    const translations = draft.translations;
     await eachLocale((l) =>
       db
         .insert(landingMarqueeItemsI18n)
-        .values({ marqueeItemId: id, locale: l, text: draft.translations![l].text })
+        .values({ marqueeItemId: id, locale: l, text: translations[l].text })
         .onConflictDoUpdate({
           target: [landingMarqueeItemsI18n.marqueeItemId, landingMarqueeItemsI18n.locale],
-          set: { text: draft.translations![l].text },
+          set: { text: translations[l].text },
         }),
     );
   }
