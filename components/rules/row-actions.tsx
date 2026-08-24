@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import type { MessageKey, TranslateFn } from "@/src/i18n/message-key";
 import { Power, PowerOff, Trash2, Pencil, MoreVertical } from "lucide-react";
 import { useRouter } from "@/src/i18n/navigation";
 import type { AdminRule } from "@/lib/services/rules-types";
@@ -19,12 +20,12 @@ import { useRules } from "./rules-context";
 
 interface ActionButton {
   key: string;
-  labelKey: string;
+  labelKey: MessageKey;
   onClick: () => void;
   danger?: boolean;
 }
 
-function RowActionItem({ button, disabled, t }: { button: ActionButton; disabled: boolean; t: ReturnType<typeof useTranslations> }) {
+function RowActionItem({ button, disabled, t }: { button: ActionButton; disabled: boolean; t: TranslateFn }) {
   return (
     <DropdownMenuItem
       disabled={disabled}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import type { TranslateFn } from "@/src/i18n/message-key";
 import { ChevronDown, Search, SlidersHorizontal, X } from "lucide-react";
 import type { ReactNode } from "react";
 import GroupGlyph from "@/components/create-group/GroupGlyph";
@@ -13,7 +14,7 @@ type PriceChip = { value: PriceBucket; label: string };
 
 function priceChips(
   bounds: { min: number; max: number },
-  t: ReturnType<typeof useTranslations>,
+  t: TranslateFn,
 ): PriceChip[] {
   const low = bucketRange(bounds, "low");
   const mid = bucketRange(bounds, "mid");

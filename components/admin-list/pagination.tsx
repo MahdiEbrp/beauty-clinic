@@ -1,11 +1,12 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { asTranslate } from "@/src/i18n/message-key";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useAdminListContext } from "./context";
 
 export function AdminListPagination<T extends { id: string }>() {
-  const t = useTranslations();
+  const t = asTranslate(useTranslations());
   const ctx = useAdminListContext<T>();
   const { config, page, setPage, totalPages, from, to, data } = ctx;
   if (totalPages <= 1) return null;

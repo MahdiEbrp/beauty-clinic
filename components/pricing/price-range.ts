@@ -1,5 +1,5 @@
-import type { useTranslations } from "next-intl";
 import { formatNumber } from "@/lib/services/format";
+import type { TranslateFn } from "@/src/i18n/message-key";
 import type { CategoryCardData } from "./data";
 
 /**
@@ -11,7 +11,7 @@ import type { CategoryCardData } from "./data";
  */
 export function categoryPriceRange(
 	card: CategoryCardData,
-	t: ReturnType<typeof useTranslations>,
+	t: TranslateFn,
 	currency: string,
 ): string {
 	const { minPrice, maxPrice } = card;

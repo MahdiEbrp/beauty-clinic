@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import type { MessageNamespace } from "@/src/i18n/message-key";
 import { Image as ImageIcon } from "lucide-react";
 
 import { Field, Panel, inputClass } from "@/components/create-group/ui";
@@ -12,7 +13,7 @@ export default function AppearanceStep({
 }: {
   imageUrl: string;
   onImageUrlChange: (value: string) => void;
-  ns?: string;
+  ns?: MessageNamespace;
 }) {
   const t = useTranslations(ns ?? "serviceWizard");
 

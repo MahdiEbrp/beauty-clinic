@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import type { MessageKey } from "@/src/i18n/message-key";
 import { Search, X, Loader2, ChevronDown, Check } from "lucide-react";
 import {
   DropdownMenu,
@@ -11,7 +12,7 @@ import {
 import type { StatusFilter } from "./types";
 import { useGroups } from "./groups-context";
 
-type StatusOption = { value: StatusFilter; labelKey: string };
+type StatusOption = { value: StatusFilter; labelKey: MessageKey };
 
 const STATUS_OPTIONS: StatusOption[] = [
   { value: "all", labelKey: "serviceGroups.statusAll" },

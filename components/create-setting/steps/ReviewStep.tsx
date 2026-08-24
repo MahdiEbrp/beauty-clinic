@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import type { MessageNamespace } from "@/src/i18n/message-key";
 import { Check } from "lucide-react";
 import { Panel, ReviewCard, ReviewLabel } from "../../create-group/ui";
 import { SETTING_TYPES } from "../helpers";
@@ -31,7 +32,7 @@ export default function ReviewStep({
   enValue: string;
   displayOrder: string;
   isActive: boolean;
-  ns?: string;
+  ns?: MessageNamespace;
 }) {
   const t = useTranslations(ns ?? "settingWizard");
 

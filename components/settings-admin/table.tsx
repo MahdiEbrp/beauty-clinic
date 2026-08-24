@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations, useLocale } from "next-intl";
+import type { MessageKey } from "@/src/i18n/message-key";
 import { useRouter } from "@/src/i18n/navigation";
 import { Loader2, MoreVertical, Pencil, Power, PowerOff, RefreshCw, Settings as SettingsIcon, Trash2 } from "lucide-react";
 import type { AdminSetting } from "@/lib/settings/admin";
@@ -58,7 +59,7 @@ export function RowActions({ row }: { row: AdminSetting }) {
   const { canWrite, canManage, isSyncing, runAction, setConfirm } = useSettings();
   const state = statusOf(row);
   const disabled = isSyncing(row.id);
-  const menuButton = (key: string, labelKey: string, onClick: () => void, danger?: boolean) => (
+  const menuButton = (key: string, labelKey: MessageKey, onClick: () => void, danger?: boolean) => (
     <DropdownMenuItem disabled={disabled} onSelect={onClick} className={danger ? "text-error focus:bg-error/10 focus:text-error" : "text-accent"}>
       {key === "edit" ? <Pencil className="size-4" /> : key === "activate" ? <Power className="size-4" /> : key === "deactivate" ? <PowerOff className="size-4" /> : <Trash2 className="size-4" />}
       <span>{t(labelKey)}</span>

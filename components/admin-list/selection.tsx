@@ -1,11 +1,12 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { asTranslate } from "@/src/i18n/message-key";
 import { Loader2 } from "lucide-react";
 import { useAdminListContext } from "./context";
 
 export function AdminListSelectionBar<T extends { id: string }>() {
-  const t = useTranslations();
+  const t = asTranslate(useTranslations());
   const ctx = useAdminListContext<T>();
   const { config, data, selectionScope, selectedIds, bulkAction, setBulkAction, bulkDangerous, runBulkAction, clearSelection, busyId } = ctx;
   if (selectedIds.length === 0) return null;
@@ -48,7 +49,7 @@ export function AdminListSelectionBar<T extends { id: string }>() {
 }
 
 export function AdminListSelectFilteredRow<T extends { id: string }>() {
-  const t = useTranslations();
+  const t = asTranslate(useTranslations());
   const ctx = useAdminListContext<T>();
   const { config, data, selectedIds, selectionScope, selectedVisibleCount, visibleIds, selectAllFiltered } = ctx;
   if (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import type { MessageKey } from "@/src/i18n/message-key";
 import { Search, X, Loader2, ChevronDown, Check } from "lucide-react";
 import {
   DropdownMenu,
@@ -12,7 +13,7 @@ import {
 import { useRules } from "./rules-context";
 import type { RuleStatusFilter } from "./types";
 
-type StatusOption = { value: RuleStatusFilter; labelKey: string };
+type StatusOption = { value: RuleStatusFilter; labelKey: MessageKey };
 const STATUS_OPTIONS: StatusOption[] = [
   { value: "all", labelKey: "dashboardRules.statusAll" },
   { value: "active", labelKey: "dashboardRules.statuses.active" },

@@ -7,6 +7,7 @@ import {
   numeric,
   pgEnum,
   pgTable,
+  primaryKey,
   text,
   time,
   timestamp,
@@ -23,14 +24,15 @@ export const bookingStatusEnum = pgEnum("booking_status", [
   "cancelled",
 ]);
 
-/** A staff-managed block of availability (the supply side of booking). */
+/**
+ * A staff-managed block of availability (the supply side of booking).
+ * A slot with no linked services is bookable for every service; linked ones
+ * restrict it to exactly those services (see `bookingSlotServices`).
+ */
 export const bookingSlots = pgTable(
   "booking_slots",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    serviceId: uuid("service_id").references(() => services.id, {
-      onDelete: "set null",
-    }),
     slotDate: date("slot_date").notNull(),
     startTime: time("start_time").notNull(),
     endTime: time("end_time").notNull(),
@@ -44,7 +46,26 @@ export const bookingSlots = pgTable(
   },
   (table) => [
     index("booking_slots_date_active_idx").on(table.slotDate, table.isActive),
-    index("booking_slots_service_date_idx").on(table.serviceId, table.slotDate),
+  ],
+);
+
+/**
+ * Slot ↔ service availability (one slot → many services). An empty set means
+ * the slot accepts every service; any rows restrict it to those services.
+ */
+export const bookingSlotServices = pgTable(
+  "booking_slot_services",
+  {
+    slotId: uuid("slot_id")
+      .notNull()
+      .references(() => bookingSlots.id, { onDelete: "cascade" }),
+    serviceId: uuid("service_id")
+      .notNull()
+      .references(() => services.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    primaryKey({ columns: [table.slotId, table.serviceId] }),
+    index("booking_slot_services_service_idx").on(table.serviceId),
   ],
 );
 
@@ -88,12 +109,20 @@ export const bookings = pgTable(
 );
 
 export const bookingSlotsRelations = relations(bookingSlots, ({ one, many }) => ({
+  creator: one(users, { fields: [bookingSlots.createdBy], references: [users.id] }),
+  services: many(bookingSlotServices),
+  bookings: many(bookings),
+}));
+
+export const bookingSlotServicesRelations = relations(bookingSlotServices, ({ one }) => ({
+  slot: one(bookingSlots, {
+    fields: [bookingSlotServices.slotId],
+    references: [bookingSlots.id],
+  }),
   service: one(services, {
-    fields: [bookingSlots.serviceId],
+    fields: [bookingSlotServices.serviceId],
     references: [services.id],
   }),
-  creator: one(users, { fields: [bookingSlots.createdBy], references: [users.id] }),
-  bookings: many(bookings),
 }));
 
 export const bookingsRelations = relations(bookings, ({ one }) => ({
@@ -111,5 +140,6 @@ export const bookingsRelations = relations(bookings, ({ one }) => ({
 export type BookingStatus = (typeof bookingStatusEnum.enumValues)[number];
 export type BookingSlot = typeof bookingSlots.$inferSelect;
 export type NewBookingSlot = typeof bookingSlots.$inferInsert;
+export type BookingSlotService = typeof bookingSlotServices.$inferSelect;
 export type Booking = typeof bookings.$inferSelect;
 export type NewBooking = typeof bookings.$inferInsert;

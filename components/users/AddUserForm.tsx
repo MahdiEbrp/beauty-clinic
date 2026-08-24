@@ -16,6 +16,8 @@ import {
   Loader2,
   X,
 } from "lucide-react";
+import type { TranslateFn } from "@/src/i18n/message-key";
+import { msgKey } from "@/src/i18n/message-key";
 import type { AddUserValues, EmailState } from "@/components/AddUserModal";
 
 function inputClass(invalid: boolean) {
@@ -83,7 +85,7 @@ export default function AddUserForm({
   errorText: (field: keyof AddUserValues) => string | null;
   onSubmit: SubmitHandler<AddUserValues>;
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  t: (key: string) => string;
+  t: TranslateFn;
 }) {
   return (
     <form
@@ -192,7 +194,7 @@ export default function AddUserForm({
                 className={`inline-flex items-center gap-1.5 ${rule.valid ? "text-success" : ""}`}
               >
                 <Check className="size-3" aria-hidden="true" />
-                {t(`users.form.passwordRules.${rule.key}`)}
+                {t(msgKey(`users.form.passwordRules.${rule.key}`))}
               </span>
             ))}
           </div>
@@ -234,7 +236,7 @@ export default function AddUserForm({
                         className="flex min-h-10 cursor-pointer items-center rounded-control px-3 text-dash-body-sm outline-none data-highlighted:bg-surface-tertiary"
                       >
                         <SelectPrimitive.ItemText>
-                          {t(`users.roles.${role}`)}
+                          {t(msgKey(`users.roles.${role}`))}
                         </SelectPrimitive.ItemText>
                       </SelectPrimitive.Item>
                     ))}

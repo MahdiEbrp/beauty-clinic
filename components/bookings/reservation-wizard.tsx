@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { useRouter } from "@/src/i18n/navigation";
 import type { BookingStatus } from "@/src/db/schema";
 import type { ReservationAdmin } from "@/lib/bookings/admin-types";
+import { DatePickerField } from "@/components/date-time-picker/date-picker-field";
 import { WizardShell, type WizardStep } from "./wizard-shell";
 import { Field, ReviewBlock, inputClass } from "./wizard-fields";
 
@@ -27,6 +28,7 @@ export function ReservationWizard({
   backHref: string;
 }) {
   const t = useTranslations("reservationWizard");
+  const locale = useLocale();
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
@@ -215,11 +217,11 @@ export function ReservationWizard({
           {mode === "create" && (
             <>
               <Field label={t("fields.date.label")}>
-                <input
-                  type="date"
+                <DatePickerField
                   value={slotDate}
-                  onChange={(event) => setSlotDate(event.target.value)}
-                  className={inputClass(Boolean(slotDate))}
+                  onChange={setSlotDate}
+                  locale={locale === "fa" ? "fa" : "en"}
+                  min={new Date().toISOString().slice(0, 10)}
                 />
               </Field>
 

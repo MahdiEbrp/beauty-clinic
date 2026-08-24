@@ -7,6 +7,7 @@ import { formatNumber } from "@/lib/services/format";
 import type { Locale } from "@/lib/services/types";
 import { formatSlotLabel, type CalendarKind } from "@/lib/bookings/dates";
 import { bookingErrorKey } from "@/lib/bookings/errors";
+import { asTranslate } from "@/src/i18n/message-key";
 import { payBooking } from "../api";
 import type { CreatedBooking, SelectedService, SlotOption } from "../types";
 
@@ -19,6 +20,7 @@ type ReviewStepProps = {
 
 export default function ReviewStep({ booking, service, slot, onDone }: ReviewStepProps) {
   const t = useTranslations("booking");
+  const looseT = asTranslate(t);
   const locale = useLocale() as Locale;
   const calendar: CalendarKind = locale === "fa" ? "jalali" : "gregorian";
   const [paying, setPaying] = useState(false);
@@ -53,7 +55,7 @@ export default function ReviewStep({ booking, service, slot, onDone }: ReviewSte
       const paid = await payBooking(booking.id);
       onDone(paid);
     } catch (err) {
-      setError(t(`errors.${bookingErrorKey(err)}`));
+      setError(looseT(`errors.${bookingErrorKey(err)}`));
     } finally {
       setPaying(false);
     }

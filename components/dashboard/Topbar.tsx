@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/navigation";
+import { msgKey } from "@/src/i18n/message-key";
 import {
   Bell,
   ChevronLeft,
@@ -62,7 +63,7 @@ export function Topbar({
   }, [notificationsOpen, searchOpen]);
 
   const searchResults = navItems.filter((item) => {
-    const label = t(`dashboard.sidebar.${item.key}`);
+    const label = t(msgKey(`dashboard.sidebar.${item.key}`));
     const query = searchTerm.trim().toLocaleLowerCase();
     return !query || label.toLocaleLowerCase().includes(query);
   });
@@ -146,7 +147,7 @@ export function Topbar({
                     className="flex min-h-11 items-center gap-3 rounded-control px-3 text-dash-body-sm font-semibold text-content-secondary no-underline transition hover:bg-surface-tertiary hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                   >
                     <item.icon className="size-4" aria-hidden="true" />
-                    <span>{t(`dashboard.sidebar.${item.key}`)}</span>
+                    <span>{t(msgKey(`dashboard.sidebar.${item.key}`))}</span>
                   </Link>
                 ))
               ) : (

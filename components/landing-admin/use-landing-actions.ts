@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { msgKey } from "@/src/i18n/message-key";
 import type { DestructiveConfirm } from "./types";
 import type { LandingListState } from "./use-landing-list";
 import { editPathFor, endpointFor, rowTitle } from "./config";
@@ -100,7 +101,7 @@ export function useLandingActions(list: LandingListState): LandingActionsState {
         ? t("landingAdmin.deactivateDialog.title", { name: confirmName })
         : t("landingAdmin.actions.deleteConfirm", { name: confirmName })
       : confirm
-        ? t(`landingAdmin.bulk.confirm.${confirm.action}`)
+        ? t(msgKey(`landingAdmin.bulk.confirm.${confirm.action}`))
         : "";
   const confirmDescription =
     confirm?.kind === "row"

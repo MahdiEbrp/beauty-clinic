@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import type { MessageNamespace } from "@/src/i18n/message-key";
 import { AlertTriangle } from "lucide-react";
 
 import { siteUrl } from "@/lib/site";
@@ -25,7 +26,7 @@ export default function SeoStep({
   onDescriptionChange: (value: string) => void;
   slug: string;
   faIncomplete: boolean;
-  ns?: string;
+  ns?: MessageNamespace;
 }) {
   const t = useTranslations(ns ?? "groupWizard");
 

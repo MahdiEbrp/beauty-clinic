@@ -3,17 +3,35 @@ import "server-only";
 import { and, desc, eq, ilike, inArray, or, sql, type SQL } from "drizzle-orm";
 
 import { db } from "@/src/db";
-import { bookings, bookingSlots } from "@/src/db/schema";
+import { bookings, bookingSlots, bookingSlotServices, servicesI18n } from "@/src/db/schema";
+import {
+  computeSlotStatus,
+  slotStatusCondition,
+  type SlotStatus,
+} from "./slot-status";
 
 export type SlotFilters = {
   search?: string;
-  status?: "all" | "active" | "inactive";
+  status?: "all" | SlotStatus;
+  serviceId?: string;
 };
 
 function slotConditions(opts: SlotFilters): (SQL | undefined)[] {
   const conditions: (SQL | undefined)[] = [];
-  if (opts.status === "active") conditions.push(eq(bookingSlots.isActive, true));
-  else if (opts.status === "inactive") conditions.push(eq(bookingSlots.isActive, false));
+  if (opts.status && opts.status !== "all") {
+    // Derived-status match (active/inactive/expired) as a raw SQL condition.
+    conditions.push(sql.raw(slotStatusCondition(opts.status)));
+  }
+  if (opts.serviceId) {
+    const noLinks = sql`NOT EXISTS (
+      SELECT 1 FROM ${bookingSlotServices} bss WHERE bss.slot_id = ${bookingSlots.id}
+    )`;
+    const hasLink = sql`EXISTS (
+      SELECT 1 FROM ${bookingSlotServices} bss
+      WHERE bss.slot_id = ${bookingSlots.id} AND bss.service_id = ${opts.serviceId}
+    )`;
+    conditions.push(or(hasLink, noLinks));
+  }
   if (opts.search?.trim()) {
     const term = `%${opts.search.trim()}%`;
     conditions.push(
@@ -91,13 +109,67 @@ async function bookedCounts(slotIds: string[]): Promise<Map<string, number>> {
   return map;
 }
 
+/**
+ * Linked service titles per slot (admin display), batch-loaded with one
+ * `inArray` join across both locales. Slots without links return an empty
+ * list (= all services).
+ */
+async function slotServicesMap(
+  slotIds: string[],
+): Promise<Map<string, SlotAdminRow["services"]>> {
+  const map = new Map<string, SlotAdminRow["services"]>();
+  if (slotIds.length === 0) return map;
+
+  const rows = await db
+    .select({
+      slotId: bookingSlotServices.slotId,
+      serviceId: bookingSlotServices.serviceId,
+      locale: servicesI18n.locale,
+      title: servicesI18n.title,
+    })
+    .from(bookingSlotServices)
+    .innerJoin(servicesI18n, eq(servicesI18n.serviceId, bookingSlotServices.serviceId));
+
+  const byKey = new Map<
+    string,
+    { slotId: string; id: string; titleFa: string; titleEn: string | null }
+  >();
+  for (const row of rows) {
+    const key = `${row.slotId}:${row.serviceId}`;
+    const entry = byKey.get(key) ?? {
+      slotId: row.slotId,
+      id: row.serviceId,
+      titleFa: "",
+      titleEn: null,
+    };
+    if (row.locale === "en") entry.titleEn = row.title;
+    else entry.titleFa = row.title;
+    byKey.set(key, entry);
+  }
+  for (const entry of byKey.values()) {
+    const title = entry.titleFa || entry.titleEn || "";
+    if (!title) continue;
+    const list = map.get(entry.slotId);
+    const item = { id: entry.id, title };
+    if (list) list.push(item);
+    else map.set(entry.slotId, [item]);
+  }
+  return map;
+}
+
 export type SlotAdminRow = {
   id: string;
+  serviceIds: string[];
+  /** Localized linked-service titles; empty when the slot allows all services. */
+  services: Array<{ id: string; title: string }>;
+  allServices: boolean;
   slotDate: string;
   startTime: string;
   endTime: string;
   capacity: number;
   isActive: boolean;
+  /** Derived on read: active | inactive | expired. */
+  status: SlotStatus;
   bookedCount: number;
 };
 
@@ -117,7 +189,8 @@ export async function listSlotsAdmin(query: {
   page: number;
   perPage: number;
   search?: string;
-  status?: "all" | "active" | "inactive";
+  status?: "all" | SlotStatus;
+  serviceId?: string;
 }): Promise<SlotsListResult> {
   const offset = (query.page - 1) * query.perPage;
   const where = and(...slotConditions(query));
@@ -136,16 +209,28 @@ export async function listSlotsAdmin(query: {
     .limit(query.perPage)
     .offset(offset);
 
-  const counts = await bookedCounts(rows.map((row) => row.id));
-  const items: SlotAdminRow[] = rows.map((row) => ({
-    id: row.id,
-    slotDate: row.slotDate,
-    startTime: row.startTime,
-    endTime: row.endTime,
-    capacity: row.capacity,
-    isActive: row.isActive,
-    bookedCount: counts.get(row.id) ?? 0,
-  }));
+  const ids = rows.map((row) => row.id);
+  const [counts, serviceMap] = await Promise.all([
+    bookedCounts(ids),
+    slotServicesMap(ids),
+  ]);
+
+  const items: SlotAdminRow[] = rows.map((row) => {
+    const services = serviceMap.get(row.id) ?? [];
+    return {
+      id: row.id,
+      serviceIds: services.map((s) => s.id),
+      services,
+      allServices: services.length === 0,
+      slotDate: row.slotDate,
+      startTime: row.startTime,
+      endTime: row.endTime,
+      capacity: row.capacity,
+      isActive: row.isActive,
+      status: computeSlotStatus(row.isActive, row.slotDate, row.endTime),
+      bookedCount: counts.get(row.id) ?? 0,
+    };
+  });
 
   return {
     items,

@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import type { MessageKey } from "@/src/i18n/message-key";
 import { Search, X, Loader2, ChevronDown, Check } from "lucide-react";
 import {
   DropdownMenu,
@@ -12,7 +13,7 @@ import { ROLE_KEYS, type RoleFilter, type StatusFilter } from "./types";
 import { useRoleLabel } from "./helpers";
 import { useUsers } from "./users-context";
 
-type StatusOption = { value: StatusFilter; labelKey: string };
+type StatusOption = { value: StatusFilter; labelKey: MessageKey };
 
 const STATUS_OPTIONS: StatusOption[] = [
   { value: "all", labelKey: "users.statusAll" },

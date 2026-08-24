@@ -1,7 +1,9 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { BookingStatus } from "@/src/db/schema";
+import { formatDate, slotToDate } from "@/lib/bookings/dates";
+import type { CalendarKind } from "@/lib/bookings/dates";
 
 export const inputClass = (valid: boolean) =>
   `h-11 w-full rounded-control border bg-form-input-bg px-3 text-dash-body-sm text-accent outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
@@ -63,6 +65,12 @@ export function ReviewBlock({
   slotLabel: string;
 }) {
   const t = useTranslations("reservationWizard");
+  const locale = useLocale();
+  // Review shows the chosen day in the visitor's own calendar system.
+  const kind: CalendarKind = locale === "fa" ? "jalali" : "gregorian";
+  const reviewDate = slotDate
+    ? formatDate(slotToDate(slotDate, "12:00:00"), kind)
+    : "—";
   return (
     <dl className="grid gap-3 sm:grid-cols-2">
       <Row label={t("reviewData.customer")} value={fullName} />
@@ -71,7 +79,7 @@ export function ReviewBlock({
       <Row label={t("reviewData.service")} value={serviceTitle} />
       {mode === "create" ? (
         <>
-          <Row label={t("reviewData.date")} value={slotDate || "—"} />
+          <Row label={t("reviewData.date")} value={reviewDate} />
           <Row label={t("reviewData.time")} value={slotLabel} />
         </>
       ) : (

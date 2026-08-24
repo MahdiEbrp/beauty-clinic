@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { asTranslate } from "@/src/i18n/message-key";
 import { Check, ImageIcon } from "lucide-react";
 import GroupGlyph from "@/components/create-group/GroupGlyph";
 import { Panel, ReviewCard, ReviewLabel } from "@/components/create-group/ui";
@@ -43,6 +44,7 @@ export default function ReviewStep({
   isActive: boolean;
 }) {
   const t = useTranslations("landingForm");
+  const ft = asTranslate(t);
 
   return (
     <div className="grid gap-5">
@@ -75,7 +77,7 @@ export default function ReviewStep({
                 CONTENT_FIELDS[collection].map((field) => (
                 <Row
                   key={field.key}
-                  label={t(field.labelKey)}
+                  label={ft(field.labelKey)}
                   value={
                     
                     content[locale][field.key].trim() || t("review.notProvided")

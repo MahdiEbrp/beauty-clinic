@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { asTranslate } from "@/src/i18n/message-key";
 import { toast } from "sonner";
 import type { AdminListConfig, DestructiveConfirm } from "./types";
 import type { AdminListState } from "./use-admin-list";
@@ -24,7 +25,7 @@ export function useAdminActions<T extends { id: string }>(
   config: AdminListConfig<T>,
   list: AdminListState<T>,
 ): AdminActionsState<T> {
-  const t = useTranslations();
+  const t = asTranslate(useTranslations());
   const { load, debouncedSearch, status, page } = list;
   const [busyId, setBusyId] = useState<string | null>(null);
   const [syncingIds, setSyncingIds] = useState<Set<string>>(new Set());

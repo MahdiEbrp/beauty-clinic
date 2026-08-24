@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations, useFormatter } from "next-intl";
 import { useRouter } from "@/src/i18n/navigation";
+import { msgKey } from "@/src/i18n/message-key";
 import {
   LogOut,
   Monitor,
@@ -73,8 +74,10 @@ export default function DashboardContent({
   const dateTime = (date: Date) =>
     format.dateTime(date, { dateStyle: "medium", timeStyle: "short" });
 
-  const roleLabel = (role: string) =>
-    t.has(`users.roles.${role}`) ? t(`users.roles.${role}`) : role;
+  const roleLabel = (role: string) => {
+    const key = msgKey(`users.roles.${role}`);
+    return t.has(key) ? t(key) : role;
+  };
 
   return (
     <div className="grid gap-8">

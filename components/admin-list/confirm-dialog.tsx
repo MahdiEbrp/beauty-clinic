@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { asTranslate } from "@/src/i18n/message-key";
 import { Loader2 } from "lucide-react";
 import {
   AlertDialog,
@@ -15,7 +16,7 @@ import {
 import { useAdminListContext } from "./context";
 
 export function AdminListConfirmDialog<T extends { id: string }>() {
-  const t = useTranslations();
+  const t = asTranslate(useTranslations());
   const ctx = useAdminListContext<T>();
   const { config, busyId, confirm, setConfirm, runAction, deleteRow, executeBulkAction } = ctx;
   return (

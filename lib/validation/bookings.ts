@@ -18,9 +18,13 @@ export const slotDateSchema = z
   .trim()
   .regex(DATE_PATTERN, "Date must be YYYY-MM-DD");
 
+/**
+ * `serviceIds` links a slot to specific services (one slot → many services).
+ * An empty array or omitted field means the slot is bookable for ALL services.
+ */
 export const createSlotSchema = z
   .object({
-    serviceId: z.uuid().nullable().optional(),
+    serviceIds: z.array(z.uuid()).max(50).optional(),
     slotDate: slotDateSchema,
     startTime: z.string().trim().regex(TIME_PATTERN, "Time must be HH:MM"),
     endTime: z.string().trim().regex(TIME_PATTERN, "Time must be HH:MM"),
@@ -45,6 +49,7 @@ export const createSlotsSchema = z
 
 export const updateSlotSchema = z
   .object({
+    serviceIds: z.array(z.uuid()).max(50).optional(),
     slotDate: slotDateSchema.optional(),
     startTime: z.string().trim().regex(TIME_PATTERN, "Time must be HH:MM").optional(),
     endTime: z.string().trim().regex(TIME_PATTERN, "Time must be HH:MM").optional(),
@@ -110,7 +115,8 @@ export const listSlotsAdminQuerySchema = z
     page: z.coerce.number().int().min(1).max(100000).default(1),
     perPage: z.coerce.number().int().min(1).max(100).default(20),
     search: z.string().trim().max(100).optional(),
-    status: z.enum(["all", "active", "inactive"]).default("all"),
+    status: z.enum(["all", "active", "inactive", "expired"]).default("all"),
+    serviceId: z.uuid().optional(),
   })
   .strict();
 

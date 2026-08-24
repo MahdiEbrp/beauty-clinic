@@ -25,7 +25,8 @@ export async function getBookingsPerformance(): Promise<BookingsPerformance> {
   const [slotRow] = await db
     .select({
       total: sql<number>`count(*)::int`,
-      active: sql<number>`count(*) filter (where ${bookingSlots.isActive})::int`,
+      // Derived-active: toggled on and not yet past its end time.
+      active: sql<number>`count(*) filter (where ${bookingSlots.isActive} and now() <= (${bookingSlots.slotDate} + ${bookingSlots.endTime}))::int`,
     })
     .from(bookingSlots);
 

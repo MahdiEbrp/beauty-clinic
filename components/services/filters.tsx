@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import type { MessageKey } from "@/src/i18n/message-key";
 import { Search, X, Loader2, ChevronDown, Check } from "lucide-react";
 import {
   DropdownMenu,
@@ -11,14 +12,14 @@ import {
 import type { FeaturedFilter, ServiceStatusFilter } from "./types";
 import { useServices } from "./services-context";
 
-type StatusOption = { value: ServiceStatusFilter; labelKey: string };
+type StatusOption = { value: ServiceStatusFilter; labelKey: MessageKey };
 const STATUS_OPTIONS: StatusOption[] = [
   { value: "all", labelKey: "serviceServices.statusAll" },
   { value: "active", labelKey: "serviceServices.statuses.active" },
   { value: "inactive", labelKey: "serviceServices.statuses.inactive" },
 ];
 
-type FeaturedOption = { value: FeaturedFilter; labelKey: string };
+type FeaturedOption = { value: FeaturedFilter; labelKey: MessageKey };
 const FEATURED_OPTIONS: FeaturedOption[] = [
   { value: "all", labelKey: "serviceServices.featuredAll" },
   { value: "yes", labelKey: "serviceServices.featuredYes" },

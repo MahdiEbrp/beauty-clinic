@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { MessageKey, MessageNamespace } from "@/src/i18n/message-key";
 
 export interface ListResult<T> {
   items: T[];
@@ -16,7 +17,7 @@ export type ListFilterParams = {
 
 export interface Column<T> {
   key: string;
-  labelKey: string;
+  labelKey: MessageKey;
   /** `desktop` (default) only shows on md+, `mobile` shows on md and below. */
   responsive?: "desktop" | "mobile";
   render: (row: T) => ReactNode;
@@ -33,7 +34,7 @@ export type RowActionIcon =
 
 export interface RowActionItem {
   key: string;
-  labelKey: string;
+  labelKey: MessageKey;
   onClick: () => void;
   icon: RowActionIcon;
   danger?: boolean;
@@ -55,13 +56,13 @@ export type RowActionCtx<T> = {
 };
 
 export interface AdminListConfig<T extends { id: string }> {
-    namespace: string;
+    namespace: MessageNamespace;
   routeBase: string;
   backHref: string;
   addHref: string;
   listUrl: string;
   permissions: { read: string; write: string; manage: string };
-  statusOptions: Array<{ value: string; labelKey: string }>;
+  statusOptions: Array<{ value: string; labelKey: MessageKey }>;
   columns: Column<T>[];
   renderMobileCard: (row: T) => ReactNode;
   rowActionButtons: (row: T, ctx: RowActionCtx<T>) => RowActionItem[];
@@ -69,7 +70,7 @@ export interface AdminListConfig<T extends { id: string }> {
   statusPatch: (action: string) => Record<string, unknown>;
   /** Human-readable (already translated) confirm heading/description per action. */
   confirmPhrase: (action: string, row: T) => { title: string; description: string };
-  bulkActions: Array<{ key: string; labelKey: string; dangerous?: boolean }>;
+  bulkActions: Array<{ key: string; labelKey: MessageKey; dangerous?: boolean }>;
   executeBulk: (
     action: string,
     ids: string[],

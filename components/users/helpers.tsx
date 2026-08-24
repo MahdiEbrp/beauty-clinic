@@ -17,7 +17,12 @@ export function roleClass(role: string): string {
 export function useRoleLabel(): (role: string) => string {
   const t = useTranslations();
   return (role: string) =>
-    t.has(`users.roles.${role}`) ? t(`users.roles.${role}`) : role;
+    role === "admin" ||
+    role === "doctor" ||
+    role === "receptionist" ||
+    role === "customer"
+      ? t(`users.roles.${role}`)
+      : role;
 }
 
 export function statusOf(row: AdminUser): UserStatus {

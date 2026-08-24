@@ -5,7 +5,7 @@ import { SlotWizard } from "@/components/bookings/slot-wizard";
 import { requirePermission } from "@/lib/auth/dal";
 import { siteUrl } from "@/lib/site";
 
-const ROUTE = "/dashboard/bookings/manage/slots";
+const ROUTE = "/dashboard/slots";
 
 export async function generateMetadata({
   params,

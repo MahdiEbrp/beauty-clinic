@@ -5,8 +5,9 @@ import { Link } from "@/src/i18n/navigation";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { LucideIcon } from "lucide-react";
 import { initials } from "@/lib/utils";
+import { msgKey, type TranslateFn } from "@/src/i18n/message-key";
 
-type Translate = (key: string) => string;
+type Translate = TranslateFn;
 export type SidebarNavItem = { key: string; href: string; icon: LucideIcon };
 
 export function SidebarNavSection({
@@ -42,9 +43,15 @@ export function SidebarNavSection({
             onClick={onNavigate}
             aria-current={isActive(item.href) ? "page" : undefined}
             aria-label={
-              isCollapsed ? t(`dashboard.sidebar.${item.key}`) : undefined
+              isCollapsed
+                ? t(msgKey(`dashboard.sidebar.${item.key}`))
+                : undefined
             }
-            title={isCollapsed ? t(`dashboard.sidebar.${item.key}`) : undefined}
+            title={
+              isCollapsed
+                ? t(msgKey(`dashboard.sidebar.${item.key}`))
+                : undefined
+            }
             className={linkClass(item.href)}
           >
             <item.icon
@@ -54,7 +61,7 @@ export function SidebarNavSection({
             />
             {!isCollapsed && (
               <span className="truncate">
-                {t(`dashboard.sidebar.${item.key}`)}
+                {t(msgKey(`dashboard.sidebar.${item.key}`))}
               </span>
             )}
           </Link>

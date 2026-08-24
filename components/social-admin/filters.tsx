@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import type { MessageKey } from "@/src/i18n/message-key";
 import { Check, ChevronDown, Loader2, Search, X } from "lucide-react";
 import type { SocialLinkStatusFilter } from "@/lib/validation/social-links";
 import { useSocialLinks } from "./social-context";
@@ -11,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const STATUS_OPTIONS: Array<{ value: SocialLinkStatusFilter; labelKey: string }> = [
+const STATUS_OPTIONS: Array<{ value: SocialLinkStatusFilter; labelKey: MessageKey }> = [
   { value: "all", labelKey: "socialAdmin.statusAll" },
   { value: "active", labelKey: "socialAdmin.statuses.active" },
   { value: "inactive", labelKey: "socialAdmin.statuses.inactive" },

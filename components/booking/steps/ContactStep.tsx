@@ -8,8 +8,8 @@ import { z } from "zod";
 import { LoaderCircle } from "lucide-react";
 import { bookingErrorKey } from "@/lib/bookings/errors";
 import { cn } from "@/lib/utils";
+import { asTranslate } from "@/src/i18n/message-key";
 import type { ContactInfo } from "../types";
-
 type ContactStepProps = {
   defaultValues: ContactInfo;
   onContinue: (data: ContactInfo) => Promise<void>;
@@ -20,7 +20,7 @@ const fieldClass =
 
 const labelClass = "block text-caption font-medium text-content-secondary mb-2";
 
-function schema(t: (key: string, values?: Record<string, string | number | Date>) => string) {
+function schema(t: (key: string) => string) {
   return z.object({
     fullName: z.string().trim().min(2, t("contact.errors.name")).max(160),
     phone: z
@@ -35,6 +35,7 @@ function schema(t: (key: string, values?: Record<string, string | number | Date>
 
 export default function ContactStep({ defaultValues, onContinue }: ContactStepProps) {
   const t = useTranslations("booking");
+  const looseT = asTranslate(t);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,7 +44,7 @@ export default function ContactStep({ defaultValues, onContinue }: ContactStepPr
     handleSubmit,
     formState: { errors },
   } = useForm<ContactInfo>({
-    resolver: zodResolver(schema(t)),
+    resolver: zodResolver(schema(looseT)),
     defaultValues,
   });
 
@@ -58,7 +59,7 @@ export default function ContactStep({ defaultValues, onContinue }: ContactStepPr
         notes: data.notes,
       });
     } catch (err) {
-      setError(t(`errors.${bookingErrorKey(err)}`));
+      setError(looseT(`errors.${bookingErrorKey(err)}`));
     } finally {
       setSubmitting(false);
     }

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { msgKey } from "@/src/i18n/message-key";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { ListUsersResult } from "@/lib/users/service";
 import type { BulkAction, RoleFilter, StatusFilter } from "./types";
@@ -178,7 +179,11 @@ export function useUsersList(
   const statusSummary =
     status === "all"
       ? t("users.statusAll")
-      : t(`users.status${status.charAt(0).toUpperCase()}${status.slice(1)}`);
+      : t(
+          msgKey(
+            `users.status${status.charAt(0).toUpperCase()}${status.slice(1)}`,
+          ),
+        );
 
   return {
     currentUser,

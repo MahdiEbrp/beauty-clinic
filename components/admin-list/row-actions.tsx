@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { asTranslate, type TranslateFn } from "@/src/i18n/message-key";
 import { Power, PowerOff, Trash2, Pencil, CheckCircle, XCircle, MoreVertical } from "lucide-react";
 import {
   DropdownMenu,
@@ -23,7 +24,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string; strokeW
 };
 
 export function AdminListRowActions<T extends { id: string }>({ row }: { row: T }) {
-  const t = useTranslations();
+  const t = asTranslate(useTranslations());
   const ctx = useAdminListContext<T>();
   const { config, isSyncing } = ctx;
   const disabled = isSyncing(row.id);
@@ -72,7 +73,7 @@ export function AdminListRowActions<T extends { id: string }>({ row }: { row: T 
 
 function renderItem(
   button: RowActionItem,
-  t: ReturnType<typeof useTranslations>,
+  t: TranslateFn,
   disabled: boolean,
 ) {
   const Icon = ICON_MAP[button.icon] ?? Pencil;

@@ -24,9 +24,9 @@ export function SlotsListView({
 
   const config: AdminListConfig<SlotAdminRow> = {
     namespace: "bookingSlots",
-    routeBase: "/dashboard/bookings/manage/slots",
+    routeBase: "/dashboard/slots",
     backHref: "/dashboard/bookings",
-    addHref: "/dashboard/bookings/manage/slots/add",
+    addHref: "/dashboard/slots/add",
     listUrl: "/api/v1/bookings/slots/list",
     permissions: {
       read: "appointments.read",
@@ -37,6 +37,7 @@ export function SlotsListView({
       { value: "all", labelKey: "bookingSlots.statusAll" },
       { value: "active", labelKey: "bookingSlots.statuses.active" },
       { value: "inactive", labelKey: "bookingSlots.statuses.inactive" },
+      { value: "expired", labelKey: "bookingSlots.statuses.expired" },
     ],
     columns: slotColumns(),
     renderMobileCard: (row) => <SlotMobileCard row={row} />,
@@ -44,7 +45,7 @@ export function SlotsListView({
       {
         key: "edit",
         labelKey: "bookingSlots.actions.edit",
-        onClick: () => router.push(`/dashboard/bookings/manage/slots/${row.id}/edit`),
+        onClick: () => router.push(`/dashboard/slots/${row.id}/edit`),
         icon: "edit",
       },
       row.isActive

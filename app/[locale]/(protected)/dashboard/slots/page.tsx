@@ -8,7 +8,7 @@ import type { ListResult } from "@/components/admin-list/types";
 import type { SlotAdminRow } from "@/lib/bookings/slots-admin";
 import { siteUrl } from "@/lib/site";
 
-const ROUTE = "/dashboard/bookings/manage/slots";
+const ROUTE = "/dashboard/slots";
 
 export async function generateMetadata({
   params,
@@ -32,7 +32,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function ManageSlotsPage() {
+export default async function SlotsPage() {
   const session = await requirePermission("appointments.read");
   const result = await listSlotsAdmin({ page: 1, perPage: 10 });
   const initialData: ListResult<SlotAdminRow> = {

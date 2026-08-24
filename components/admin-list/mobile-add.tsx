@@ -1,12 +1,13 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { asTranslate } from "@/src/i18n/message-key";
 import { Plus } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
 import { useAdminListContext } from "./context";
 
 export function AdminListMobileAdd<T extends { id: string }>() {
-  const t = useTranslations();
+  const t = asTranslate(useTranslations());
   const ctx = useAdminListContext<T>();
   const { config, canWrite } = ctx;
   if (!canWrite) return null;

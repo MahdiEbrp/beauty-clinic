@@ -1,11 +1,12 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { asTranslate } from "@/src/i18n/message-key";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { useAdminListContext } from "./context";
 
 export function AdminListErrorState<T extends { id: string }>() {
-  const t = useTranslations();
+  const t = asTranslate(useTranslations());
   const ctx = useAdminListContext<T>();
   const { config, hasLoadFailed, load, debouncedSearch, status, page } = ctx;
   if (!hasLoadFailed) return null;

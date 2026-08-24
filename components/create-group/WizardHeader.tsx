@@ -1,6 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import type { MessageNamespace } from "@/src/i18n/message-key";
+import { asTranslate } from "@/src/i18n/message-key";
 import { Link } from "@/src/i18n/navigation";
 import { Check, ChevronLeft, Languages } from "lucide-react";
 
@@ -30,11 +32,12 @@ export default function WizardHeader({
   subtitle?: string;
   onLangChange: (value: Locale) => void;
   onGoTo: (next: number) => void;
-  ns?: string;
+  ns?: MessageNamespace;
   steps?: ReadonlyArray<{ id: number; key: string }>;
   backHref?: string;
 }) {
   const t = useTranslations(ns);
+  const stepName = asTranslate(t);
   const progress = Math.round((step / total) * 100);
 
   return (
@@ -65,7 +68,7 @@ export default function WizardHeader({
               aria-hidden="true"
             />
             <h2 className="text-dash-title font-bold tracking-tight text-content-primary">
-              {t(`steps.${currentStepKey}.name`)}
+              {stepName(`steps.${currentStepKey}.name`)}
             </h2>
           </div>
           <span className="text-dash-caption font-semibold text-content-tertiary">
@@ -79,7 +82,7 @@ export default function WizardHeader({
           aria-valuenow={step}
           aria-valuemin={1}
           aria-valuemax={total}
-          aria-label={t(`steps.${currentStepKey}.name`)}
+          aria-label={stepName(`steps.${currentStepKey}.name`)}
         >
           <div
             className="h-full rounded-pill bg-accent transition-all duration-300 ease-out"
@@ -138,7 +141,7 @@ export default function WizardHeader({
                     id
                   )}
                 </span>
-                <span className="hidden sm:inline">{t(`steps.${key}.name`)}</span>
+                <span className="hidden sm:inline">{stepName(`steps.${key}.name`)}</span>
               </button>
             );
           })}

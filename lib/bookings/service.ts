@@ -81,13 +81,14 @@ export async function createBooking(input: {
 }) {
   const settings = await loadSystemSettingsMap();
   const slot = await getSlot(input.slotId);
-  if (!slot.isActive) {
+  if (!slot.isActive || slot.status !== "active") {
     throw new ApiError(409, "SLOT_UNAVAILABLE", "This slot is no longer available.");
   }
   if (slot.bookedCount >= slot.capacity) {
     throw new ApiError(409, "SLOT_FULL", "This time slot has just been taken.");
   }
-  if (slot.serviceId && slot.serviceId !== input.serviceId) {
+  // A slot with linked services only accepts those; no links = every service.
+  if (slot.serviceIds.length > 0 && !slot.serviceIds.includes(input.serviceId)) {
     throw new ApiError(409, "SERVICE_UNAVAILABLE", "This slot does not offer the selected service.");
   }
 

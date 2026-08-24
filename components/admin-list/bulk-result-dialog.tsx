@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { asTranslate } from "@/src/i18n/message-key";
 import { CheckCircle2, XCircle } from "lucide-react";
 import {
   AlertDialog,
@@ -14,7 +15,7 @@ import {
 import { useAdminListContext } from "./context";
 
 export function AdminListBulkResultDialog<T extends { id: string }>() {
-  const t = useTranslations();
+  const t = asTranslate(useTranslations());
   const ctx = useAdminListContext<T>();
   const { config, bulkResult, setBulkResult } = ctx;
   if (!bulkResult) return null;

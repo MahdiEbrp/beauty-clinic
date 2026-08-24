@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import type { MessageNamespace } from "@/src/i18n/message-key";
 import { Search } from "lucide-react";
 import { DynamicIcon, type IconName } from "lucide-react/dynamic";
 
@@ -31,7 +32,7 @@ export default function IconPickerDialog({
   onOpenChange: (open: boolean) => void;
   selected: string;
   onSelect: (key: string) => void;
-  ns?: string;
+  ns?: MessageNamespace;
 }) {
   const t = useTranslations(ns);
   const [search, setSearch] = useState("");

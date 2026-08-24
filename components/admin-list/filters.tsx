@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { asTranslate } from "@/src/i18n/message-key";
 import { Search, X, Loader2, ChevronDown, Check } from "lucide-react";
 import {
   DropdownMenu,
@@ -42,7 +43,7 @@ function FilterPill({
 }
 
 export function AdminListFilters<T extends { id: string }>() {
-  const t = useTranslations();
+  const t = asTranslate(useTranslations());
   const ctx = useAdminListContext<T>();
   const {
     config,

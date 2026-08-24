@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import type { MessageKey, TranslateFn } from "@/src/i18n/message-key";
 import {
   Power,
   PowerOff,
@@ -23,7 +24,7 @@ import { useCategories } from "./categories-context";
 
 interface ActionButton {
   key: string;
-  labelKey: string;
+  labelKey: MessageKey;
   onClick: () => void;
   danger?: boolean;
 }
@@ -35,7 +36,7 @@ function RowActionItem({
 }: {
   button: ActionButton;
   disabled: boolean;
-  t: ReturnType<typeof useTranslations>;
+  t: TranslateFn;
 }) {
   return (
     <DropdownMenuItem

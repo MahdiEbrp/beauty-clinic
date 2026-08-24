@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight, RotateCcw, RotateCw } from "lucide-react";
 import type { PublicGalleryItem } from "@/lib/landing";
+import type { TranslateFn } from "@/src/i18n/message-key";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 const overlayButton =
@@ -29,7 +30,7 @@ export default function GalleryLightbox({
   onRotateLeft: () => void;
   onRotateRight: () => void;
   onSelect: (index: number) => void;
-  t: (key: string, values?: Record<string, string | number>) => string;
+  t: TranslateFn;
 }) {
   const activeTitle = active?.alt ?? active?.caption ?? "";
   return (

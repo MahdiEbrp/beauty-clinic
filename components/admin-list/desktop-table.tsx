@@ -1,12 +1,13 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { asTranslate } from "@/src/i18n/message-key";
 import { useAdminListContext } from "./context";
 import { SelectionCheckbox } from "./helpers";
 import { AdminListRowActions } from "./row-actions";
 
 export function AdminListDesktopTable<T extends { id: string }>() {
-  const t = useTranslations();
+  const t = asTranslate(useTranslations());
   const ctx = useAdminListContext<T>();
   const { config, data, selectionMode, toggleRowSelection, selectedIds, isSyncing } = ctx;
 

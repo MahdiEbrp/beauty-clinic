@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import type { MessageKey } from "@/src/i18n/message-key";
 import { Check, ChevronDown, Loader2, Search, X } from "lucide-react";
 import type { SettingStatusFilter } from "@/lib/validation/settings-admin";
 import { useSettings } from "./settings-context";
@@ -11,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const STATUS_OPTIONS: Array<{ value: SettingStatusFilter; labelKey: string }> = [
+const STATUS_OPTIONS: Array<{ value: SettingStatusFilter; labelKey: MessageKey }> = [
   { value: "all", labelKey: "settingsAdmin.statusAll" },
   { value: "active", labelKey: "settingsAdmin.statuses.active" },
   { value: "inactive", labelKey: "settingsAdmin.statuses.inactive" },

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { asTranslate } from "@/src/i18n/message-key";
 import { toast } from "sonner";
 import type { AdminListConfig, BulkResult } from "./types";
 import type { AdminActionsState } from "./use-admin-actions";
@@ -20,7 +21,7 @@ export function useAdminBulk<T extends { id: string }>(
   list: AdminListState<T>,
   actions: AdminActionsState<T>,
 ): AdminBulkState {
-  const t = useTranslations();
+  const t = asTranslate(useTranslations());
   const {
     load,
     debouncedSearch,

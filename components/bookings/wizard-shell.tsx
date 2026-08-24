@@ -3,10 +3,11 @@
 import { useTranslations } from "next-intl";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
+import { msgKey, type MessageKey, type MessageNamespace } from "@/src/i18n/message-key";
 
 export interface WizardStep {
   key: string;
-  labelKey: string;
+  labelKey: MessageKey;
 }
 
 export function WizardShell({
@@ -22,7 +23,7 @@ export function WizardShell({
   onSubmit,
   children,
 }: {
-  namespace: string;
+  namespace: MessageNamespace;
   backHref: string;
   title: string;
   steps: WizardStep[];
@@ -51,7 +52,7 @@ export function WizardShell({
       <header className="rounded-panel border border-border-primary bg-surface-secondary px-5 py-4 shadow-elevation-2 sm:px-6">
         <h1 className="text-dash-title font-bold tracking-tight text-accent">{title}</h1>
         <p className="mt-1 text-dash-caption text-content-tertiary">
-          {t(`${namespace}.nav.stepOf`, { current: step + 1, total })}
+          {t(msgKey(`${namespace}.nav.stepOf`), { current: step + 1, total })}
         </p>
       </header>
 
@@ -117,16 +118,16 @@ export function WizardShell({
               >
                 {submitting && <Loader2 className="size-4 animate-spin" />}
                 {mode === "create"
-                  ? t(`${namespace}.submit.create`)
-                  : t(`${namespace}.submit.save`)}
+                  ? t(msgKey(`${namespace}.submit.create`))
+                  : t(msgKey(`${namespace}.submit.save`))}
               </button>
             ) : (
-                            <button
+              <button
                 type="submit"
                 disabled={!canContinue}
                 className="inline-flex min-h-11 items-center gap-2 rounded-pill bg-accent px-5 py-2.5 text-dash-body-sm font-bold text-content-contrast shadow-elevation-1 transition hover:bg-accent-hover disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
-                {t(`${namespace}.nav.continue`)}
+                {t(msgKey(`${namespace}.nav.continue`))}
                 <ArrowRight className="size-4 rtl-mirror rtl:rotate-180" aria-hidden="true" />
               </button>
             )}

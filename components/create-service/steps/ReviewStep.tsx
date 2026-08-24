@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import type { MessageNamespace } from "@/src/i18n/message-key";
 import {
   CheckCircle2,
   Clock,
@@ -39,7 +40,7 @@ export default function ReviewStep({
   sessionsCount: string;
   coverImage: string;
   extraSummary?: ReviewExtra;
-  ns?: string;
+  ns?: MessageNamespace;
 }) {
   const t = useTranslations(ns ?? "serviceWizard");
 

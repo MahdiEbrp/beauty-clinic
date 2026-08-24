@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import type { MessageNamespace } from "@/src/i18n/message-key";
 import { Check, Image as ImageIcon } from "lucide-react";
 
 import { LOCALES } from "../helpers";
@@ -24,7 +25,7 @@ export default function ReviewStep({
   isActive: boolean;
   iconKey: string;
   imageUrl: string;
-  ns?: string;
+  ns?: MessageNamespace;
   extraSummary?: { label: string; value: string };
 }) {
   const t = useTranslations(ns ?? "groupWizard");

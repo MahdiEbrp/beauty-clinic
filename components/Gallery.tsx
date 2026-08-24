@@ -4,6 +4,7 @@ import { useRef, useState, useCallback, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import GalleryLightbox from "@/components/gallery/GalleryLightbox";
+import type { TranslateFn } from "@/src/i18n/message-key";
 import type { PublicLanding } from "@/lib/landing";
 
 interface GalleryProps {
@@ -144,7 +145,7 @@ export default function Gallery({ landing }: GalleryProps) {
         onRotateLeft={rotateLeft}
         onRotateRight={rotateRight}
         onSelect={(index) => { setRotation(0); setLightboxIndex(index); }}
-        t={t}
+        t={t as TranslateFn}
       />
     </section>
   );

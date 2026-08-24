@@ -7,7 +7,7 @@ import {
   usePathname,
   useRouter,
 } from "@/src/i18n/navigation";
-import { LayoutDashboard, Sparkles, Users, Files, Shield, LayoutTemplate, Settings, HeartPulse, CalendarClock } from "lucide-react";
+import { LayoutDashboard, Sparkles, Users, Files, Shield, LayoutTemplate, Settings, HeartPulse, CalendarClock, CalendarRange } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { SidebarNavItem } from "@/components/dashboard/SidebarSections";
@@ -62,7 +62,10 @@ export default function DashboardShell({
     ...(canViewUsers ? [{ key: "users", href: "/dashboard/users", icon: Users }] : []),
     ...(canViewFiles ? [{ key: "files", href: "/dashboard/files", icon: Files }] : []),
     ...(canViewBookings
-      ? [{ key: "bookings", href: "/dashboard/bookings", icon: CalendarClock }]
+      ? [
+          { key: "bookings", href: "/dashboard/bookings", icon: CalendarClock },
+          { key: "slots", href: "/dashboard/slots", icon: CalendarRange },
+        ]
       : []),
     ...(canViewSettings
       ? [{ key: "settings", href: "/dashboard/settings", icon: Settings }]

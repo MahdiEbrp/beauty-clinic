@@ -2,6 +2,7 @@
 
 import {
   CalendarClock,
+  CalendarRange,
   CheckCircle2,
   CreditCard,
   Inbox,
@@ -46,9 +47,9 @@ export function buildHubCards(
       key: "slots",
       title: t("hub.slots.name"),
       description: t("hub.slots.description"),
-      href: "/dashboard/bookings/manage/slots",
-      addHref: "/dashboard/bookings/manage/slots/add",
-      icon: CalendarClock,
+      href: "/dashboard/slots",
+      addHref: "/dashboard/slots/add",
+      icon: CalendarRange,
       badge: t("counts.active", { count: formatNumber(data.slots.active) }),
       features: [
         { icon: CalendarClock, label: t("hub.slots.featureTime") },

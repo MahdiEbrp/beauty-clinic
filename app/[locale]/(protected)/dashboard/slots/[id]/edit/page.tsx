@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { z } from "zod";
 
-import { SlotWizard } from "@/components/bookings/slot-wizard";
+import { SlotWizard, type SlotEditData } from "@/components/bookings/slot-wizard";
 import { requirePermission } from "@/lib/auth/dal";
 import { getSlot } from "@/lib/bookings/slots";
-import type { SlotAdminRow } from "@/lib/bookings/slots-admin";
 import { siteUrl } from "@/lib/site";
 
-const ROUTE = "/dashboard/bookings/manage/slots";
+const ROUTE = "/dashboard/slots";
 
 export async function generateMetadata({
   params,
@@ -37,21 +37,17 @@ export default async function EditSlotPage({
 }) {
   await requirePermission("appointments.write");
   const { id } = await params;
-  const slot = (await getSlot(id)) as unknown as SlotAdminRow;
+  if (!z.uuid().safeParse(id).success) notFound();
+  const slot = await getSlot(id);
   if (!slot) notFound();
-  return (
-    <SlotWizard
-      mode="edit"
-      slot={{
-        id: slot.id,
-        slotDate: String(slot.slotDate).slice(0, 10),
-        startTime: String(slot.startTime),
-        endTime: String(slot.endTime),
-        capacity: slot.capacity,
-        isActive: slot.isActive,
-        bookedCount: 0,
-      }}
-      backHref={ROUTE}
-    />
-  );
+  const editData: SlotEditData = {
+    id: slot.id,
+    slotDate: String(slot.slotDate).slice(0, 10),
+    startTime: String(slot.startTime).slice(0, 5),
+    endTime: String(slot.endTime).slice(0, 5),
+    capacity: slot.capacity,
+    isActive: slot.isActive,
+    serviceIds: slot.serviceIds,
+  };
+  return <SlotWizard mode="edit" slot={editData} backHref={ROUTE} />;
 }

@@ -243,7 +243,8 @@
     },
     "cta": {
       "book": "Book an appointment",
-      "details": "Read more"
+      "details": "Read more",
+      "addToCart": "Add to cart"
     },
     "card": {
       "options": "{count, plural, one {# option} other {# options}}",
@@ -475,7 +476,8 @@
       "landing": "Landing",
       "settings": "Settings",
       "care": "Care Guide",
-      "bookings": "Bookings"
+      "bookings": "Bookings",
+      "slots": "Time Slots"
     },
     "topbar": {
       "breadcrumbLabel": "Dashboard breadcrumb",
@@ -649,7 +651,11 @@
       "confirm": {
         "ban": "Ban the selected users?",
         "delete": "Soft-delete the selected users?",
-        "reset-password": "Generate temporary passwords for the selected users?"
+        "reset-password": "Generate temporary passwords for the selected users?",
+        "activate": "Activate the selected users?",
+        "deactivate": "Deactivate the selected users?",
+        "unban": "Unban the selected users?",
+        "change-role": "Change the role of the selected users?"
       },
       "error": "The bulk action failed.",
       "confirmDescription": "This action will be applied to the selected accounts and may change their access.",
@@ -746,7 +752,8 @@
       "selectPage": "Select groups on this page",
       "confirm": {
         "delete": "Delete the selected groups?",
-        "deactivate": "Deactivate the selected groups?"
+        "deactivate": "Deactivate the selected groups?",
+        "activate": "Activate the selected groups?"
       },
       "confirmDescription": "This action will be applied to the selected groups and may change their visibility.",
       "resultTitle": "Bulk action result",
@@ -829,7 +836,8 @@
       "selectFiltered": "Select all {count} filtered results",
       "confirm": {
         "delete": "Delete the selected categories?",
-        "deactivate": "Deactivate the selected categories?"
+        "deactivate": "Deactivate the selected categories?",
+        "activate": "Activate the selected categories?"
       },
       "confirmDescription": "This action will be applied to the selected categories and may change their visibility.",
       "resultTitle": "Bulk action completed",
@@ -990,7 +998,9 @@
       "trashedMany": "Moved {count} items to trash.",
       "copiedMany": "Copied {count} items.",
       "partialFailure": "{count} operation(s) failed.",
-      "error": "The action failed. Please try again."
+      "error": "The action failed. Please try again.",
+      "directoryExists": "A folder with this name already exists.",
+      "fileNameTaken": "A file with this name already exists."
     }
   },
   "forbidden": {
@@ -1321,7 +1331,8 @@
       "english": "English",
       "persian": "Persian",
       "submit": "Create Service Group",
-      "creating": "Creating…"
+      "creating": "Creating…",
+      "imagePreview": "Preview"
     },
     "nav": {
       "back": "Back",
@@ -1480,7 +1491,8 @@
       "optimized": "Optimized",
       "incomplete": "Incomplete",
       "english": "English",
-      "persian": "Persian"
+      "persian": "Persian",
+      "imagePreview": "Preview"
     },
     "nav": {
       "back": "Back",
@@ -1650,7 +1662,8 @@
       "title": "Title",
       "shortDesc": "Short description",
       "image": "Cover image",
-      "notSet": "Not set"
+      "notSet": "Not set",
+      "imagePreview": "Preview"
     },
     "errors": {
       "generic": "An error occurred",
@@ -1741,7 +1754,8 @@
       "selectPage": "Select rules on this page",
       "confirm": {
         "delete": "Delete the selected rules?",
-        "deactivate": "Deactivate the selected rules?"
+        "deactivate": "Deactivate the selected rules?",
+        "activate": "Activate the selected rules?"
       },
       "confirmDescription": "This action will be applied to the selected rules and may change their visibility.",
       "resultTitle": "Bulk action result",
@@ -1860,7 +1874,8 @@
       "english": "English",
       "persian": "Persian",
       "submit": "Create Rule",
-      "creating": "Creating…"
+      "creating": "Creating…",
+      "imagePreview": "Preview"
     },
     "nav": {
       "back": "Back",
@@ -1906,7 +1921,8 @@
     "statusAll": "All",
     "statuses": {
       "active": "Active",
-      "inactive": "Inactive"
+      "inactive": "Inactive",
+      "all": "All"
     },
     "clearFilters": "Clear filters",
     "loading": "Loading...",
@@ -1958,7 +1974,8 @@
       "selectFiltered": "Select all {count} filtered results",
       "confirm": {
         "delete": "Delete the selected items?",
-        "deactivate": "Deactivate the selected items?"
+        "deactivate": "Deactivate the selected items?",
+        "activate": "Activate the selected items?"
       },
       "confirmDescription": "This action will be applied to the selected items and may change their visibility.",
       "resultTitle": "Bulk action completed",
@@ -2351,7 +2368,8 @@
       "fa": "Persian",
       "en": "English",
       "true": "true",
-      "false": "false"
+      "false": "false",
+      "imagePreview": "Preview"
     },
     "errors": {
       "keyInvalid": "Use lowercase letters, numbers, dots and underscores only.",
@@ -2367,7 +2385,8 @@
       "saving": "Saving changes...",
       "created": "Setting created",
       "updated": "Setting updated",
-      "error": "Something went wrong"
+      "error": "Something went wrong",
+      "keyTaken": "This key is already taken."
     },
     "nav": {
       "back": "Back",
@@ -2523,7 +2542,8 @@
       "displayOrder": "Display Order",
       "active": "Status",
       "activeYes": "Active",
-      "activeNo": "Inactive"
+      "activeNo": "Inactive",
+      "imagePreview": "Preview"
     },
     "errors": {
       "urlInvalid": "Enter a valid http(s) URL.",
@@ -2641,7 +2661,8 @@
       "selectPage": "Select guides on this page",
       "confirm": {
         "delete": "Delete the selected guides?",
-        "deactivate": "Deactivate the selected guides?"
+        "deactivate": "Deactivate the selected guides?",
+        "activate": "Activate the selected guides?"
       },
       "confirmDescription": "This action will be applied to the selected guides and may change their visibility.",
       "resultTitle": "Bulk action result",
@@ -2729,7 +2750,8 @@
       "selectPage": "Select items on this page",
       "confirm": {
         "delete": "Delete the selected items?",
-        "deactivate": "Deactivate the selected items?"
+        "deactivate": "Deactivate the selected items?",
+        "activate": "Activate the selected items?"
       },
       "confirmDescription": "This action will be applied to the selected items and may change their visibility.",
       "resultTitle": "Bulk action result",
@@ -2804,7 +2826,8 @@
       "title": "Icon",
       "hint": "Choose an icon for this care guide.",
       "badge": "Appearance",
-      "icon": "Choose icon"
+      "icon": "Choose icon",
+      "imagePreview": "Preview"
     },
     "localization": {
       "title": "Bilingual Content",
@@ -2826,7 +2849,8 @@
       "notProvided": "—",
       "notSet": "Not set",
       "english": "English",
-      "persian": "Persian"
+      "persian": "Persian",
+      "imagePreview": "Preview"
     },
     "nav": {
       "back": "Back",
@@ -2930,7 +2954,8 @@
       "featured": "Highlight",
       "notProvided": "—",
       "english": "English",
-      "persian": "Persian"
+      "persian": "Persian",
+      "imagePreview": "Preview"
     },
     "nav": {
       "back": "Back",
@@ -3074,6 +3099,17 @@
     "back": "Back to reservations",
     "select": "Select"
   },
+  "dateTimePicker": {
+    "chooseDate": "Select date",
+    "calendarToggle": "Calendar type",
+    "today": "Today",
+    "hour": "Hour",
+    "minute": "Minute",
+    "calendar": {
+      "gregorian": "Gregorian",
+      "jalali": "Jalali"
+    }
+  },
   "bookingSlots": {
     "meta": {
       "title": "Availability Slots | Nafas Beauty Clinic",
@@ -3090,7 +3126,8 @@
     "clearFilters": "Clear filters",
     "statuses": {
       "active": "Active",
-      "inactive": "Closed"
+      "inactive": "Closed",
+      "expired": "Expired"
     },
     "errorTitle": "Something went wrong",
     "errorDescription": "We couldn't load the slots. Please try again.",
@@ -3100,6 +3137,7 @@
     "table": {
       "date": "Date",
       "time": "Time",
+      "services": "Services",
       "capacity": "Capacity",
       "booked": "Booked",
       "status": "Status"
@@ -3148,7 +3186,8 @@
       "deleted": "Slot deleted",
       "error": "Something went wrong"
     },
-    "select": "Select"
+    "select": "Select",
+    "allServices": "All services"
   },
   "reservationWizard": {
     "title": {
@@ -3163,7 +3202,8 @@
     },
     "review": {
       "title": "Review Reservation",
-      "description": "Verify the details before finalizing."
+      "description": "Verify the details before finalizing.",
+      "imagePreview": "Preview"
     },
     "fields": {
       "customerName": {
@@ -3246,9 +3286,13 @@
       "stepOf": "Step {current} of {total}"
     },
     "fields": {
-      "service": {
-        "label": "Service (optional)",
-        "placeholder": "Leave empty for any service"
+      "services": {
+        "label": "Services",
+        "searchPlaceholder": "Search services…",
+        "noResults": "No services match your search.",
+        "empty": "No active services yet.",
+        "allHint": "Nothing selected — this slot is bookable for every service.",
+        "count": "{count} selected — only these services can book this slot."
       },
       "date": {
         "label": "Date",
@@ -3265,12 +3309,18 @@
       "capacity": {
         "label": "Capacity",
         "hint": "Max bookings per slot"
+      },
+      "isActive": {
+        "label": "Open for booking",
+        "hintOn": "Customers can see and reserve this slot.",
+        "hintOff": "Hidden from customers; existing reservations stay."
       }
     },
     "status": {
       "label": "Status",
       "active": "Active",
-      "inactive": "Closed"
+      "inactive": "Closed",
+      "expired": "Expired"
     },
     "errors": {
       "endBeforeStart": "End time must be after start time.",
@@ -3290,6 +3340,13 @@
     "steps": {
       "details": "Details",
       "review": "Review"
+    },
+    "reviewData": {
+      "servicesAll": "All services",
+      "statusLabel": "Status"
+    },
+    "review": {
+      "imagePreview": "Preview"
     }
   }
 }

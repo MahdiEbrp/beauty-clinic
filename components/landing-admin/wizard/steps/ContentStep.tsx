@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { asTranslate } from "@/src/i18n/message-key";
 import type { Locale } from "@/lib/services/types";
 import { Field, Panel, inputClass } from "@/components/create-group/ui";
 import { LangBadge } from "../../forms/fields";
@@ -22,6 +23,7 @@ export default function ContentStep({
   onChange: (key: string, value: string) => void;
 }) {
   const t = useTranslations("landingForm");
+  const ft = asTranslate(t);
 
   return (
     <Panel>
@@ -40,8 +42,8 @@ export default function ContentStep({
             <Field
               key={field.key}
               id={`landing-field-${field.key}-${lang}`}
-              label={t(field.labelKey)}
-              hint={field.hintKey ? t(field.hintKey) : undefined}
+              label={ft(field.labelKey)}
+              hint={field.hintKey ? ft(field.hintKey) : undefined}
               error={error}
               required={field.required}
             >
@@ -51,7 +53,7 @@ export default function ContentStep({
                   dir={lang === "fa" ? "rtl" : "ltr"}
                   value={content[lang][field.key]}
                   onChange={(event) => onChange(field.key, event.target.value)}
-                  placeholder={t(field.placeholderKey)}
+                  placeholder={ft(field.placeholderKey)}
                   rows={field.rows ?? 3}
                   className={`${inputClass(Boolean(error))} resize-y py-3`}
                 />
@@ -61,7 +63,7 @@ export default function ContentStep({
                   dir={lang === "fa" ? "rtl" : "ltr"}
                   value={content[lang][field.key]}
                   onChange={(event) => onChange(field.key, event.target.value)}
-                  placeholder={t(field.placeholderKey)}
+                  placeholder={ft(field.placeholderKey)}
                   className={inputClass(Boolean(error))}
                 />
               )}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import type { MessageNamespace } from "@/src/i18n/message-key";
 import { Check, Sparkles } from "lucide-react";
 
 import { Panel, ReviewCard, ReviewLabel } from "../../create-group/ui";
@@ -17,7 +18,7 @@ export default function ReviewStep({
   guideName: string;
   isActive: boolean;
   highlighted: boolean;
-  ns?: string;
+  ns?: MessageNamespace;
 }) {
   const t = useTranslations(ns);
 
