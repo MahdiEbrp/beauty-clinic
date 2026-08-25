@@ -171,9 +171,9 @@ function CalendarDropdown(props: React.SelectHTMLAttributes<HTMLSelectElement>) 
                 disabled={opt.disabled}
                 className={cn(
                   "relative flex h-9 cursor-pointer select-none items-center rounded-control px-3 pr-8 text-dash-body-sm text-accent outline-none transition-colors",
-                  "focus:bg-surface-tertiary data-[highlighted]:bg-surface-tertiary",
+                  "focus:bg-surface-tertiary data-highlighted:bg-surface-tertiary",
                   "data-[state=checked]:bg-accent-subtle data-[state=checked]:font-bold",
-                  "data-[disabled]:pointer-events-none data-[disabled]:opacity-30",
+                  "data-disabled:pointer-events-none data-disabled:opacity-30",
                 )}
               >
                 <SelectPrimitive.ItemText>{opt.label}</SelectPrimitive.ItemText>
