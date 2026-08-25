@@ -9,28 +9,31 @@ import type { ReservationAdmin } from "@/lib/bookings/admin-types";
 import { DatePickerField } from "@/components/date-time-picker/date-picker-field";
 import { WizardShell, type WizardStep } from "./wizard-shell";
 import { Field, ReviewBlock, inputClass } from "./wizard-fields";
+import {
+  ServiceSelectStep,
+  type ServiceOption,
+} from "./service-select-step";
 
 const STEPS: WizardStep[] = [
-  { key: "customer", labelKey: "reservationWizard.steps.details" },
+  { key: "service", labelKey: "reservationWizard.steps.service" },
+  { key: "customer", labelKey: "reservationWizard.steps.customer" },
   { key: "review", labelKey: "reservationWizard.steps.review" },
 ];
-
-type ServiceOption = { id: string; title: string };
-type SlotOption = { id: string; label: string };
-
 export function ReservationWizard({
   mode,
   reservation,
   backHref,
+  currency,
 }: {
   mode: "create" | "edit";
   reservation?: ReservationAdmin | null;
   backHref: string;
+  currency: string;
 }) {
   const t = useTranslations("reservationWizard");
   const locale = useLocale();
   const router = useRouter();
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(mode === "edit" ? 1 : 0);
   const [submitting, setSubmitting] = useState(false);
 
   const [fullName, setFullName] = useState(reservation?.fullName ?? "");
@@ -39,10 +42,11 @@ export function ReservationWizard({
   const [notes, setNotes] = useState(reservation?.notes ?? "");
   const [status, setStatus] = useState<BookingStatus>(reservation?.status ?? "pending");
 
-  const [serviceId, setServiceId] = useState("");
+  const [serviceId, setServiceId] = useState(reservation?.serviceId ?? "");
   const [services, setServices] = useState<ServiceOption[]>([]);
+  const [servicesLoading, setServicesLoading] = useState(true);
   const [slotDate, setSlotDate] = useState("");
-  const [slots, setSlots] = useState<SlotOption[]>([]);
+  const [slots, setSlots] = useState<Array<{ id: string; label: string }>>([]);
   const [slotId, setSlotId] = useState("");
 
   useEffect(() => {
@@ -54,11 +58,24 @@ export function ReservationWizard({
         });
         if (!res.ok) return;
         const payload = (await res.json()) as {
-          data: { items: Array<{ id: string; title: string }> };
+          data: {
+            items: Array<{
+              id: string;
+              title: string;
+              price: number | null;
+              priceType: "fixed" | "from" | "on_request";
+              durationMin: number | null;
+              sessionsCount: number;
+              categoryName: string;
+              groupName: string;
+            }>;
+          };
         };
         if (active) setServices(payload.data.items);
       } catch {
         // optional
+      } finally {
+        if (active) setServicesLoading(false);
       }
     })();
     return () => {
@@ -66,7 +83,6 @@ export function ReservationWizard({
     };
   }, []);
 
-  // Load bookable slots for the chosen date/service.
   useEffect(() => {
     if (!slotDate) return;
     let active = true;
@@ -98,7 +114,8 @@ export function ReservationWizard({
 
   const customerValid =
     fullName.trim().length >= 2 && /^[0-9+][0-9\s()-]{6,19}$/.test(phone.trim());
-  const canContinue = step === 0 ? customerValid : true;
+  const canContinue =
+    step === 0 ? Boolean(serviceId) : step === 1 ? customerValid : true;
 
   const submit = async () => {
     setSubmitting(true);
@@ -164,7 +181,15 @@ export function ReservationWizard({
       mode={mode}
       onSubmit={submit}
     >
-            {step === 0 ? (
+      {step === 0 ? (
+        <ServiceSelectStep
+          services={services}
+          selectedId={serviceId}
+          onSelect={setServiceId}
+          loading={servicesLoading}
+          currency={currency}
+        />
+      ) : step === 1 ? (
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label={t("fields.customerName.label")}>
             <input
@@ -196,22 +221,6 @@ export function ReservationWizard({
               placeholder={t("fields.email.placeholder")}
               className={inputClass(true)}
             />
-          </Field>
-
-          <Field label={t("fields.service.label")}>
-            <select
-              value={serviceId}
-              onChange={(event) => setServiceId(event.target.value)}
-              disabled={mode === "edit"}
-              className={`${inputClass(mode === "create" ? Boolean(serviceId) : true)} disabled:opacity-60`}
-            >
-              <option value="">{t("fields.service.placeholder")}</option>
-              {services.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.title}
-                </option>
-              ))}
-            </select>
           </Field>
 
           {mode === "create" && (

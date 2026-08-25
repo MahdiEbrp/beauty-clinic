@@ -3270,8 +3270,17 @@
       "error": "Could not save the reservation."
     },
     "steps": {
-      "details": "Details",
+      "service": "Select Service",
+      "customer": "Customer Details",
       "review": "Review"
+    },
+    "serviceStep": {
+      "searchPlaceholder": "Search services…",
+      "uncategorized": "Other Services",
+      "emptyTitle": "No services available",
+      "emptyDescription": "Create a service first before adding a reservation.",
+      "createService": "Create Service",
+      "minutes": "min"
     }
   },
   "slotWizard": {
@@ -3338,8 +3347,12 @@
       "error": "Could not save the slot."
     },
     "steps": {
-      "details": "Details",
-      "review": "Review"
+      "details": {
+        "name": "Details"
+      },
+      "review": {
+        "name": "Review"
+      }
     },
     "reviewData": {
       "servicesAll": "All services",

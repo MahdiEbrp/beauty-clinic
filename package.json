@@ -23,6 +23,7 @@
     "@codemirror/lang-json": "^6.0.2",
     "@codemirror/lang-markdown": "^6.5.2",
     "@hookform/resolvers": "^5.7.1",
+    "@radix-ui/react-select": "^2.3.7",
     "@uiw/react-codemirror": "^4.25.11",
     "@upstash/redis": "^1.38.1",
     "argon2": "^0.45.1",

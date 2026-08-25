@@ -6,6 +6,8 @@ import { ReservationWizard } from "@/components/bookings/reservation-wizard";
 import { requirePermission } from "@/lib/auth/dal";
 import { getBooking } from "@/lib/bookings/service";
 import { toReservationAdmin } from "@/lib/bookings/admin-types";
+import { getClinicData } from "@/data/clinic";
+import type { Locale } from "@/lib/services/types";
 import { siteUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/bookings/manage/reservations";
@@ -36,12 +38,20 @@ export default async function EditReservationPage({
   params: Promise<{ locale: string; id: string }>;
 }) {
   await requirePermission("appointments.write");
-  const { id } = await params;
+  const { locale, id } = await params;
+  const clinic = await getClinicData(locale as Locale);
   let reservation = null;
   try {
     reservation = toReservationAdmin(await getBooking(id));
   } catch {
     notFound();
   }
-  return <ReservationWizard mode="edit" reservation={reservation} backHref={ROUTE} />;
+  return (
+    <ReservationWizard
+      mode="edit"
+      reservation={reservation}
+      backHref={ROUTE}
+      currency={clinic.currency}
+    />
+  );
 }

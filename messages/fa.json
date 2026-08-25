@@ -3270,8 +3270,17 @@
       "error": "ذخیره رزرو انجام نشد."
     },
     "steps": {
-      "details": "جزئیات",
+      "service": "انتخاب خدمت",
+      "customer": "اطلاعات مشتری",
       "review": "بازبینی"
+    },
+    "serviceStep": {
+      "searchPlaceholder": "جستجوی خدمات…",
+      "uncategorized": "سایر خدمات",
+      "emptyTitle": "خدمتی موجود نیست",
+      "emptyDescription": "ابتدا یک خدمت ایجاد کنید.",
+      "createService": "ایجاد خدمت",
+      "minutes": "دقیقه"
     }
   },
   "slotWizard": {
@@ -3338,8 +3347,12 @@
       "error": "ذخیره نوبت انجام نشد."
     },
     "steps": {
-      "details": "جزئیات",
-      "review": "بازبینی"
+      "details": {
+        "name": "جزئیات"
+      },
+      "review": {
+        "name": "بازبینی"
+      }
     },
     "reviewData": {
       "servicesAll": "همه خدمات",

@@ -3,6 +3,8 @@ import { getTranslations } from "next-intl/server";
 
 import { ReservationWizard } from "@/components/bookings/reservation-wizard";
 import { requirePermission } from "@/lib/auth/dal";
+import { getClinicData } from "@/data/clinic";
+import type { Locale } from "@/lib/services/types";
 import { siteUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/bookings/manage/reservations";
@@ -27,7 +29,13 @@ export async function generateMetadata({
   };
 }
 
-export default async function AddReservationPage() {
+export default async function AddReservationPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   await requirePermission("appointments.write");
-  return <ReservationWizard mode="create" backHref={ROUTE} />;
+  const { locale } = await params;
+  const clinic = await getClinicData(locale as Locale);
+  return <ReservationWizard mode="create" backHref={ROUTE} currency={clinic.currency} />;
 }
