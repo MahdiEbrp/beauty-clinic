@@ -17,8 +17,8 @@ import {
 } from "./service-multi-select";
 
 const STEPS: WizardStep[] = [
-  { key: "details", labelKey: "slotWizard.steps.details" },
-  { key: "review", labelKey: "slotWizard.steps.review" },
+  { key: "details", labelKey: "slotWizard.steps.details.name" },
+  { key: "review", labelKey: "slotWizard.steps.review.name" },
 ];
 
 export type SlotEditData = {

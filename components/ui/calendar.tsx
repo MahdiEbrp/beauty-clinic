@@ -1,22 +1,27 @@
 import * as React from "react";
 import { ChevronLeft, ChevronRight, ChevronDown, Check } from "lucide-react";
-import { DayPicker as GregorianDayPicker } from "react-day-picker";
+import { DayPicker as GregorianDayPicker, type Matcher } from "react-day-picker";
 import { enUS, faIR } from "react-day-picker/locale";
 import { DayPicker as PersianDayPicker } from "react-day-picker/persian";
 import { enUS as enUSJalali, faIR as faIRJalali } from "react-day-picker/persian";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { cn } from "@/lib/utils";
 
+export type CalendarKind = "gregorian" | "jalali";
+
 export type CalendarProps = {
-  kind?: "gregorian" | "jalali";
+  kind?: CalendarKind;
   locale?: "en" | "fa";
   selected?: Date;
   onSelect?: (date: Date | undefined) => void;
-  disabled?: (date: Date) => boolean;
+  disabled?: Matcher | Matcher[];
   startMonth?: Date;
   endMonth?: Date;
   className?: string;
 };
+
+/** How many years beyond the current year the dropdown calendar may select. */
+const BOOKING_YEARS_AHEAD = 5;
 
 const dayButtonClass =
   "inline-flex size-full items-center justify-center rounded-control text-dash-body-sm font-normal text-accent transition-colors hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
@@ -200,13 +205,23 @@ export function Calendar({
   className,
 }: CalendarProps) {
   const classNames = useCalendarClassNames();
+
+  // RDP v9 pins the dropdown year range to end-of-current-year when no
+  // endMonth toYear is supplied (getNavMonths defaults endMonth to
+  // endOfYear(today)). That makes the year dropdown unusable past the
+  // current year. Default to a generous future horizon so future dates can
+  // be selected, while keeping an explicit endMonth when callers need one.
+  const futureEndMonth =
+    endMonth ??
+    new Date(new Date().getFullYear() + BOOKING_YEARS_AHEAD, 11, 31);
+
   const shared = {
     mode: "single" as const,
     selected,
     onSelect,
     disabled,
     startMonth,
-    endMonth,
+    endMonth: futureEndMonth,
     showOutsideDays: true,
     numerals: "latn" as const,
     captionLayout: "dropdown" as const,
