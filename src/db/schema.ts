@@ -248,15 +248,11 @@ export const serviceGroups = pgTable(
   "service_groups",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    name: text("name").notNull(),
     slug: text("slug").notNull(),
-    description: text("description"),
     icon: text("icon"),
     image: text("image"),
     displayOrder: integer("display_order").notNull().default(0),
     isActive: boolean("is_active").notNull().default(true),
-    seoTitle: text("seo_title"),
-    seoDescription: text("seo_description"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -273,15 +269,11 @@ export const serviceCategories = pgTable(
     groupId: uuid("group_id")
       .notNull()
       .references(() => serviceGroups.id, { onDelete: "cascade" }),
-    name: text("name").notNull(),
     slug: text("slug").notNull(),
-    description: text("description"),
     icon: text("icon"),
     image: text("image"),
     displayOrder: integer("display_order").notNull().default(0),
     isActive: boolean("is_active").notNull().default(true),
-    seoTitle: text("seo_title"),
-    seoDescription: text("seo_description"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -299,10 +291,7 @@ export const services = pgTable(
     categoryId: uuid("category_id")
       .notNull()
       .references(() => serviceCategories.id, { onDelete: "cascade" }),
-    title: text("title").notNull(),
     slug: text("slug").notNull(),
-    shortDesc: text("short_desc"),
-    fullDesc: text("full_desc"),
     price: numeric("price", { precision: 10, scale: 2 }),
     priceType: priceTypeEnum("price_type").notNull().default("fixed"),
     durationMin: integer("duration_min"),
@@ -344,16 +333,74 @@ export const serviceFaqs = pgTable(
     serviceId: uuid("service_id")
       .notNull()
       .references(() => services.id, { onDelete: "cascade" }),
-    question: text("question").notNull(),
-    answer: text("answer").notNull(),
     displayOrder: integer("display_order").notNull().default(0),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [index("service_faqs_service_id_idx").on(table.serviceId)],
 );
 
+export const localeEnum = pgEnum("locale", ["en", "fa"]);
+
+export const serviceGroupsI18n = pgTable(
+  "service_groups_i18n",
+  {
+    groupId: uuid("group_id")
+      .notNull()
+      .references(() => serviceGroups.id, { onDelete: "cascade", onUpdate: "cascade" }),
+    locale: localeEnum("locale").notNull(),
+    name: text("name").notNull(),
+    description: text("description"),
+    seoTitle: text("seo_title"),
+    seoDescription: text("seo_description"),
+  },
+  (table) => [primaryKey({ columns: [table.groupId, table.locale] })],
+);
+
+export const serviceCategoriesI18n = pgTable(
+  "service_categories_i18n",
+  {
+    categoryId: uuid("category_id")
+      .notNull()
+      .references(() => serviceCategories.id, { onDelete: "cascade", onUpdate: "cascade" }),
+    locale: localeEnum("locale").notNull(),
+    name: text("name").notNull(),
+    description: text("description"),
+    seoTitle: text("seo_title"),
+    seoDescription: text("seo_description"),
+  },
+  (table) => [primaryKey({ columns: [table.categoryId, table.locale] })],
+);
+
+export const servicesI18n = pgTable(
+  "services_i18n",
+  {
+    serviceId: uuid("service_id")
+      .notNull()
+      .references(() => services.id, { onDelete: "cascade", onUpdate: "cascade" }),
+    locale: localeEnum("locale").notNull(),
+    title: text("title").notNull(),
+    shortDesc: text("short_desc"),
+    fullDesc: text("full_desc"),
+  },
+  (table) => [primaryKey({ columns: [table.serviceId, table.locale] })],
+);
+
+export const serviceFaqsI18n = pgTable(
+  "service_faqs_i18n",
+  {
+    faqId: uuid("faq_id")
+      .notNull()
+      .references(() => serviceFaqs.id, { onDelete: "cascade", onUpdate: "cascade" }),
+    locale: localeEnum("locale").notNull(),
+    question: text("question").notNull(),
+    answer: text("answer").notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.faqId, table.locale] })],
+);
+
 export const serviceGroupsRelations = relations(serviceGroups, ({ many }) => ({
   categories: many(serviceCategories),
+  i18n: many(serviceGroupsI18n),
 }));
 
 export const serviceCategoriesRelations = relations(serviceCategories, ({ one, many }) => ({
@@ -362,6 +409,7 @@ export const serviceCategoriesRelations = relations(serviceCategories, ({ one, m
     references: [serviceGroups.id],
   }),
   services: many(services),
+  i18n: many(serviceCategoriesI18n),
 }));
 
 export const servicesRelations = relations(services, ({ one, many }) => ({
@@ -371,14 +419,32 @@ export const servicesRelations = relations(services, ({ one, many }) => ({
   }),
   images: many(serviceImages),
   faqs: many(serviceFaqs),
+  i18n: many(servicesI18n),
 }));
 
 export const serviceImagesRelations = relations(serviceImages, ({ one }) => ({
   service: one(services, { fields: [serviceImages.serviceId], references: [services.id] }),
 }));
 
-export const serviceFaqsRelations = relations(serviceFaqs, ({ one }) => ({
+export const serviceFaqsRelations = relations(serviceFaqs, ({ one, many }) => ({
   service: one(services, { fields: [serviceFaqs.serviceId], references: [services.id] }),
+  i18n: many(serviceFaqsI18n),
+}));
+
+export const serviceGroupsI18nRelations = relations(serviceGroupsI18n, ({ one }) => ({
+  group: one(serviceGroups, { fields: [serviceGroupsI18n.groupId], references: [serviceGroups.id] }),
+}));
+
+export const serviceCategoriesI18nRelations = relations(serviceCategoriesI18n, ({ one }) => ({
+  category: one(serviceCategories, { fields: [serviceCategoriesI18n.categoryId], references: [serviceCategories.id] }),
+}));
+
+export const servicesI18nRelations = relations(servicesI18n, ({ one }) => ({
+  service: one(services, { fields: [servicesI18n.serviceId], references: [services.id] }),
+}));
+
+export const serviceFaqsI18nRelations = relations(serviceFaqsI18n, ({ one }) => ({
+  faq: one(serviceFaqs, { fields: [serviceFaqsI18n.faqId], references: [serviceFaqs.id] }),
 }));
 
 export type ServiceGroup = typeof serviceGroups.$inferSelect;
@@ -389,3 +455,11 @@ export type Service = typeof services.$inferSelect;
 export type NewService = typeof services.$inferInsert;
 export type ServiceImage = typeof serviceImages.$inferSelect;
 export type ServiceFaq = typeof serviceFaqs.$inferSelect;
+export type ServiceGroupI18n = typeof serviceGroupsI18n.$inferSelect;
+export type NewServiceGroupI18n = typeof serviceGroupsI18n.$inferInsert;
+export type ServiceCategoryI18n = typeof serviceCategoriesI18n.$inferSelect;
+export type NewServiceCategoryI18n = typeof serviceCategoriesI18n.$inferInsert;
+export type ServiceI18n = typeof servicesI18n.$inferSelect;
+export type NewServiceI18n = typeof servicesI18n.$inferInsert;
+export type ServiceFaqI18n = typeof serviceFaqsI18n.$inferSelect;
+export type NewServiceFaqI18n = typeof serviceFaqsI18n.$inferInsert;
