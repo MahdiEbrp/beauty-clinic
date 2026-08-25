@@ -17,7 +17,8 @@ Full rulebook: `DESIGN_RULES.md` — read it before any UI/design work.
 - Full RTL: logical properties (`start`/`end`, `ms`/`me`), `rtl-mirror` on directional icons; responsive from 4k down to 300px.
 - Interactives ≥ 44×44px; never remove focus rings (`focus-visible:outline-accent`).
 - Images use native `<img>` (never `next/image`), so pre-signed/third-party URLs load directly in the browser; Persian digits via the `ss01` font feature (Estedad), never `Intl.NumberFormat` fa digits.
-- Lists/tables need dedicated empty + error states and skeleton loading.
+- **Never use native `<select>`** — a native select's open list is drawn by the OS/browser, so it can't be themed. Always use Radix `Select` via `import * as SelectPrimitive from "@radix-ui/react-select"`. The dropdown must match the same theme as `components/ui/calendar.tsx` `CalendarDropdown` (copper hover/open border + ring, `bg-surface-secondary` content, `shadow-elevation-3`, `rounded-control`, custom `Check` item indicator, RTL-safe logical props).
+- Lists/tables need empty + error states and skeleton loading.
 
 ## Routing conventions
 

@@ -1,6 +1,7 @@
 "use client";
 
-import { Clock, ChevronDown } from "lucide-react";
+import * as SelectPrimitive from "@radix-ui/react-select";
+import { Clock, ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
@@ -20,9 +21,77 @@ export interface TimePickerFieldProps {
 
 /**
  * Clean, accessible localized HH:mm time picker built with design system tokens.
- * Solves the nested border container collision, removes OS-native select clunkiness,
- * and provides responsive touch targets with unified focus rings.
+ * Solves the nested border container collision and removes OS-native select
+ * clunkiness. Hours and minutes use Radix SelectPrimitive so the OPEN option
+ * list is real themed DOM (not an OS popup), matching the calendar dropdown.
  */
+function Segment({
+  value,
+  options,
+  label,
+  disabled,
+  onChange,
+}: {
+  value: string;
+  options: readonly string[];
+  label: string;
+  disabled: boolean;
+  onChange: (next: string) => void;
+}) {
+  return (
+    <SelectPrimitive.Root
+      value={value || undefined}
+      onValueChange={(next) => {
+        if (next) onChange(next);
+      }}
+      disabled={disabled}
+    >
+      <SelectPrimitive.Trigger
+        aria-label={label}
+        className="relative flex h-full min-w-0 flex-1 items-center justify-between rounded-md px-1.5 outline-none transition-colors hover:bg-surface-tertiary/40 data-[state=open]:bg-surface-tertiary/40 focus-visible:ring-2 focus-visible:ring-copper/40"
+      >
+        <SelectPrimitive.Value
+          placeholder={label}
+          className="pointer-events-none truncate text-dash-body-sm font-semibold tracking-tight data-placeholder:font-normal data-placeholder:text-content-tertiary"
+        />
+        <SelectPrimitive.Icon className="shrink-0">
+          <ChevronDown
+            className="size-3 text-content-tertiary"
+            aria-hidden="true"
+          />
+        </SelectPrimitive.Icon>
+      </SelectPrimitive.Trigger>
+
+      <SelectPrimitive.Portal>
+        <SelectPrimitive.Content
+          position="popper"
+          sideOffset={4}
+          className="z-50 max-h-64 overflow-y-auto rounded-control border border-border-primary bg-surface-secondary text-accent shadow-elevation-3 animate-fade-in"
+        >
+          <SelectPrimitive.Viewport className="p-1">
+            {options.map((opt) => (
+              <SelectPrimitive.Item
+                key={opt}
+                value={opt}
+                className={cn(
+                  "relative flex h-9 cursor-pointer select-none items-center rounded-control px-3 pe-8 text-dash-body-sm text-accent outline-none transition-colors",
+                  "focus:bg-surface-tertiary data-highlighted:bg-surface-tertiary",
+                  "data-[state=checked]:bg-accent-subtle data-[state=checked]:font-bold",
+                )}
+              >
+                <SelectPrimitive.ItemText>{opt}</SelectPrimitive.ItemText>
+                <SelectPrimitive.ItemIndicator className="absolute inset-e-2.5 inline-flex items-center">
+                  <Check className="size-3.5 text-copper-strong" aria-hidden="true" />
+                </SelectPrimitive.ItemIndicator>
+              </SelectPrimitive.Item>
+            ))}
+          </SelectPrimitive.Viewport>
+        </SelectPrimitive.Content>
+      </SelectPrimitive.Portal>
+    </SelectPrimitive.Root>
+  );
+}
+
 export function TimePickerField({
   value = "",
   onChange,
@@ -37,16 +106,12 @@ export function TimePickerField({
 
   const handleHourChange = (newHour: string) => {
     const currentMin = minute || "00";
-    if (newHour) {
-      onChange(`${newHour}:${currentMin}`);
-    }
+    onChange(`${newHour}:${currentMin}`);
   };
 
   const handleMinuteChange = (newMin: string) => {
     const currentHour = hour || "00";
-    if (newMin) {
-      onChange(`${currentHour}:${newMin}`);
-    }
+    onChange(`${currentHour}:${newMin}`);
   };
 
   return (
@@ -75,84 +140,30 @@ export function TimePickerField({
       />
 
       {/* Hour Segment */}
-      <div className="relative flex flex-1 items-center justify-between min-w-0 h-full rounded-md px-1.5 hover:bg-surface-tertiary/40 transition-colors">
-        <span
-          className={cn(
-            "truncate text-dash-body-sm font-semibold tracking-tight pointer-events-none",
-            hour ? "text-content-primary" : "text-content-tertiary font-normal",
-          )}
-        >
-          {hour || hourLabel}
-        </span>
-        <ChevronDown
-          className="size-3 shrink-0 text-content-tertiary pointer-events-none ml-1 rtl:mr-1 rtl:ml-0"
-          aria-hidden="true"
-        />
-        <select
-          aria-label={hourLabel}
-          disabled={disabled}
-          value={hour}
-          onChange={(e) => handleHourChange(e.target.value)}
-          className="absolute inset-0 size-full cursor-pointer appearance-none bg-transparent opacity-0 scheme-light focus:outline-none"
-        >
-          <option value="" disabled className="text-content-tertiary bg-surface-primary">
-            {hourLabel}
-          </option>
-          {HOURS.map((opt) => (
-            <option
-              key={opt}
-              value={opt}
-              className="bg-surface-secondary text-content-primary py-1"
-            >
-              {opt}
-            </option>
-          ))}
-        </select>
-      </div>
+      <Segment
+        value={hour}
+        options={HOURS}
+        label={hourLabel}
+        disabled={disabled}
+        onChange={handleHourChange}
+      />
 
       {/* Colon Separator */}
       <span
-        className="shrink-0 text-dash-body-sm font-bold text-content-tertiary select-none px-0.5"
+        className="shrink-0 select-none px-0.5 text-dash-body-sm font-bold text-content-tertiary"
         aria-hidden="true"
       >
         :
       </span>
 
       {/* Minute Segment */}
-      <div className="relative flex flex-1 items-center justify-between min-w-0 h-full rounded-md px-1.5 hover:bg-surface-tertiary/40 transition-colors">
-        <span
-          className={cn(
-            "truncate text-dash-body-sm font-semibold tracking-tight pointer-events-none",
-            minute ? "text-content-primary" : "text-content-tertiary font-normal",
-          )}
-        >
-          {minute || minuteLabel}
-        </span>
-        <ChevronDown
-          className="size-3 shrink-0 text-content-tertiary pointer-events-none ml-1 rtl:mr-1 rtl:ml-0"
-          aria-hidden="true"
-        />
-        <select
-          aria-label={minuteLabel}
-          disabled={disabled}
-          value={minute}
-          onChange={(e) => handleMinuteChange(e.target.value)}
-          className="absolute inset-0 size-full cursor-pointer appearance-none bg-transparent opacity-0 scheme-light focus:outline-none"
-        >
-          <option value="" disabled className="text-content-tertiary bg-surface-primary">
-            {minuteLabel}
-          </option>
-          {MINUTES.map((opt) => (
-            <option
-              key={opt}
-              value={opt}
-              className="bg-surface-secondary text-content-primary py-1"
-            >
-              {opt}
-            </option>
-          ))}
-        </select>
-      </div>
+      <Segment
+        value={minute}
+        options={MINUTES}
+        label={minuteLabel}
+        disabled={disabled}
+        onChange={handleMinuteChange}
+      />
     </div>
   );
 }
