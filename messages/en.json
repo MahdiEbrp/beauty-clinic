@@ -181,6 +181,30 @@
     "save": "Save changes"
   },
   "pricing": {
+    "updated": "Last updated:",
+    "badge": "Transparent medical pricing & treatments",
+    "jump": {
+      "label": "Table of contents",
+      "sections": "{count, plural, one {# section} other {# sections}}",
+      "scrollTop": "Scroll to top",
+      "itemLabel": "Jump to {title}"
+    },
+    "search": {
+      "label": "Search services",
+      "placeholder": "Search treatments or categories…",
+      "clear": "Clear search"
+    },
+    "faq": {
+      "heading": "Frequently asked questions"
+    },
+    "article": {
+      "featured": "Most requested",
+      "category": "Medical category",
+      "certified": "Medical certified",
+      "book": "Book",
+      "minutes": "min",
+      "sessions": "{count, plural, one {# session} other {# sessions}}"
+    },
     "meta": {
       "title": "Service Pricing | Nafas Beauty Clinic",
       "description": "Complete price list for Nafas Clinic beauty services including filler, botox, mesotherapy and laser with top brands"

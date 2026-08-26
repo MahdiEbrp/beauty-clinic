@@ -1,4 +1,5 @@
 import type { SettingInput } from "@/lib/validation/settings-admin";
+import { PRICING_PAGE_SETTINGS } from "./pricing-settings";
 
 export const ROLE_DEFS = [
   { key: "admin", name: "Admin", description: "Full platform access" },
@@ -163,6 +164,7 @@ export const SYSTEM_SETTINGS: SettingInput[] = [
     type: "localized",
     translations: { fa: "در تب جدید باز می‌شود", en: "Opens in new tab" },
   },
+  ...PRICING_PAGE_SETTINGS,
 ];
 
 export const SOCIAL_LINKS = [
