@@ -9,6 +9,8 @@ const envSchema = z.object({
   CORS_ORIGINS: z.string().optional(),
   FILE_STORAGE_ROOT: z.string().optional(),
   FILE_MAX_BYTES: z.coerce.number().int().positive().optional(),
+  KV_REST_API_URL: z.string().optional(),
+  KV_REST_API_TOKEN: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

@@ -9,15 +9,15 @@ import Gallery from "@/components/Gallery";
 import Contact from "@/components/Contact";
 import FloatingBookingButton from "@/components/FloatingBookingButton";
 import type { ClinicData } from "@/data/clinic";
-import { usePublicLanding } from "@/lib/hooks/use-public-landing";
+import type { PublicLanding } from "@/lib/landing";
 
 interface HomePageProps {
   clinicData: ClinicData;
+  landing: PublicLanding | null;
 }
 
-export default function HomePage({ clinicData }: HomePageProps) {
+export default function HomePage({ clinicData, landing }: HomePageProps) {
   const router = useRouter();
-  const landing = usePublicLanding();
   const openBooking = () => router.push("/booking");
 
   return (

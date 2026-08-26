@@ -41,6 +41,7 @@ export default function Services({ landing }: ServicesProps) {
   }, []);
 
   const start = useCallback(() => {
+    if (count === 0) return;
     if (typeof window !== "undefined") {
       const reduceMotion = window.matchMedia(
         "(prefers-reduced-motion: reduce)",
@@ -181,7 +182,7 @@ export default function Services({ landing }: ServicesProps) {
       )}
 
       <p className="sr-only" role="status">
-        {t("slideName", { title: current.title })}
+        {current && t("slideName", { title: current.title })}
       </p>
     </section>
   );

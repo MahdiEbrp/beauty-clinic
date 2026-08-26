@@ -38,6 +38,8 @@ export default async function Page({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const clinicData = await getClinicData(locale as Parameters<typeof getClinicData>[0]);
-  return <HomePage clinicData={clinicData} />;
+  const localeTyped = locale as Locale;
+  const landing = await getPublicLanding(localeTyped);
+  const clinicData = await getClinicData(localeTyped);
+  return <HomePage clinicData={clinicData} landing={landing} />;
 }
