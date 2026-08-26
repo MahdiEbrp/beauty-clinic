@@ -14,18 +14,6 @@ export type PricingJumpNavProps = {
   itemLabel?: string;
 };
 
-/**
- * Editorial Dual-Mode Pricing Jump Navigation:
- * - Large Screens (>= lg): Fixed Start/Sidebar Navigation (sticky to top viewport)
- *   with an editorial Table of Contents list, active indicators, and counts.
- * - Small/Medium Screens (< lg): Sticky Bottom Action Bar with quick-jump
- *   active capsule, drawer trigger, and back-to-top button. Zero horizontal
- *   scrollbar clipping.
- *
- * All text is supplied via props so the caller (PricingArticle) drives it
- * through `next-intl` `t()` keys — no hardcoded strings here. State and
- * observers live here; the DOM is delegated to the two focused sub-components.
- */
 export default function PricingJumpNav({
   groups = [],
   label = "",
@@ -36,25 +24,33 @@ export default function PricingJumpNav({
   itemLabel = "",
 }: PricingJumpNavProps) {
   const [active, setActive] = useState<string>(groups[0]?.slug || "");
-
-  // IntersectionObserver to sync scroll position with the active group.
   useEffect(() => {
     if (groups.length === 0) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActive(entry.target.id.replace(/^pricing-/, ""));
-          }
+
+    const getActiveSlug = () => {
+      const offset = 140; // matches your scroll offset + some buffer
+      let current = groups[0]?.slug || "";
+
+      for (const group of groups) {
+        const el = document.getElementById(`pricing-${group.slug}`);
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top;
+        if (top - offset <= 0) {
+          current = group.slug;
+        } else {
+          break;
         }
-      },
-      { rootMargin: "-15% 0px -60% 0px", threshold: 0.1 }
-    );
-    groups.forEach((group) => {
-      const el = document.getElementById(`pricing-${group.slug}`);
-      if (el) observer.observe(el);
-    });
-    return () => observer.disconnect();
+      }
+      return current;
+    };
+
+    const handleScroll = () => {
+      setActive(getActiveSlug());
+    };
+
+    handleScroll(); // set initial state
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [groups]);
 
   if (groups.length === 0) return null;

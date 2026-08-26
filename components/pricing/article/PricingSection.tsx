@@ -1,6 +1,5 @@
 import React from "react";
 import PricingCategory from "./PricingCategory";
-import { useTranslations } from "next-intl";
 import type { PricingGroup, PricingService } from "@/lib/services/pricing-page";
 
 export type PricingSectionProps = {
@@ -21,7 +20,6 @@ export default function PricingSection({
   index = 0,
   onBook,
 }: PricingSectionProps) {
-  const t = useTranslations();
 
   return (
     <article
@@ -32,9 +30,6 @@ export default function PricingSection({
         <div className="flex items-center gap-2">
           <span className="flex size-6 items-center justify-center rounded-full bg-copper/20 text-xs font-bold text-copper-strong">
             {String(index + 1).padStart(2, "0")}
-          </span>
-          <span className="text-dash-caption font-bold uppercase tracking-wider text-copper">
-            {t("pricing.article.category")}
           </span>
         </div>
         <h3 className="text-2xl font-bold text-accent tracking-tight">
