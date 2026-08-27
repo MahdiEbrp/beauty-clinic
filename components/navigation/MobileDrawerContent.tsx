@@ -12,21 +12,43 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { iconForCatalog } from "@/data/services";
-import type { PublicNavCatalog } from "@/lib/services/types";
+import type { PublicNavCatalog, PublicNavGroup } from "@/lib/services/types";
 import type { NavKey, RouteNavKey } from "@/data/navigation";
 import type { AuthUser } from "@/lib/auth/dal";
 
-export type DrawerLink = { key: NavKey | RouteNavKey; href: string };
+export type DrawerLink = { key: NavKey | RouteNavKey; href: string; };
 
 const rowBase =
   "flex w-full items-center gap-3 rounded-control text-body-sm font-semibold no-underline transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 
 function rowClass(active: boolean) {
-  return `${rowBase} min-h-11 px-4 ${
-    active
+  return `${rowBase} min-h-11 px-4 ${active
       ? "border-s-2 border-accent bg-accent text-content-contrast shadow-elevation-1"
       : "text-content-secondary hover:bg-surface-tertiary hover:text-accent"
-  }`;
+    }`;
+}
+
+/**
+ * Flattens a group's categories into a de-duplicated { category, service }
+ * list. Mirrors the fix already applied in ServicesMegaMenu.tsx: if a
+ * service slug appears under more than one category of the same group
+ * (stale/over-constrained catalog data), React sees sibling <Link>s with
+ * the same `key`, logs "Encountered two children with the same key" for
+ * every affected slug, and can duplicate/drop rows on re-render. We keep
+ * only the first occurrence per group, tagged with the category it came
+ * from so the subheading logic below still works.
+ */
+function dedupedServices(group: PublicNavGroup) {
+  const seen = new Set<string>();
+  return group.categories.flatMap((category) =>
+    category.services
+      .filter((service) => {
+        if (seen.has(service.slug)) return false;
+        seen.add(service.slug);
+        return true;
+      })
+      .map((service) => ({ category, service })),
+  );
 }
 
 /**
@@ -104,32 +126,47 @@ export default function MobileDrawerContent({
             <AccordionContent className="pb-2 pt-1">
               {groups.map((group) => {
                 const Icon = iconForCatalog(group.icon);
+                const rows = dedupedServices(group);
+                let lastCategorySlug: string | null = null;
+
                 return (
-                  <div key={group.slug} className="mb-3 last:mb-0">
-                    <div className="flex min-h-9 items-center gap-2 pe-4 ps-8 text-caption font-bold text-accent">
-                      <Icon className="size-4 shrink-0" strokeWidth={2} aria-hidden="true" />
+                  <div
+                    key={group.slug}
+                    className="mb-4 last:mb-0 border-s-2 border-border-primary ps-3"
+                  >
+                    <div className="mb-1.5 flex min-h-9 items-center gap-2 text-caption font-bold uppercase tracking-wide text-accent">
+                      <span
+                        className="flex size-6 shrink-0 items-center justify-center rounded-pill bg-copper/15 text-copper-strong"
+                        aria-hidden="true"
+                      >
+                        <Icon className="size-3.5" strokeWidth={2} />
+                      </span>
                       <span className="truncate">{group.title}</span>
                     </div>
 
-                    {group.categories.map((category) => (
-                      <div key={category.slug}>
-                        {group.categories.length > 1 && (
-                          <p className="mb-0.5 mt-1.5 truncate pe-4 ps-12 text-tiny font-semibold uppercase tracking-wide text-content-tertiary">
-                            {category.title}
-                          </p>
-                        )}
-                        {category.services.map((service) => (
-                          <Link
-                            key={service.slug}
-                            href={`/pricing#pricing-${group.slug}-${service.slug}`}
-                            onClick={onClose}
-                            className={`${rowBase} min-h-9 pe-4 ps-12 text-caption text-content-secondary hover:bg-surface-tertiary hover:text-accent`}
-                          >
-                            <span className="truncate">{service.title}</span>
-                          </Link>
-                        ))}
-                      </div>
-                    ))}
+                    <div className="flex flex-col">
+                      {rows.map(({ category, service }) => {
+                        const showSubheading =
+                          group.categories.length > 1 && category.slug !== lastCategorySlug;
+                        lastCategorySlug = category.slug;
+                        return (
+                          <div key={`${category.slug}-${service.slug}`}>
+                            {showSubheading && (
+                              <p className="mb-0.5 mt-2 truncate ps-2 text-tiny font-semibold uppercase tracking-wide text-content-tertiary first:mt-0">
+                                {category.title}
+                              </p>
+                            )}
+                            <Link
+                              href={`/pricing#pricing-${group.slug}-${service.slug}`}
+                              onClick={onClose}
+                              className={`${rowBase} min-h-9 px-2 text-caption text-content-secondary hover:bg-surface-tertiary hover:text-accent`}
+                            >
+                              <span className="truncate">{service.title}</span>
+                            </Link>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 );
               })}

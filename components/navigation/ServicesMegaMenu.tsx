@@ -2,93 +2,280 @@
 
 import { ArrowLeft, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
+
 import { Link } from "@/src/i18n/navigation";
+
 import {
   NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+
 import { iconForCatalog } from "@/data/services";
 import type { PublicNavCatalog } from "@/lib/services/types";
 
 const groupHeaderClass =
-  "flex items-center gap-2 px-3 pb-2 pt-1 text-body-sm font-bold text-accent";
+  "mb-1.5 flex items-center gap-2 border-b border-border-primary/60 pb-1.5";
 
-const serviceLinkClass =
-  "group flex min-h-9 items-center gap-2 rounded-control px-3 py-1.5 text-caption text-content-secondary no-underline transition-colors hover:bg-surface-tertiary hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+const serviceLinkClass = [
+  "group/link",
+  "flex min-h-7 w-full items-center justify-between gap-2",
+  "rounded-control px-2 py-1",
+  "text-caption leading-5",
+  "text-content-secondary no-underline",
+  "transition-colors duration-150",
+  "hover:bg-accent-subtle hover:text-accent",
+  "focus-visible:outline-2 focus-visible:outline-offset-2",
+  "focus-visible:outline-accent",
+].join(" ");
 
-
-export default function ServicesMegaMenu({ catalog }: { catalog: PublicNavCatalog | null }) {
+export default function ServicesMegaMenu({
+  catalog,
+}: {
+  catalog: PublicNavCatalog | null;
+}) {
   const t = useTranslations();
+
   const groups = catalog?.groups ?? [];
 
-  if (groups.length === 0) return null;
+  if (groups.length === 0) {
+    return null;
+  }
 
   return (
     <NavigationMenuItem>
-      <NavigationMenuTrigger>{t("nav.services")}</NavigationMenuTrigger>
-      <NavigationMenuContent>
-        <div className="flex w-[min(calc(100vw-3rem),58rem)] flex-col">
-          <div className="grid max-h-[min(70vh,32rem)] grid-cols-1 gap-x-2 gap-y-4 overflow-y-auto p-4 sm:grid-cols-2 sm:p-6 lg:grid-cols-3">
-            {groups.map((group) => {
-              const Icon = iconForCatalog(group.icon);
-              // The mega menu flattens every category's services into a single
-              // <ul>, whose <li> items are keyed by service.slug. If a service
-              // ever sits under two categories of the same group (stale or
-              // over-constrained catalog data), that flat list would contain
-              // two siblings with the same key, which React treats as an error,
-              // re-renders repeatedly and can crash the page when the menu
-              // opens. Collapse to the first occurrence per group so the keys
-              // are always unique. (Categories aren't shown here anyway.)
-              const seen = new Set<string>();
-              const services = group.categories.flatMap((category) =>
-                category.services.filter((service) => {
-                  if (seen.has(service.slug)) return false;
-                  seen.add(service.slug);
-                  return true;
-                }),
-              );
-              return (
-                <div key={group.slug}>
-                  <div className={groupHeaderClass}>
-                    <span
-                      className="flex size-7 shrink-0 items-center justify-center rounded-pill bg-copper/15 text-copper-strong"
-                      aria-hidden="true"
-                    >
-                      <Icon className="size-4" strokeWidth={2} />
-                    </span>
-                    <span className="truncate">{group.title}</span>
-                  </div>
+      <NavigationMenuTrigger>
+        {t("nav.services")}
+      </NavigationMenuTrigger>
 
-                  <ul className="m-0 list-none">
-                    {services.map((service) => (
-                        <li key={service.slug}>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href={`/pricing#pricing-${group.slug}-${service.slug}`}
-                              className={serviceLinkClass}
-                            >
-                              <span className="truncate">{service.title}</span>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                      ))}
-                  </ul>
-                </div>
-              );
-            })}
+      <NavigationMenuContent>
+        <div
+          className="
+            w-[min(calc(100vw-2rem),56rem)]
+            overflow-hidden
+            rounded-panel
+            border
+            border-border-primary
+            bg-surface
+            shadow-elevation-2
+          "
+        >
+          {/* Main menu */}
+          <div className="relative">
+            {/* Very subtle top accent */}
+            <div
+              className="
+                pointer-events-none
+                absolute inset-x-0 top-0
+                h-16
+                bg-linear-to-b
+                from-copper/[0.035]
+                to-transparent
+              "
+              aria-hidden="true"
+            />
+
+            <div
+              className="
+                relative
+                max-h-[min(70vh,36rem)]
+                overflow-y-auto
+                px-3.5
+                py-3.5
+                sm:px-4
+                sm:py-4
+              "
+            >
+              {/* 
+                CSS columns are intentional here.
+
+                Unlike grid:
+                - groups don't create large empty spaces
+                - content flows vertically
+                - each group stays intact
+                - 3 columns are used on large screens
+                - 2 on tablets
+                - 1 on mobile
+              */}
+              <div
+                className="
+                  columns-1
+                  gap-x-7
+                  sm:columns-2
+                  lg:columns-3
+                "
+              >
+                {groups.map((group) => {
+                  const Icon = iconForCatalog(group.icon);
+
+                  /*
+                   * Deduplicate services inside a group.
+                   * This protects against stale catalog data where the
+                   * same service exists in multiple categories.
+                   */
+                  const seen = new Set<string>();
+
+                  const services = group.categories.flatMap((category) =>
+                    category.services.filter((service) => {
+                      if (seen.has(service.slug)) {
+                        return false;
+                      }
+
+                      seen.add(service.slug);
+
+                      return true;
+                    }),
+                  );
+
+                  /*
+                   * Don't render empty groups.
+                   * This also prevents unnecessary blank areas in columns.
+                   */
+                  if (services.length === 0) {
+                    return null;
+                  }
+
+                  return (
+                    <section
+                      key={group.slug}
+                      className="
+                        mb-4
+                        break-inside-avoid
+                        align-top
+                      "
+                    >
+                      {/* Group header */}
+                      <div className={groupHeaderClass}>
+                        <span
+                          className="
+                            flex size-6.5 shrink-0
+                            items-center justify-center
+                            rounded-control
+                            bg-copper/10
+                            text-copper-strong
+                          "
+                          aria-hidden="true"
+                        >
+                          <Icon
+                            className="size-3.5"
+                            strokeWidth={2}
+                          />
+                        </span>
+
+                        <span
+                          className="
+                            min-w-0
+                            truncate
+                            text-caption
+                            font-bold
+                            text-accent
+                          "
+                        >
+                          {group.title}
+                        </span>
+
+                        <span
+                          className="
+                            ms-auto
+                            shrink-0
+                            text-[10px]
+                            font-semibold
+                            tabular-nums
+                            text-content-tertiary
+                          "
+                          aria-label={`${services.length} services`}
+                        >
+                          {services.length}
+                        </span>
+                      </div>
+
+                      {/* Services */}
+                      <ul className="m-0 list-none space-y-px p-0">
+                        {services.map((service) => (
+                          <li key={service.slug}>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href={`/pricing#pricing-${group.slug}-${service.slug}`}
+                                className={serviceLinkClass}
+                              >
+                                <span className="min-w-0 truncate">
+                                  {service.title}
+                                </span>
+
+                                <ArrowLeft
+                                  className="
+                                    size-3
+                                    shrink-0
+                                    rtl-mirror
+                                    text-copper-strong
+                                    opacity-0
+                                    transition-opacity
+                                    duration-150
+                                    group-hover/link:opacity-100
+                                  "
+                                  strokeWidth={2.5}
+                                  aria-hidden="true"
+                                />
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
-          <div className="shrink-0 border-t border-border-primary p-3">
+          {/* Compact footer */}
+          <div
+            className="
+              border-t
+              border-border-primary
+              bg-surface-tertiary/30
+              px-3
+              py-2
+            "
+          >
             <NavigationMenuLink asChild>
               <Link
                 href="/pricing"
-                className="flex min-h-11 items-center justify-center gap-2 rounded-control border border-border-primary bg-surface-secondary px-4 py-2.5 text-body-sm font-semibold text-content-secondary no-underline transition-colors hover:bg-surface-tertiary hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="
+                  flex
+                  h-9
+                  items-center
+                  justify-center
+                  gap-2
+                  rounded-control
+                  bg-accent
+                  px-3
+                  text-caption
+                  font-bold
+                  text-content-contrast
+                  no-underline
+                  shadow-elevation-1
+                  transition-colors
+                  hover:bg-accent-hover
+                  focus-visible:outline-2
+                  focus-visible:outline-offset-2
+                  focus-visible:outline-accent
+                "
               >
-                <Sparkles className="size-4" strokeWidth={2} aria-hidden="true" />
-                {t("nav.pricing")}
-                <ArrowLeft className="size-4 rtl-mirror" strokeWidth={2} aria-hidden="true" />
+                <Sparkles
+                  className="size-3.5"
+                  strokeWidth={2}
+                  aria-hidden="true"
+                />
+
+                <span>{t("nav.pricing")}</span>
+
+                <ArrowLeft
+                  className="size-3.5 rtl-mirror"
+                  strokeWidth={2}
+                  aria-hidden="true"
+                />
               </Link>
             </NavigationMenuLink>
           </div>
