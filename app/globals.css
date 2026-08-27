@@ -216,6 +216,10 @@
   /* Sidebar drawer — physical, direction-aware variants applied via rtl:/ltr: */
   --animate-drawer-in: drawer-in 250ms ease-out;
   --animate-drawer-in-rtl: drawer-in-rtl 250ms ease-out;
+  --animate-fade-out: fade-out 200ms ease-in;
+  /* Accordion expand/collapse — Radix exposes --radix-accordion-content-height. */
+  --animate-accordion-down: accordion-down 250ms ease-out;
+  --animate-accordion-up: accordion-up 250ms ease-out;
 
   /* Breath — the clinic's signature pulse, used once on the dashboard welcome
      mark. Reduced-motion is handled by the blanket rule below. */
@@ -255,6 +259,40 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+
+  to {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+
+  to {
+    height: 0;
+    opacity: 0;
   }
 }
 

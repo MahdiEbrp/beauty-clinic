@@ -10,6 +10,8 @@ export type PricingRowProps = {
   service: PricingService;
   currency?: string;
   onBook?: (service: PricingService) => void;
+  /** Owning group slug — when set, the row is anchored at `#pricing-<groupSlug>-<serviceSlug>`. */
+  groupSlug?: string;
 };
 
 /** A single responsive pricing row: name + optional desc/price (right, RTL-aware). */
@@ -17,13 +19,17 @@ export default function PricingRow({
   service,
   currency = "",
   onBook,
+  groupSlug,
 }: PricingRowProps) {
   const t = useTranslations();
   const minutesLabel = t("pricing.article.minutes");
   const sessionsLabel = t("pricing.article.sessions", { count: service.sessionsCount });
 
   return (
-    <li className="py-4.5 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group hover:bg-surface-tertiary/20 -mx-3 px-3 rounded-lg transition-colors">
+    <li
+      id={groupSlug ? `pricing-${groupSlug}-${service.slug}` : undefined}
+      className="py-4.5 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group hover:bg-surface-tertiary/20 -mx-3 px-3 rounded-lg transition-colors scroll-mt-24"
+    >
       <div className="flex-1 space-y-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-base font-bold text-accent group-hover:text-primary-deep transition-colors">

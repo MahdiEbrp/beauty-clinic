@@ -46,6 +46,7 @@ function makeRequest(
 }
 
 const okResponse = () => NextResponse.json({ ok: true });
+const routeContext = { params: Promise.resolve({}) as Promise<Record<string, string>> };
 
 describe("withSecurity", () => {
   beforeEach(() => {
@@ -58,6 +59,7 @@ describe("withSecurity", () => {
     });
     const response = await handler(
       makeRequest("POST", { origin: "https://evil.example.com" }),
+      routeContext,
     );
     expect(response.status).toBe(403);
     expect(await response.json()).toMatchObject({
@@ -69,6 +71,7 @@ describe("withSecurity", () => {
     const handler = withSecurity({}, okResponse);
     const response = await handler(
       makeRequest("POST", { origin: "http://localhost:3000" }),
+      routeContext,
     );
     expect(response.status).toBe(200);
   });
@@ -77,6 +80,7 @@ describe("withSecurity", () => {
     const handler = withSecurity({}, okResponse);
     const response = await handler(
       makeRequest("GET", { origin: "https://evil.example.com" }),
+      routeContext,
     );
     expect(response.status).toBe(200);
   });
@@ -86,8 +90,8 @@ describe("withSecurity", () => {
       { rateLimit: { limit: 1, windowMs: 60_000, key: () => "test" } },
       okResponse,
     );
-    const first = await handler(makeRequest("GET"));
-    const second = await handler(makeRequest("GET"));
+    const first = await handler(makeRequest("GET"), routeContext);
+    const second = await handler(makeRequest("GET"), routeContext);
     expect(first.status).toBe(200);
     expect(second.status).toBe(429);
   });
@@ -95,7 +99,7 @@ describe("withSecurity", () => {
   it("returns 401 when auth is required and no session exists", async () => {
     mockGetSession.mockResolvedValue(null);
     const handler = withSecurity({ auth: "required" }, okResponse);
-    const response = await handler(makeRequest("GET"));
+    const response = await handler(makeRequest("GET"), routeContext);
     expect(response.status).toBe(401);
   });
 
@@ -106,7 +110,7 @@ describe("withSecurity", () => {
       seen = ctx.session;
       return okResponse();
     });
-    const response = await handler(makeRequest("GET"));
+    const response = await handler(makeRequest("GET"), routeContext);
     expect(response.status).toBe(200);
     expect(seen?.user.id).toBe(SESSION.user.id);
   });
@@ -117,7 +121,7 @@ describe("withSecurity", () => {
       { auth: "required", permissions: "settings.manage" },
       okResponse,
     );
-    const response = await handler(makeRequest("GET"));
+    const response = await handler(makeRequest("GET"), routeContext);
     expect(response.status).toBe(403);
   });
 
@@ -127,7 +131,7 @@ describe("withSecurity", () => {
       { auth: "required", permissions: "settings.manage" },
       okResponse,
     );
-    const response = await handler(makeRequest("GET"));
+    const response = await handler(makeRequest("GET"), routeContext);
     expect(response.status).toBe(200);
   });
 
@@ -142,11 +146,13 @@ describe("withSecurity", () => {
 
     const invalid = await handler(
       makeRequest("POST", { origin: "http://localhost:3000", body: { name: "" } }),
+      routeContext,
     );
     expect(invalid.status).toBe(400);
 
     const valid = await handler(
       makeRequest("POST", { origin: "http://localhost:3000", body: { name: "alice" } }),
+      routeContext,
     );
     expect(valid.status).toBe(200);
   });
@@ -158,7 +164,7 @@ describe("withSecurity", () => {
       headers: { host: "localhost:3000", origin: "http://localhost:3000" },
       body: "not json",
     });
-    const response = await handler(request);
+    const response = await handler(request, routeContext);
     expect(response.status).toBe(415);
   });
 
@@ -173,11 +179,13 @@ describe("withSecurity", () => {
 
     const invalid = await handler(
       new Request("http://localhost:3000/api/v1/test?page=abc", { method: "GET" }),
+      routeContext,
     );
     expect(invalid.status).toBe(400);
 
     const valid = await handler(
       new Request("http://localhost:3000/api/v1/test?page=3", { method: "GET" }),
+      routeContext,
     );
     expect(valid.status).toBe(200);
   });
@@ -185,7 +193,7 @@ describe("withSecurity", () => {
   it("sets the x-request-id header on error responses", async () => {
     mockGetSession.mockResolvedValue(null);
     const handler = withSecurity({ auth: "required" }, okResponse);
-    const response = await handler(makeRequest("GET"));
+    const response = await handler(makeRequest("GET"), routeContext);
     expect(response.status).toBe(401);
     expect(response.headers.get("x-request-id")).toBeTruthy();
   });
@@ -194,7 +202,7 @@ describe("withSecurity", () => {
     const handler = withSecurity({}, () => {
       throw new Error("boom");
     });
-    const response = await handler(makeRequest("GET"));
+    const response = await handler(makeRequest("GET"), routeContext);
     expect(response.status).toBe(500);
   });
 });

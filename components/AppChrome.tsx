@@ -2,6 +2,7 @@
 
 import { usePathname } from "@/src/i18n/navigation";
 import type { AuthUser } from "@/lib/auth/dal";
+import type { PublicNavCatalog } from "@/lib/services/types";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
@@ -20,11 +21,14 @@ export default function AppChrome({
   children,
   user,
   clinic,
+  catalog,
   skipLabel,
 }: {
   children: React.ReactNode;
   user: AuthUser | null;
   clinic?: FooterClinic;
+  /** Lightweight nav tree (group -> category -> service names) powering the navbar's mega menu / mobile drawer. Server-cached, no client fetch. */
+  catalog?: PublicNavCatalog | null;
   skipLabel: string;
 }) {
   const pathname = usePathname();
@@ -44,7 +48,7 @@ export default function AppChrome({
       >
         {skipLabel}
       </a>
-      <Navbar user={user} />
+      <Navbar user={user} catalog={catalog} />
       <main id="main" className="flex-1">
         {children}
       </main>

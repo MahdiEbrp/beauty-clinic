@@ -7,6 +7,7 @@ import { Direction as DirectionPrimitive } from "radix-ui";
 import { routing } from "@/src/i18n/routing";
 import { canonicalUrl, dirForLocale } from "@/lib/site";
 import { getClinicData } from "@/data/clinic";
+import { getPublicNavCatalog } from "@/lib/services/public-nav-catalog";
 import { getSessionCached } from "@/lib/auth/dal";
 import AppChrome from "@/components/AppChrome";
 import JsonLd from "@/components/JsonLd";
@@ -53,7 +54,11 @@ export default async function LocaleLayout({
 
   const messages = await getMessages({ locale });
   const t = await getTranslations({ locale, namespace: "a11y" });
-  const clinicData = await getClinicData(locale);
+  // Both are hard-cached (shared KV/memory); safe to resolve together.
+  const [clinicData, catalog] = await Promise.all([
+    getClinicData(locale),
+    getPublicNavCatalog(locale),
+  ]);
   const session = await getSessionCached();
 
   return (
@@ -61,7 +66,12 @@ export default async function LocaleLayout({
       <DirectionPrimitive.DirectionProvider dir={dirForLocale(locale)}>
         <DirSetter />
         <JsonLd />
-        <AppChrome user={session?.user ?? null} clinic={clinicData} skipLabel={t("skipToContent")}>
+        <AppChrome
+          user={session?.user ?? null}
+          clinic={clinicData}
+          catalog={catalog}
+          skipLabel={t("skipToContent")}
+        >
           {children}
         </AppChrome>
       </DirectionPrimitive.DirectionProvider>

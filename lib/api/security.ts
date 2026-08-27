@@ -63,7 +63,7 @@ export function withSecurity<Body = unknown, Query = unknown>(
 ) {
   return async (
     request: Request,
-    routeContext?: { params?: Promise<Record<string, string>> },
+    routeContext: { params: Promise<Record<string, string>> },
   ): Promise<NextResponse> => {
     const requestId = crypto.randomUUID();
     const reply = (response: NextResponse) => {
@@ -102,9 +102,9 @@ export function withSecurity<Body = unknown, Query = unknown>(
       }
 
       const ctx: ApiContext<Body, Query> = { requestId };
-      if (routeContext?.params) {
-        ctx.params = await routeContext.params;
-      }
+      // Dynamic route params (`[id]`, etc.) are always a Promise from Next; for
+      // static routes Next resolves it to `{}`.
+      ctx.params = await routeContext.params;
 
       if (config.auth === "required") {
         const session = await getSession();

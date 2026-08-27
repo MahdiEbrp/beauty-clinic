@@ -12,7 +12,10 @@ export type PricingSectionProps = {
 
 /**
  * One pricing section per DB group, anchored at `#pricing-<slug>` so the
- * generated jump-nav can deep-link without any hardcoded ids.
+ * generated jump-nav can deep-link without any hardcoded ids. Each service
+ * row also carries a per-service anchor (`#pricing-<groupSlug>-<serviceSlug>`)
+ * so navbar mega menu / mobile drawer links land exactly on the picked
+ * service.
  */
 export default function PricingSection({
   group,
@@ -49,6 +52,7 @@ export default function PricingSection({
             category={category}
             currency={currency}
             onBook={onBook}
+            groupSlug={group.slug}
           />
         ))}
       </div>

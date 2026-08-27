@@ -1,3 +1,5 @@
+
+
 import type en from "../../messages/en.json";
 
 type Join<K extends string, P extends string> = P extends "" ? K : `${K}.${P}`;

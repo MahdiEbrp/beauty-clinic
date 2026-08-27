@@ -7,6 +7,8 @@ export type PricingCategoryProps = {
   category: PricingCategoryType;
   currency?: string;
   onBook?: (service: PricingService) => void;
+  /** Owning group slug, for per-service pricing anchors (`#pricing-<groupSlug>-<serviceSlug>`). */
+  groupSlug?: string;
 };
 
 /** A category block with its service pricing rows. */
@@ -14,6 +16,7 @@ export default function PricingCategory({
   category,
   currency = "$",
   onBook,
+  groupSlug,
 }: PricingCategoryProps) {
   return (
     <div className="py-4 first:pt-0 last:pb-0">
@@ -34,6 +37,7 @@ export default function PricingCategory({
             service={service}
             currency={currency}
             onBook={onBook}
+            groupSlug={groupSlug}
           />
         ))}
       </ul>
