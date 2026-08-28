@@ -20,10 +20,10 @@ export const TATTOO_REMOVAL_GROUP: SeedGroup = {
       locale: "en",
       name: "Tattoo Removal & Skin Brightening",
       description:
-        "Reveal clearer, more even-looking skin with targeted Q-switched laser treatments for tattoo fading and pigmentation concerns.",
+        "Reveal clearer, more even-looking skin with targeted Q-switched laser services for tattoo fading and pigmentation concerns.",
       seoTitle: "Q-Switched Laser | Tattoo Removal & Skin Brightening",
       seoDescription:
-        "Explore Q-switched laser treatments for tattoo removal and pigmentation concerns. A precise approach to achieving clearer, more even-looking skin.",
+        "Explore Q-switched laser services for tattoo removal and pigmentation concerns. A precise approach to achieving clearer, more even-looking skin.",
     },
   ],
   categories: [
@@ -48,7 +48,7 @@ export const TATTOO_REMOVAL_GROUP: SeedGroup = {
             "Q-switch laser device services for tattoo fading, skin brightening and removal of pigmentation and dark spots with a precise, gradual approach.",
           seoTitle: "Q-Switch Device Services | Laser, Tattoo & Pigmentation",
           seoDescription:
-            "Q-switch laser for tattoo removal, skin brightening, and treatment of pigmentation and dark spots — a precise approach to clearer, more even skin.",
+            "Q-switch laser for tattoo removal, skin brightening, and service of pigmentation and dark spots — a precise approach to clearer, more even skin.",
         },
       ],
       // NOTE: no pricing provided yet. priceType stays on_request (price:
@@ -89,7 +89,7 @@ export const TATTOO_REMOVAL_GROUP: SeedGroup = {
             {
               locale: "fa",
               title: "سفید کننده (وایتنینگ)",
-              shortDesc: "لیزر و درمان‌های روشن‌کننده پوست برای یکدست‌تر شدن رنگ پوست.",
+              shortDesc: "لیزر و خدماتی روشن‌کننده پوست برای یکدست‌تر شدن رنگ پوست.",
               seoTitle: "لیزر سفید کردن پوست | قیمت",
               seoDescription:
                 "قیمت و مشاوره لیزر کیوسوییچ برای روشن‌کردن و یکدست‌تر شدن رنگ پوست.",
@@ -97,7 +97,7 @@ export const TATTOO_REMOVAL_GROUP: SeedGroup = {
             {
               locale: "en",
               title: "Skin Whitening",
-              shortDesc: "Laser and brightening treatments for a more even skin tone.",
+              shortDesc: "Laser and brightening services for a more even skin tone.",
               seoTitle: "Skin Brightening Laser | Price",
               seoDescription:
                 "Q-switch laser price and consultation for skin brightening and a more even skin tone.",

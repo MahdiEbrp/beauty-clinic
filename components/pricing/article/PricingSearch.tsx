@@ -25,7 +25,7 @@ type PricingSearchProps = {
 export default function PricingSearch({
   groups,
   entries,
-  placeholder = "Search treatments, fillers, or laser services...",
+  placeholder = "Search services, fillers, or laser services...",
   label = "Search pricing",
   clearLabel = "Clear search",
 }: PricingSearchProps) {

@@ -18,7 +18,7 @@ import {
 //
 // Three levels: serviceGroups (top level, e.g. "Laser") → serviceCategories
 // (sub-groups that always belong to a group) → services (actual billable
-// treatments). Localized content is stored per locale in the *_i18n tables.
+// services). Localized content is stored per locale in the *_i18n tables.
 // ---------------------------------------------------------------------------
 
 export const priceTypeEnum = pgEnum("price_type", ["fixed", "from", "on_request"]);

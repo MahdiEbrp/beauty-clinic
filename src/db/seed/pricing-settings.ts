@@ -20,7 +20,7 @@ export const PRICING_PAGE_SETTINGS: SettingInput[] = [
     value: "لیست شفاف قیمت خدمات زیبایی که توسط تیم متخصص ما ارائه می‌شود.",
     type: "localized",
     translations: {
-      en: "Our transparent list of beauty treatment prices, performed by our medical team.",
+      en: "Our transparent list of beauty service prices, performed by our medical team.",
     },
   },
   {

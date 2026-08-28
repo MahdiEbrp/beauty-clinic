@@ -24,10 +24,10 @@ export const LASER_HAIR_REMOVAL_GROUP: SeedGroup = {
       locale: "en",
       name: "Laser Hair Removal",
       description:
-        "Smooth, confident skin with personalized laser hair removal treatments tailored to your needs and target areas.",
-      seoTitle: "Laser Hair Removal | Face & Body Treatments",
+        "Smooth, confident skin with personalized laser hair removal services tailored to your needs and target areas.",
+      seoTitle: "Laser Hair Removal | Face & Body Services",
       seoDescription:
-        "Achieve smoother-looking skin with personalized laser hair removal for the face and body. Explore individual areas, packages, and full-body treatments.",
+        "Achieve smoother-looking skin with personalized laser hair removal for the face and body. Explore individual areas, packages, and full-body services.",
     },
   ],
   categories: [

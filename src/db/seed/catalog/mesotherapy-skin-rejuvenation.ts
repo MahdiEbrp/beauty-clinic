@@ -12,8 +12,8 @@ export const MESOTHERAPY_GROUP: SeedGroup = {
       locale: "fa",
       name: "مزو و جوانسازی",
       description:
-        "با درمان‌های تخصصی مزوتراپی و جوانسازی، به بهبود آبرسانی، کیفیت، شادابی و انعطاف‌پذیری پوست کمک کنید و ظاهری تازه‌تر و درخشان‌تر داشته باشید.",
-      seoTitle: "مزو و جوانسازی | مزوتراپی و درمان‌های پیشرفته پوست",
+        "با خدماتی تخصصی مزوتراپی و جوانسازی، به بهبود آبرسانی، کیفیت، شادابی و انعطاف‌پذیری پوست کمک کنید و ظاهری تازه‌تر و درخشان‌تر داشته باشید.",
+      seoTitle: "مزو و جوانسازی | مزوتراپی و خدماتی پیشرفته پوست",
       seoDescription:
         "خدمات مزوتراپی، مزوژل، نیدلینگ، پی‌آر‌پی، جالپرو و پروفایلو برای بهبود آبرسانی، کیفیت، شادابی و جوان‌تر شدن ظاهر پوست.",
     },
@@ -21,10 +21,10 @@ export const MESOTHERAPY_GROUP: SeedGroup = {
       locale: "en",
       name: "Mesotherapy & Skin Rejuvenation",
       description:
-        "Refresh, hydrate, and revitalize your skin with personalized rejuvenation treatments designed to improve skin quality, elasticity, radiance, and overall vitality.",
+        "Refresh, hydrate, and revitalize your skin with personalized rejuvenation services designed to improve skin quality, elasticity, radiance, and overall vitality.",
       seoTitle: "Mesotherapy & Skin Rejuvenation | Advanced Aesthetic Treatme",
       seoDescription:
-        "Discover personalized mesotherapy, skin boosters, microneedling, PRP, Jalupro and Profhilo treatments designed to refresh, hydrate and revitalize your skin.",
+        "Discover personalized mesotherapy, skin boosters, microneedling, PRP, Jalupro and Profhilo services designed to refresh, hydrate and revitalize your skin.",
     },
   ],
   categories: [
@@ -37,7 +37,7 @@ export const MESOTHERAPY_GROUP: SeedGroup = {
           locale: "fa",
           name: "مزو (هرجلسه) - مزوژل - جوانساز",
           description:
-            "مزوتراپی و مزوژل برای آبرسانی، بهبود کیفیت و شادابی پوست؛ به‌همراه درمان‌های جوانسازی برای ظاهری تازه‌تر و درخشان‌تر.",
+            "مزوتراپی و مزوژل برای آبرسانی، بهبود کیفیت و شادابی پوست؛ به‌همراه خدماتی جوانسازی برای ظاهری تازه‌تر و درخشان‌تر.",
           seoTitle: "مزو و مزوژل | قیمت هر جلسه و جوانسازی پوست",
           seoDescription:
             "قیمت مزوتراپی، مزوژل، نیدلینگ، پی‌آر‌پی، جالپرو و پروفایلو برای آبرسانی، شادابی و جوان‌تر شدن ظاهر پوست.",
@@ -46,7 +46,7 @@ export const MESOTHERAPY_GROUP: SeedGroup = {
           locale: "en",
           name: "Meso (Per Session) - Mesogel - Rejuvenation",
           description:
-            "Mesotherapy and skin boosters for hydration, quality and radiance, plus rejuvenation treatments for a fresher, brighter look.",
+            "Mesotherapy and skin boosters for hydration, quality and radiance, plus rejuvenation services for a fresher, brighter look.",
           seoTitle: "Meso & Mesogel | Price per Session & Skin Rejuvenation",
           seoDescription:
             "Mesotherapy, mesogel, microneedling, PRP, Jalupro and Profhilo prices for hydration, radiance and younger-looking skin.",

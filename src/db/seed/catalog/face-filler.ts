@@ -24,9 +24,9 @@ export const FACE_FILLER_GROUP: SeedGroup = {
       name: "Face Filler",
       description:
         "Enhance your natural beauty with subtle, elegant facial fillers.\nRestore lost volume, soften fine lines, and beautifully define your lips, cheeks, or chin — for a refreshed look that still feels like you.",
-      seoTitle: "Face Filler Treatment | Natural, Refined Results",
+      seoTitle: "Face Filler Service | Natural, Refined Results",
       seoDescription:
-        "Enhance your natural beauty with expert face filler treatments. Restore volume, soften lines, and define lips, cheeks, or chin for a refreshed, balanced look.",
+        "Enhance your natural beauty with expert face filler services. Restore volume, soften lines, and define lips, cheeks, or chin for a refreshed, balanced look.",
     },
   ],
   categories: [

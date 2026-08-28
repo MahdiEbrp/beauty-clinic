@@ -1,7 +1,7 @@
 /**
  * Central source for media URLs used across the app.
  *
- * Treatment / venue photos are hosted on Vercel Blob so they load directly in
+ * Service / venue photos are hosted on Vercel Blob so they load directly in
  * the browser from a public CDN (native <img>, no next/image). Keep the base in
  * one place so the blob bucket can be swapped without touching every catalog,
  * landing, rules and pricing entity.

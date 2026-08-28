@@ -274,13 +274,13 @@ export const CARE_GUIDES_SEED: SeedGuide[] = [
             locale: "fa",
             title: "نکته مهم برای اولین‌بار",
             description:
-              "بیمارانی که اولین بار این کار را انجام می‌دهند به یک دوره تطبیق ۲۰ روزه برای جا افتادن ژل نیاز دارند. جذب ژل طبیعی است و برای رسیدن به نتیجه مطلوب حداقل به دو جلسه نیاز دارید.",
+              "مشتریانی که اولین بار این کار را انجام می‌دهند به یک دوره تطبیق ۲۰ روزه برای جا افتادن ژل نیاز دارند. جذب ژل طبیعی است و برای رسیدن به نتیجه مطلوب حداقل به دو جلسه نیاز دارید.",
           },
           {
             locale: "en",
             title: "Important Note for First-Timers",
             description:
-              "First-time patients need a 20-day adaptation period for the gel to adjust. Gel absorption is natural and you need at least two sessions for desired results.",
+              "First-time clients need a 20-day adaptation period for the gel to adjust. Gel absorption is natural and you need at least two sessions for desired results.",
           },
         ],
       },

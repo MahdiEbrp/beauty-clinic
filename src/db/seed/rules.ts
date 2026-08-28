@@ -33,7 +33,7 @@ export const RULES_SEED: SeedRule[] = [
         locale: "en",
         name: "Respect Appointments",
         description:
-          "Please be punctual and respect your appointment time so we can serve all patients without delay.",
+          "Please be punctual and respect your appointment time so we can serve all clients without delay.",
       },
     ],
   },
@@ -96,13 +96,13 @@ export const RULES_SEED: SeedRule[] = [
         locale: "fa",
         name: "سیاست همراهان",
         description:
-          "به منظور حفظ فضای آرام و راحتی بقیه بیماران، لطفاً همراهان غیرضروری به ویژه کودکان را همراه نداشته باشید.",
+          "به منظور حفظ فضای آرام و راحتی بقیه مشتریان، لطفاً همراهان غیرضروری به ویژه کودکان را همراه نداشته باشید.",
       },
       {
         locale: "en",
         name: "Companion Policy",
         description:
-          "To maintain a peaceful environment and comfort of other patients, please avoid bringing unnecessary companions, especially children.",
+          "To maintain a peaceful environment and comfort of other clients, please avoid bringing unnecessary companions, especially children.",
       },
     ],
   },

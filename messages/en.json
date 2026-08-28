@@ -68,20 +68,20 @@
   "booking": {
     "meta": {
       "title": "Book an Appointment Online | Nafas Beauty Clinic",
-      "description": "Book your appointment online — pick a treatment, choose a time, and pay in a few simple steps."
+      "description": "Book your appointment online — pick a service, choose a time, and pay in a few simple steps."
     },
     "title": "Book an appointment",
-    "description": "Choose your treatment, reserve a time that suits you, and finalise your visit.",
+    "description": "Choose your service, reserve a time that suits you, and finalise your visit.",
     "stepper": {
       "label": "Booking steps",
-      "service": "Treatment",
+      "service": "Service",
       "schedule": "Date & time",
       "contact": "Contact",
       "review": "Review & pay"
     },
     "appointment": {
       "label": "Appointment",
-      "service": "Treatment",
+      "service": "Service",
       "date": "Date & time",
       "duration": "Duration",
       "minutes": "min",
@@ -113,7 +113,7 @@
       }
     },
     "review": {
-      "service": "Treatment",
+      "service": "Service",
       "date": "Appointment",
       "duration": "Duration",
       "name": "Name",
@@ -130,7 +130,7 @@
     "confirmation": {
       "title": "Appointment confirmed",
       "description": "Thank you. Your appointment details have been saved.",
-      "service": "Treatment",
+      "service": "Service",
       "reference": "Reference",
       "pending": "Pending",
       "status": "Status",
@@ -151,12 +151,12 @@
       "slotFull": "This time slot has just been taken. Please pick another.",
       "slotUnavailable": "This time slot is no longer available.",
       "customerConflict": "You already have a booking at this time.",
-      "serviceUnavailable": "This treatment is not currently bookable.",
+      "serviceUnavailable": "This service is not currently bookable.",
       "pastSlot": "This time has already passed. Pick a future slot.",
       "businessClosed": "The clinic is closed at the selected time.",
       "invalidId": "The booking reference is invalid.",
       "cancelled": "This booking was cancelled and can no longer be changed.",
-      "notFound": "We couldn't find that booking or treatment.",
+      "notFound": "We couldn't find that booking or service.",
       "outsideWindow": "The selected date is outside the booking window.",
       "tooFarAhead": "That date is too far in advance to book.",
       "systemError": "Something went wrong. Please try again."
@@ -182,7 +182,7 @@
   },
   "pricing": {
     "updated": "Last updated:",
-    "badge": "Transparent medical pricing & treatments",
+    "badge": "Transparent medical pricing & services",
     "jump": {
       "label": "Table of contents",
       "sections": "{count, plural, one {# section} other {# sections}}",
@@ -191,7 +191,7 @@
     },
     "search": {
       "label": "Search services",
-      "placeholder": "Search treatments or categories…",
+      "placeholder": "Search services or categories…",
       "clear": "Clear search"
     },
     "faq": {
@@ -256,9 +256,9 @@
       "beforeAfter": "Before & After",
       "bookNote": "Get availability and a personalized quote",
       "backToCatalog": "Back to all services",
-      "services": "Treatment options",
+      "services": "Service options",
       "noServices": "No services are available in this category right now.",
-      "searchServices": "Search treatments…",
+      "searchServices": "Search services…",
       "noResults": "No matching services"
     },
     "empty": {
@@ -1807,7 +1807,7 @@
     },
     "back": "Back to Rules",
     "heading": "Create Rule",
-    "subtitle": "Add a rule your patients can read on the public rules page.",
+    "subtitle": "Add a rule your clients can read on the public rules page.",
     "editHeading": "Edit Rule",
     "editSubtitle": "Update the details of this clinic rule.",
     "steps": {
@@ -2595,7 +2595,7 @@
       "description": "Manage care guides and their items."
     },
     "heading": "Care Guides",
-    "subtitle": "Organize pre and post treatment care instructions for your patients.",
+    "subtitle": "Organize pre and post service care instructions for your clients.",
     "sectionTitle": "Management",
     "manage": "Manage",
     "addNew": "Add New",

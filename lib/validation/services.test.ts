@@ -14,7 +14,7 @@ import {
 
 const groupTranslation = {
   name: "Laser",
-  description: "Laser treatments",
+  description: "Laser services",
   seoTitle: "Laser | Clinic",
   seoDescription: null,
 };

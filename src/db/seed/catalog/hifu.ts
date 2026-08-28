@@ -11,7 +11,7 @@ export const HIFU_GROUP: SeedGroup = {
       locale: "fa",
       name: "هایفوتراپی",
       description:
-        "با هایفوتراپی، به سفت‌تر شدن پوست و بهبود فرم و کانتور صورت و بدن کمک کنید؛ با درمانی متناسب با نیاز و ناحیه موردنظر شما.",
+        "با هایفوتراپی، به سفت‌تر شدن پوست و بهبود فرم و کانتور صورت و بدن کمک کنید؛ با خدمتی متناسب با نیاز و ناحیه موردنظر شما.",
       seoTitle: "هایفوتراپی | لیفت و سفتی پوست صورت و بدن",
       seoDescription:
         "هایفوتراپی صورت و بدن برای کمک به سفت‌تر شدن پوست و بهبود فرم و کانتور نواحی موردنظر، با رویکردی متناسب و طبیعی.",
@@ -20,10 +20,10 @@ export const HIFU_GROUP: SeedGroup = {
       locale: "en",
       name: "HIFU",
       description:
-        "Lift, tighten, and redefine your natural contours with personalized HIFU treatments for the face and body.",
-      seoTitle: "HIFU Treatment | Face & Body Skin Tightening",
+        "Lift, tighten, and redefine your natural contours with personalized HIFU services for the face and body.",
+      seoTitle: "HIFU Service | Face & Body Skin Tightening",
       seoDescription:
-        "Discover personalized HIFU treatments for the face and body, designed to support firmer-looking skin and more defined, natural-looking contours.",
+        "Discover personalized HIFU services for the face and body, designed to support firmer-looking skin and more defined, natural-looking contours.",
     },
   ],
   categories: [
@@ -36,19 +36,19 @@ export const HIFU_GROUP: SeedGroup = {
           locale: "fa",
           name: "خدمات هایفو",
           description:
-            "درمان‌های هایفوتراپی برای لیفت، سفت‌شدن و بهبود فرم و کانتور صورت و بدن؛ متناسب با نیاز و ناحیه موردنظر شما.",
+            "خدماتی هایفوتراپی برای لیفت، سفت‌شدن و بهبود فرم و کانتور صورت و بدن؛ متناسب با نیاز و ناحیه موردنظر شما.",
           seoTitle: "خدمات هایفوتراپی | لیفت و سفتی پوست",
           seoDescription:
-            "درمان‌های هایفوتراپی صورت و بدن برای لیفت، سفت‌شدن و بهبود فرم و کانتور نواحی موردنظر، با رویکردی متناسب و طبیعی.",
+            "خدماتی هایفوتراپی صورت و بدن برای لیفت، سفت‌شدن و بهبود فرم و کانتور نواحی موردنظر، با رویکردی متناسب و طبیعی.",
         },
         {
           locale: "en",
           name: "HIFU Services",
           description:
-            "HIFU treatments to lift, tighten and improve the shape and contour of the face and body, tailored to your needs and target area.",
+            "HIFU services to lift, tighten and improve the shape and contour of the face and body, tailored to your needs and target area.",
           seoTitle: "HIFU Services | Lift & Skin Tightening",
           seoDescription:
-            "HIFU treatments for the face and body to lift, tighten and enhance natural contours with a personalized, natural-looking approach.",
+            "HIFU services for the face and body to lift, tighten and enhance natural contours with a personalized, natural-looking approach.",
         },
       ],
       // Empty on purpose — Mahdi will provide HIFU pricing separately.

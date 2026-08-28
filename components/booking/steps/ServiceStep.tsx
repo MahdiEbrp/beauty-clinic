@@ -17,7 +17,7 @@ type ServiceStepProps = {
 };
 
 /**
- * Step 1 — pick a treatment. Group chips up top filter the category/service
+ * Step 1 — pick a service. Group chips up top filter the category/service
  * list; each row shows localized title, price and duration.
  */
 export default function ServiceStep({

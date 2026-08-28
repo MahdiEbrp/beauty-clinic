@@ -5,7 +5,7 @@ import { IMG } from "./images";
  * Landing page transformation gallery.
  *
  * Kept in its own module so landing-content.ts stays under the 300-line cap.
- * Treat these as the primary showcase of real treatment photos; all images
+ * Treat these as the primary showcase of real service photos; all images
  * load from Vercel Blob.
  */
 export const LANDING_GALLERY_ITEMS: SeedGalleryItem[] = [
@@ -51,7 +51,7 @@ export const LANDING_GALLERY_ITEMS: SeedGalleryItem[] = [
   {
     imageUrl: IMG.botox,
     i18n: {
-      en: { alt: "Botox Treatment", caption: "Botox Treatment" },
+      en: { alt: "Botox Service", caption: "Botox Service" },
       fa: { alt: "بوتاکس", caption: "بوتاکس" },
     },
   },
@@ -65,8 +65,8 @@ export const LANDING_GALLERY_ITEMS: SeedGalleryItem[] = [
   {
     imageUrl: IMG.hydraulically,
     i18n: {
-      en: { alt: "HydraFacial Treatment", caption: "HydraFacial Treatment" },
-      fa: { alt: "درمان هیدرافیشیال", caption: "درمان هیدرافیشیال" },
+      en: { alt: "HydraFacial Service", caption: "HydraFacial Service" },
+      fa: { alt: "خدمت هیدرافیشیال", caption: "خدمت هیدرافیشیال" },
     },
   },
   {

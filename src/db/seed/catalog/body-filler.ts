@@ -24,7 +24,7 @@ export const BODY_FILLER_GROUP: SeedGroup = {
         "Enhance your body’s natural contours with a refined, personalized approach.\nDesigned to improve volume, balance and definition in selected areas for a more harmonious and confident silhouette.",
       seoTitle: "Body Filler & Contouring | Natural-Looking Results",
       seoDescription:
-        "Explore personalized body filler and contouring treatments designed to enhance shape and definition with a refined, natural-looking approach.Book a consultatio.",
+        "Explore personalized body filler and contouring services designed to enhance shape and definition with a refined, natural-looking approach.Book a consultatio.",
     },
   ],
   categories: [

@@ -12,19 +12,19 @@ export const BOTOX_ENZYME_GROUP: SeedGroup = {
       locale: "fa",
       name: "بوتاکس و آنزیم",
       description:
-        "با بوتاکس و درمان‌های اصلاحی آنزیم، خطوط صورت را نرم‌تر کرده و فرم و تعادل چهره را متناسب با ویژگی‌های شما بهبود دهید.",
+        "با بوتاکس و خدماتی اصلاحی آنزیم، خطوط صورت را نرم‌تر کرده و فرم و تعادل چهره را متناسب با ویژگی‌های شما بهبود دهید.",
       seoTitle: "بوتاکس و آنزیم | خدمات زیبایی و اصلاح فیلر",
       seoDescription:
         "خدمات تخصصی بوتاکس و آنزیم برای فرم‌دهی چهره، کاهش خطوط، تعریق زیربغل و اصلاح فیلر؛ متناسب با نیاز و ویژگی‌های شما.",
     },
     {
       locale: "en",
-      name: "Botox & Enzyme Treatments",
+      name: "Botox & Enzyme Services",
       description:
-        "Refine your features, soften expression lines, and restore facial balance with personalized Botox and filler-correction treatments tailored to your aesthetic goals.",
-      seoTitle: "Botox & Enzyme Treatments | Facial Aesthetics",
+        "Refine your features, soften expression lines, and restore facial balance with personalized Botox and filler-correction services tailored to your aesthetic goals.",
+      seoTitle: "Botox & Enzyme Services | Facial Aesthetics",
       seoDescription:
-        "Discover personalized Botox and enzyme treatments for facial refinement, expression lines, underarm sweating, and filler correction. Book your consultation.",
+        "Discover personalized Botox and enzyme services for facial refinement, expression lines, underarm sweating, and filler correction. Book your consultation.",
     },
   ],
   categories: [
@@ -46,10 +46,10 @@ export const BOTOX_ENZYME_GROUP: SeedGroup = {
           locale: "en",
           name: "Massyvort Botox",
           description:
-            "Massyvort Botox injections for full face, cat eye and underarm treatments — soften expression lines and refine your look naturally.",
+            "Massyvort Botox injections for full face, cat eye and underarm services — soften expression lines and refine your look naturally.",
           seoTitle: "Massyvort Botox | Price & Expert Injection",
           seoDescription:
-            "Massyvort Botox prices and expert consultation for full face, cat eye and underarm treatments to soften lines and refine your look.",
+            "Massyvort Botox prices and expert consultation for full face, cat eye and underarm services to soften lines and refine your look.",
         },
       ],
       services: [
@@ -89,7 +89,7 @@ export const BOTOX_ENZYME_GROUP: SeedGroup = {
           fa: {
             shortDesc:
               "بوتاکس زیر بغل برای کاهش تعریق شدید و بوی بدن؛ نتیجه‌ای ماندگار و بدون نیاز به جراحی.",
-            seoTitle: "بوتاکس زیر بغل | قیمت درمان تعریق",
+            seoTitle: "بوتاکس زیر بغل | قیمت خدمت تعریق",
             seoDescription:
               "قیمت و مشاوره بوتاکس زیر بغل برای کاهش تعریق شدید و بوی بدن؛ نتیجه‌ای ماندگار و بدون نیاز به جراحی.",
           },
@@ -113,7 +113,7 @@ export const BOTOX_ENZYME_GROUP: SeedGroup = {
           name: "آنزیم",
           description:
             "تزریق آنزیم کره‌ای و انگلیسی برای اصلاح و حذف طبیعی فیلر اضافی؛ روشی دقیق و متناسب با نیاز شما.",
-          seoTitle: "آنزیم | قیمت و درمان اصلاح فیلر",
+          seoTitle: "آنزیم | قیمت و خدمت اصلاح فیلر",
           seoDescription:
             "قیمت و مشاوره تزریق آنزیم کره‌ای و انگلیسی برای اصلاح فیلر و حذف طبیعی مواد؛ با رویکردی دقیق و متناسب با نیاز شما.",
         },
@@ -122,9 +122,9 @@ export const BOTOX_ENZYME_GROUP: SeedGroup = {
           name: "Enzyme",
           description:
             "Korean and English enzyme injections to gently correct and dissolve excess filler with expert precision.",
-          seoTitle: "Enzyme Treatment | Price & Filler Correction",
+          seoTitle: "Enzyme Service | Price & Filler Correction",
           seoDescription:
-            "Enzyme treatment prices (Korean and English formulas) for gentle filler correction and dissolving, delivered with expert precision.",
+            "Enzyme service prices (Korean and English formulas) for gentle filler correction and dissolving, delivered with expert precision.",
         },
       ],
       services: [
