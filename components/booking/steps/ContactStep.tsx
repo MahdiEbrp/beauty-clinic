@@ -64,12 +64,15 @@ export default function ContactStep({ defaultValues, onBack, onContinue }: Conta
     defaultValues,
   });
 
-  const [consultationRequired, hasAllergies, isPregnant, agreeToTerms] = watch([
-    "consultationRequired",
-    "hasAllergies",
-    "isPregnant",
-    "agreeToTerms",
-  ]);
+  const [consultationRequired, hasAllergies, isPregnant, agreeToTerms] = useMemo(
+    () => watch([
+      "consultationRequired",
+      "hasAllergies",
+      "isPregnant",
+      "agreeToTerms",
+    ]),
+    [],
+  );
 
   const setToggle = (name: "consultationRequired" | "hasAllergies" | "isPregnant" | "agreeToTerms", value: boolean) =>
     setValue(name, value, { shouldValidate: true });

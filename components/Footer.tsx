@@ -44,7 +44,6 @@ export default function Footer({ clinic }: FooterProps) {
             </h3>
             <ul className="list-none flex flex-col">
               {navigationKeys
-                .filter((key) => key !== "gallery")
                 .map((key) => (
                   <li key={key}>
                     <Link href={getAnchorHref(`#${key}`)} className={linkClass}>
