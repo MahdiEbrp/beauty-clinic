@@ -97,7 +97,7 @@ export const SYSTEM_SETTINGS: SettingInput[] = [
     type: "array",
   },
   { key: "booking.min_cancel_hours", value: 24, type: "number" },
-  { key: "booking.price", value: 0, type: "number" },
+  { key: "booking.price", value: 100000, type: "number" },
   {
     key: "booking.currency",
     value: "تومان",

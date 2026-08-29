@@ -49,6 +49,8 @@
     /* 4.50:1 on --surface-primary */
     /* Dark copper for progress fills and secondary accents. */
     --copper-deep: #924b20;
+    /* Light copper — used for text/icons seated on the dark accent surface. */
+    --copper-light: #e8b48f;
 
     /* ---- Surfaces (variant) ----------------------------------------- */
     --surface-variant: #f0dede;
@@ -114,6 +116,7 @@
   --color-copper: var(--copper);
   --color-copper-strong: var(--copper-strong);
   --color-copper-deep: var(--copper-deep);
+  --color-copper-light: var(--copper-light);
 
   --color-surface-variant: var(--surface-variant);
 
@@ -180,6 +183,10 @@
   /* ---- Fonts ------------------------------------------------------- */
   --font-sans: var(--font-estedad);
 
+  /* ---- Breakpoint (extra-small) ------------------------------------- */
+  --breakpoint-xs: 26rem;
+  /* 416px — used by booking step icons/labels that collapse under this */
+
   /* ---- Font Sizes -------------------------------------------------- */
   /* Override Tailwind's built-in text-* scale with our fluid values */
   --text-xs: clamp(0.75rem, 0.72rem + 0.1vw, 0.8125rem);
@@ -224,6 +231,7 @@
   /* Breath — the clinic's signature pulse, used once on the dashboard welcome
      mark. Reduced-motion is handled by the blanket rule below. */
   --animate-breath: breath 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  --animate-zoom-in: zoom-in 180ms ease-out;
 
   /* Marquee (diceui) - duration/gap/loop-count are set inline per instance. */
   --animate-marquee-left: marquee-left var(--marquee-duration) linear
@@ -269,6 +277,18 @@
 
   to {
     opacity: 0;
+  }
+}
+
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 

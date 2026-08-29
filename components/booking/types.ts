@@ -21,27 +21,59 @@ export type SlotOption = {
   available: boolean;
 };
 
+/** One cart line: service + quantity + its chosen slot. */
+export type CartItem = {
+  service: SelectedService;
+  quantity: number;
+  slot: SlotOption | null;
+};
+
 export type ContactInfo = {
   fullName: string;
   phone: string;
   email: string;
   notes: string;
+  consultationRequired: boolean;
+  hasAllergies: boolean;
+  isPregnant: boolean;
+  agreeToTerms: boolean;
 };
 
-/** Shape returned by the public bookings endpoints. */
-export type CreatedBooking = {
+/** Group row returned by the public booking endpoints. */
+export type CreatedBookingItem = {
   id: string;
+  serviceTitle: string;
+  quantity: number;
+  slotDate: string | null;
+  startTime: string | null;
+  endTime: string | null;
+  durationMin: number | null;
+  totalAmount: string;
+};
+
+export type CreatedBookingGroup = {
+  groupRef: string;
+  deposit: number;
+  items: (CreatedBookingItem & { status: string })[];
+};
+
+export type BookingGroup = {
+  groupRef: string;
   fullName: string;
   phone: string;
-  serviceTitle: string;
-  currency: string;
-  slotDate?: string;
-  slotStart?: string;
-  durationMin: number | null;
-  sessionsCount: number;
-  totalAmount: string;
+  email: string | null;
   status: string;
   paymentReference: string | null;
+  consultationRequired: boolean;
+  createdAt: string;
+  canCancelUntil: string | null;
+  items: CreatedBookingItem[];
 };
 
 export type WizardStep = 0 | 1 | 2 | 3;
+
+export type ClinicBookingProps = {
+  currency: string;
+  minCancelHours: number;
+  defaultDeposit: number;
+};

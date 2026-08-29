@@ -47,6 +47,17 @@ export default async function BookingPage({
       tree={tree}
       currency={clinic.currency}
       openingHours={clinic.openingHours}
+      minCancelHours={clinic.minCancelHours}
+      defaultDeposit={clinic.defaultDeposit}
+      clinic={{
+        clinicName: clinic.content.clinicName,
+        addressTitle: clinic.content.addressTitle,
+        address: clinic.address.streetAddress,
+        telephone: clinic.telephone,
+        phoneDisplay: clinic.telephone ?? "",
+        neshanMap: clinic.maps.neshan,
+        googleMap: clinic.maps.google,
+      }}
     />
   );
 }

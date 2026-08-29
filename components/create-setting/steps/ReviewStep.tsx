@@ -79,20 +79,20 @@ export default function ReviewStep({
 
       <ReviewCard title={t("review.value")}>
         <div className="p-5">
-          <p dir={type === "localized" ? undefined : "ltr"} className="break-words rounded-control border border-border-primary bg-surface-tertiary/40 p-4 text-start font-mono text-dash-body-sm text-content-primary">
+          <p dir={type === "localized" ? undefined : "ltr"} className="wrap-break-word rounded-control border border-border-primary bg-surface-tertiary/40 p-4 text-start font-mono text-dash-body-sm text-content-primary">
             {preview()}
           </p>
           {type === "localized" && (
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <div className="space-y-1">
                 <ReviewLabel>{t("review.fa")}</ReviewLabel>
-                <p className="break-words rounded-control bg-surface-tertiary/40 p-3 text-dash-body-sm text-content-primary">
+                <p className="wrap-break-word rounded-control bg-surface-tertiary/40 p-3 text-dash-body-sm text-content-primary">
                   {faValue.trim() || "—"}
                 </p>
               </div>
               <div className="space-y-1">
                 <ReviewLabel>{t("review.en")}</ReviewLabel>
-                <p dir="ltr" className="break-words rounded-control bg-surface-tertiary/40 p-3 text-dash-body-sm text-content-primary">
+                <p dir="ltr" className="wrap-break-word rounded-control bg-surface-tertiary/40 p-3 text-dash-body-sm text-content-primary">
                   {enValue.trim() || "—"}
                 </p>
               </div>

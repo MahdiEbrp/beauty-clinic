@@ -89,6 +89,69 @@ export const createBookingSchema = z
   })
   .strict();
 
+/** One cart line: a service + slot pair with seat count. */
+export const bookingItemSchema = z
+  .object({
+    serviceId: z.uuid(),
+    slotId: z.uuid(),
+    quantity: z.number().int().min(1).max(10).default(1),
+  })
+  .strict();
+
+/**
+ * Multi-service order: one row per item, all sharing the generated group ref.
+ * Duplicate (serviceId, slotId) lines are allowed — quantities are merged.
+ */
+export const createBookingGroupSchema = z
+  .object({
+    fullName: z.string().trim().min(2).max(160),
+    phone: z
+      .string()
+      .trim()
+      .regex(/^[0-9+][0-9\s()-]{6,19}$/, "Enter a valid phone number")
+      .max(24),
+    email: z.email().trim().max(254).optional().nullable(),
+    locale: z.enum(["fa", "en"]).default("fa"),
+    notes: z.string().trim().max(1000).optional().nullable(),
+    consultationRequired: z.boolean().default(false),
+    hasAllergies: z.boolean().default(false),
+    isPregnant: z.boolean().default(false),
+    items: z.array(bookingItemSchema).min(1).max(10),
+  })
+  .strict();
+
+export const payBookingGroupSchema = z
+  .object({
+    bookingId: z.uuid().optional(),
+    groupRef: z.string().trim().regex(/^NF-\d{5}$/).optional(),
+  })
+  .strict()
+  .refine((v) => Boolean(v.bookingId) !== Boolean(v.groupRef), {
+    message: "Provide exactly one of bookingId or groupRef",
+    path: ["groupRef"],
+  });
+
+export const myBookingsQuerySchema = z
+  .object({
+    phone: z
+      .string()
+      .trim()
+      .regex(/^[0-9+][0-9\s()-]{6,19}$/, "Enter a valid phone number")
+      .max(24),
+  })
+  .strict();
+
+export const cancelBookingGroupSchema = z
+  .object({
+    groupRef: z.string().trim().regex(/^NF-\d{5}$/),
+    phone: z
+      .string()
+      .trim()
+      .regex(/^[0-9+][0-9\s()-]{6,19}$/, "Enter a valid phone number")
+      .max(24),
+  })
+  .strict();
+
 export const bookingStatusUpdateSchema = z
   .object({
     status: bookingStatusSchema,
@@ -193,6 +256,10 @@ export const updateBookingAdminSchema = z
 export type UpdateBookingAdminInput = z.infer<typeof updateBookingAdminSchema>;
 
 export type CreateBookingInput = z.infer<typeof createBookingSchema>;
+export type CreateBookingGroupInput = z.infer<typeof createBookingGroupSchema>;
+export type PayBookingGroupInput = z.infer<typeof payBookingGroupSchema>;
+export type MyBookingsQuery = z.infer<typeof myBookingsQuerySchema>;
+export type CancelBookingGroupInput = z.infer<typeof cancelBookingGroupSchema>;
 export type CreateSlotInput = z.infer<typeof createSlotSchema>;
 export type CreateSlotsInput = z.infer<typeof createSlotsSchema>;
 export type UpdateSlotInput = z.infer<typeof updateSlotSchema>;

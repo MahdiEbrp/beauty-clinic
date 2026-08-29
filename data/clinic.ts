@@ -41,6 +41,8 @@ export type ClinicData = {
     google: string;
   };
   currency: string;
+  minCancelHours: number;
+  defaultDeposit: number;
   content: ClinicContent;
 };
 
@@ -85,6 +87,8 @@ const DEFAULT_CLINIC: Omit<ClinicData, "content"> = {
     google: "https://www.google.com/maps/search/?api=1&query=Andisheh+Phase+2",
   },
   currency: "تومان",
+  minCancelHours: 24,
+  defaultDeposit: 100000,
 };
 
 type OpeningSlot = {
@@ -115,6 +119,11 @@ function localized(
 
 function text(value: unknown, fallback: string): string {
   return typeof value === "string" ? value : fallback;
+}
+
+function numberSetting(value: unknown, fallback: number): number {
+  const n = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(n) && n >= 0 ? n : fallback;
 }
 
 /** Resolves the clinic-wide public data from cached system settings + social links. */
@@ -162,6 +171,8 @@ export async function getClinicData(locale: Locale): Promise<ClinicData> {
       google: s("contact.map_google", DEFAULT_CLINIC.maps.google),
     },
     currency: s("booking.currency", DEFAULT_CLINIC.currency),
+    minCancelHours: numberSetting(byKey.get("booking.min_cancel_hours")?.value, 24),
+    defaultDeposit: numberSetting(byKey.get("booking.price")?.value, 100000),
     content: {
       clinicName: s("clinic.name", DEFAULT_CONTENT.clinicName),
       addressTitle: s("contact.address_title", DEFAULT_CONTENT.addressTitle),

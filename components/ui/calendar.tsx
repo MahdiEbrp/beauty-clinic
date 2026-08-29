@@ -43,7 +43,7 @@ export function useCalendarClassNames() {
       // Generous horizontal padding (px-8) guarantees that centered dropdown pills
       // NEVER collide with or overlay the previous/next navigation buttons on the flanks.
       month_caption:
-        "relative z-10 flex h-9 w-full items-center justify-center px-8 pointer-events-none [&>*]:pointer-events-auto",
+        "relative z-10 flex h-9 w-full items-center justify-center px-8 pointer-events-none *:pointer-events-auto",
 
       button_previous:
         "pointer-events-auto relative inline-flex size-8 shrink-0 items-center justify-center rounded-control text-content-tertiary hover:text-accent hover:bg-surface-tertiary transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent aria-disabled:pointer-events-none aria-disabled:opacity-30",

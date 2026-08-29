@@ -52,7 +52,7 @@ export default function ReviewStep({
           </div>
           <div className="space-y-1 sm:col-span-2">
             <ReviewLabel>{t("review.url")}</ReviewLabel>
-            <p dir="ltr" className="break-words text-start text-dash-body text-content-primary">{url || "—"}</p>
+            <p dir="ltr" className="wrap-break-word text-start text-dash-body text-content-primary">{url || "—"}</p>
           </div>
           {imageUrl && (
             <div className="sm:col-span-2">

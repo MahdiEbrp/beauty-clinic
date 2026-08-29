@@ -82,6 +82,12 @@ export const bookings = pgTable(
     }),
     serviceTitle: text("service_title").notNull(),
     servicePrice: numeric("service_price", { precision: 12, scale: 2 }),
+    /**
+     * Multi-service orders share one `groupRef`; each row is one service +
+     * slot line inside the group (see `lib/bookings/service.ts`).
+     */
+    groupRef: text("group_ref").notNull(),
+    quantity: integer("quantity").notNull().default(1),
     currency: text("currency").notNull().default("تومان"),
     durationMin: integer("duration_min"),
     sessionsCount: integer("sessions_count").notNull().default(1),
@@ -94,6 +100,9 @@ export const bookings = pgTable(
     status: bookingStatusEnum("status").notNull().default("pending"),
     paymentReference: text("payment_reference"),
     notes: text("notes"),
+    consultationRequired: boolean("consultation_required").notNull().default(false),
+    hasAllergies: boolean("has_allergies").notNull().default(false),
+    isPregnant: boolean("is_pregnant").notNull().default(false),
     createdBy: uuid("created_by").references(() => users.id, {
       onDelete: "set null",
     }),
@@ -105,6 +114,7 @@ export const bookings = pgTable(
     index("bookings_status_idx").on(table.status),
     index("bookings_service_id_idx").on(table.serviceId),
     index("bookings_created_at_idx").on(table.createdAt),
+    index("bookings_group_ref_idx").on(table.groupRef),
   ],
 );
 
