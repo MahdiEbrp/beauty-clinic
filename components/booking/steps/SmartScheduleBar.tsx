@@ -15,7 +15,7 @@ type SmartScheduleBarProps = {
   onDismissFeedback: () => void;
 };
 
-/** Multi-service smart auto-schedule toolbar + feedback + treatment tabs
+/** Multi-service smart auto-schedule toolbar + feedback + service tabs
  *  (Template Step2 parity). */
 export default function SmartScheduleBar({
   cart,
@@ -77,7 +77,7 @@ export default function SmartScheduleBar({
         </div>
       ) : null}
 
-      {/* Treatment tabs */}
+      {/* Service tabs */}
       <div className="space-y-2.5 rounded-panel border border-border-primary bg-surface-secondary p-3 shadow-elevation-1 sm:p-4">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 text-xs font-black text-content-primary">

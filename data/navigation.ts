@@ -1,13 +1,12 @@
 export const navigationKeys = [
   "services",
-  "about",
-  "gallery",
   "contact",
 ] as const;
 
 export type NavKey = (typeof navigationKeys)[number];
 
 export const routeNavigationKeys = [
+  "booking",
   "pricing",
   "care",
   "rules",

@@ -92,10 +92,10 @@ export default function BookingSuccessModal({
             </div>
           </div>
 
-          {/* Patient */}
+          {/* Client */}
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="rounded-control border border-border-primary bg-surface-primary p-2.5">
-              <span className="block text-[10px] text-content-tertiary">{t("success.patient")}</span>
+              <span className="block text-[10px] text-content-tertiary">{t("success.client")}</span>
               <span className="font-extrabold text-content-primary">{contact?.fullName ?? ""}</span>
             </div>
             <div className="rounded-control border border-border-primary bg-surface-primary p-2.5">

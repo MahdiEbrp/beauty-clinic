@@ -110,7 +110,7 @@ export default function Navbar({
 
   return (
     <header
-      className={`fixed top-4 inset-x-4 z-50 rounded-pill transition-all duration-300 ${scrolled
+      className={`sticky top-4 inset-x-4 z-50 rounded-pill transition-all duration-300 ${scrolled
         ? "bg-surface-secondary/95 backdrop-blur-xl border border-border-primary shadow-elevation-2"
         : "bg-surface-secondary/70 backdrop-blur-md border border-border-primary/40 shadow-elevation-1"
         }`}

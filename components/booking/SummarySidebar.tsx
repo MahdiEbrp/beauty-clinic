@@ -65,7 +65,7 @@ export default function SummarySidebar({
 
           <div className="space-y-1.5 rounded-control border border-border-primary bg-surface-primary p-3 text-start text-xs text-content-secondary">
             <div className="flex items-center justify-between gap-2">
-              <span>{t("sidebar.treatmentRow")}</span>
+              <span>{t("sidebar.serviceRow")}</span>
               <span className="font-bold text-content-tertiary">{t("appointment.notSelected")}</span>
             </div>
             <div className="flex items-center justify-between gap-2">
@@ -98,7 +98,7 @@ export default function SummarySidebar({
 
   return (
     <aside className="hidden w-80 shrink-0 space-y-3 lg:block">
-      <div className="sticky top-32 space-y-3.5 rounded-panel border-2 border-copper/80 bg-surface-secondary p-4 shadow-md sm:p-5">
+      <div className="sticky top-50 z-999 max-h-[calc(100vh-200px-1rem)] space-y-3.5 overflow-y-auto rounded-panel border-2 border-copper/80 bg-surface-secondary p-4 shadow-md sm:p-5">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border-primary pb-2.5">
           <div>
@@ -112,7 +112,7 @@ export default function SummarySidebar({
           </span>
         </div>
 
-        {/* Selected treatments list */}
+        {/* Selected services list */}
         <div className="max-h-56 space-y-2 overflow-y-auto pe-1 scrollbar-hide">
           <div className="text-[11px] font-bold uppercase tracking-wider text-content-tertiary">
             {t("sidebar.selectedLabel")}
@@ -121,7 +121,7 @@ export default function SummarySidebar({
           {cart.map((line) => (
             <div
               key={line.service.id}
-              className="relative w-full max-w-md space-y-1 rounded-control bg-surface-primary p-2.5 ring-1 ring-border-primary"
+              className="relative w-full max-w-md m-0.5 space-y-1 rounded-control bg-surface-primary p-2.5 ring-1 ring-border-primary"
             >
               <div className="flex items-start justify-between gap-1">
                 <span className="text-xs font-extrabold leading-snug text-content-primary">

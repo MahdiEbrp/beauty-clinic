@@ -85,7 +85,7 @@ export default function ServiceStep({ tree, currency, cart, onToggle, onRemove }
           <div className="flex shrink-0 items-center gap-2 self-start sm:self-center">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-border-interactive bg-surface-primary px-3 py-1.5 text-xs font-bold">
               <Sparkles className="size-3.5 text-copper" aria-hidden="true" />
-              <span>{t("services.treatments", { n: serviceCount })}</span>
+              <span>{t("services.count", { n: serviceCount })}</span>
             </span>
           </div>
         </div>

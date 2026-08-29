@@ -31,7 +31,7 @@ type ReviewStepProps = {
 };
 
 /** Step 4 — review & pay (Template Step4 parity): 7/5 grid of the reserved
- *  treatments, patient recap, Shaparak gateway and the order summary. */
+ *  services, client recap, Shaparak gateway and the order summary. */
 export default function ReviewStep({
   group,
   cart,
@@ -101,7 +101,7 @@ export default function ReviewStep({
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-        {/* Left: services + patient + gateway */}
+        {/* Left: services + client + gateway */}
         <div className="space-y-4 lg:col-span-7">
           {/* Services recap */}
           <div className="space-y-3 rounded-panel border border-border-primary bg-surface-secondary p-4 shadow-elevation-1">
@@ -144,16 +144,16 @@ export default function ReviewStep({
             </div>
           </div>
 
-          {/* Patient recap */}
+          {/* Client recap */}
           <div className="rounded-panel border border-border-primary bg-surface-secondary p-4 shadow-elevation-1">
-            <h3 className="mb-2 text-sm font-extrabold text-content-primary">{t("review.patientTitle")}</h3>
+            <h3 className="mb-2 text-sm font-extrabold text-content-primary">{t("review.clientTitle")}</h3>
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="rounded-control border border-border-primary bg-surface-primary p-2.5">
-                <span className="block text-[10px] text-content-tertiary">{t("review.patientName")}</span>
+                <span className="block text-[10px] text-content-tertiary">{t("review.clientName")}</span>
                 <span className="font-bold text-content-primary">{contact?.fullName ?? ""}</span>
               </div>
               <div className="rounded-control border border-border-primary bg-surface-primary p-2.5">
-                <span className="block text-[10px] text-content-tertiary">{t("review.patientPhone")}</span>
+                <span className="block text-[10px] text-content-tertiary">{t("review.clientPhone")}</span>
                 <span className="font-bold text-content-primary" dir="ltr">{contact?.phone ?? ""}</span>
               </div>
             </div>

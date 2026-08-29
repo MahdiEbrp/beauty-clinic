@@ -5,6 +5,7 @@ import { CalendarPlus, Eye, Heart, Shield, Sparkles, Zap } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import Magnetic from "@/components/motion/magnetic";
 import type { PublicLanding } from "@/lib/landing";
+import Link from "next/link";
 
 interface HeroProps {
   landing: PublicLanding | null;
@@ -118,14 +119,14 @@ export default function Hero({ landing }: HeroProps) {
 
           <motion.div variants={childVariants} className="flex gap-4 flex-wrap">
             <Magnetic strength={6}>
-              <a
+              <Link
                 id="hero-cta"
-                href="#contact"
+                href="/booking"
                 className="btn-hero-primary inline-flex items-center justify-center gap-3 px-10 py-5 text-body-lg min-h-15 bg-accent text-content-contrast rounded-pill font-bold no-underline border border-copper transition-all duration-300 hover:bg-accent-hover hover:-translate-y-0.5 hover:shadow-elevation-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-95"
               >
                 <CalendarPlus className="w-6 h-6" strokeWidth={2} aria-hidden="true" />
                 {data?.ctaLabel1 ?? t("cta1")}
-              </a>
+              </Link>
             </Magnetic>
             <Magnetic strength={4}>
               <a

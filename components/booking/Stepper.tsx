@@ -35,7 +35,7 @@ export default function Stepper({
   const percent = Math.round(((current + 1) / total) * 100);
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border-primary bg-surface-secondary px-3 py-3 shadow-elevation-1 backdrop-blur-md sm:px-6">
+    <header className="sticky top-20 z-40 w-full border-b border-border-primary bg-surface-secondary px-3 py-3 shadow-elevation-1 backdrop-blur-md sm:px-6">
       <div className="mx-auto max-w-4xl space-y-2.5">
         {/* Top header row: step badge + title (right), actions + percent (left) */}
         <div className="flex flex-wrap items-center justify-between gap-2 sm:flex-nowrap">
@@ -126,7 +126,7 @@ export default function Stepper({
                   >
                     {isCompleted ? <Check className="size-3" strokeWidth={3} /> : index + 1}
                   </span>
-                  <span className="hidden truncate text-[11px] xs:inline sm:inline sm:text-xs">
+                  <span className="hidden max-w-17.5 truncate text-[11px] xs:inline sm:inline sm:max-w-none sm:text-xs">
                     {t(`stepper.${label}`)}
                   </span>
                 </button>
