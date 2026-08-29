@@ -106,7 +106,7 @@ export default function SmartScheduleBar({
                 )}
               >
                 <div className="flex items-center justify-between gap-1.5">
-                  <span className="max-w-[160px] truncate text-xs font-black">
+                  <span className="max-w-40 truncate text-xs font-black">
                     {idx + 1}. {line.service.title}
                   </span>
                   {isScheduled ? (
