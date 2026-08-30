@@ -32,6 +32,10 @@ export const PERMISSION_DEFS = [
   { key: "settings.read", name: "Read settings", description: "View platform settings" },
   { key: "settings.write", name: "Write settings", description: "Create and update platform settings" },
   { key: "settings.manage", name: "Manage settings", description: "Deactivate and delete platform settings" },
+  { key: "sms.read", name: "Read SMS", description: "View SMS providers, templates, and reports" },
+  { key: "sms.write", name: "Write SMS", description: "Create and update SMS providers and templates" },
+  { key: "sms.manage", name: "Manage SMS", description: "Deactivate and delete SMS providers and templates" },
+  { key: "sms.send", name: "Send SMS", description: "Send messages and test SMS providers" },
 ] as const;
 
 export const ALL_PERMISSIONS = PERMISSION_DEFS.map((p) => p.key);

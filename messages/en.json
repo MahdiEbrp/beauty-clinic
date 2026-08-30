@@ -2577,6 +2577,386 @@
     "selectPage": "Select all on page",
     "selectRow": "Select this setting"
   },
+  "smsAdmin": {
+    "meta": {
+      "title": "SMS Panel | Nafas Beauty Clinic",
+      "description": "Manage Iranian SMS providers, templates, sending and delivery reports."
+    },
+    "heading": "SMS panel",
+    "description": "Connect Iranian providers, send messages and monitor delivery health.",
+    "eyebrow": "Customer communication operations",
+    "back": "Back to dashboard",
+    "resultsLabel": "items",
+    "notAvailable": "Not available",
+    "nav": {
+      "overview": "Overview",
+      "send": "Send message",
+      "providers": "Providers",
+      "templates": "Templates",
+      "reports": "Send reports"
+    },
+    "actions": {
+      "send": "Send message",
+      "addProvider": "Add provider",
+      "addTemplate": "Add template",
+      "edit": "Edit",
+      "delete": "Delete",
+      "test": "Send test message",
+      "save": "Save changes",
+      "cancel": "Cancel",
+      "retry": "Try again",
+      "viewAll": "View all",
+      "confirm": "Confirm",
+      "loading": "Loading..."
+    },
+    "providerKinds": {
+      "kavenegar": "Kavenegar",
+      "smsIr": "SMS.ir",
+      "ippanel": "IPPanel",
+      "melipayamak": "Meli Payamak",
+      "custom": "Custom provider"
+    },
+    "providerDescriptions": {
+      "kavenegar": "REST connection with an API key",
+      "smsIr": "Bulk sending through SMS.ir API",
+      "ippanel": "Connection to the IPPanel SMS API",
+      "melipayamak": "Meli Payamak REST connection",
+      "custom": "Configurable JSON contract for another provider"
+    },
+    "statuses": {
+      "unknown": "Not checked",
+      "healthy": "Healthy",
+      "unhealthy": "Needs attention",
+      "queued": "Queued",
+      "sending": "Sending",
+      "sent": "Sent",
+      "delivered": "Delivered",
+      "failed": "Failed",
+      "partial": "Partially successful"
+    },
+    "connection": {
+      "eyebrow": "Connection health",
+      "title": "Provider status",
+      "description": "See the active provider and its latest connection check.",
+      "noProvider": "No active SMS provider has been configured yet.",
+      "default": "Default",
+      "active": "Active",
+      "inactive": "Inactive",
+      "tokenConfigured": "Token configured",
+      "endpoint": "Service URL",
+      "lastCheck": "Last check",
+      "never": "Not checked yet",
+      "testTitle": "Connection test",
+      "testRecipient": "Test recipient",
+      "testMessage": "Test message",
+      "testPlaceholder": "e.g. 09121234567",
+      "testMessagePlaceholder": "Connection test message",
+      "testing": "Sending test message...",
+      "testSuccess": "The test message was accepted.",
+      "testError": "The test message could not be sent."
+    },
+    "stats": {
+      "total": "Total messages",
+      "sent": "Sent",
+      "delivered": "Delivered",
+      "failed": "Failed",
+      "deliveryRate": "Delivery rate"
+    },
+    "recent": {
+      "heading": "Recent messages",
+      "empty": "No messages have been sent yet.",
+      "recipient": "Recipient",
+      "provider": "Provider",
+      "status": "Status",
+      "time": "Time"
+    },
+    "providers": {
+      "heading": "SMS providers",
+      "description": "Manage encrypted SMS connections and test them before sending.",
+      "search": "Search providers",
+      "searchPlaceholder": "Provider name or type...",
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "active": "Active",
+      "inactive": "Inactive",
+      "table": {
+        "name": "Name",
+        "type": "Type",
+        "endpoint": "Endpoint",
+        "token": "Token",
+        "status": "Status",
+        "default": "Default",
+        "lastCheck": "Last check",
+        "actions": "Actions"
+      },
+      "default": "Default",
+      "configured": "Configured",
+      "notConfigured": "Not configured",
+      "never": "Not checked",
+      "edit": "Edit provider",
+      "test": "Send test message",
+      "delete": "Delete provider",
+      "deleteTitle": "Delete provider?",
+      "deleteDescription": "The provider will be disabled and unavailable for new sends.",
+      "deleteConfirm": "Delete provider",
+      "deleteSuccess": "Provider deleted.",
+      "deleteError": "The provider could not be deleted.",
+      "empty": "No SMS provider has been added yet.",
+      "emptySearch": "No provider matches these filters.",
+      "error": "Providers could not be loaded.",
+      "retry": "Try again",
+      "pagination": {
+        "showing": "Showing {from} to {to} of {total}",
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {page} of {totalPages}"
+      }
+    },
+    "templates": {
+      "heading": "SMS templates",
+      "description": "Manage Persian and English templates with replaceable variables.",
+      "search": "Search templates",
+      "searchPlaceholder": "Template key or name...",
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "active": "Active",
+      "inactive": "Inactive",
+      "table": {
+        "key": "Key",
+        "name": "Template name",
+        "type": "Type",
+        "variables": "Variables",
+        "status": "Status",
+        "updated": "Last updated",
+        "actions": "Actions"
+      },
+      "noVariables": "No variables",
+      "edit": "Edit template",
+      "delete": "Delete template",
+      "deleteTitle": "Delete template?",
+      "deleteDescription": "The template will be disabled and hidden from new sends.",
+      "deleteConfirm": "Delete template",
+      "deleteSuccess": "Template deleted.",
+      "deleteError": "The template could not be deleted.",
+      "empty": "No SMS template has been added yet.",
+      "emptySearch": "No template matches these filters.",
+      "error": "Templates could not be loaded.",
+      "retry": "Try again",
+      "pagination": {
+        "showing": "Showing {from} to {to} of {total}",
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {page} of {totalPages}"
+      }
+    }
+  },
+  "smsProviderForm": {
+    "meta": {
+      "title": "SMS Provider | Nafas Beauty Clinic",
+      "description": "Add or edit an SMS provider connection."
+    },
+    "back": "Back to providers",
+    "heading": "Add SMS provider",
+    "editHeading": "Edit SMS provider",
+    "description": "Connection credentials are encrypted on the server and never shown in the interface.",
+    "sections": {
+      "identity": "Connection details",
+      "credentials": "Authentication and payload",
+      "status": "Provider status"
+    },
+    "fields": {
+      "name": "Display name",
+      "nameHint": "The name shown in the admin panel.",
+      "kind": "Provider type",
+      "apiUrl": "Service URL",
+      "apiUrlHint": "Use HTTPS. Suggested value: {url}",
+      "token": "Token or API key",
+      "tokenHint": "The token is encrypted in the database. Leave blank while editing to keep the current token.",
+      "tokenConfigured": "A previous token is configured; enter a new value to replace it.",
+      "sender": "Sender number or line",
+      "senderHint": "Enter a sender line when your provider requires one.",
+      "authScheme": "Authentication method",
+      "authHeader": "Authentication header",
+      "authHeaderPlaceholder": "Authorization",
+      "lineNumber": "Provider line number",
+      "payloadMode": "Payload mode",
+      "username": "Username",
+      "password": "Password",
+      "apiKey": "Additional API key"
+    },
+    "options": {
+      "bearer": "Bearer",
+      "xApiKey": "X-API-Key",
+      "token": "Token",
+      "none": "No header",
+      "standard": "Standard",
+      "bulk": "Bulk"
+    },
+    "status": {
+      "active": "Active provider",
+      "activeHint": "Allow this connection to send messages.",
+      "default": "Default provider",
+      "defaultHint": "Use it when a send request does not specify a provider."
+    },
+    "actions": {
+      "create": "Add provider",
+      "update": "Save provider",
+      "saving": "Saving..."
+    },
+    "errors": {
+      "required": "This field is required.",
+      "invalidUrl": "Enter a valid HTTPS URL.",
+      "invalid": "Provider details are invalid.",
+      "server": "The provider could not be saved."
+    },
+    "toast": {
+      "created": "Provider added.",
+      "updated": "Provider updated.",
+      "error": "The operation failed."
+    }
+  },
+  "smsTemplateForm": {
+    "meta": {
+      "title": "SMS Template | Nafas Beauty Clinic",
+      "description": "Add or edit a bilingual SMS template."
+    },
+    "back": "Back to templates",
+    "heading": "Add SMS template",
+    "editHeading": "Edit SMS template",
+    "description": "Use variables such as {{name}} for repeatable messages.",
+    "sections": {
+      "identity": "Template details",
+      "content": "Bilingual content",
+      "status": "Template status"
+    },
+    "fields": {
+      "key": "Template key",
+      "keyHint": "Lowercase letters, numbers, dots and hyphens only; example: booking.confirmed",
+      "type": "Message type",
+      "faName": "Persian name",
+      "enName": "English name",
+      "faContent": "Persian message",
+      "enContent": "English message",
+      "variables": "Variables",
+      "variablesHint": "Separate variable names with English commas; example: name, date, time",
+      "displayOrder": "Display order"
+    },
+    "types": {
+      "transactional": "Transactional",
+      "marketing": "Marketing"
+    },
+    "status": {
+      "active": "Active template",
+      "activeHint": "Make the template available in the send form."
+    },
+    "preview": "Preview",
+    "previewHint": "Variable values are replaced when the message is sent.",
+    "actions": {
+      "create": "Add template",
+      "update": "Save template",
+      "saving": "Saving..."
+    },
+    "errors": {
+      "required": "This field is required.",
+      "keyInvalid": "The template key is invalid.",
+      "server": "The template could not be saved."
+    },
+    "toast": {
+      "created": "Template added.",
+      "updated": "Template updated.",
+      "error": "The operation failed."
+    }
+  },
+  "smsSend": {
+    "meta": {
+      "title": "Send SMS | Nafas Beauty Clinic",
+      "description": "Send a single or bulk message through an SMS provider."
+    },
+    "back": "Back to SMS panel",
+    "heading": "Send SMS",
+    "description": "Add recipients, compose the message and review each recipient in the report.",
+    "mode": {
+      "custom": "Custom text",
+      "template": "Use a template"
+    },
+    "fields": {
+      "provider": "Provider",
+      "template": "SMS template",
+      "locale": "Message language",
+      "recipients": "Recipients",
+      "recipientsHint": "Put one number per line or separate with commas. Up to 1,000 numbers.",
+      "message": "Message",
+      "messageHint": "Persian messages usually use shorter segments.",
+      "sender": "Optional sender line",
+      "campaignName": "Send name",
+      "variables": "Template variable values",
+      "variablePlaceholder": "Value for {name}"
+    },
+    "options": {
+      "fa": "Persian",
+      "en": "English",
+      "chooseProvider": "Choose a provider",
+      "chooseTemplate": "Choose a template"
+    },
+    "summary": {
+      "recipients": "Recipients",
+      "characters": "Characters",
+      "parts": "Parts",
+      "encoding": "Encoding",
+      "gsm7": "GSM-7",
+      "unicode": "Unicode",
+      "ready": "Ready to send",
+      "sent": "{sent} of {total} sent.",
+      "failed": "{failed} recipients failed.",
+      "success": "The message send was recorded."
+    },
+    "actions": {
+      "send": "Send message",
+      "sending": "Sending...",
+      "clear": "Clear form",
+      "manageProviders": "Configure provider"
+    },
+    "errors": {
+      "noProvider": "Configure at least one active provider before sending.",
+      "required": "Enter at least one recipient and a message.",
+      "server": "The message could not be sent.",
+      "templateVariables": "Complete the template variable values."
+    }
+  },
+  "smsReports": {
+    "meta": {
+      "title": "SMS Reports | Nafas Beauty Clinic",
+      "description": "Review SMS sending and delivery statuses."
+    },
+    "back": "Back to SMS panel",
+    "heading": "SMS send reports",
+    "description": "Review each message and the provider response.",
+    "search": "Search",
+    "searchPlaceholder": "Masked phone or provider message id...",
+    "status": "Status",
+    "allStatuses": "All statuses",
+    "provider": "Provider",
+    "notAvailable": "Not available",
+    "allProviders": "All providers",
+    "table": {
+      "recipient": "Recipient",
+      "provider": "Provider",
+      "status": "Status",
+      "providerId": "Provider id",
+      "created": "Created",
+      "sent": "Sent",
+      "error": "Error"
+    },
+    "empty": "No messages match these filters.",
+    "error": "Reports could not be loaded.",
+    "retry": "Try again",
+    "pagination": {
+      "showing": "Showing {from} to {to} of {total}",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {page} of {totalPages}"
+    }
+  },
   "settingWizard": {
     "meta": {
       "title": "Add Setting | Nafas Beauty Clinic",

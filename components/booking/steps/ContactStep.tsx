@@ -5,13 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
-  ArrowRight,
-  FileText,
-  LoaderCircle,
-  Mail,
-  Phone,
-  ShieldAlert,
-  Stethoscope,
+  ArrowRight,FileText,LoaderCircle,Mail,Phone,ShieldAlert,Stethoscope,
   User,
 } from "lucide-react";
 import { bookingErrorKey } from "@/lib/bookings/errors";

@@ -127,6 +127,13 @@
       "when": 1787947310694,
       "tag": "0017_worthless_thunderball",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1788079503284,
+      "tag": "0018_curved_joseph",
+      "breakpoints": true
     }
   ]
 }
