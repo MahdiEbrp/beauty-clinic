@@ -41,6 +41,12 @@ export const PATCH = withSecurity(
     permissions: "appointments.write",
     validate: { body: updateBookingAdminSchema },
     audit: true,
+    notification: {
+      entityType: "booking",
+      entityId: (ctx) => ctx.params?.id,
+      entityLabel: () => "Booking updated",
+      action: "updated",
+    },
   },
   async (_request, ctx) => {
     const id = ctx.params?.id;
@@ -60,6 +66,12 @@ export const DELETE = withSecurity(
     auth: "required",
     permissions: "appointments.manage",
     audit: true,
+    notification: {
+      entityType: "booking",
+      entityId: (ctx) => ctx.params?.id,
+      entityLabel: () => "Booking deleted",
+      action: "deleted",
+    },
   },
   async (_request, ctx) => {
     const id = ctx.params?.id;

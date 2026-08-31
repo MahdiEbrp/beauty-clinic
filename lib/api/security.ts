@@ -8,10 +8,19 @@ import { isSameOrigin, readJsonBody } from "@/lib/api/request";
 import { rateLimit } from "@/lib/api/rate-limit";
 import { toFieldErrors } from "@/lib/validation/field-errors";
 import { logError, logInfo } from "@/lib/log";
+import { createNotification } from "@/lib/notifications/service";
 
 export { jsonError, jsonOk };
 
 const MUTATION_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
+
+export type NotificationConfig<Body = unknown, Query = unknown> = {
+  entityType: string;
+  entityId: (ctx: ApiContext<Body, Query>) => string | undefined;
+  entityLabel: (ctx: ApiContext<Body, Query>) => string;
+  action?: string | ((method: string) => string);
+  meta?: (ctx: ApiContext<Body, Query>) => Record<string, unknown> | undefined;
+};
 
 export type SecurityConfig<Body = unknown, Query = unknown> = {
   auth?: "public" | "required";
@@ -29,6 +38,7 @@ export type SecurityConfig<Body = unknown, Query = unknown> = {
     bodyLimit?: number;
   };
   audit?: boolean;
+  notification?: NotificationConfig<Body, Query>;
 };
 
 export type ApiContext<Body = unknown, Query = unknown> = {
@@ -173,6 +183,34 @@ export function withSecurity<Body = unknown, Query = unknown>(
           status: response.status,
           userId: ctx.session?.user.id,
         });
+      }
+
+      if (
+        config.notification &&
+        MUTATION_METHODS.has(request.method) &&
+        response.status >= 200 &&
+        response.status < 300
+      ) {
+        const n = config.notification;
+        const action =
+          typeof n.action === "function"
+            ? n.action(request.method)
+            : n.action ?? request.method.toLowerCase();
+        const entityId = n.entityId(ctx);
+        if (entityId) {
+          createNotification({
+            actorId: ctx.session?.user.id,
+            action,
+            entityType: n.entityType,
+            entityId,
+            entityLabel: n.entityLabel(ctx),
+            meta: n.meta?.(ctx),
+          }).catch((err: unknown) => {
+            logError("notification.create_failed", {
+              error: err instanceof Error ? err.message : String(err),
+            });
+          });
+        }
       }
 
       return reply(response);

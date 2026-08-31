@@ -15,6 +15,7 @@ import type { AuthUser } from "@/lib/auth/dal";
 import type { SidebarNavItem } from "./SidebarSections";
 import LocaleSwitcher from "../LocaleSwitcher";
 import { ProfileControl } from "./ProfileControl";
+import { NotificationDropdown } from "./NotificationDropdown";
 
 export function Topbar({
   sidebarMode,
@@ -37,6 +38,7 @@ export function Topbar({
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [unreadCount, setUnreadCount] = useState(0);
   const notificationsRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
 
@@ -61,6 +63,53 @@ export function Topbar({
       document.removeEventListener("pointerdown", onPointerDown);
     };
   }, [notificationsOpen, searchOpen]);
+
+  // Live unread count via SSE, with a REST poll as a fallback so the badge
+  // never goes stale if the stream drops or is unsupported in the env.
+  useEffect(() => {
+    const refreshFromApi = async () => {
+      try {
+        const res = await fetch("/api/v1/notifications");
+        if (!res.ok) return;
+        const json = (await res.json()) as {
+          data: { unreadCount: number };
+        };
+        setUnreadCount(json.data.unreadCount);
+      } catch {
+        // Ignore transient failures; the next tick/poll retries.
+      }
+    };
+
+    let eventSource: EventSource | null = null;
+    try {
+      eventSource = new EventSource("/api/v1/notifications/stream");
+      eventSource.addEventListener("notification", (event) => {
+        const raw: unknown = event.data;
+        if (typeof raw !== "string") return;
+        try {
+          const parsed = JSON.parse(raw) as {
+            unreadCount?: number;
+          };
+          if (typeof parsed.unreadCount === "number") {
+            setUnreadCount(parsed.unreadCount);
+          }
+        } catch {
+          // Malformed frame; fall back to the API poll.
+        }
+      });
+    } catch {
+      // EventSource unsupported here (rare); rely on the API poll.
+    }
+
+    const poll = window.setInterval(() => {
+      void refreshFromApi();
+    }, 60_000);
+
+    return () => {
+      eventSource?.close();
+      window.clearInterval(poll);
+    };
+  }, []);
 
   const searchResults = navItems.filter((item) => {
     const label = t(msgKey(`dashboard.sidebar.${item.key}`));
@@ -166,15 +215,21 @@ export function Topbar({
             onClick={() => setNotificationsOpen((open) => !open)}
             aria-expanded={notificationsOpen}
             aria-label={t("dashboard.topbar.notifications")}
-            className="relative inline-flex size-10 items-center justify-center rounded-control text-accent transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="relative inline-flex size-10 items-center justify-center overflow-visible rounded-control text-accent transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             <Bell className="size-5" aria-hidden="true" />
+            {unreadCount > 0 && (
+              <span
+                className={`absolute -top-0.5 -inset-s-0.5 flex h-4 items-center justify-center rounded-full bg-accent text-[10px] font-bold leading-none text-white ${unreadCount > 9 ? "min-w-4 px-1" : "size-4"}`}
+              >
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
           </button>
-          {notificationsOpen && (
-            <div className="absolute inset-e-0 top-12 z-50 w-56 rounded-card border border-border-primary bg-surface-secondary p-4 text-dash-caption text-content-secondary shadow-elevation-3">
-              {t("dashboard.topbar.noNotifications")}
-            </div>
-          )}
+          <NotificationDropdown
+            open={notificationsOpen}
+            onCountChange={setUnreadCount}
+          />
         </div>
         <span className="h-6 w-px bg-border-primary" aria-hidden="true" />
         <LocaleSwitcher />

@@ -12,6 +12,12 @@ export const PATCH = withSecurity(
     permissions: "users.manage",
     validate: { body: updateUserStatusSchema },
     audit: true,
+    notification: {
+      entityType: "user",
+      entityId: (ctx) => ctx.params?.id,
+      entityLabel: () => "User status updated",
+      action: "updated",
+    },
   },
   async (_request, ctx) => {
     const targetId = ctx.params?.id;
@@ -39,7 +45,17 @@ export const PATCH = withSecurity(
 );
 
 export const DELETE = withSecurity(
-  { auth: "required", permissions: "users.manage", audit: true },
+  {
+    auth: "required",
+    permissions: "users.manage",
+    audit: true,
+    notification: {
+      entityType: "user",
+      entityId: (ctx) => ctx.params?.id,
+      entityLabel: () => "User deleted",
+      action: "deleted",
+    },
+  },
   async (_request, ctx) => {
     const targetId = ctx.params?.id;
     if (!targetId || !z.uuid().safeParse(targetId).success) return jsonError("INVALID_USER_ID", "Invalid user id.", 400);

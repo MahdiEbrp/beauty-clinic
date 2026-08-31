@@ -30,6 +30,12 @@ export const PATCH = withSecurity(
     permissions: "services.write",
     validate: { body: updateServiceCategorySchema },
     audit: true,
+    notification: {
+      entityType: "service_category",
+      entityId: (ctx) => ctx.params?.id,
+      entityLabel: () => "Service category updated",
+      action: "updated",
+    },
   },
   async (_request, ctx) => {
     const id = ctx.params?.id;
@@ -41,7 +47,17 @@ export const PATCH = withSecurity(
 );
 
 export const DELETE = withSecurity(
-  { auth: "required", permissions: "services.manage", audit: true },
+  {
+    auth: "required",
+    permissions: "services.manage",
+    audit: true,
+    notification: {
+      entityType: "service_category",
+      entityId: (ctx) => ctx.params?.id,
+      entityLabel: () => "Service category deleted",
+      action: "deleted",
+    },
+  },
   async (_request, ctx) => {
     const id = ctx.params?.id;
     if (!id || !z.uuid().safeParse(id).success) return invalidId();

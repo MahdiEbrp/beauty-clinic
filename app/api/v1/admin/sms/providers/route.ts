@@ -28,6 +28,12 @@ export const POST = withSecurity(
     permissions: "sms.write",
     validate: { body: createSmsProviderSchema },
     audit: true,
+    notification: {
+      entityType: "sms_provider",
+      entityId: (ctx) => (ctx.body as { name?: string } | undefined)?.name,
+      entityLabel: () => "New SMS provider created",
+      action: "created",
+    },
   },
   async (_request, ctx) => {
     const session = ctx.session ?? (() => { throw new Error("Session is missing"); })();

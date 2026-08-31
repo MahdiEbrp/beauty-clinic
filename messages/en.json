@@ -380,12 +380,11 @@
   "bookingAdmin": {
     "addNew": "Add New",
     "back": "Back to Bookings",
+    "clearFilters": "Clear filters",
     "counts": {
       "active": "{count} Active",
       "total": "{count} Total"
     },
-    "clearFilters": "Clear filters",
-    "clearFilters": "Clear filters",
     "description": "Monitor reservations and manage availability slots.",
     "hub": {
       "reservations": {
@@ -1010,6 +1009,7 @@
       "access": "Access management",
       "breadcrumbLabel": "Dashboard breadcrumb",
       "dashboard": "Dashboard",
+      "markAllRead": "Mark all read",
       "noNotifications": "No new notifications",
       "noSearchResults": "No results found",
       "notifications": "Notifications",
@@ -1980,6 +1980,18 @@
     "description": "The page you are looking for does not exist or has been moved.",
     "goHome": "Go Home",
     "title": "Page Not Found"
+  },
+  "notifications": {
+    "actions": {
+      "DELETE": "deleted",
+      "PATCH": "updated",
+      "POST": "created",
+      "PUT": "updated",
+      "created": "created",
+      "deleted": "deleted",
+      "status_changed": "status changed",
+      "updated": "updated"
+    }
   },
   "pricing": {
     "article": {
@@ -3315,7 +3327,6 @@
     }
   },
   "smsAdmin": {
-    "clearFilters": "Clear filters",
     "actions": {
       "addProvider": "Add provider",
       "addTemplate": "Add template",
@@ -3332,6 +3343,7 @@
     },
     "addNew": "Add New",
     "back": "Back to dashboard",
+    "clearFilters": "Clear filters",
     "connection": {
       "active": "Active",
       "default": "Default",
@@ -3587,23 +3599,29 @@
       "token": "Token",
       "xApiKey": "X-API-Key"
     },
+    "review": {
+      "connection": "Connection",
+      "description": "Review the connection details before saving.",
+      "notProvided": "Not provided",
+      "secretHidden": "Stored securely",
+      "secretReady": "Configured",
+      "security": "Security and payload",
+      "status": "Status",
+      "title": "Ready to save"
+    },
     "sections": {
       "credentials": "Authentication and payload",
       "credentialsHint": "Choose how the gateway authenticates and receives message requests.",
       "identity": "Connection details",
       "identityHint": "Give this connection a recognizable name and verify its service URL.",
-      "statusHint": "Control whether this connection can send and whether it is the default route.",
-      "status": "Provider status"
+      "status": "Provider status",
+      "statusHint": "Control whether this connection can send and whether it is the default route."
     },
-    "review": {
-      "connection": "Connection",
-      "description": "Review the connection details before saving.",
-      "notProvided": "Not provided",
-      "security": "Security and payload",
-      "secretHidden": "Stored securely",
-      "secretReady": "Configured",
-      "status": "Status",
-      "title": "Ready to save"
+    "status": {
+      "active": "Active provider",
+      "activeHint": "Allow this connection to send messages.",
+      "default": "Default provider",
+      "defaultHint": "Use it when a send request does not specify a provider."
     },
     "steps": {
       "credentials": {
@@ -3619,15 +3637,9 @@
         "name": "Status"
       }
     },
-    "status": {
-      "active": "Active provider",
-      "activeHint": "Allow this connection to send messages.",
-      "default": "Default provider",
-      "defaultHint": "Use it when a send request does not specify a provider."
-    },
     "toast": {
-      "creating": "Adding provider...",
       "created": "Provider added.",
+      "creating": "Adding provider...",
       "error": "The operation failed.",
       "saving": "Saving provider...",
       "updated": "Provider updated."
@@ -3795,6 +3807,16 @@
     },
     "preview": "Preview",
     "previewHint": "Variable values are replaced when the message is sent.",
+    "review": {
+      "content": "Content",
+      "description": "Review the template before saving.",
+      "details": "Template details",
+      "inactive": "Inactive",
+      "none": "None",
+      "notProvided": "Not provided",
+      "status": "Status",
+      "title": "Ready to save"
+    },
     "sections": {
       "content": "Bilingual content",
       "contentHint": "Provide the Persian and English names and message bodies.",
@@ -3802,15 +3824,9 @@
       "identityHint": "Define the key, message type, variables and display order.",
       "status": "Template status"
     },
-    "review": {
-      "content": "Content",
-      "details": "Template details",
-      "description": "Review the template before saving.",
-      "inactive": "Inactive",
-      "none": "None",
-      "notProvided": "Not provided",
-      "status": "Status",
-      "title": "Ready to save"
+    "status": {
+      "active": "Active template",
+      "activeHint": "Make the template available in the send form."
     },
     "steps": {
       "content": {
@@ -3826,13 +3842,9 @@
         "name": "Review"
       }
     },
-    "status": {
-      "active": "Active template",
-      "activeHint": "Make the template available in the send form."
-    },
     "toast": {
-      "creating": "Adding template...",
       "created": "Template added.",
+      "creating": "Adding template...",
       "error": "The operation failed.",
       "saving": "Saving template...",
       "updated": "Template updated."

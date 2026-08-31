@@ -7,3 +7,4 @@ export * from "./care-guides";
 export * from "./landing";
 export * from "./landing-relations";
 export * from "./sms";
+export * from "./notifications";

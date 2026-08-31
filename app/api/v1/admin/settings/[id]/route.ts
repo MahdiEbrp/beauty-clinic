@@ -30,6 +30,12 @@ export const PATCH = withSecurity(
     permissions: "settings.write",
     validate: { body: updateSettingSchema },
     audit: true,
+    notification: {
+      entityType: "setting",
+      entityId: (ctx) => ctx.params?.id,
+      entityLabel: () => "System setting updated",
+      action: "updated",
+    },
   },
   async (_request, ctx) => {
     const id = ctx.params?.id;
@@ -52,6 +58,12 @@ export const DELETE = withSecurity(
     auth: "required",
     permissions: "settings.manage",
     audit: true,
+    notification: {
+      entityType: "setting",
+      entityId: (ctx) => ctx.params?.id,
+      entityLabel: () => "System setting deleted",
+      action: "deleted",
+    },
   },
   async (_request, ctx) => {
     const id = ctx.params?.id;

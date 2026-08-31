@@ -23,6 +23,12 @@ export const POST = withSecurity(
     permissions: "appointments.write",
     validate: { body: createBookingSchema },
     audit: true,
+    notification: {
+      entityType: "booking",
+      entityId: (ctx) => (ctx.body as { serviceId?: string } | undefined)?.serviceId,
+      entityLabel: () => "New booking created",
+      action: "created",
+    },
   },
   async (_request, ctx) => {
     const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();

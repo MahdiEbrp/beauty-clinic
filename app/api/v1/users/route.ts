@@ -24,6 +24,12 @@ export const POST = withSecurity(
     permissions: "users.write",
     validate: { body: createUserSchema },
     audit: true,
+    notification: {
+      entityType: "user",
+      entityId: (ctx) => (ctx.body as { email?: string } | undefined)?.email,
+      entityLabel: () => "New user created",
+      action: "created",
+    },
   },
   async (_request, ctx) => {
     const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();

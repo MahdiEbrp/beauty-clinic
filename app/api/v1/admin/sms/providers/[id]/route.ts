@@ -32,6 +32,12 @@ export const PATCH = withSecurity(
     permissions: "sms.write",
     validate: { body: updateSmsProviderSchema },
     audit: true,
+    notification: {
+      entityType: "sms_provider",
+      entityId: (ctx) => ctx.params?.id,
+      entityLabel: () => "SMS provider updated",
+      action: "updated",
+    },
   },
   async (_request, ctx) => {
     const id = ctx.params?.id;
@@ -43,7 +49,17 @@ export const PATCH = withSecurity(
 );
 
 export const DELETE = withSecurity(
-  { auth: "required", permissions: "sms.manage", audit: true },
+  {
+    auth: "required",
+    permissions: "sms.manage",
+    audit: true,
+    notification: {
+      entityType: "sms_provider",
+      entityId: (ctx) => ctx.params?.id,
+      entityLabel: () => "SMS provider deleted",
+      action: "deleted",
+    },
+  },
   async (_request, ctx) => {
     const id = ctx.params?.id;
     if (!validId(id)) return jsonError(SMS_ERROR_CODES.invalidProviderId, "Invalid SMS provider id.", SMS_HTTP_STATUS.badRequest);
