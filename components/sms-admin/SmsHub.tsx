@@ -1,18 +1,22 @@
 "use client";
 
-import { Activity, ArrowUpLeft, CheckCircle2, MessageSquareText, Send, Settings2 } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
+import {
+  BarChart3,
+  FileText,
+  Network,
+  Plus,
+  Send,
+  Settings2,
+} from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
 
 import type { AuthUser } from "@/lib/auth/dal";
 import type { SmsOverview } from "@/lib/sms/report-service";
-import {
-  formatSmsDate,
-  providerKindKey,
-  SmsBackLink,
-  SmsStatusBadge,
-  SmsSubnav,
-} from "./common";
+
+function percentage(part: number, total: number): number {
+  return total === 0 ? 0 : Math.round((part / total) * 100);
+}
 
 export function SmsHub({
   user,
@@ -22,202 +26,253 @@ export function SmsHub({
   overview: SmsOverview;
 }) {
   const t = useTranslations("smsAdmin");
-  const locale = useLocale();
+  const format = useFormatter();
   const canSend = user.permissions.includes("sms.send");
   const canWrite = user.permissions.includes("sms.write");
-  const activeProvider =
-    overview.providers.find((provider) => provider.isDefault && provider.isActive) ??
-    overview.providers.find((provider) => provider.isActive);
-  const stats = [
-    { key: "total", value: overview.stats.total, icon: MessageSquareText },
-    { key: "sent", value: overview.stats.sent, icon: Send },
-    { key: "delivered", value: overview.stats.delivered, icon: CheckCircle2 },
-    { key: "failed", value: overview.stats.failed, icon: Activity },
+
+  const rows = [
+    {
+      key: "providers" as const,
+      count: overview.activeProviderCount,
+      dot: "bg-accent",
+      track: "bg-accent/10",
+      fill: "bg-accent",
+    },
+    {
+      key: "templates" as const,
+      count: overview.activeTemplateCount,
+      dot: "bg-copper-deep",
+      track: "bg-surface-tertiary/30",
+      fill: "bg-copper-deep",
+    },
+    {
+      key: "messages" as const,
+      count: overview.stats.total,
+      dot: "bg-gold",
+      track: "bg-surface-tertiary/30",
+      fill: "bg-gold",
+    },
   ];
+
+  const cards = [
+    {
+      key: "providers" as const,
+      title: t("hub.providers.name"),
+      description: t("hub.providers.description"),
+      href: "/dashboard/sms/providers",
+      addHref: "/dashboard/sms/providers/add",
+      icon: Network,
+      badge: t("counts.active", {
+        count: format.number(overview.activeProviderCount),
+      }),
+      features: [
+        { icon: Settings2, label: t("hub.providers.featureEncryption") },
+        { icon: BarChart3, label: t("hub.providers.featureHealth") },
+        { icon: Network, label: t("hub.providers.featureDefault") },
+      ],
+      showAdd: canWrite,
+    },
+    {
+      key: "templates" as const,
+      title: t("hub.templates.name"),
+      description: t("hub.templates.description"),
+      href: "/dashboard/sms/templates",
+      addHref: "/dashboard/sms/templates/add",
+      icon: FileText,
+      badge: t("counts.active", {
+        count: format.number(overview.activeTemplateCount),
+      }),
+      features: [
+        { icon: FileText, label: t("hub.templates.featureBilingual") },
+        { icon: Settings2, label: t("hub.templates.featureVariables") },
+        { icon: BarChart3, label: t("hub.templates.featureType") },
+      ],
+      showAdd: canWrite,
+    },
+    {
+      key: "send" as const,
+      title: t("hub.send.name"),
+      description: t("hub.send.description"),
+      href: "/dashboard/sms/send",
+      addHref: "/dashboard/sms/send",
+      icon: Send,
+      badge: t("counts.total", {
+        count: format.number(overview.stats.total),
+      }),
+      features: [
+        { icon: Send, label: t("hub.send.featureCustom") },
+        { icon: Network, label: t("hub.send.featureBulk") },
+        { icon: FileText, label: t("hub.send.featureTemplate") },
+      ],
+      showAdd: canSend,
+    },
+    {
+      key: "reports" as const,
+      title: t("hub.reports.name"),
+      description: t("hub.reports.description"),
+      href: "/dashboard/sms/messages",
+      addHref: "/dashboard/sms/messages",
+      icon: BarChart3,
+      badge: t("counts.total", {
+        count: format.number(overview.stats.total),
+      }),
+      features: [
+        { icon: BarChart3, label: t("hub.reports.featureStatus") },
+        { icon: Settings2, label: t("hub.reports.featureFilter") },
+        { icon: FileText, label: t("hub.reports.featureHistory") },
+      ],
+      showAdd: true,
+    },
+  ];
+
+  const totalAssets =
+    overview.activeProviderCount + overview.activeTemplateCount + overview.stats.total;
+
+  const manageClass =
+    "flex-1 px-4 py-2.5 min-h-11 flex items-center justify-center gap-2 whitespace-nowrap rounded-pill bg-accent text-on-primary text-dash-body-sm font-semibold transition-colors duration-300 hover:bg-primary-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+  const addClass =
+    "flex-1 px-4 py-2.5 min-h-11 flex items-center justify-center gap-2 whitespace-nowrap rounded-pill border border-accent bg-accent/5 text-accent text-dash-body-sm font-semibold transition-colors duration-300 hover:bg-accent/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      <SmsSubnav canSend={canSend} canWrite={canWrite} />
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="min-w-0 space-y-2">
-          <SmsBackLink />
-          <p className="pt-2 text-dash-caption font-bold uppercase tracking-[0.16em] text-copper-strong">
-            {t("eyebrow")}
-          </p>
-          <h1 className="text-dash-display font-black tracking-tight text-accent">
-            {t("heading")}
-          </h1>
-          <p className="max-w-2xl text-dash-body leading-7 text-content-secondary">
-            {t("description")}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {canSend && (
-            <Link
-              href="/dashboard/sms/send"
-              className="inline-flex min-h-11 items-center gap-2 rounded-pill bg-accent px-4 text-dash-body-sm font-bold text-content-contrast no-underline shadow-elevation-1 transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
-              <Send className="size-4" aria-hidden="true" />
-              {t("actions.send")}
-            </Link>
-          )}
-          {canWrite && (
-            <Link
-              href="/dashboard/sms/providers"
-              className="inline-flex min-h-11 items-center gap-2 rounded-pill border border-border-interactive bg-surface-secondary px-4 text-dash-body-sm font-bold text-accent no-underline transition-colors hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
-              <Settings2 className="size-4" aria-hidden="true" />
-              {t("actions.addProvider")}
-            </Link>
-          )}
-        </div>
-      </div>
 
-      <section
-        aria-labelledby="sms-connection-heading"
-        className="overflow-hidden rounded-panel border border-border-primary bg-surface-secondary shadow-elevation-2"
-      >
-        <div className="grid gap-5 p-5 sm:p-6 lg:grid-cols-[1fr_auto] lg:items-center lg:p-8">
-          <div className="flex items-start gap-4">
-            <div className="flex size-12 shrink-0 items-center justify-center rounded-card bg-copper/15 text-copper-strong">
-              <Activity className="size-6" aria-hidden="true" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-dash-caption font-bold uppercase tracking-[0.14em] text-copper-strong">
-                {t("connection.eyebrow")}
-              </p>
-              <h2
-                id="sms-connection-heading"
-                className="mt-1 text-dash-heading font-black text-accent"
-              >
-                {activeProvider
-                  ? `${activeProvider.name} · ${t(`providerKinds.${providerKindKey(activeProvider.kind)}` as never)}`
-                  : t("connection.noProvider")}
-              </h2>
-              <p className="mt-1 text-dash-body-sm text-content-secondary">
-                {t("connection.description")}
-              </p>
-            </div>
-          </div>
-          {activeProvider ? (
-            <div className="flex flex-wrap items-center gap-2 lg:justify-end">
-              <SmsStatusBadge status={activeProvider.healthStatus} />
-              {activeProvider.isDefault && (
-                <span className="rounded-pill border border-copper/30 bg-copper/10 px-2.5 py-1 text-dash-caption font-bold text-copper-strong">
-                  {t("connection.default")}
-                </span>
-              )}
-              {canWrite && (
-                <Link
-                  href="/dashboard/sms/providers"
-                  className="inline-flex min-h-11 items-center gap-2 rounded-pill border border-border-interactive px-3 text-dash-body-sm font-bold text-accent no-underline transition-colors hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                >
-                  {t("actions.edit")}
-                  <ArrowUpLeft className="size-4 rtl-mirror" aria-hidden="true" />
-                </Link>
-              )}
-            </div>
-          ) : (
-            canWrite && (
-              <Link
-                href="/dashboard/sms/providers/add"
-                className="inline-flex min-h-11 items-center justify-center rounded-pill bg-accent px-4 text-dash-body-sm font-bold text-content-contrast no-underline transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-              >
-                {t("actions.addProvider")}
-              </Link>
-            )
-          )}
-        </div>
-        {activeProvider && (
-          <div className="grid gap-3 border-t border-border-primary bg-surface-tertiary/30 p-5 text-dash-caption text-content-secondary sm:grid-cols-3 sm:p-6">
-            <div>
-              <span className="block text-content-tertiary">{t("connection.endpoint")}</span>
-              <span dir="ltr" className="mt-1 block truncate font-mono text-content-primary">
-                {activeProvider.apiUrl}
-              </span>
-            </div>
-            <div>
-              <span className="block text-content-tertiary">{t("connection.tokenConfigured")}</span>
-              <span className="mt-1 block font-bold text-content-primary">
-                {activeProvider.tokenLast4
-                  ? `•••• ${activeProvider.tokenLast4}`
-                  : t("notAvailable")}
-              </span>
-            </div>
-            <div>
-              <span className="block text-content-tertiary">{t("connection.lastCheck")}</span>
-              <time className="mt-1 block font-bold text-content-primary">
-                {activeProvider.lastHealthCheckedAt
-                  ? formatSmsDate(activeProvider.lastHealthCheckedAt, locale)
-                  : t("connection.never")}
-              </time>
-            </div>
-          </div>
-        )}
-      </section>
+      <header className="space-y-2">
+        <h1 className="text-dash-display font-bold tracking-tight text-accent">
+          {t("heading")}
+        </h1>
+        <p className="max-w-2xl wrap-break-word text-dash-body text-content-secondary">
+          {t("description")}
+        </p>
+      </header>
 
-      <section aria-label={t("stats.total")} className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map((stat) => (
+      <section aria-labelledby="performance-heading" className="space-y-4">
+        <h2
+          id="performance-heading"
+          className="text-dash-title font-bold tracking-tight text-content-primary"
+        >
+          {t("performance.title")}
+        </h2>
+        <div className="relative overflow-hidden rounded-panel border border-surface-variant/50 bg-surface-secondary p-5 shadow-elevation-2 sm:p-6 md:p-8">
           <div
-            key={stat.key}
-            className="rounded-card border border-border-primary bg-surface-secondary p-5 shadow-elevation-1"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <span className="text-dash-caption font-bold text-content-tertiary">
-                {t(`stats.${stat.key}` as never)}
-              </span>
-              <stat.icon className="size-5 text-copper-strong" aria-hidden="true" />
+            className="pointer-events-none absolute inset-0 bg-linear-to-br from-surface-tertiary/20 to-transparent"
+            aria-hidden="true"
+          />
+          <div className="relative z-10 space-y-6 sm:space-y-8">
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+              <div className="min-w-0 space-y-1">
+                <p className="text-dash-caption font-bold uppercase tracking-[0.16em] text-copper-strong">
+                  {t("performance.totalAssets")}
+                </p>
+                <p className="text-dash-display font-black tracking-tight text-accent">
+                  {format.number(totalAssets)}
+                </p>
+              </div>
             </div>
-            <p className="mt-4 text-dash-display font-black tracking-tight text-accent">
-              {stat.value}
-            </p>
-            {stat.key === "delivered" && (
-              <p className="mt-1 text-dash-caption text-content-secondary">
-                {overview.stats.deliveryRate}% {t("stats.deliveryRate")}
-              </p>
-            )}
+            <div className="space-y-4 sm:space-y-5">
+              {rows.map((row) => {
+                const pct = percentage(row.count, totalAssets);
+                return (
+                  <div key={row.key} className="space-y-2 sm:space-y-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex min-w-0 items-center gap-2">
+                        <span
+                          className={`size-1.5 shrink-0 rounded-full ${row.dot}`}
+                          aria-hidden="true"
+                        />
+                        <span className="truncate text-dash-body-sm font-medium text-content-secondary">
+                          {t(`performance.${row.key}`)}
+                        </span>
+                      </div>
+                      <span className="text-dash-body-sm font-semibold text-content-primary">
+                        {format.number(row.count)}
+                      </span>
+                    </div>
+                    <div
+                      className={`h-1.5 w-full flex-1 overflow-hidden rounded-full ${row.track}`}
+                      role="progressbar"
+                      aria-valuenow={pct}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-label={t(`performance.${row.key}`)}
+                    >
+                      <div
+                        className={`h-full rounded-full ${row.fill}`}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        ))}
+        </div>
       </section>
 
-      <section className="overflow-hidden rounded-panel border border-border-primary bg-surface-secondary shadow-elevation-2">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border-primary px-5 py-4 sm:px-6">
-          <h2 className="text-dash-heading font-black text-accent">{t("recent.heading")}</h2>
-          <Link
-            href="/dashboard/sms/messages"
-            className="inline-flex min-h-11 items-center gap-2 rounded-pill px-3 text-dash-body-sm font-bold text-accent no-underline transition-colors hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            {t("actions.viewAll")}
-            <ArrowUpLeft className="size-4 rtl-mirror" aria-hidden="true" />
-          </Link>
-        </div>
-        {overview.recentMessages.length === 0 ? (
-          <p className="p-8 text-center text-dash-body-sm text-content-secondary">
-            {t("recent.empty")}
-          </p>
-        ) : (
-          <div className="divide-y divide-border-primary">
-            {overview.recentMessages.map((message) => (
-              <div
-                key={message.id}
-                className="grid gap-3 px-5 py-4 sm:grid-cols-[1fr_auto_auto] sm:items-center sm:px-6"
-              >
-                <div className="min-w-0">
-                  <p dir="ltr" className="font-mono text-dash-body-sm font-bold text-accent">
-                    {message.recipientMasked}
-                  </p>
-                  <p className="mt-1 truncate text-dash-caption text-content-tertiary">
-                    {message.providerName ?? t("notAvailable")}
-                  </p>
+      <section aria-labelledby="management-heading" className="space-y-4">
+        <h2
+          id="management-heading"
+          className="text-dash-title font-bold tracking-tight text-content-primary"
+        >
+          {t("hub.title")}
+        </h2>
+
+        <div className="flex flex-col gap-4 sm:gap-6">
+          {cards.map((card) => (
+            <div
+              key={card.key}
+              className="flex min-w-0 flex-col items-start justify-between gap-5 rounded-panel border border-surface-variant/50 bg-surface-secondary p-5 shadow-elevation-2 transition-all duration-300 hover:shadow-elevation-3 sm:gap-6 lg:flex-row lg:items-center"
+            >
+              <div className="w-full min-w-0 flex-1 space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4">
+                  <div className="flex min-w-0 flex-1 items-start gap-3 sm:gap-4">
+                    <div className="shrink-0 rounded-control bg-accent/10 p-2 text-copper-strong">
+                      <card.icon className="size-6" strokeWidth={1.75} aria-hidden="true" />
+                    </div>
+                    <div className="min-w-0 space-y-0.5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="text-dash-heading wrap-break-word text-content-primary">
+                          {card.title}
+                        </h3>
+                        <span className="whitespace-nowrap rounded-pill border border-accent/20 bg-accent/10 px-2 py-0.5 text-dash-caption font-bold uppercase tracking-wider text-accent">
+                          {card.badge}
+                        </span>
+                      </div>
+                      <p className="text-dash-body-sm wrap-break-word text-content-secondary">
+                        {card.description}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <SmsStatusBadge status={message.status} />
-                <time className="text-dash-caption text-content-tertiary">
-                  {formatSmsDate(message.createdAt, locale)}
-                </time>
+                <div className="grid grid-cols-1 gap-x-4 gap-y-2 border-t border-surface-variant/50 pt-3 sm:grid-cols-2">
+                  {card.features.map((feature) => (
+                    <div
+                      key={feature.label}
+                      className="flex min-w-0 items-start gap-2 text-dash-body-sm text-content-secondary"
+                    >
+                      <feature.icon
+                        className="mt-0.5 size-4 shrink-0 text-copper-strong"
+                        aria-hidden="true"
+                      />
+                      <span className="wrap-break-word">{feature.label}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
-        )}
+              <div className="flex w-full shrink-0 flex-col gap-2.5 sm:flex-row lg:w-48 lg:flex-col">
+                <Link href={card.href} className={manageClass}>
+                  <Settings2 className="size-4 shrink-0" aria-hidden="true" />
+                  <span>{t("manage")}</span>
+                </Link>
+                {card.showAdd && (
+                  <Link href={card.addHref} className={addClass}>
+                    <Plus className="size-4 shrink-0" aria-hidden="true" />
+                    <span>{t("addNew")}</span>
+                  </Link>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
     </div>
   );

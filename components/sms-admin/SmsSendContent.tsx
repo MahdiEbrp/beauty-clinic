@@ -1,11 +1,11 @@
 "use client";
 
-import { AlertTriangle, CheckCircle2, Send } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Send } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import { Panel } from "@/components/create-group/ui";
+import { Field, inputClass, Panel } from "@/components/create-group/ui";
 import {
   SMS_API_ROUTES,
   SMS_DASHBOARD_ROUTES,
@@ -17,18 +17,23 @@ import { getSmsLengthLabel } from "@/lib/sms/message";
 import type { AdminSmsProvider } from "@/lib/sms/provider-service";
 import type { AdminSmsTemplate } from "@/lib/sms/template-service";
 import type { SmsSendSummary } from "@/lib/sms/send-service";
+import type { SmsRecipient } from "@/lib/sms/report-service";
 import { Link } from "@/src/i18n/navigation";
-import {
-  SmsBackLink,
-  SmsStatusBadge,
-  SmsSubnav,
-  type SmsSelectOption,
-} from "./common";
+import type { SmsSelectOption } from "./SmsSelect";
 import { parseSmsRecipients } from "./form-utils";
 import { SmsSendFormFields, type SmsComposeMode } from "./SmsSendFormFields";
+import { SmsRecipientPicker } from "./SmsRecipientPicker";
+import WizardActionBar from "@/components/create-group/WizardActionBar";
+import WizardHeader from "@/components/create-group/WizardHeader";
+import { SmsSendReview } from "./SmsSendReview";
 
 type SendMode = SmsComposeMode;
 type SendLocale = (typeof SMS_LOCALES)[keyof typeof SMS_LOCALES];
+const SEND_STEPS = [
+  { id: 1, key: "recipients" },
+  { id: 2, key: "content" },
+  { id: 3, key: "review" },
+] as const;
 
 export function SmsSendContent({
   providerItems,
@@ -38,10 +43,14 @@ export function SmsSendContent({
   templateItems: AdminSmsTemplate[];
 }) {
   const t = useTranslations("smsSend");
+  const formRef = useRef<HTMLFormElement>(null);
+  const [step, setStep] = useState(1);
+  const [selectedUsers, setSelectedUsers] = useState<SmsRecipient[]>([]);
   const [mode, setMode] = useState<SendMode>(SMS_SEND_MODES.custom);
   const [providerId, setProviderId] = useState(providerItems[0]?.id ?? "");
   const [templateId, setTemplateId] = useState("");
   const [locale, setLocale] = useState<SendLocale>(SMS_LOCALES.fa);
+  const wizardLocale = locale === "en" ? "en" : "fa";
   const [recipientsText, setRecipientsText] = useState("");
   const [message, setMessage] = useState("");
   const [sender, setSender] = useState("");
@@ -55,7 +64,10 @@ export function SmsSendContent({
   const composedMessage = mode === SMS_SEND_MODES.template
     ? selectedTranslation?.content ?? ""
     : message;
-  const recipients = useMemo(() => parseSmsRecipients(recipientsText), [recipientsText]);
+  const recipients = useMemo(
+    () => [...new Set([...selectedUsers.map((user) => user.phone), ...parseSmsRecipients(recipientsText)])],
+    [recipientsText, selectedUsers],
+  );
   const length = getSmsLengthLabel(composedMessage);
   const canSend = providerItems.length > SMS_LIMITS.emptyLength;
 
@@ -83,6 +95,7 @@ export function SmsSendContent({
 
   function resetForm() {
     setRecipientsText("");
+    setSelectedUsers([]);
     setMessage("");
     setSender("");
     setCampaignName("");
@@ -142,14 +155,35 @@ export function SmsSendContent({
     }
   }
 
+  function goNext() {
+    if (step === 1 && recipients.length === SMS_LIMITS.emptyLength) {
+      setError(t("errors.recipientsRequired"));
+      return;
+    }
+    if (step === 2 && (!providerId || !canSend || !composedMessage.trim())) {
+      setError(t("errors.required"));
+      return;
+    }
+    setError(null);
+    setStep((current) => Math.min(SEND_STEPS.length, current + 1));
+  }
+
   return (
     <div className="space-y-6 sm:space-y-8">
-      <SmsSubnav canSend canWrite={false} />
-      <header className="space-y-3">
-        <SmsBackLink href={SMS_DASHBOARD_ROUTES.root} />
-        <h1 className="text-dash-display font-black tracking-tight text-accent">{t("heading")}</h1>
-        <p className="max-w-2xl text-dash-body leading-7 text-content-secondary">{t("description")}</p>
-      </header>
+      <WizardHeader
+        step={step}
+        currentStepKey={SEND_STEPS[step - 1]?.key ?? "recipients"}
+        total={SEND_STEPS.length}
+        lang={wizardLocale}
+        langAware={false}
+        heading={t("heading")}
+        subtitle={t("description")}
+        onLangChange={() => undefined}
+        onGoTo={(next) => setStep(next)}
+        ns="smsSend"
+        steps={SEND_STEPS}
+        backHref={SMS_DASHBOARD_ROUTES.root}
+      />
 
       {!canSend ? (
         <Panel>
@@ -168,8 +202,18 @@ export function SmsSendContent({
           </div>
         </Panel>
       ) : (
-        <form onSubmit={(event) => void submit(event)} className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
-          <div className="space-y-6">
+        <form ref={formRef} onSubmit={(event) => void submit(event)} className="space-y-6">
+          {step === 1 && (
+            <div className="space-y-6">
+              <SmsRecipientPicker selected={selectedUsers} onChange={setSelectedUsers} />
+              <Panel>
+                <Field id="sms-send-recipients" label={t("fields.recipients")} hint={t("fields.recipientsHint")} required>
+                  <textarea id="sms-send-recipients" dir="ltr" inputMode="tel" value={recipientsText} onChange={(event) => setRecipientsText(event.target.value)} className={`${inputClass(Boolean(error) && recipients.length === SMS_LIMITS.emptyLength)} min-h-36 resize-y py-3`} />
+                </Field>
+              </Panel>
+            </div>
+          )}
+          {step === 2 && (
             <SmsSendFormFields
               mode={mode}
               providerId={providerId}
@@ -196,60 +240,27 @@ export function SmsSendContent({
               onSenderChange={setSender}
               onVariableChange={(name, value) => setVariables((current) => ({ ...current, [name]: value }))}
               onClear={resetForm}
+              showRecipients={false}
             />
-          </div>
-
-          <aside className="space-y-6 xl:sticky xl:top-6 xl:self-start">
-            <Panel>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="size-5 text-copper-strong" aria-hidden="true" />
-                <h2 className="text-dash-heading font-black text-accent">{t("summary.ready")}</h2>
-              </div>
-              <dl className="mt-5 grid gap-4 text-dash-body-sm">
-                <SummaryItem label={t("summary.recipients")} value={String(recipients.length)} />
-                <SummaryItem label={t("summary.characters")} value={String(length.characters)} />
-                <SummaryItem label={t("summary.parts")} value={String(length.parts)} />
-                <SummaryItem
-                  label={t("summary.encoding")}
-                  value={length.encoding === "gsm7" ? t("summary.gsm7") : t("summary.unicode")}
-                />
-              </dl>
-              {error && (
-                <div role="alert" className="mt-5 flex items-start gap-2 rounded-control border border-error/30 bg-error/10 p-3 text-dash-caption text-error">
-                  <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-                  <span className="wrap-break-word">{error}</span>
-                </div>
-              )}
-              {result && (
-                <div className="mt-5 space-y-1 rounded-control border border-success/30 bg-success/10 p-3 text-dash-caption text-success">
-                  <p>{t("summary.sent", { sent: result.sent, total: result.total })}</p>
-                  {result.failed > SMS_LIMITS.emptyLength && (
-                    <p>{t("summary.failed", { failed: result.failed })}</p>
-                  )}
-                  <SmsStatusBadge status={result.status} />
-                </div>
-              )}
-              <button
-                type="submit"
-                disabled={submitting}
-                className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-pill bg-accent px-4 text-dash-body-sm font-bold text-content-contrast shadow-elevation-1 transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-60"
-              >
-                <Send className="size-4" aria-hidden="true" />
-                {submitting ? t("actions.sending") : t("actions.send")}
-              </button>
-            </Panel>
-          </aside>
+          )}
+          {step === 3 && (
+            <SmsSendReview recipientCount={recipients.length} length={length} error={error} result={result} submitting={submitting} />
+          )}
         </form>
       )}
-    </div>
-  );
-}
-
-function SummaryItem({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between gap-3 border-b border-border-primary pb-3 last:border-b-0 last:pb-0">
-      <dt className="text-content-secondary">{label}</dt>
-      <dd dir="ltr" className="font-bold text-accent">{value}</dd>
+      {canSend && (
+        <WizardActionBar
+          step={step}
+          total={SEND_STEPS.length}
+          submitting={submitting}
+          onBack={() => setStep((current) => Math.max(1, current - 1))}
+          onPrimary={() => {
+            if (step === SEND_STEPS.length) formRef.current?.requestSubmit();
+            else goNext();
+          }}
+          ns="smsSend"
+        />
+      )}
     </div>
   );
 }

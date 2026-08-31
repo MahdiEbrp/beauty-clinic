@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 
 import { Field, inputClass } from "@/components/create-group/ui";
-import { SmsSelect, type SmsSelectOption } from "./common";
+import { SmsSelect, type SmsSelectOption } from "./SmsSelect";
 import type {
   SmsProviderFormSetter,
   SmsProviderFormState,

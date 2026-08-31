@@ -85,3 +85,19 @@ export const listSmsMessagesQuerySchema = z
 
 export type SendSmsInput = z.infer<typeof sendSmsSchema>;
 export type ListSmsMessagesQuery = z.infer<typeof listSmsMessagesQuerySchema>;
+
+export const listSmsRecipientsQuerySchema = z
+  .object({
+    page: pageSchema,
+    perPage: positivePageSize
+      .max(SMS_LIMITS.recipientListPerPageMax)
+      .default(SMS_LIMITS.recipientListPerPageDefault),
+    search: z
+      .string()
+      .trim()
+      .max(SMS_LIMITS.recipientSearchMaxLength)
+      .optional(),
+  })
+  .strict();
+
+export type ListSmsRecipientsQuery = z.infer<typeof listSmsRecipientsQuerySchema>;

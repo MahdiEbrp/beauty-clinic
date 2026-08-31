@@ -210,12 +210,11 @@ function providerConditions(options: ListSmsProvidersQuery): SQL[] {
   if (options.status === "active") conditions.push(eq(smsProviders.isActive, true));
   if (options.status === "inactive") conditions.push(eq(smsProviders.isActive, false));
   if (options.search) {
-    conditions.push(
-      or(
-        ilike(smsProviders.name, `%${options.search}%`),
-        ilike(smsProviders.kind, `%${options.search}%`),
-      )!,
+    const searchCondition = or(
+      ilike(smsProviders.name, `%${options.search}%`),
+      ilike(smsProviders.kind, `%${options.search}%`),
     );
+    if (searchCondition) conditions.push(searchCondition);
   }
   return conditions;
 }

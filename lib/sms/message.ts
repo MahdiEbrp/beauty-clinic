@@ -1,6 +1,8 @@
 import { SMS_MESSAGE_LIMITS } from "./constants";
 
+// GSM 7-bit default alphabet — an explicit SMS encoding allowlist, not a secret.
 const GSM_7_BASIC =
+  // eslint-disable-next-line no-secrets/no-secrets
   "@£$¥èéùìòÇ\nØø\rÅåΔ_ΦΓΛΩΠΨΣΘΞ\u001bÆæßÉ !\"#¤%&'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà";
 const GSM_7_EXTENDED = "^{}\\[~]|€";
 

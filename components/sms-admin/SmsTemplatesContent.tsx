@@ -1,6 +1,5 @@
 "use client";
 
-import { Plus } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -16,18 +15,23 @@ import type {
   AdminSmsTemplate,
   ListSmsTemplatesResult,
 } from "@/lib/sms/template-service";
-import { Link } from "@/src/i18n/navigation";
-import { inputClass } from "@/components/create-group/ui";
 import {
-  SmsBackLink,
-  SmsSelect,
-  SmsSubnav,
-  type SmsSelectOption,
-} from "./common";
-import { SmsConfirmDialog } from "./SmsConfirmDialog";
-import { SmsListEmpty, SmsListError, SmsListSkeleton, listRange } from "./SmsListStates";
+  SmsManagementFilters,
+  type SmsManagementFilterOption,
+} from "./SmsManagementFilters";
+import {
+  SmsManagementHeader,
+  SmsManagementMobileAdd,
+} from "./SmsManagementHeader";
+import { SmsListEmpty, SmsListError } from "./SmsListStates";
+import { SmsListShell } from "./SmsListShell";
 import { SmsPagination } from "./SmsPagination";
-import { SmsTemplateCard, SmsTemplateRow, type TemplateLabels } from "./SmsTemplateListItems";
+import {
+  SmsTemplateCard,
+  SmsTemplateRow,
+  type TemplateLabels,
+} from "./SmsTemplateListItems";
+import { SmsConfirmDialog } from "./SmsConfirmDialog";
 
 type TemplateStatus = "all" | "active" | "inactive";
 
@@ -50,8 +54,8 @@ export function SmsTemplatesContent({
   const [loadFailed, setLoadFailed] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<AdminSmsTemplate | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const canSend = user.permissions.includes(SMS_PERMISSIONS.send);
   const canWrite = user.permissions.includes(SMS_PERMISSIONS.write);
+  const canManage = user.permissions.includes(SMS_PERMISSIONS.manage);
 
   const load = useCallback(
     async (nextPage: number, nextSearch: string, nextStatus: TemplateStatus) => {
@@ -67,9 +71,9 @@ export function SmsTemplatesContent({
         const response = await fetch(`${SMS_API_ROUTES.templates}?${query.toString()}`, {
           credentials: "include",
         });
-        if (!response.ok) throw new Error();
+        if (!response.ok) throw new Error("templates_load_failed");
         const payload = (await response.json()) as { data?: ListSmsTemplatesResult };
-        if (!payload.data) throw new Error();
+        if (!payload.data) throw new Error("templates_response_invalid");
         setData(payload.data);
       } catch {
         setLoadFailed(true);
@@ -97,9 +101,15 @@ export function SmsTemplatesContent({
   }, [debouncedSearch, load, page, status]);
 
   const refresh = () => load(page, debouncedSearch, status);
-  const range = listRange(data.page, data.perPage, data.total);
+  const range = {
+    from:
+      data.total === SMS_LIMITS.emptyLength
+        ? SMS_LIMITS.emptyLength
+        : (data.page - SMS_LIMITS.pageMin) * data.perPage + SMS_LIMITS.pageMin,
+    to: Math.min(data.page * data.perPage, data.total),
+  };
   const hasFilters = Boolean(debouncedSearch) || status !== "all";
-  const statusOptions: SmsSelectOption[] = [
+  const statusOptions: SmsManagementFilterOption[] = [
     { value: "all", label: t("templates.allStatuses") },
     { value: "active", label: t("templates.active") },
     { value: "inactive", label: t("templates.inactive") },
@@ -109,6 +119,7 @@ export function SmsTemplatesContent({
     noVariables: t("templates.noVariables"),
     edit: t("templates.edit"),
     delete: t("templates.delete"),
+    menu: t("templates.table.actions"),
   };
 
   async function confirmDelete() {
@@ -119,7 +130,7 @@ export function SmsTemplatesContent({
         method: "DELETE",
         credentials: "include",
       });
-      if (!response.ok) throw new Error();
+      if (!response.ok) throw new Error("template_delete_failed");
       setDeleteTarget(null);
       toast.success(t("templates.deleteSuccess"));
       await refresh();
@@ -132,123 +143,137 @@ export function SmsTemplatesContent({
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      <SmsSubnav canSend={canSend} canWrite={canWrite} />
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div className="min-w-0 space-y-3">
-          <SmsBackLink />
-          <h1 className="text-dash-display font-black tracking-tight text-accent">
-            {t("templates.heading")}
-          </h1>
-          <p className="max-w-2xl text-dash-body leading-7 text-content-secondary">
-            {t("templates.description")}
-          </p>
-        </div>
-        {canWrite && (
-          <Link
-            href={SMS_DASHBOARD_ROUTES.addTemplate}
-            className="inline-flex min-h-11 items-center gap-2 rounded-pill bg-accent px-4 text-dash-body-sm font-bold text-content-contrast no-underline shadow-elevation-1 transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            <Plus className="size-4" aria-hidden="true" />
-            {t("actions.addTemplate")}
-          </Link>
-        )}
-      </header>
-
-      <section className="grid gap-4 rounded-panel border border-border-primary bg-surface-secondary p-5 shadow-elevation-1 sm:grid-cols-[1fr_14rem] sm:p-6">
-        <label className="grid gap-1.5 text-dash-caption font-bold text-content-secondary" htmlFor="sms-template-search">
-          {t("templates.search")}
-          <input
-            id="sms-template-search"
-            value={search}
-            onChange={(event) => {
-              setSearch(event.target.value);
-              setPage(SMS_LIMITS.pageDefault);
-            }}
-            placeholder={t("templates.searchPlaceholder")}
-            className={inputClass(false)}
+      <SmsManagementHeader
+        backHref={SMS_DASHBOARD_ROUTES.root}
+        backLabel={t("back")}
+        heading={t("templates.heading")}
+        total={data.total}
+        resultsLabel={t("resultsLabel")}
+        addHref={canWrite ? SMS_DASHBOARD_ROUTES.addTemplate : undefined}
+        addLabel={canWrite ? t("actions.addTemplate") : undefined}
+      />
+      <SmsManagementFilters
+        search={search}
+        onSearchChange={(value) => {
+          setSearch(value);
+          setPage(SMS_LIMITS.pageDefault);
+        }}
+        searchLabel={t("templates.search")}
+        searchPlaceholder={t("templates.searchPlaceholder")}
+        isLoading={loading}
+        loadingLabel={t("actions.loading")}
+        status={status}
+        onStatusChange={(value) => {
+          setStatus(value as TemplateStatus);
+          setPage(SMS_LIMITS.pageDefault);
+        }}
+        statusLabel={t("templates.status")}
+        statusOptions={statusOptions}
+        clearLabel={t("clearFilters")}
+        onClear={() => {
+          setSearch("");
+          setStatus("all");
+          setPage(SMS_LIMITS.pageDefault);
+        }}
+      />
+      <SmsListShell
+        total={data.total}
+        resultsLabel={t("resultsLabel")}
+        loading={loading}
+        loadingLabel={t("actions.loading")}
+        error={
+          loadFailed ? (
+            <SmsListError
+              message={t("templates.error")}
+              retryLabel={t("templates.retry")}
+              onRetry={() => void refresh()}
+            />
+          ) : undefined
+        }
+        empty={
+          <SmsListEmpty
+            message={hasFilters ? t("templates.emptySearch") : t("templates.empty")}
+            filtering={hasFilters}
           />
-        </label>
-        <label className="grid gap-1.5 text-dash-caption font-bold text-content-secondary" htmlFor="sms-template-status">
-          {t("templates.status")}
-          <SmsSelect
-            value={status}
-            onValueChange={(value) => {
-              setStatus(value as TemplateStatus);
-              setPage(SMS_LIMITS.pageDefault);
-            }}
-            options={statusOptions}
-            placeholder={t("templates.allStatuses")}
-            ariaLabel={t("templates.status")}
-          />
-        </label>
-      </section>
-
-      <section className="overflow-hidden rounded-panel border border-border-primary bg-surface-secondary shadow-elevation-2">
-        <div className="hidden overflow-x-auto md:block">
-          <table className="w-full min-w-[64rem] text-start text-dash-body-sm">
-            <thead className="bg-surface-tertiary/40 text-dash-caption text-content-tertiary">
-              <tr>
-                <th className="px-5 py-4 font-bold">{t("templates.table.key")}</th>
-                <th className="px-5 py-4 font-bold">{t("templates.table.name")}</th>
-                <th className="px-5 py-4 font-bold">{t("templates.table.type")}</th>
-                <th className="px-5 py-4 font-bold">{t("templates.table.variables")}</th>
-                <th className="px-5 py-4 font-bold">{t("templates.table.status")}</th>
-                <th className="px-5 py-4 font-bold">{t("templates.table.updated")}</th>
-                <th className="px-5 py-4 font-bold">{t("templates.table.actions")}</th>
+        }
+        desktop={
+          <table className="w-full min-w-5xl table-fixed text-start">
+            <thead>
+              <tr className="border-b border-border-primary bg-surface-tertiary/30 text-dash-caption text-content-secondary">
+                <th scope="col" className="w-[34%] px-4 py-4 text-start font-bold">
+                  {t("templates.table.name")}
+                </th>
+                <th scope="col" className="w-[18%] px-4 py-4 text-start font-bold">
+                  {t("templates.table.type")}
+                </th>
+                <th scope="col" className="w-[22%] px-4 py-4 text-start font-bold">
+                  {t("templates.table.variables")}
+                </th>
+                <th scope="col" className="w-[12%] px-4 py-4 text-start font-bold">
+                  {t("templates.table.status")}
+                </th>
+                <th scope="col" className="w-[14%] px-4 py-4 text-start font-bold">
+                  {t("templates.table.updated")}
+                </th>
+                <th scope="col" className="w-16 px-2 py-4 text-end font-bold">
+                  <span className="sr-only">{t("templates.table.actions")}</span>
+                </th>
               </tr>
             </thead>
-            {!loading && !loadFailed && data.items.length > SMS_LIMITS.emptyLength && (
-              <tbody className="divide-y divide-border-primary">
-                {data.items.map((template) => (
-                  <SmsTemplateRow
-                    key={template.id}
-                    template={template}
-                    locale={locale}
-                    canWrite={canWrite}
-                    labels={labels}
-                    onDelete={() => setDeleteTarget(template)}
-                  />
-                ))}
-              </tbody>
-            )}
+            <tbody className="divide-y divide-border-primary">
+              {data.items.map((template) => (
+                <SmsTemplateRow
+                  key={template.id}
+                  template={template}
+                  locale={locale}
+                  canWrite={canWrite}
+                  canManage={canManage}
+                  labels={labels}
+                  onDelete={() => setDeleteTarget(template)}
+                />
+              ))}
+            </tbody>
           </table>
-        </div>
-        <div className="md:hidden">
-          {data.items.map((template) => (
-            <SmsTemplateCard
-              key={template.id}
-              template={template}
-              locale={locale}
-              canWrite={canWrite}
-              labels={labels}
-              onDelete={() => setDeleteTarget(template)}
-            />
-          ))}
-        </div>
-        {loading && <SmsListSkeleton />}
-        {!loading && loadFailed && (
-          <SmsListError message={t("templates.error")} retryLabel={t("templates.retry")} onRetry={() => void refresh()} />
-        )}
-        {!loading && !loadFailed && data.items.length === SMS_LIMITS.emptyLength && (
-          <SmsListEmpty message={hasFilters ? t("templates.emptySearch") : t("templates.empty")} />
-        )}
-        <SmsPagination
-          page={data.page}
-          totalPages={data.totalPages}
-          total={data.total}
-          labels={{
-            showing: t("templates.pagination.showing", range),
-            previous: t("templates.pagination.previous"),
-            next: t("templates.pagination.next"),
-            page: t("templates.pagination.page", {
-              page: data.page,
-              totalPages: data.totalPages,
-            }),
-          }}
-          onPageChange={setPage}
+        }
+        mobile={
+          <div className="grid gap-2.5 p-3">
+            {data.items.map((template) => (
+              <SmsTemplateCard
+                key={template.id}
+                template={template}
+                locale={locale}
+                canWrite={canWrite}
+                canManage={canManage}
+                labels={labels}
+                onDelete={() => setDeleteTarget(template)}
+              />
+            ))}
+          </div>
+        }
+        pagination={
+          <SmsPagination
+            page={data.page}
+            totalPages={data.totalPages}
+            total={data.total}
+            labels={{
+              showing: t("templates.pagination.showing", range),
+              previous: t("templates.pagination.previous"),
+              next: t("templates.pagination.next"),
+              page: t("templates.pagination.page", {
+                page: data.page,
+                totalPages: data.totalPages,
+              }),
+            }}
+            onPageChange={setPage}
+          />
+        }
+      />
+      {canWrite && (
+        <SmsManagementMobileAdd
+          href={SMS_DASHBOARD_ROUTES.addTemplate}
+          label={t("actions.addTemplate")}
         />
-      </section>
-
+      )}
       <SmsConfirmDialog
         open={Boolean(deleteTarget)}
         title={t("templates.deleteTitle")}

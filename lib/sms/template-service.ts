@@ -191,16 +191,15 @@ function templateConditions(options: ListSmsTemplatesQuery): SQL[] {
   if (options.status === "inactive") conditions.push(eq(smsTemplates.isActive, false));
   if (options.search) {
     const term = `%${options.search}%`;
-    conditions.push(
-      or(
-        ilike(smsTemplates.key, term),
-        sql`exists (
-          select 1 from ${smsTemplatesI18n}
-          where ${smsTemplatesI18n.templateId} = ${smsTemplates.id}
-            and (${smsTemplatesI18n.name} ilike ${term} OR ${smsTemplatesI18n.content} ilike ${term})
-        )`,
-      )!,
+    const searchCondition = or(
+      ilike(smsTemplates.key, term),
+      sql`exists (
+        select 1 from ${smsTemplatesI18n}
+        where ${smsTemplatesI18n.templateId} = ${smsTemplates.id}
+          and (${smsTemplatesI18n.name} ilike ${term} OR ${smsTemplatesI18n.content} ilike ${term})
+      )`,
     );
+    if (searchCondition) conditions.push(searchCondition);
   }
   return conditions;
 }

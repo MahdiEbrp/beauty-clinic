@@ -29,6 +29,8 @@ export const POST = withSecurity(
         SMS_HTTP_STATUS.badRequest,
       );
     }
-    return jsonOk(await testSmsProvider(id, ctx.body!, ctx.session!.user.id));
+    const session = ctx.session ?? (() => { throw new Error("Session is missing"); })();
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    return jsonOk(await testSmsProvider(id, body, session.user.id));
   },
 );

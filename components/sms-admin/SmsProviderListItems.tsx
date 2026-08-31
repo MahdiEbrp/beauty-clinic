@@ -1,35 +1,117 @@
 "use client";
 
-import { Activity, Edit3, Send, Trash2 } from "lucide-react";
-
-import {
-  SMS_DASHBOARD_ROUTES,
-  SMS_UI,
-} from "@/lib/sms/constants";
+import { Activity, MoreVertical, Pencil, Send, Trash2 } from "lucide-react";
+import { useRouter } from "@/src/i18n/navigation";
 import type { AdminSmsProvider } from "@/lib/sms/provider-service";
-import { Link } from "@/src/i18n/navigation";
 import {
-  formatSmsDate,
-  SmsStatusBadge,
-} from "./common";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { SMS_DASHBOARD_ROUTES, SMS_UI } from "@/lib/sms/constants";
+import { SmsStatusBadge } from "./SmsStatusBadge";
+import { formatSmsDate } from "./sms-format";
 
 export type ProviderLabels = {
   kind: string;
-  endpoint: string;
   default: string;
-  configured: string;
   notConfigured: string;
   never: string;
   edit: string;
   test: string;
   delete: string;
+  menu: string;
 };
+
+function ProviderIcon() {
+  return (
+    <span
+      className="flex size-12 shrink-0 items-center justify-center rounded-pill border border-border-primary bg-surface-tertiary text-copper-strong"
+      aria-hidden="true"
+    >
+      <Activity className="size-5" strokeWidth={1.75} />
+    </span>
+  );
+}
+
+function ProviderActions({
+  provider,
+  canSend,
+  canWrite,
+  canManage,
+  labels,
+  onTest,
+  onDelete,
+}: {
+  provider: AdminSmsProvider;
+  canSend: boolean;
+  canWrite: boolean;
+  canManage: boolean;
+  labels: ProviderLabels;
+  onTest: () => void;
+  onDelete: () => void;
+}) {
+  const router = useRouter();
+  const hasActions = canSend || canWrite || canManage;
+  if (!hasActions) return null;
+
+  return (
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label={`${labels.menu}: ${provider.name}`}
+          className="inline-flex size-11 shrink-0 items-center justify-center rounded-pill border border-border-interactive bg-surface-secondary p-0 text-accent shadow-elevation-1 transition hover:bg-surface-tertiary hover:shadow-elevation-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          <MoreVertical className="size-5" aria-hidden="true" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        {canWrite && (
+          <DropdownMenuItem
+            onSelect={() =>
+              router.push(`${SMS_DASHBOARD_ROUTES.providers}/${provider.id}/edit`)
+            }
+            className="text-accent"
+          >
+            <Pencil className="size-4" aria-hidden="true" />
+            <span>{labels.edit}</span>
+          </DropdownMenuItem>
+        )}
+        {canSend && (
+          <>
+            {canWrite && <DropdownMenuSeparator />}
+            <DropdownMenuItem onSelect={onTest} className="text-accent">
+              <Send className="size-4" aria-hidden="true" />
+              <span>{labels.test}</span>
+            </DropdownMenuItem>
+          </>
+        )}
+        {canManage && (
+          <>
+            {(canWrite || canSend) && <DropdownMenuSeparator />}
+            <DropdownMenuItem
+              onSelect={onDelete}
+              className="text-error focus:bg-error/10 focus:text-error"
+            >
+              <Trash2 className="size-4" aria-hidden="true" />
+              <span>{labels.delete}</span>
+            </DropdownMenuItem>
+          </>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 export function SmsProviderRow({
   provider,
   locale,
   canSend,
   canWrite,
+  canManage,
   labels,
   onTest,
   onDelete,
@@ -38,49 +120,59 @@ export function SmsProviderRow({
   locale: string;
   canSend: boolean;
   canWrite: boolean;
+  canManage: boolean;
   labels: ProviderLabels;
   onTest: () => void;
   onDelete: () => void;
 }) {
   return (
-    <tr>
-      <td className="px-5 py-4">
-        <div className="flex items-center gap-2">
-          <Activity className="size-4 text-copper-strong" aria-hidden="true" />
-          <span className="font-bold text-accent">{provider.name}</span>
-          {provider.isDefault && (
-            <span className="rounded-pill bg-copper/10 px-2 py-0.5 text-dash-caption font-bold text-copper-strong">
-              {labels.default}
-            </span>
-          )}
+    <tr className="transition-colors hover:bg-surface-primary/60">
+      <td className="px-4 py-5">
+        <div className="flex min-w-0 items-center gap-3">
+          <ProviderIcon />
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="truncate text-dash-body font-semibold text-accent">
+                {provider.name}
+              </p>
+              {provider.isDefault && (
+                <span className="rounded-pill bg-copper/10 px-2 py-0.5 text-dash-caption font-bold text-copper-strong">
+                  {labels.default}
+                </span>
+              )}
+            </div>
+            <p className="truncate text-dash-caption text-content-tertiary">
+              {labels.kind}
+            </p>
+          </div>
         </div>
       </td>
-      <td className="px-5 py-4 text-content-secondary">{labels.kind}</td>
       <td
         dir="ltr"
-        className="max-w-64 truncate px-5 py-4 font-mono text-dash-caption text-content-secondary"
+        className="max-w-64 truncate px-4 py-5 text-dash-caption text-content-secondary"
       >
         {provider.apiUrl}
       </td>
       <td
         dir="ltr"
-        className="px-5 py-4 font-mono text-dash-caption text-content-secondary"
+        className="px-4 py-5 font-mono text-dash-caption text-content-secondary"
       >
         {provider.tokenConfigured
           ? `${SMS_UI.maskedTokenPrefix}${provider.tokenLast4}`
           : labels.notConfigured}
       </td>
-      <td className="px-5 py-4">
+      <td className="px-4 py-5">
         <SmsStatusBadge status={provider.healthStatus} />
       </td>
-      <td className="px-5 py-4 text-dash-caption text-content-secondary">
+      <td className="px-4 py-5 text-dash-caption text-content-secondary">
         {formatSmsDate(provider.lastHealthCheckedAt, locale) || labels.never}
       </td>
-      <td className="px-5 py-4">
-        <SmsProviderActions
+      <td className="w-16 px-2 py-5 text-end">
+        <ProviderActions
           provider={provider}
           canSend={canSend}
           canWrite={canWrite}
+          canManage={canManage}
           labels={labels}
           onTest={onTest}
           onDelete={onDelete}
@@ -95,6 +187,7 @@ export function SmsProviderCard({
   locale,
   canSend,
   canWrite,
+  canManage,
   labels,
   onTest,
   onDelete,
@@ -103,108 +196,59 @@ export function SmsProviderCard({
   locale: string;
   canSend: boolean;
   canWrite: boolean;
+  canManage: boolean;
   labels: ProviderLabels;
   onTest: () => void;
   onDelete: () => void;
 }) {
   return (
-    <article className="space-y-4 border-b border-border-primary p-5 last:border-b-0">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <Activity className="size-4 text-copper-strong" aria-hidden="true" />
-            <h2 className="font-bold text-accent">{provider.name}</h2>
+    <article className="rounded-card border border-border-primary bg-surface-secondary p-3">
+      <div className="flex items-center gap-3">
+        <ProviderIcon />
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between gap-2">
+            <p className="truncate text-dash-body font-bold text-accent">
+              {provider.name}
+            </p>
+            <SmsStatusBadge status={provider.healthStatus} />
           </div>
-          <p className="mt-1 text-dash-caption text-content-secondary">{labels.kind}</p>
-        </div>
-        <SmsStatusBadge status={provider.healthStatus} />
-      </div>
-      <dl className="grid gap-3 text-dash-caption sm:grid-cols-2">
-        <div>
-          <dt className="text-content-tertiary">{labels.configured}</dt>
-          <dd dir="ltr" className="mt-1 font-mono text-content-primary">
-            {provider.tokenConfigured
-              ? `${SMS_UI.maskedTokenPrefix}${provider.tokenLast4}`
-              : labels.notConfigured}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-content-tertiary">{labels.never}</dt>
-          <dd className="mt-1 text-content-primary">
-            {formatSmsDate(provider.lastHealthCheckedAt, locale) || labels.never}
-          </dd>
-        </div>
-        <div className="sm:col-span-2">
-          <dt className="text-content-tertiary">{labels.endpoint}</dt>
-          <dd dir="ltr" className="mt-1 truncate font-mono text-content-primary">
+          <p className="truncate text-dash-caption text-content-tertiary">
+            {labels.kind}
+          </p>
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-dash-caption text-content-secondary">
+            <span dir="ltr" className="truncate">
+              {provider.tokenConfigured
+                ? `${SMS_UI.maskedTokenPrefix}${provider.tokenLast4}`
+                : labels.notConfigured}
+            </span>
+            {provider.isDefault && (
+              <span className="rounded-pill bg-copper/10 px-2 py-0.5 font-bold text-copper-strong">
+                {labels.default}
+              </span>
+            )}
+            <span>
+              {formatSmsDate(provider.lastHealthCheckedAt, locale) || labels.never}
+            </span>
+          </div>
+          <p
+            dir="ltr"
+            className="mt-1 truncate text-dash-caption text-content-tertiary"
+          >
             {provider.apiUrl}
-          </dd>
+          </p>
         </div>
-      </dl>
-      <SmsProviderActions
-        provider={provider}
-        canSend={canSend}
-        canWrite={canWrite}
-        labels={labels}
-        onTest={onTest}
-        onDelete={onDelete}
-      />
+        <div className="shrink-0 self-center">
+          <ProviderActions
+            provider={provider}
+            canSend={canSend}
+            canWrite={canWrite}
+            canManage={canManage}
+            labels={labels}
+            onTest={onTest}
+            onDelete={onDelete}
+          />
+        </div>
+      </div>
     </article>
-  );
-}
-
-function SmsProviderActions({
-  provider,
-  canSend,
-  canWrite,
-  labels,
-  onTest,
-  onDelete,
-}: {
-  provider: AdminSmsProvider;
-  canSend: boolean;
-  canWrite: boolean;
-  labels: ProviderLabels;
-  onTest: () => void;
-  onDelete: () => void;
-}) {
-  return (
-    <div className="flex flex-wrap gap-2">
-      {canSend && (
-        <button
-          type="button"
-          onClick={onTest}
-          title={labels.test}
-          aria-label={`${labels.test}: ${provider.name}`}
-          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill border border-border-interactive px-3 text-dash-caption font-bold text-accent transition-colors hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          <Send className="size-4" aria-hidden="true" />
-          <span className="sr-only">{labels.test}</span>
-        </button>
-      )}
-      {canWrite && (
-        <Link
-          href={`${SMS_DASHBOARD_ROUTES.providers}/${provider.id}/edit`}
-          title={labels.edit}
-          aria-label={`${labels.edit}: ${provider.name}`}
-          className="inline-flex min-h-11 items-center justify-center rounded-pill border border-border-interactive px-3 text-accent transition-colors hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          <Edit3 className="size-4" aria-hidden="true" />
-          <span className="sr-only">{labels.edit}</span>
-        </Link>
-      )}
-      {canWrite && (
-        <button
-          type="button"
-          onClick={onDelete}
-          title={labels.delete}
-          aria-label={`${labels.delete}: ${provider.name}`}
-          className="inline-flex min-h-11 items-center justify-center rounded-pill border border-error/30 px-3 text-error transition-colors hover:bg-error/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error"
-        >
-          <Trash2 className="size-4" aria-hidden="true" />
-          <span className="sr-only">{labels.delete}</span>
-        </button>
-      )}
-    </div>
   );
 }

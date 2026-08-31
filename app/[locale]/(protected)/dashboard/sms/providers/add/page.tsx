@@ -29,6 +29,10 @@ export async function generateMetadata({
 }
 
 export default async function AddSmsProviderPage() {
-  await requirePermission("sms.write");
-  return <SmsProviderForm />;
+  const session = await requirePermission("sms.write");
+  return (
+    <SmsProviderForm
+      canSend={session.user.permissions.includes("sms.send")}
+    />
+  );
 }

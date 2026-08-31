@@ -1,7 +1,8 @@
 "use client";
 
 import type { AdminSmsMessage } from "@/lib/sms/report-service";
-import { formatSmsDate, SmsStatusBadge } from "./common";
+import { SmsStatusBadge } from "./SmsStatusBadge";
+import { formatSmsDate } from "./sms-format";
 
 export type MessageLabels = {
   providerFallback: string;
@@ -21,16 +22,16 @@ export function MessageRow({
   labels: MessageLabels;
 }) {
   return (
-    <tr>
-      <td dir="ltr" className="px-5 py-4 font-mono font-bold text-accent">{message.recipientMasked}</td>
-      <td className="px-5 py-4 text-content-secondary">{message.providerName ?? labels.providerFallback}</td>
-      <td className="px-5 py-4"><SmsStatusBadge status={message.status} /></td>
-      <td dir="ltr" className="max-w-48 truncate px-5 py-4 font-mono text-dash-caption text-content-secondary">
+    <tr className="transition-colors hover:bg-surface-primary/60">
+      <td dir="ltr" className="px-4 py-5 font-mono font-bold text-accent">{message.recipientMasked}</td>
+      <td className="px-4 py-5 text-content-secondary">{message.providerName ?? labels.providerFallback}</td>
+      <td className="px-4 py-5"><SmsStatusBadge status={message.status} /></td>
+      <td dir="ltr" className="max-w-48 truncate px-4 py-5 font-mono text-dash-caption text-content-secondary">
         {message.providerMessageId ?? labels.noValue}
       </td>
-      <td className="px-5 py-4 text-dash-caption text-content-secondary">{formatSmsDate(message.createdAt, locale)}</td>
-      <td className="px-5 py-4 text-dash-caption text-content-secondary">{formatSmsDate(message.sentAt, locale) || labels.noValue}</td>
-      <td className="max-w-56 truncate px-5 py-4 text-dash-caption text-error">{message.errorMessage ?? labels.noValue}</td>
+      <td className="px-4 py-5 text-dash-caption text-content-secondary">{formatSmsDate(message.createdAt, locale)}</td>
+      <td className="px-4 py-5 text-dash-caption text-content-secondary">{formatSmsDate(message.sentAt, locale) || labels.noValue}</td>
+      <td className="max-w-56 truncate px-4 py-5 text-dash-caption text-error">{message.errorMessage ?? labels.noValue}</td>
     </tr>
   );
 }
@@ -45,7 +46,7 @@ export function MessageCard({
   labels: MessageLabels;
 }) {
   return (
-    <article className="space-y-4 border-b border-border-primary p-5 last:border-b-0">
+    <article className="rounded-card border border-border-primary bg-surface-secondary p-3">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p dir="ltr" className="font-mono font-bold text-accent">{message.recipientMasked}</p>

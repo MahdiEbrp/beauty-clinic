@@ -16,7 +16,10 @@ export const GET = withSecurity(
     permissions: "sms.read",
     validate: { query: listSmsProvidersQuerySchema },
   },
-  async (_request, ctx) => jsonOk(await listSmsProviders(ctx.query!)),
+  async (_request, ctx) => {
+    const query = ctx.query ?? (() => { throw new Error("Query params are missing"); })();
+    return jsonOk(await listSmsProviders(query));
+  },
 );
 
 export const POST = withSecurity(
@@ -27,7 +30,9 @@ export const POST = withSecurity(
     audit: true,
   },
   async (_request, ctx) => {
-    const result = await createSmsProvider(ctx.body!, ctx.session!.user.id);
+    const session = ctx.session ?? (() => { throw new Error("Session is missing"); })();
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    const result = await createSmsProvider(body, session.user.id);
     return jsonOk(result, 201);
   },
 );

@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { Panel, Field, inputClass } from "@/components/create-group/ui";
 import { SMS_LIMITS, SMS_SEND_MODES } from "@/lib/sms/constants";
 import type { AdminSmsTemplate } from "@/lib/sms/template-service";
-import { SmsSelect, type SmsSelectOption } from "./common";
+import { SmsSelect, type SmsSelectOption } from "./SmsSelect";
 
 export type SmsComposeMode = (typeof SMS_SEND_MODES)[keyof typeof SMS_SEND_MODES];
 
@@ -36,6 +36,7 @@ export function SmsSendFormFields({
   onSenderChange,
   onVariableChange,
   onClear,
+  showRecipients = true,
 }: {
   mode: SmsComposeMode;
   providerId: string;
@@ -62,6 +63,7 @@ export function SmsSendFormFields({
   onSenderChange: (value: string) => void;
   onVariableChange: (name: string, value: string) => void;
   onClear: () => void;
+  showRecipients?: boolean;
 }) {
   const t = useTranslations("smsSend");
   return (
@@ -89,10 +91,14 @@ export function SmsSendFormFields({
         </div>
       </Panel>
 
+      {showRecipients && (
+        <Panel>
+          <Field id="sms-send-recipients" label={t("fields.recipients")} hint={t("fields.recipientsHint")} required>
+            <textarea id="sms-send-recipients" dir="ltr" inputMode="tel" value={recipientsText} onChange={(event) => onRecipientsChange(event.target.value)} className={`${inputClass(Boolean(error) && recipientsText.trim().length === SMS_LIMITS.emptyLength)} min-h-36 resize-y py-3`} />
+          </Field>
+        </Panel>
+      )}
       <Panel>
-        <Field id="sms-send-recipients" label={t("fields.recipients")} hint={t("fields.recipientsHint")} required>
-          <textarea id="sms-send-recipients" dir="ltr" inputMode="tel" value={recipientsText} onChange={(event) => onRecipientsChange(event.target.value)} className={`${inputClass(Boolean(error) && recipientsText.trim().length === SMS_LIMITS.emptyLength)} min-h-36 resize-y py-3`} />
-        </Field>
         {mode === SMS_SEND_MODES.custom ? (
           <Field id="sms-send-message" label={t("fields.message")} hint={t("fields.messageHint")} required>
             <textarea id="sms-send-message" value={message} onChange={(event) => onMessageChange(event.target.value)} className={`${inputClass(Boolean(error) && !message.trim())} mt-1 min-h-40 resize-y py-3`} maxLength={SMS_LIMITS.messageMaxLength} />

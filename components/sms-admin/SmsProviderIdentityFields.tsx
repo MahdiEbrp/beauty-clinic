@@ -7,7 +7,7 @@ import { getSmsProviderOption, SMS_PROVIDER_OPTIONS } from "@/data/sms-providers
 import type { AdminSmsProvider } from "@/lib/sms/provider-service";
 import { SMS_PROVIDER_DEFAULTS } from "@/lib/sms/constants";
 import { Field, inputClass } from "@/components/create-group/ui";
-import { SmsSelect, type SmsSelectOption } from "./common";
+import { SmsSelect, type SmsSelectOption } from "./SmsSelect";
 import type {
   SmsProviderFormSetter,
   SmsProviderFormState,

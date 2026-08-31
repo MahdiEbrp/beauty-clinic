@@ -1,4 +1,4 @@
-import { RefreshCw } from "lucide-react";
+import { AlertTriangle, Layers, RefreshCw, SearchX } from "lucide-react";
 
 import { SMS_LIMITS, SMS_UI } from "@/lib/sms/constants";
 
@@ -6,11 +6,17 @@ export function SmsListSkeleton() {
   return (
     <div className="divide-y divide-border-primary" aria-hidden="true">
       {Array.from({ length: SMS_UI.skeletonRows }, (_, index) => (
-        <div key={index} className="grid gap-3 p-5 sm:grid-cols-4 sm:p-6">
-          <div className="h-5 animate-pulse rounded-control bg-surface-tertiary" />
-          <div className="h-5 animate-pulse rounded-control bg-surface-tertiary" />
-          <div className="h-5 animate-pulse rounded-control bg-surface-tertiary" />
-          <div className="h-5 animate-pulse rounded-control bg-surface-tertiary" />
+        <div
+          key={index}
+          className="grid grid-cols-[auto_1fr_auto_auto] items-center gap-4 px-4 py-5 md:px-6"
+        >
+          <div className="size-12 animate-pulse rounded-pill bg-surface-tertiary" />
+          <div className="grid gap-2">
+            <div className="h-4 w-40 animate-pulse rounded-control bg-surface-tertiary" />
+            <div className="h-3 w-56 animate-pulse rounded-control bg-surface-tertiary/70" />
+          </div>
+          <div className="h-6 w-20 animate-pulse rounded-pill bg-surface-tertiary" />
+          <div className="size-11 animate-pulse rounded-pill bg-surface-tertiary" />
         </div>
       ))}
     </div>
@@ -21,20 +27,28 @@ export function SmsListError({
   message,
   retryLabel,
   onRetry,
+  description,
 }: {
   message: string;
   retryLabel: string;
   onRetry: () => void;
+  description?: string;
 }) {
   return (
-    <div className="grid place-items-center gap-3 p-8 text-center">
-      <p role="alert" className="text-dash-body-sm text-error">
-        {message}
-      </p>
+    <div className="flex flex-col items-center justify-center gap-3 px-6 py-14 text-center">
+      <AlertTriangle className="size-8 text-error" strokeWidth={1.75} aria-hidden="true" />
+      <div>
+        <p role="alert" className="text-dash-body-sm font-semibold text-content-primary">
+          {message}
+        </p>
+        {description && (
+          <p className="mt-1 text-dash-caption text-content-secondary">{description}</p>
+        )}
+      </div>
       <button
         type="button"
         onClick={onRetry}
-        className="inline-flex min-h-11 items-center gap-2 rounded-pill border border-border-interactive px-4 text-dash-body-sm font-bold text-accent transition-colors hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        className="inline-flex min-h-10 items-center gap-2 rounded-pill border border-border-interactive bg-surface-secondary px-4 text-dash-body-sm font-bold text-accent transition-colors hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         <RefreshCw className="size-4" aria-hidden="true" />
         {retryLabel}
@@ -43,11 +57,24 @@ export function SmsListError({
   );
 }
 
-export function SmsListEmpty({ message }: { message: string }) {
+export function SmsListEmpty({
+  message,
+  filtering = false,
+}: {
+  message: string;
+  filtering?: boolean;
+}) {
   return (
-    <p className="p-8 text-center text-dash-body-sm text-content-secondary">
-      {message}
-    </p>
+    <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
+      <div className="mb-6 flex size-16 items-center justify-center rounded-control bg-surface-tertiary">
+        {filtering ? (
+          <SearchX className="size-8 text-content-tertiary" strokeWidth={1.5} aria-hidden="true" />
+        ) : (
+          <Layers className="size-8 text-content-tertiary" strokeWidth={1.5} aria-hidden="true" />
+        )}
+      </div>
+      <p className="text-dash-body text-content-secondary">{message}</p>
+    </div>
   );
 }
 

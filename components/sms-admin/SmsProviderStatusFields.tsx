@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
-import { SmsToggle } from "./common";
+import { SmsToggle } from "./SmsToggle";
 import type {
   SmsProviderFormSetter,
   SmsProviderFormState,

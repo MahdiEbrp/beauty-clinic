@@ -1,7 +1,7 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -48,25 +48,20 @@ export default function ContactStep({ defaultValues, onBack, onContinue }: Conta
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const {
+    control,
     register,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors },
   } = useForm<ContactInfo>({
     resolver: zodResolver(schema(looseT)),
     defaultValues,
   });
 
-  const [consultationRequired, hasAllergies, isPregnant, agreeToTerms] = useMemo(
-    () => watch([
-      "consultationRequired",
-      "hasAllergies",
-      "isPregnant",
-      "agreeToTerms",
-    ]),
-    [],
-  );
+  const [consultationRequired, hasAllergies, isPregnant, agreeToTerms] = useWatch<ContactInfo>({
+    control,
+    name: ["consultationRequired", "hasAllergies", "isPregnant", "agreeToTerms"],
+  });
 
   const setToggle = (name: "consultationRequired" | "hasAllergies" | "isPregnant" | "agreeToTerms", value: boolean) =>
     setValue(name, value, { shouldValidate: true });
@@ -206,7 +201,7 @@ export default function ContactStep({ defaultValues, onBack, onContinue }: Conta
               <p className="mt-0.5 text-xs leading-relaxed text-content-secondary">{t("contact.consultationHint")}</p>
             </div>
           </div>
-          <Switch checked={consultationRequired} onCheckedChange={(v) => setToggle("consultationRequired", v)} aria-label={t("contact.consultation")} />
+          <Switch checked={consultationRequired === true} onCheckedChange={(v) => setToggle("consultationRequired", v)} aria-label={t("contact.consultation")} />
         </div>
 
         {/* Medical toggles */}
@@ -219,11 +214,11 @@ export default function ContactStep({ defaultValues, onBack, onContinue }: Conta
           <div className="grid grid-cols-1 gap-2.5 text-xs sm:grid-cols-2">
             <div className="flex items-center justify-between gap-2.5 rounded-control border border-border-primary bg-surface-primary p-3">
               <span className="font-medium leading-snug text-content-primary">{t("contact.allergies")}</span>
-              <Switch size="sm" checked={hasAllergies} onCheckedChange={(v) => setToggle("hasAllergies", v)} aria-label={t("contact.allergies")} />
+              <Switch size="sm" checked={hasAllergies === true} onCheckedChange={(v) => setToggle("hasAllergies", v)} aria-label={t("contact.allergies")} />
             </div>
             <div className="flex items-center justify-between gap-2.5 rounded-control border border-border-primary bg-surface-primary p-3">
               <span className="font-medium leading-snug text-content-primary">{t("contact.pregnant")}</span>
-              <Switch size="sm" checked={isPregnant} onCheckedChange={(v) => setToggle("isPregnant", v)} aria-label={t("contact.pregnant")} />
+              <Switch size="sm" checked={isPregnant === true} onCheckedChange={(v) => setToggle("isPregnant", v)} aria-label={t("contact.pregnant")} />
             </div>
           </div>
         </div>
@@ -256,7 +251,7 @@ export default function ContactStep({ defaultValues, onBack, onContinue }: Conta
               <span className="mb-0.5 block font-bold text-content-primary">{t("contact.terms")}</span>
               {t("contact.termsHint")}
             </div>
-            <Switch checked={agreeToTerms} onCheckedChange={(v) => setToggle("agreeToTerms", v)} aria-label={t("contact.terms")} />
+            <Switch checked={agreeToTerms === true} onCheckedChange={(v) => setToggle("agreeToTerms", v)} aria-label={t("contact.terms")} />
           </div>
           {errors.agreeToTerms ? (
             <p role="alert" className="mt-1.5 text-xs font-bold text-error">

@@ -37,6 +37,9 @@ export const SMS_LIMITS = {
   templateListPerPageDefault: 10,
   templateSearchMaxLength: 100,
   recipientCountMax: 1_000,
+  recipientSearchMaxLength: 100,
+  recipientListPerPageMax: 50,
+  recipientListPerPageDefault: 10,
   variableValueMaxLength: 256,
   campaignNameMaxLength: 120,
   idempotencyKeyMinLength: 8,
@@ -104,6 +107,7 @@ export const SMS_API_ROUTES = {
   providers: "/api/v1/admin/sms/providers",
   templates: "/api/v1/admin/sms/templates",
   messages: "/api/v1/admin/sms/messages",
+  recipients: "/api/v1/admin/sms/recipients",
   overview: "/api/v1/admin/sms/overview",
 } as const;
 

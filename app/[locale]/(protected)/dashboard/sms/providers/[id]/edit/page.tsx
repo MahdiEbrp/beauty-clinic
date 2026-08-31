@@ -37,8 +37,13 @@ export default async function EditSmsProviderPage({
   params: Promise<{ locale: string; id: string }>;
 }) {
   const { id } = await params;
-  await requirePermission("sms.write");
+  const session = await requirePermission("sms.write");
   const provider = await getSmsProviderById(id);
   if (!provider) notFound();
-  return <SmsProviderForm provider={provider} />;
+  return (
+    <SmsProviderForm
+      provider={provider}
+      canSend={session.user.permissions.includes("sms.send")}
+    />
+  );
 }

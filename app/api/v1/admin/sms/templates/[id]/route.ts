@@ -36,7 +36,8 @@ export const PATCH = withSecurity(
   async (_request, ctx) => {
     const id = ctx.params?.id;
     if (!validId(id)) return jsonError(SMS_ERROR_CODES.invalidTemplateId, "Invalid SMS template id.", SMS_HTTP_STATUS.badRequest);
-    await updateSmsTemplate(id, ctx.body!);
+    const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    await updateSmsTemplate(id, body);
     return jsonOk({ ok: true });
   },
 );

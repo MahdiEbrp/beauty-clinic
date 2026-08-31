@@ -1,10 +1,11 @@
-import { and, count, desc, eq, ilike, or, sql, type SQL } from "drizzle-orm";
+import { and, count, desc, eq, ilike, isNull, or, sql, type SQL } from "drizzle-orm";
 
 import { decryptSecret } from "@/lib/auth/encryption";
 import { SMS_LIMITS } from "@/lib/sms/constants";
 import { hashRecipient } from "@/lib/sms/phone";
 import type {
   ListSmsMessagesQuery,
+  ListSmsRecipientsQuery,
   ListSmsProvidersQuery,
   ListSmsTemplatesQuery,
 } from "@/lib/validation/sms";
@@ -12,6 +13,8 @@ import { db } from "@/src/db";
 import {
   smsMessages,
   smsProviders,
+  smsTemplates,
+  users,
   type SmsHealthStatus,
   type SmsMessageStatus,
   type SmsProviderKind,
@@ -51,6 +54,10 @@ export type SmsOverview = {
     failed: number;
     deliveryRate: number;
   };
+  providerCount: number;
+  activeProviderCount: number;
+  templateCount: number;
+  activeTemplateCount: number;
   providers: Array<{
     id: string;
     name: string;
@@ -146,6 +153,14 @@ export async function getSmsOverview(): Promise<SmsOverview> {
     .leftJoin(smsProviders, eq(smsProviders.id, smsMessages.providerId))
     .orderBy(desc(smsMessages.createdAt))
     .limit(SMS_LIMITS.recentMessageCount);
+  const [providerCountRow] = await db
+    .select({ total: count(), active: sql<number>`count(*) filter (where ${smsProviders.isActive})` })
+    .from(smsProviders)
+    .where(sql`${smsProviders.deletedAt} IS NULL`);
+  const [templateCountRow] = await db
+    .select({ total: count(), active: sql<number>`count(*) filter (where ${smsTemplates.isActive})` })
+    .from(smsTemplates)
+    .where(sql`${smsTemplates.deletedAt} IS NULL`);
   const total = Number(statsRow?.total ?? 0);
   const delivered = Number(statsRow?.delivered ?? 0);
   return {
@@ -156,6 +171,10 @@ export async function getSmsOverview(): Promise<SmsOverview> {
       failed: Number(statsRow?.failed ?? 0),
       deliveryRate: total > 0 ? Math.round((delivered / total) * 100) : 0,
     },
+    providerCount: Number(providerCountRow?.total ?? 0),
+    activeProviderCount: Number(providerCountRow?.active ?? 0),
+    templateCount: Number(templateCountRow?.total ?? 0),
+    activeTemplateCount: Number(templateCountRow?.active ?? 0),
     providers: providerRows.map(({ apiUrlEncrypted, ...provider }) => ({
       ...provider,
       apiUrl: decryptSecret(apiUrlEncrypted),
@@ -174,7 +193,8 @@ function messageConditions(options: ListSmsMessagesQuery): SQL[] {
     ];
     const recipientHash = hashRecipient(options.search);
     conditionsForSearch.push(eq(smsMessages.recipientHash, recipientHash));
-    conditions.push(or(...conditionsForSearch)!);
+    const searchCondition = or(...conditionsForSearch);
+    if (searchCondition) conditions.push(searchCondition);
   }
   return conditions;
 }
@@ -185,6 +205,57 @@ export type SmsAdminDatasets = {
   providerItems: AdminSmsProvider[];
   templateItems: AdminSmsTemplate[];
 };
+
+export type SmsRecipient = {
+  id: string;
+  fullName: string;
+  phone: string;
+};
+
+export type ListSmsRecipientsResult = {
+  items: SmsRecipient[];
+  total: number;
+  page: number;
+  perPage: number;
+  totalPages: number;
+};
+
+export async function listSmsRecipients(
+  options: ListSmsRecipientsQuery,
+): Promise<ListSmsRecipientsResult> {
+  const conditions: SQL[] = [
+    isNull(users.deletedAt),
+    eq(users.isActive, true),
+    eq(users.isBanned, false),
+    sql`${users.phone} IS NOT NULL`,
+  ];
+  if (options.search) {
+    const term = `%${options.search}%`;
+    const searchCondition = or(
+      ilike(users.fullName, term),
+      ilike(users.email, term),
+      ilike(users.phone, term),
+    );
+    if (searchCondition) conditions.push(searchCondition);
+  }
+  const where = and(...conditions);
+  const [countRow] = await db.select({ value: count() }).from(users).where(where);
+  const rows = await db
+    .select({ id: users.id, fullName: users.fullName, phone: users.phone })
+    .from(users)
+    .where(where)
+    .orderBy(desc(users.createdAt))
+    .limit(options.perPage)
+    .offset((options.page - 1) * options.perPage);
+  const total = Number(countRow?.value ?? 0);
+  return {
+    items: rows.filter((row): row is SmsRecipient => row.phone !== null),
+    total,
+    page: options.page,
+    perPage: options.perPage,
+    totalPages: Math.ceil(total / options.perPage),
+  };
+}
 
 export async function getSmsComposeDatasets(): Promise<SmsAdminDatasets> {
   const providers = await listSmsProviders({

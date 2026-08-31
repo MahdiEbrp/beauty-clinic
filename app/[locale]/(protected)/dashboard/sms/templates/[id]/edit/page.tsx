@@ -37,8 +37,13 @@ export default async function EditSmsTemplatePage({
   params: Promise<{ locale: string; id: string }>;
 }) {
   const { id } = await params;
-  await requirePermission("sms.write");
+  const session = await requirePermission("sms.write");
   const template = await getSmsTemplateById(id);
   if (!template) notFound();
-  return <SmsTemplateForm template={template} />;
+  return (
+    <SmsTemplateForm
+      template={template}
+      canSend={session.user.permissions.includes("sms.send")}
+    />
+  );
 }

@@ -1,10 +1,11 @@
 "use client";
 
+import * as SelectPrimitive from "@radix-ui/react-select";
 import { useTranslations } from "next-intl";
 import type { MessageNamespace } from "@/src/i18n/message-key";
 import { asTranslate } from "@/src/i18n/message-key";
 import { Link } from "@/src/i18n/navigation";
-import { Check, ChevronLeft, Languages } from "lucide-react";
+import { Check, ChevronDown, ChevronLeft, Languages } from "lucide-react";
 
 import { STEPS } from "./helpers";
 import type { Locale } from "./types";
@@ -100,15 +101,56 @@ export default function WizardHeader({
               <label htmlFor="wizard-lang" className="sr-only">
                 {t("language.label")}
               </label>
-              <select
-                id="wizard-lang"
+              <SelectPrimitive.Root
                 value={lang}
-                onChange={(event) => onLangChange(event.target.value as Locale)}
-                className="bg-transparent text-dash-body-sm font-semibold text-content-primary outline-none"
+                onValueChange={(value) => onLangChange(value as Locale)}
               >
-                <option value="en">{t("language.en")}</option>
-                <option value="fa">{t("language.fa")}</option>
-              </select>
+                <SelectPrimitive.Trigger
+                  id="wizard-lang"
+                  aria-label={t("language.label")}
+                  className="inline-flex min-h-9 items-center justify-between gap-2 rounded-control bg-transparent px-2 text-dash-body-sm font-semibold text-content-primary outline-none transition-colors hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent data-[state=open]:bg-surface-tertiary"
+                >
+                  <SelectPrimitive.Value />
+                  <SelectPrimitive.Icon asChild>
+                    <ChevronDown
+                      className="size-3.5 text-content-tertiary"
+                      aria-hidden="true"
+                    />
+                  </SelectPrimitive.Icon>
+                </SelectPrimitive.Trigger>
+                <SelectPrimitive.Portal>
+                  <SelectPrimitive.Content
+                    position="popper"
+                    sideOffset={4}
+                    className="z-50 min-w-32 overflow-hidden rounded-control border border-border-primary bg-surface-secondary p-1 text-accent shadow-elevation-3"
+                  >
+                    <SelectPrimitive.Viewport>
+                      <SelectPrimitive.Item
+                        value="en"
+                        className="relative flex min-h-10 cursor-pointer select-none items-center rounded-control px-3 pe-9 text-dash-body-sm outline-none transition-colors focus:bg-surface-tertiary data-highlighted:bg-surface-tertiary"
+                      >
+                        <SelectPrimitive.ItemText>
+                          {t("language.en")}
+                        </SelectPrimitive.ItemText>
+                        <SelectPrimitive.ItemIndicator className="absolute inset-e-2.5">
+                          <Check className="size-4 text-copper-strong" aria-hidden="true" />
+                        </SelectPrimitive.ItemIndicator>
+                      </SelectPrimitive.Item>
+                      <SelectPrimitive.Item
+                        value="fa"
+                        className="relative flex min-h-10 cursor-pointer select-none items-center rounded-control px-3 pe-9 text-dash-body-sm outline-none transition-colors focus:bg-surface-tertiary data-highlighted:bg-surface-tertiary"
+                      >
+                        <SelectPrimitive.ItemText>
+                          {t("language.fa")}
+                        </SelectPrimitive.ItemText>
+                        <SelectPrimitive.ItemIndicator className="absolute inset-e-2.5">
+                          <Check className="size-4 text-copper-strong" aria-hidden="true" />
+                        </SelectPrimitive.ItemIndicator>
+                      </SelectPrimitive.Item>
+                    </SelectPrimitive.Viewport>
+                  </SelectPrimitive.Content>
+                </SelectPrimitive.Portal>
+              </SelectPrimitive.Root>
             </div>
           </div>
         )}
