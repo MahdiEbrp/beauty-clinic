@@ -46,33 +46,40 @@ export default function DashboardShell({
   const canViewSms = user.permissions.includes("sms.read");
   const canViewBookings = user.permissions.includes("appointments.read");
 
+  // Sidebar items ordered by estimated frequency of use (most-used first).
   const navItems: SidebarNavItem[] = [
+    // Home/dashboard — the page every user lands on, so it stays at the top.
     { key: "overview", href: "/dashboard", icon: LayoutDashboard },
-    ...(canViewServices
-      ? [
-          { key: "services", href: "/dashboard/services", icon: Sparkles },
-          { key: "landing", href: "/dashboard/landing", icon: LayoutTemplate },
-        ]
-      : []),
-    ...(canViewRules
-      ? [{ key: "rules", href: "/dashboard/rules", icon: Shield }]
-      : []),
-    ...(canViewCare
-      ? [{ key: "care", href: "/dashboard/care", icon: HeartPulse }]
-      : []),
-    ...(canViewUsers ? [{ key: "users", href: "/dashboard/users", icon: Users }] : []),
-    ...(canViewFiles ? [{ key: "files", href: "/dashboard/files", icon: Files }] : []),
+    // Appointments + availability are the daily operational core.
     ...(canViewBookings
       ? [
           { key: "bookings", href: "/dashboard/bookings", icon: CalendarClock },
           { key: "slots", href: "/dashboard/slots", icon: CalendarRange },
         ]
       : []),
+    // Client communication and contacts.
+    ...(canViewSms
+      ? [{ key: "sms", href: "/dashboard/sms", icon: MessageSquareText }]
+      : []),
+    ...(canViewUsers ? [{ key: "users", href: "/dashboard/users", icon: Users }] : []),
+    // Catalog & content maintenance.
+    ...(canViewServices
+      ? [{ key: "services", href: "/dashboard/services", icon: Sparkles }]
+      : []),
+    ...(canViewCare
+      ? [{ key: "care", href: "/dashboard/care", icon: HeartPulse }]
+      : []),
+    ...(canViewFiles ? [{ key: "files", href: "/dashboard/files", icon: Files }] : []),
+    // Configuration & rare maintenance tasks.
     ...(canViewSettings
       ? [{ key: "settings", href: "/dashboard/settings", icon: Settings }]
       : []),
-    ...(canViewSms
-      ? [{ key: "sms", href: "/dashboard/sms", icon: MessageSquareText }]
+    ...(canViewRules
+      ? [{ key: "rules", href: "/dashboard/rules", icon: Shield }]
+      : []),
+    // Landing-page editing is grouped with services behind the same permission.
+    ...(canViewServices
+      ? [{ key: "landing", href: "/dashboard/landing", icon: LayoutTemplate }]
       : []),
   ];
 
