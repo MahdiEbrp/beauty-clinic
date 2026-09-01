@@ -1,7 +1,7 @@
 {
- "a11y": {
-  "skipToContent": "Skip to main content"
- },
+"a11y": {
+    "skipToContent": "Skip to main content"
+  },
  "booking": {
   "appointment": {
    "consult": "Consultation",
@@ -4523,6 +4523,7 @@
    "identity": "Identity",
    "image": "Image",
    "imagePreview": "Preview",
+   "settings": "Settings",
    "title": "Ready to Save",
    "url": "URL"
   },
