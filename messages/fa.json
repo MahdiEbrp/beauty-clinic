@@ -2204,9 +2204,9 @@
    "pending": "در انتظار"
   },
   "steps": {
-   "customer": "اطلاعات مشتری",
-   "review": "بازبینی",
-   "service": "انتخاب خدمت"
+   "customer": { "name": "اطلاعات مشتری" },
+   "review": { "name": "بازبینی" },
+   "service": { "name": "انتخاب خدمت" }
   },
   "submit": {
    "create": "ثبت رزرو",
@@ -3719,6 +3719,7 @@
   "nav": {
    "back": "بازگشت",
    "continue": "ادامه",
+   "create": "ارسال",
    "stepOf": "مرحلهٔ {current} از {total}"
   },
   "options": {
@@ -4253,6 +4254,7 @@
   "nav": {
    "back": "بازگشت",
    "continue": "ادامه",
+   "create": "ارسال",
    "stepOf": "مرحلهٔ {current} از {total}"
   },
   "options": {

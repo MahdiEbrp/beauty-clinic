@@ -2204,9 +2204,9 @@
    "pending": "Pending"
   },
   "steps": {
-   "customer": "Customer Details",
-   "review": "Review",
-   "service": "Select Service"
+   "customer": { "name": "Customer Details" },
+   "review": { "name": "Review" },
+   "service": { "name": "Select Service" }
   },
   "submit": {
    "create": "Create Reservation",
@@ -3719,6 +3719,7 @@
   "nav": {
    "back": "Back",
    "continue": "Continue",
+   "create": "Send",
    "stepOf": "Step {current} of {total}"
   },
   "options": {
@@ -4253,6 +4254,7 @@
   "nav": {
    "back": "Back",
    "continue": "Continue",
+   "create": "Send",
    "stepOf": "Step {current} of {total}"
   },
   "options": {
