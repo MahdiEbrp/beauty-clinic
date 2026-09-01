@@ -8,4 +8,5 @@ export * from "./landing";
 export * from "./landing-relations";
 export * from "./sms";
 export * from "./sms-received";
+export * from "./email";
 export * from "./notifications";

@@ -36,6 +36,10 @@ export const PERMISSION_DEFS = [
   { key: "sms.write", name: "Write SMS", description: "Create and update SMS providers and templates" },
   { key: "sms.manage", name: "Manage SMS", description: "Deactivate and delete SMS providers and templates" },
   { key: "sms.send", name: "Send SMS", description: "Send messages and test SMS providers" },
+  { key: "email.read", name: "Read email", description: "View email providers, templates, and reports" },
+  { key: "email.write", name: "Write email", description: "Create and update email providers and templates" },
+  { key: "email.manage", name: "Manage email", description: "Deactivate and delete email providers and templates" },
+  { key: "email.send", name: "Send email", description: "Send messages and test email providers" },
 ] as const;
 
 export const ALL_PERMISSIONS = PERMISSION_DEFS.map((p) => p.key);

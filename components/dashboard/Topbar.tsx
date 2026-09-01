@@ -160,6 +160,8 @@ export function Topbar({
                 ? t("files.heading")
                 : pathname.startsWith("/dashboard/sms")
                   ? t("smsAdmin.heading")
+                  : pathname.startsWith("/dashboard/email")
+                    ? t("emailAdmin.heading")
                 : t("dashboard.topbar.dashboard")}
           </span>
         </nav>

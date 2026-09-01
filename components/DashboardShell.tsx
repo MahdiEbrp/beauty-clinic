@@ -7,7 +7,7 @@ import {
   usePathname,
   useRouter,
 } from "@/src/i18n/navigation";
-import { CalendarClock, CalendarRange, Files, HeartPulse, LayoutDashboard, LayoutTemplate, MessageSquareText, Settings, Shield, Sparkles, Users } from "lucide-react";
+import { CalendarClock, CalendarRange, Files, HeartPulse, LayoutDashboard, LayoutTemplate, Mail, MessageSquareText, Settings, Shield, Sparkles, Users } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { SidebarNavItem } from "@/components/dashboard/SidebarSections";
@@ -44,6 +44,7 @@ export default function DashboardShell({
   const canViewCare = user.permissions.includes("care-guides.read");
   const canViewSettings = user.permissions.includes("settings.read");
   const canViewSms = user.permissions.includes("sms.read");
+  const canViewEmail = user.permissions.includes("email.read");
   const canViewBookings = user.permissions.includes("appointments.read");
 
   // Sidebar items ordered by estimated frequency of use (most-used first).
@@ -60,6 +61,9 @@ export default function DashboardShell({
     // Client communication and contacts.
     ...(canViewSms
       ? [{ key: "sms", href: "/dashboard/sms", icon: MessageSquareText }]
+      : []),
+    ...(canViewEmail
+      ? [{ key: "email", href: "/dashboard/email", icon: Mail }]
       : []),
     ...(canViewUsers ? [{ key: "users", href: "/dashboard/users", icon: Users }] : []),
     // Catalog & content maintenance.
