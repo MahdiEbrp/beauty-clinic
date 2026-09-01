@@ -1,4 +1,5 @@
 import type { SmsProviderKind } from "@/src/db/schema";
+import { createFakeAdapter } from "./fake";
 import { createGenericAdapter } from "./generic";
 import { createKavenegarAdapter } from "./kavenegar";
 import { createSmsIrAdapter } from "./sms-ir";
@@ -32,4 +33,5 @@ const PROVIDER_FACTORIES: Record<
   ippanel: createGenericAdapter,
   melipayamak: createGenericAdapter,
   custom: createGenericAdapter,
+  fake: createFakeAdapter,
 };

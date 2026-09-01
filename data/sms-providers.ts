@@ -38,6 +38,12 @@ export const SMS_PROVIDER_OPTIONS: readonly SmsProviderOption[] = [
     descriptionKey: "providerDescriptions.custom",
     defaultApiUrl: "",
   },
+  {
+    kind: "fake",
+    labelKey: "providerKinds.fake",
+    descriptionKey: "providerDescriptions.fake",
+    defaultApiUrl: "https://fake.local",
+  },
 ] as const;
 
 /**
@@ -48,7 +54,9 @@ export const SMS_PROVIDER_OPTIONS: readonly SmsProviderOption[] = [
 export function getSmsProviderDefaultAuthScheme(
   kind: SmsProviderKind,
 ): "bearer" | "x-api-key" | "token" | "none" {
-  return kind === "sms_ir" ? "x-api-key" : "bearer";
+  if (kind === "sms_ir") return "x-api-key";
+  if (kind === "fake") return "none";
+  return "bearer";
 }
 
 export function getSmsProviderOption(kind: SmsProviderKind): SmsProviderOption {

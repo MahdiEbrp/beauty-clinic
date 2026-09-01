@@ -3429,13 +3429,15 @@
    "custom": "هر سرور SMTP با تنظیمات سفارشی",
    "gmail": "SMTP جیمیل با رمز عبور برنامه",
    "outlook": "SMTP اوت‌لوک با STARTTLS",
-   "yahoo": "SMTP یاهو با رمز عبور برنامه"
+   "yahoo": "SMTP یاهو با رمز عبور برنامه",
+   "fake": "سرویس‌دهنده شبیه‌سازی که ارسال را فقط در خروجی ثبت می‌کند"
   },
   "providerKinds": {
    "custom": "سرویس‌دهنده سفارشی",
    "gmail": "Gmail",
    "outlook": "Outlook",
-   "yahoo": "Yahoo"
+   "yahoo": "Yahoo",
+   "fake": "فیک سندر (تست)"
   },
   "providers": {
    "active": "فعال",
@@ -3962,14 +3964,16 @@
    "ippanel": "اتصال به API پیامک IPPanel",
    "kavenegar": "اتصال REST با کلید API",
    "melipayamak": "اتصال REST سرویس ملی پیامک",
-   "smsIr": "ارسال bulk با API سرویس SMS.ir"
+   "smsIr": "ارسال bulk با API سرویس SMS.ir",
+   "fake": "سرویس‌دهنده شبیه‌سازی که ارسال را فقط در خروجی ثبت می‌کند"
   },
   "providerKinds": {
    "custom": "سرویس‌دهنده سفارشی",
    "ippanel": "IPPanel",
    "kavenegar": "کاوه‌نگار",
    "melipayamak": "ملی پیامک",
-   "smsIr": "SMS.ir"
+   "smsIr": "SMS.ir",
+   "fake": "فیک سندر (تست)"
   },
   "providers": {
    "active": "فعال",

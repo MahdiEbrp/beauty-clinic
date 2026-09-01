@@ -15,9 +15,9 @@ import {
 } from "./service-select-step";
 
 const STEPS: WizardStep[] = [
-  { key: "service", labelKey: "reservationWizard.steps.service" },
-  { key: "customer", labelKey: "reservationWizard.steps.customer" },
-  { key: "review", labelKey: "reservationWizard.steps.review" },
+  { key: "service", labelKey: "reservationWizard.steps.service.name" },
+  { key: "customer", labelKey: "reservationWizard.steps.customer.name" },
+  { key: "review", labelKey: "reservationWizard.steps.review.name" },
 ];
 export function ReservationWizard({
   mode,

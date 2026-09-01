@@ -1,4 +1,5 @@
 import type { EmailProviderKind } from "@/src/db/schema";
+import { createFakeAdapter } from "./fake";
 import { createSmtpAdapter } from "./smtp";
 import type { EmailProviderAdapter, EmailProviderConfig } from "./types";
 
@@ -27,4 +28,5 @@ const PROVIDER_FACTORIES: Record<
   outlook: createSmtpAdapter,
   yahoo: createSmtpAdapter,
   custom: createSmtpAdapter,
+  fake: createFakeAdapter,
 };

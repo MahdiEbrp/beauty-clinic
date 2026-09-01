@@ -42,6 +42,14 @@ export const EMAIL_PROVIDER_OPTIONS: readonly EmailProviderOption[] = [
     defaultPort: 465,
     defaultEncryption: "ssl",
   },
+  {
+    kind: "fake",
+    labelKey: "providerKinds.fake",
+    descriptionKey: "providerDescriptions.fake",
+    defaultHost: "smtp.fake.local",
+    defaultPort: 465,
+    defaultEncryption: "none",
+  },
 ] as const;
 
 export function getEmailProviderOption(

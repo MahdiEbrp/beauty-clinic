@@ -3429,13 +3429,15 @@
    "custom": "Any SMTP server with custom settings",
    "gmail": "Gmail SMTP with an app password",
    "outlook": "Outlook.com SMTP with STARTTLS",
-   "yahoo": "Yahoo Mail SMTP with an app password"
+   "yahoo": "Yahoo Mail SMTP with an app password",
+   "fake": "Simulated provider that logs sends without sending"
   },
   "providerKinds": {
    "custom": "Custom provider",
    "gmail": "Gmail",
    "outlook": "Outlook",
-   "yahoo": "Yahoo"
+   "yahoo": "Yahoo",
+   "fake": "Fake sender (test)"
   },
   "providers": {
    "active": "Active",
@@ -3962,14 +3964,16 @@
    "ippanel": "Connection to the IPPanel SMS API",
    "kavenegar": "REST connection with an API key",
    "melipayamak": "Meli Payamak REST connection",
-   "smsIr": "Bulk sending through SMS.ir API"
+   "smsIr": "Bulk sending through SMS.ir API",
+   "fake": "Simulated provider that logs sends without sending"
   },
   "providerKinds": {
    "custom": "Custom provider",
    "ippanel": "IPPanel",
    "kavenegar": "Kavenegar",
    "melipayamak": "Meli Payamak",
-   "smsIr": "SMS.ir"
+   "smsIr": "SMS.ir",
+   "fake": "Fake sender (test)"
   },
   "providers": {
    "active": "Active",

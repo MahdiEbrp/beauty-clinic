@@ -23,6 +23,7 @@ export const smsProviderKindEnum = pgEnum("sms_provider_kind", [
   "ippanel",
   "melipayamak",
   "custom",
+  "fake",
 ]);
 
 export const smsHealthStatusEnum = pgEnum("sms_health_status", [

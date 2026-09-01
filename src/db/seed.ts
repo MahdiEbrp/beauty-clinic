@@ -1,6 +1,7 @@
-import { eq, sql } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
 
 import { hashPassword } from "@/lib/auth/password";
+import { encryptSecret } from "@/lib/auth/encryption";
 import { db } from "./index";
 import {
   permissions,
@@ -14,6 +15,8 @@ import {
   users,
   rules,
   rulesI18n,
+  smsProviders,
+  emailProviders,
 } from "./schema";
 import { seedServiceCatalog } from "./seed/service-catalog";
 import { seedCareGuides } from "./seed/care-guides";
@@ -151,8 +154,102 @@ async function seed(): Promise<void> {
   await seedCareGuides();
   await seedRules();
   await seedLanding();
+  await seedFakeProviders();
 
   console.log("Seed complete.");
+}
+
+/**
+ * Ensure a built-in "fake" provider exists and is the active/default ("current")
+ * sender for both SMS and email whenever no real provider is configured yet.
+ * Fake providers never send externally — every send is logged to the console — so
+ * this makes the whole send pipeline work out-of-the-box for local testing.
+ */
+async function seedFakeProviders(): Promise<void> {
+  await seedFakeSmsProvider();
+  await seedFakeEmailProvider();
+}
+
+async function seedFakeSmsProvider(): Promise<void> {
+  const [existing] = await db
+    .select({ id: smsProviders.id })
+    .from(smsProviders)
+    .where(
+      and(
+        eq(smsProviders.kind, "fake"),
+        isNull(smsProviders.deletedAt),
+      ),
+    )
+    .limit(1);
+  if (existing) return;
+
+  const secrets = {
+    apiUrlEncrypted: encryptSecret("https://fake.local"),
+    tokenEncrypted: encryptSecret("fake-sms-token"),
+    settingsEncrypted: encryptSecret(
+      JSON.stringify({ authScheme: "none", payloadMode: "bulk" }),
+    ),
+    tokenLast4: "oken",
+  };
+
+  // Clear any outstanding default so the fake sender becomes the current one.
+  await db
+    .update(smsProviders)
+    .set({ isDefault: false, updatedAt: new Date() })
+    .where(and(eq(smsProviders.isDefault, true), isNull(smsProviders.deletedAt)));
+
+  await db.insert(smsProviders).values({
+    name: "Fake SMS Sender",
+    kind: "fake",
+    ...secrets,
+    sender: null,
+    isActive: true,
+    isDefault: true,
+    healthStatus: "healthy",
+  });
+
+  console.log("Fake SMS provider seeded as default.");
+}
+
+async function seedFakeEmailProvider(): Promise<void> {
+  const [existing] = await db
+    .select({ id: emailProviders.id })
+    .from(emailProviders)
+    .where(
+      and(
+        eq(emailProviders.kind, "fake"),
+        isNull(emailProviders.deletedAt),
+      ),
+    )
+    .limit(1);
+  if (existing) return;
+
+  const secrets = {
+    hostEncrypted: encryptSecret("smtp.fake.local"),
+    portEncrypted: encryptSecret("465"),
+    usernameEncrypted: encryptSecret("fake-sender@fake.local"),
+    passwordEncrypted: encryptSecret("fake-password"),
+    passwordLast4: "word",
+  };
+
+  await db
+    .update(emailProviders)
+    .set({ isDefault: false, updatedAt: new Date() })
+    .where(and(eq(emailProviders.isDefault, true), isNull(emailProviders.deletedAt)));
+
+  await db.insert(emailProviders).values({
+    name: "Fake Email Sender",
+    kind: "fake",
+    ...secrets,
+    encryption: "none",
+    fromEmail: null,
+    fromName: null,
+    isActive: true,
+    isDefault: true,
+    healthStatus: "healthy",
+  });
+
+  console.log("Fake email provider seeded as default.");
 }
 
 async function seedRules(): Promise<void> {
