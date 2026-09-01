@@ -1,4 +1,5 @@
 import { SMS_PROVIDER_HTTP, SMS_PROVIDER_PROTOCOL } from "@/lib/sms/constants";
+import { logError, logInfo } from "@/lib/log";
 import { requestProvider } from "./http";
 import { asArray, asRecord, readNumber, readString } from "./parsing";
 import type {
@@ -171,6 +172,7 @@ async function callApi(
   const root = asRecord(response.body);
   const status = readNumber(root, "status");
   if (status !== 1) {
+    logError("sms.smsir.rejected", { path, status, statusCode: response.statusCode });
     throw new SmsProviderError(
       statusMessage(status),
       "PROVIDER_REJECTED",
@@ -178,6 +180,7 @@ async function callApi(
       false,
     );
   }
+  logInfo("sms.smsir.request", { path, statusCode: response.statusCode });
   return root?.data;
 }
 

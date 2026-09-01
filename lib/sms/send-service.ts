@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 
 import { ApiError } from "@/lib/api/errors";
+import { logError, logInfo } from "@/lib/log";
 import { SMS_ERROR_CODES, SMS_ERROR_MESSAGES, SMS_LIMITS } from "@/lib/sms/constants";
 import {
   encryptMessageContent,
@@ -151,6 +152,18 @@ export async function sendSms(input: SendSmsInput, createdBy: string): Promise<S
         updatedAt: new Date(),
       })
       .where(eq(smsProviders.id, provider.id));
+    logInfo("sms.send.completed", {
+      campaignId: campaign.id,
+      providerId: provider.id,
+      providerKind: provider.kind,
+      otpTemplateId: otpTemplateId ?? null,
+      total: normalized.recipients.length,
+      sent: accepted.length,
+      failed: failedCount,
+      status,
+      parts: length.parts,
+      encoding: length.encoding,
+    });
     return {
       campaignId: campaign.id,
       total: normalized.recipients.length,
@@ -190,6 +203,13 @@ export async function sendSms(input: SendSmsInput, createdBy: string): Promise<S
         updatedAt: new Date(),
       })
       .where(eq(smsProviders.id, provider.id));
+    logError("sms.send.failed", {
+      campaignId: campaign.id,
+      providerId: provider.id,
+      providerKind: provider.kind,
+      code: safe.code,
+      message: safe.message,
+    });
     if (error instanceof ApiError) throw error;
     throw new ApiError(502, "SMS_SEND_FAILED", safe.message);
   }

@@ -45,7 +45,7 @@ export async function requestProvider(
       const retryable = SMS_HTTP_RETRYABLE_STATUS_CODES.has(response.status);
       if (!retryable || attempt === maxAttempts - 1) {
         throw new SmsProviderError(
-          SMS_ERROR_MESSAGES.providerHttpRejected,
+          providerErrorMessage(response, body),
           SMS_ERROR_CODES.providerHttpError,
           response.status,
           retryable,
@@ -93,6 +93,23 @@ async function readResponseBody(response: Response): Promise<unknown> {
   } catch {
     return text.slice(0, SMS_NETWORK.responseBodyMaxChars);
   }
+}
+
+/**
+ * Prefer the provider's own description in the error body (e.g. SMS.ir returns
+ * `{ status, message, data }`) over the generic rejection text, so failures
+ * like an invalid line number surface in logs instead of a blanket message.
+ */
+function providerErrorMessage(response: Response, body: unknown): string {
+  const record = body && typeof body === "object" && !Array.isArray(body)
+    ? (body as Record<string, unknown>)
+    : undefined;
+  const providerText = record?.message;
+  const text = typeof providerText === "string" && providerText.trim()
+    ? providerText.trim()
+    : "";
+  if (text) return `${text} (HTTP ${response.status})`;
+  return SMS_ERROR_MESSAGES.providerHttpRejected;
 }
 
 function assertSafeProviderUrl(rawUrl: string): void {
