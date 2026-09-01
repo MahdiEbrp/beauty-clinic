@@ -3791,7 +3791,9 @@
       "keyHint": "فقط حروف کوچک، عدد، نقطه و خط تیره؛ مثال: booking.confirmed",
       "type": "نوع پیام",
       "variables": "متغیرها",
-      "variablesHint": "نام متغیرها را با ویرگول انگلیسی جدا کنید؛ مثال: name, date, time"
+      "variablesHint": "نام متغیرها را با ویرگول انگلیسی جدا کنید؛ مثال: name, date, time",
+      "externalTemplateId": "شناسه قالب پیامک",
+      "externalTemplateIdHint": "شناسه عددی قالب ثبت‌شده در سرویس SMS.ir (سندباکس: 123456). برای ارسال متن آزاد خالی بگذارید"
     },
     "heading": "افزودن قالب پیامک",
     "meta": {

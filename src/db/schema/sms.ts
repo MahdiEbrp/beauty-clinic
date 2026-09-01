@@ -87,6 +87,7 @@ export const smsTemplates = pgTable(
   {
     id: uuid("id").primaryKey().defaultRandom(),
     key: text("key").notNull(),
+    externalTemplateId: text("external_template_id"),
     messageType: smsMessageTypeEnum("message_type").notNull().default("transactional"),
     variables: jsonb("variables").$type<string[]>().notNull().default([]),
     isActive: boolean("is_active").notNull().default(true),

@@ -71,6 +71,20 @@ export function SmsTemplateDetailsStep({
             className={inputClass(false)}
           />
         </Field>
+        <Field
+          id="sms-template-external-id"
+          label={t("fields.externalTemplateId")}
+          hint={t("fields.externalTemplateIdHint")}
+        >
+          <input
+            id="sms-template-external-id"
+            dir="ltr"
+            inputMode="numeric"
+            value={form.externalTemplateId}
+            onChange={(event) => setValue("externalTemplateId", event.target.value)}
+            className={inputClass(false)}
+          />
+        </Field>
         <Field id="sms-template-order" label={t("fields.displayOrder")}>
           <input
             id="sms-template-order"

@@ -35,8 +35,40 @@ export type SmsSendResult = {
   providerStatus?: string;
 };
 
+export type SmsVerifyInput = {
+  recipients: string[];
+  templateId: number;
+  parameters: Array<{ name: string; value: string }>;
+};
+
+export type SmsMessageReport = {
+  messageId: string;
+  deliveryState: number;
+  statusText?: string;
+  cost?: number;
+  text?: string;
+};
+
+export type SmsReceivedMessage = {
+  receiveReturnId: string;
+  messageText: string;
+  number: string;
+  mobile: string;
+  receivedDateTime?: number;
+};
+
 export type SmsProviderAdapter = {
   send(input: SmsSendInput): Promise<SmsSendResult>;
+  /** SMS.ir OTP verification (server-renders the template). Optional in other adapters. */
+  sendVerify?(input: SmsVerifyInput): Promise<SmsSendResult>;
+  /** Provider account credit. */
+  getCredit?(): Promise<number>;
+  /** Provider active sender lines. */
+  getLines?(): Promise<string[]>;
+  /** Single-message delivery report. */
+  getMessage?(messageId: string): Promise<SmsMessageReport | null>;
+  /** Latest received messages (SMS.ir marks them read after retrieval). */
+  receiveLatest?(count?: number): Promise<SmsReceivedMessage[]>;
 };
 
 export class SmsProviderError extends Error {

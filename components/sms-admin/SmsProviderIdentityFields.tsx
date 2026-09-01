@@ -3,9 +3,12 @@
 import type { SmsProviderKind } from "@/src/db/schema";
 import { useTranslations } from "next-intl";
 
-import { getSmsProviderOption, SMS_PROVIDER_OPTIONS } from "@/data/sms-providers";
+import {
+  getSmsProviderDefaultAuthScheme,
+  getSmsProviderOption,
+  SMS_PROVIDER_OPTIONS,
+} from "@/data/sms-providers";
 import type { AdminSmsProvider } from "@/lib/sms/provider-service";
-import { SMS_PROVIDER_DEFAULTS } from "@/lib/sms/constants";
 import { Field, inputClass } from "@/components/create-group/ui";
 import { SmsSelect, type SmsSelectOption } from "./SmsSelect";
 import type {
@@ -108,6 +111,6 @@ export function updateProviderKind(
     ...current,
     kind,
     apiUrl: current.apiUrl === currentDefault ? nextDefault : current.apiUrl,
-    authScheme: current.authScheme || SMS_PROVIDER_DEFAULTS.authScheme,
+    authScheme: getSmsProviderDefaultAuthScheme(kind),
   };
 }

@@ -13,6 +13,7 @@ import { smsTemplates, smsTemplatesI18n, type SmsMessageType } from "@/src/db/sc
 export type AdminSmsTemplate = {
   id: string;
   key: string;
+  externalTemplateId?: string;
   messageType: SmsMessageType;
   variables: string[];
   translations: { fa?: { name: string; content: string }; en?: { name: string; content: string } };
@@ -91,6 +92,7 @@ export async function createSmsTemplate(
       .insert(smsTemplates)
       .values({
         key: input.key,
+        externalTemplateId: input.externalTemplateId ?? null,
         messageType: input.messageType,
         variables: input.variables,
         displayOrder: input.displayOrder,
@@ -116,6 +118,9 @@ export async function updateSmsTemplate(
   await db.transaction(async (tx) => {
     const patch: Partial<typeof smsTemplates.$inferInsert> = {
       ...(input.messageType !== undefined ? { messageType: input.messageType } : {}),
+      ...(input.externalTemplateId !== undefined
+        ? { externalTemplateId: input.externalTemplateId }
+        : {}),
       ...(input.variables !== undefined ? { variables: input.variables } : {}),
       ...(input.displayOrder !== undefined ? { displayOrder: input.displayOrder } : {}),
       ...(input.isActive !== undefined ? { isActive: input.isActive } : {}),
@@ -213,6 +218,7 @@ function toAdminTemplate(
   return {
     id: row.id,
     key: row.key,
+    externalTemplateId: row.externalTemplateId ?? undefined,
     messageType: row.messageType,
     variables: row.variables,
     translations: translations ?? {},

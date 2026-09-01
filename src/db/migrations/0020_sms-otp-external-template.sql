@@ -1,0 +1,1 @@
+ALTER TABLE "sms_templates" ADD COLUMN "external_template_id" text;

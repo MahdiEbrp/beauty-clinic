@@ -54,6 +54,12 @@ const templateFields = {
     .min(SMS_LIMITS.templateKeyMinLength)
     .max(SMS_LIMITS.templateKeyMaxLength)
     .regex(/^[a-z][a-z0-9_.-]*$/),
+  externalTemplateId: z
+    .string()
+    .trim()
+    .regex(/^\d+$/)
+    .max(64)
+    .optional(),
   messageType: z.enum(["transactional", "marketing"]).default("transactional"),
   variables: z
     .array(variableSchema)

@@ -2,6 +2,7 @@ import type { AdminSmsTemplate } from "@/lib/sms/template-service";
 
 export type SmsTemplateFormState = {
   key: string;
+  externalTemplateId: string;
   messageType: AdminSmsTemplate["messageType"];
   faName: string;
   faContent: string;

@@ -10,7 +10,10 @@ import WizardActionBar from "@/components/create-group/WizardActionBar";
 import WizardHeader from "@/components/create-group/WizardHeader";
 import { SMS_API_ROUTES, SMS_DASHBOARD_ROUTES, SMS_PROVIDER_DEFAULTS } from "@/lib/sms/constants";
 import type { AdminSmsProvider } from "@/lib/sms/provider-service";
-import { getSmsProviderOption } from "@/data/sms-providers";
+import {
+  getSmsProviderDefaultAuthScheme,
+  getSmsProviderOption,
+} from "@/data/sms-providers";
 import { useRouter } from "@/src/i18n/navigation";
 import {
   SmsProviderCredentialsFields,
@@ -46,7 +49,9 @@ export function SmsProviderForm({
     apiUrl: provider?.apiUrl ?? getSmsProviderOption(initialKind).defaultApiUrl,
     token: "",
     sender: provider?.sender ?? "",
-    authScheme: provider?.credentials.authScheme ?? SMS_PROVIDER_DEFAULTS.authScheme,
+    authScheme:
+      provider?.credentials.authScheme ??
+      getSmsProviderDefaultAuthScheme(initialKind),
     authHeader: SMS_PROVIDER_DEFAULTS.authHeader,
     lineNumber: provider?.credentials.lineNumber ?? "",
     payloadMode: provider?.credentials.payloadMode ?? SMS_PROVIDER_DEFAULTS.payloadMode,

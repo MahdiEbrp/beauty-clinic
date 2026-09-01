@@ -178,6 +178,7 @@ export const SMS_ERROR_MESSAGES = {
   messageOrTemplateRequired: "Provide a message or choose a template.",
   messageEmpty: "Message cannot be empty.",
   templateVariablesNotUnique: "Template variables must be unique.",
+  messageNotFound: "SMS message not found.",
 } as const;
 
 export const SMS_ERROR_CODES = {
@@ -208,6 +209,7 @@ export const SMS_ERROR_CODES = {
   unsafeProviderUrl: "UNSAFE_PROVIDER_URL",
   invalidProviderId: "INVALID_SMS_PROVIDER_ID",
   invalidTemplateId: "INVALID_SMS_TEMPLATE_ID",
+  messageNotFound: "SMS_MESSAGE_NOT_FOUND",
 } as const;
 
 export const SMS_PROVIDER_PROTOCOL = {
@@ -224,6 +226,14 @@ export const SMS_PROVIDER_PROTOCOL = {
     lineNumberField: "lineNumber",
     messageTextField: "messageText",
     mobilesField: "mobiles",
+    bulkPath: "/send/bulk",
+    verifyPath: "/send/verify",
+    getCreditPath: "/credit",
+    getLinesPath: "/line",
+    getMessagePath: "/send/",
+    getLatestReceivedPath: "/receive/latest",
+    apiKeyHeader: "x-api-key",
+    maxMobilesPerBulk: 100,
   },
   ippanel: {
     sendingTypeField: "sending_type",

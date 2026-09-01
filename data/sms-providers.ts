@@ -18,7 +18,7 @@ export const SMS_PROVIDER_OPTIONS: readonly SmsProviderOption[] = [
     kind: "sms_ir",
     labelKey: "providerKinds.smsIr",
     descriptionKey: "providerDescriptions.smsIr",
-    defaultApiUrl: "https://api.sms.ir/v1/send/bulk",
+    defaultApiUrl: "https://api.sms.ir/v1",
   },
   {
     kind: "ippanel",
@@ -39,6 +39,17 @@ export const SMS_PROVIDER_OPTIONS: readonly SmsProviderOption[] = [
     defaultApiUrl: "",
   },
 ] as const;
+
+/**
+ * Header scheme the UI presents for a provider kind. SMS.ir authenticates with
+ * `x-api-key` (its adapter enforces this regardless of stored settings), while
+ * the other providers default to a bearer token.
+ */
+export function getSmsProviderDefaultAuthScheme(
+  kind: SmsProviderKind,
+): "bearer" | "x-api-key" | "token" | "none" {
+  return kind === "sms_ir" ? "x-api-key" : "bearer";
+}
 
 export function getSmsProviderOption(kind: SmsProviderKind): SmsProviderOption {
   return (

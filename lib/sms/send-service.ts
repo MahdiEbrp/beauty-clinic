@@ -46,11 +46,20 @@ export async function sendSms(input: SendSmsInput, createdBy: string): Promise<S
   }
 
   const provider = await getSmsProviderForUse(input.providerId);
-  const renderedMessage = await resolveMessage(input);
-  if (renderedMessage.length > SMS_LIMITS.messageMaxLength) {
+  const template = input.templateId
+    ? await getSmsTemplateForUse(input.templateId)
+    : null;
+  const otpTemplateId = resolveOtpTemplateId(provider, template);
+  const renderedMessage = otpTemplateId
+    ? (template?.translations.fa?.content ?? input.message ?? "")
+    : await resolveMessage(input);
+  if (!otpTemplateId && renderedMessage.length > SMS_LIMITS.messageMaxLength) {
     throw new ApiError(400, SMS_ERROR_CODES.messageTooLong, SMS_ERROR_MESSAGES.messageTooLong);
   }
   const length = getSmsLengthLabel(renderedMessage);
+  const verifyParameters = otpTemplateId
+    ? buildVerifyParameters(template, input.variables)
+    : [];
   if (input.idempotencyKey) {
     const previous = await db.query.smsCampaigns.findFirst({
       where: eq(smsCampaigns.idempotencyKey, input.idempotencyKey),
@@ -90,11 +99,18 @@ export async function sendSms(input: SendSmsInput, createdBy: string): Promise<S
 
   const adapter = createSmsProviderAdapter(provider);
   try {
-    const result = await adapter.send({
-      recipients: normalized.recipients,
-      message: renderedMessage,
-      sender: input.sender ?? provider.sender ?? provider.credentials.lineNumber,
-    });
+    const result =
+      otpTemplateId && adapter.sendVerify
+        ? await adapter.sendVerify({
+            recipients: normalized.recipients,
+            templateId: Number(otpTemplateId),
+            parameters: verifyParameters,
+          })
+        : await adapter.send({
+            recipients: normalized.recipients,
+            message: renderedMessage,
+            sender: input.sender ?? provider.sender ?? provider.credentials.lineNumber,
+          });
     const accepted = result.accepted;
     const acceptedSet = new Set(accepted.map((item) => item.recipient));
     const rejectedSet = new Set(result.rejected.map((item) => item.recipient));
@@ -204,6 +220,40 @@ function providerFailure(error: unknown): { code: string; message: string } {
   }
   return { code: SMS_ERROR_CODES.providerNetworkError, message: SMS_ERROR_MESSAGES.providerNetworkError };
 }
+
+/** SMS.ir OTP uses a remote template id instead of free-text; only for sms_ir. */
+function resolveOtpTemplateId(
+  provider: { kind: string },
+  template: Awaited<ReturnType<typeof getSmsTemplateForUse>> | null,
+): string | null {
+  return provider.kind === "sms_ir" && template?.externalTemplateId
+    ? template.externalTemplateId
+    : null;
+}
+
+/** Turn the app template's named variables into SMS.ir verify parameters. */
+function buildVerifyParameters(
+  template: Awaited<ReturnType<typeof getSmsTemplateForUse>> | null,
+  variables: Record<string, string> | undefined,
+): Array<{ name: string; value: string }> {
+  const names = template?.variables ?? [];
+  return names.map((name) => {
+    const value = variables?.[name]?.trim() ?? "";
+    if (value.length === 0) {
+      throw new ApiError(400, "SMS_OTP_PARAM_MISSING", `Missing template value: ${name}.`);
+    }
+    if (value.length > SMS_IR_PARAM_VALUE_MAX) {
+      throw new ApiError(
+        400,
+        "SMS_OTP_PARAM_TOO_LONG",
+        `Template value "${name}" exceeds the 25-character limit.`,
+      );
+    }
+    return { name, value };
+  });
+}
+
+const SMS_IR_PARAM_VALUE_MAX = 25;
 
 function summaryFromCampaign(
   campaign: typeof smsCampaigns.$inferSelect,

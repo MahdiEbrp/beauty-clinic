@@ -32,6 +32,7 @@ const TEMPLATE_STEPS = [
 function initialState(template?: AdminSmsTemplate): SmsTemplateFormState {
   return {
     key: template?.key ?? "",
+    externalTemplateId: template?.externalTemplateId ?? "",
     messageType: template?.messageType ?? "transactional",
     faName: template?.translations.fa?.name ?? "",
     faContent: template?.translations.fa?.content ?? "",
@@ -91,6 +92,7 @@ export function SmsTemplateForm({
     try {
       const payload = {
         ...(template ? {} : { key: form.key.trim() }),
+        externalTemplateId: form.externalTemplateId.trim() || undefined,
         messageType: form.messageType,
         variables: parseSmsVariables(form.variables),
         translations: {

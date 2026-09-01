@@ -141,6 +141,20 @@
       "when": 1788169846928,
       "tag": "0019_tiny_war_machine",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1788207663002,
+      "tag": "0020_sms-otp-external-template",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1788208748841,
+      "tag": "0021_sms-received-messages",
+      "breakpoints": true
     }
   ]
 }

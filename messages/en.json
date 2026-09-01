@@ -3791,7 +3791,9 @@
       "keyHint": "Lowercase letters, numbers, dots and hyphens only; example: booking.confirmed",
       "type": "Message type",
       "variables": "Variables",
-      "variablesHint": "Separate variable names with English commas; example: name, date, time"
+      "variablesHint": "Separate variable names with English commas; example: name, date, time",
+      "externalTemplateId": "SMS.ir template ID",
+      "externalTemplateIdHint": "Numeric template ID registered in SMS.ir (sandbox: 123456). Leave empty for free-text sends"
     },
     "heading": "Add SMS template",
     "meta": {
