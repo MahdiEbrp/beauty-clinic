@@ -25,8 +25,10 @@ export const POST = withSecurity(
     const ip = clientIp(request);
     const userAgent = request.headers.get("user-agent") ?? undefined;
     const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    const identifier =
+      body.phone !== undefined ? { phone: body.phone } : { email: body.email as string };
 
-    const result = await verifyLoginOtp(body.phone, body.code);
+    const result = await verifyLoginOtp(identifier, body.code);
 
     if (!result.ok) {
       // USER_NOT_FOUND / NO_CODE are indistinguishable from a wrong code so

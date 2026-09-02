@@ -4,7 +4,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { ApiError } from "@/lib/api/errors";
 import { rateLimit } from "@/lib/rate-limit";
 import {
-  getLoginUserByPhone,
+  getLoginUserByIdentifier,
   invalidateLatestLoginOtp,
   issueLoginOtp,
   OTP_RESEND_COOLDOWN_MS,
@@ -30,18 +30,24 @@ export const POST = withSecurity(
   },
   async (request, ctx) => {
     const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    const identifier =
+      body.channel === "sms"
+        ? { phone: body.phone }
+        : { email: body.email };
+    const identifierKey =
+      body.channel === "sms" ? body.phone : body.email;
 
-    // Per-phone limiter on top of the per-IP one: SMS/email bombing protection.
-    const phoneLimit = await rateLimit(
-      `otp-request-phone:${body.phone}`,
+    // Per-identifier limiter on top of the per-IP one: SMS/email bombing protection.
+    const identifierLimit = await rateLimit(
+      `otp-request-${body.channel}:${identifierKey}`,
       REQUEST_RATE_LIMIT.limit,
       REQUEST_RATE_LIMIT.windowMs,
     );
-    if (!phoneLimit.allowed) {
+    if (!identifierLimit.allowed) {
       return jsonError("RATE_LIMITED", "Too many attempts. Please try again later.", 429);
     }
 
-    const user = await getLoginUserByPhone(body.phone);
+    const user = await getLoginUserByIdentifier(identifier);
     const canReceive =
       user &&
       user.isActive &&
@@ -65,7 +71,7 @@ export const POST = withSecurity(
     try {
       await sendLoginOtp({
         channel: body.channel,
-        phone: user.phone ?? body.phone,
+        phone: user.phone ?? identifierKey,
         email: user.email,
         code,
         smsText: t("otp.smsMessage", { code }),

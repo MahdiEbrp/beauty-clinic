@@ -21,6 +21,7 @@ export function VerifyStep({
   onResend,
   onChangePhone,
   onSubmit,
+  channel,
 }: {
   code: string;
   onCodeChange: (code: string) => void;
@@ -36,6 +37,7 @@ export function VerifyStep({
   onResend: () => void;
   onChangePhone: () => void;
   onSubmit: (event: React.SyntheticEvent<HTMLFormElement>) => void;
+  channel: "sms" | "email";
 }) {
   const t = useTranslations();
   const expiry = useCountdown(expiresAt);
@@ -146,7 +148,9 @@ export function VerifyStep({
           strokeWidth={2}
           aria-hidden="true"
         />
-        {t("login.otp.changePhone")}
+        {channel === "email"
+          ? t("login.otp.changeEmail")
+          : t("login.otp.changePhone")}
       </button>
     </form>
   );

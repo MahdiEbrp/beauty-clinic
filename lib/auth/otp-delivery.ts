@@ -1,7 +1,7 @@
 import "server-only";
 
 import { ApiError } from "@/lib/api/errors";
-import { logError } from "@/lib/log";
+import { logError, logInfo } from "@/lib/log";
 import { getEmailProviderForUse } from "@/lib/email/provider-service";
 import { createEmailProviderAdapter } from "@/lib/email/providers";
 import { getSmsProviderForUse } from "@/lib/sms/provider-service";
@@ -87,8 +87,31 @@ async function sendEmail(input: OtpDeliveryInput): Promise<void> {
       );
     }
   } catch (error) {
+    // Dev-only fake sender: with no active email provider (and never in
+    // production) the code is only logged to the server console so OTP login
+    // stays testable without an SMTP server.
+    if (isUnconfiguredEmailError(error) && !isProduction()) {
+      logInfo("otp.email.dev_log", {
+        recipients: [input.email],
+        subject: input.emailSubject,
+        message: input.emailHtml,
+      });
+      return;
+    }
     throw normalizeDeliveryError("email", error);
   }
+}
+
+function isUnconfiguredEmailError(error: unknown): boolean {
+  return (
+    error instanceof ApiError &&
+    (error.code === "EMAIL_PROVIDER_NOT_CONFIGURED" ||
+      error.code === "EMAIL_PROVIDER_INACTIVE")
+  );
+}
+
+function isProduction(): boolean {
+  return process.env.NODE_ENV === "production";
 }
 
 function normalizeDeliveryError(channel: OtpChannel, error: unknown): unknown {

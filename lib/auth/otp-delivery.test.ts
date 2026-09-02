@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { OtpDeliveryInput } from "./otp-delivery";
 
@@ -12,6 +12,7 @@ const mocks = vi.hoisted(() => ({
     rejected: [],
   })),
   logError: vi.fn(),
+  logInfo: vi.fn(),
   getSmsProviderForUse: vi.fn(
     (): {
       id: string;
@@ -50,7 +51,10 @@ const mocks = vi.hoisted(() => ({
 // `server-only` throws when imported outside a Server Component runtime, so
 // the auth service's guard import must be stubbed in the test environment.
 vi.mock("server-only", () => ({}));
-vi.mock("@/lib/log", () => ({ logError: mocks.logError }));
+vi.mock("@/lib/log", () => ({
+  logError: mocks.logError,
+  logInfo: mocks.logInfo,
+}));
 vi.mock("@/lib/sms/provider-service", () => ({
   getSmsProviderForUse: mocks.getSmsProviderForUse,
 }));
@@ -81,8 +85,13 @@ beforeEach(() => {
   mocks.smsSend.mockClear();
   mocks.emailSend.mockClear();
   mocks.logError.mockClear();
+  mocks.logInfo.mockClear();
   mocks.getSmsProviderForUse.mockClear();
   mocks.getEmailProviderForUse.mockClear();
+});
+
+afterEach(() => {
+  vi.unstubAllEnvs();
 });
 
 describe("sendLoginOtp (sms)", () => {
@@ -158,7 +167,8 @@ describe("sendLoginOtp (email)", () => {
     });
   });
 
-  it("maps provider-inactive errors to OTP_PROVIDER_UNAVAILABLE", async () => {
+  it("maps provider-inactive errors to OTP_PROVIDER_UNAVAILABLE in production", async () => {
+    vi.stubEnv("NODE_ENV", "production");
     mocks.getEmailProviderForUse.mockRejectedValueOnce(
       new ApiError(503, "EMAIL_PROVIDER_INACTIVE", "No active email provider."),
     );
@@ -175,5 +185,38 @@ describe("sendLoginOtp (email)", () => {
       sendLoginOtp({ ...base, channel: "email" }),
     ).rejects.toMatchObject({ status: 502, code: "OTP_PROVIDER_UNAVAILABLE" });
     expect(mocks.logError).toHaveBeenCalled();
+  });
+
+  it("logs the code instead of sending when no provider is configured in dev", async () => {
+    vi.stubEnv("NODE_ENV", "development");
+    mocks.getEmailProviderForUse.mockRejectedValueOnce(
+      new ApiError(503, "EMAIL_PROVIDER_NOT_CONFIGURED", "No email provider."),
+    );
+
+    await expect(
+      sendLoginOtp({ ...base, channel: "email" }),
+    ).resolves.toBeUndefined();
+
+    expect(mocks.emailSend).not.toHaveBeenCalled();
+    expect(mocks.logInfo).toHaveBeenCalledWith(
+      "otp.email.dev_log",
+      expect.objectContaining({
+        recipients: ["jane@example.com"],
+        subject: "Login code",
+        message: "<p>Your code is <b>123456</b></p>",
+      }),
+    );
+  });
+
+  it("still fails when no provider is configured in production", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    mocks.getEmailProviderForUse.mockRejectedValueOnce(
+      new ApiError(503, "EMAIL_PROVIDER_NOT_CONFIGURED", "No email provider."),
+    );
+
+    await expect(
+      sendLoginOtp({ ...base, channel: "email" }),
+    ).rejects.toMatchObject({ status: 502, code: "OTP_PROVIDER_UNAVAILABLE" });
+    expect(mocks.logInfo).not.toHaveBeenCalled();
   });
 });

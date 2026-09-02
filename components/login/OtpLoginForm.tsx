@@ -7,7 +7,7 @@ import { ShieldAlert } from "lucide-react";
 import { toFieldErrors } from "@/lib/validation/field-errors";
 import { requestOtpSchema, verifyOtpSchema } from "@/lib/validation/otp";
 import BrandLogo from "@/components/BrandLogo";
-import { PhoneStep, maskPhone } from "./PhoneStep";
+import { PhoneStep, maskEmail, maskPhone } from "./PhoneStep";
 import { VerifyStep } from "./VerifyStep";
 
 type FieldErrors = Record<string, string[] | undefined>;
@@ -29,6 +29,7 @@ export default function OtpLoginForm() {
 
   const [step, setStep] = useState<"request" | "verify">("request");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [channel, setChannel] = useState<"sms" | "email">("sms");
   const [code, setCode] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -76,7 +77,7 @@ export default function OtpLoginForm() {
 
   const fetchOtp = async (
     path: "/api/v1/auth/otp/request" | "/api/v1/auth/otp/resend",
-    body: Record<string, string>,
+    body: Record<string, unknown>,
   ): Promise<{ ok: boolean; error?: ServerError }> => {
     const response = await fetch(path, {
       method: "POST",
@@ -101,7 +102,9 @@ export default function OtpLoginForm() {
   const handleRequest = async (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     setFormError(null);
-    const parsed = requestOtpSchema.safeParse({ phone, channel });
+    const payload =
+      channel === "sms" ? { phone, channel } : { email, channel };
+    const parsed = requestOtpSchema.safeParse(payload);
     if (!parsed.success) {
       setErrors(toFieldErrors(parsed.error));
       return;
@@ -128,10 +131,9 @@ export default function OtpLoginForm() {
     setFormError(null);
     setResending(true);
     try {
-      const result = await fetchOtp("/api/v1/auth/otp/resend", {
-        phone,
-        channel,
-      });
+      const body =
+        channel === "sms" ? { phone, channel } : { email, channel };
+      const result = await fetchOtp("/api/v1/auth/otp/resend", body);
       if (!result.ok) {
         setFormError(
           result.error ? translateServerError(result.error) : t("login.errors.generic"),
@@ -147,7 +149,12 @@ export default function OtpLoginForm() {
   const submitVerify = async (verifyCode: string) => {
     setFormError(null);
     setCodeError(null);
-    const parsed = verifyOtpSchema.safeParse({ phone, code: verifyCode });
+    const identifier =
+      channel === "sms" ? { phone } : { email };
+    const parsed = verifyOtpSchema.safeParse({
+      ...identifier,
+      code: verifyCode,
+    });
     if (!parsed.success) {
       setCodeError(t("login.otp.errors.codeInvalid"));
       return;
@@ -198,7 +205,9 @@ export default function OtpLoginForm() {
     setFormError(null);
   };
 
-  const invalidPhone = Boolean(errors.phone);
+  const invalidContact = Boolean(errors.phone) || Boolean(errors.email);
+  const maskedDestination =
+    channel === "email" ? maskEmail(email) : maskPhone(phone);
 
   return (
     <section className="py-24 bg-surface-primary">
@@ -214,7 +223,7 @@ export default function OtpLoginForm() {
           <p className="text-body text-content-secondary mb-10">
             {step === "request"
               ? t("login.description")
-              : t("login.otp.codeDescription", { destination: maskPhone(phone) })}
+              : t("login.otp.codeDescription", { destination: maskedDestination })}
           </p>
 
           {formError && (
@@ -236,9 +245,11 @@ export default function OtpLoginForm() {
             <PhoneStep
               phone={phone}
               onPhoneChange={setPhone}
+              email={email}
+              onEmailChange={setEmail}
               channel={channel}
               onChannelChange={setChannel}
-              invalidPhone={invalidPhone}
+              invalid={invalidContact}
               pending={pending}
               onSubmit={(event) => void handleRequest(event)}
             />
@@ -258,6 +269,7 @@ export default function OtpLoginForm() {
               onResend={() => void handleResend()}
               onChangePhone={handleChangePhone}
               onSubmit={(event) => void handleVerify(event)}
+              channel={channel}
             />
           )}
 

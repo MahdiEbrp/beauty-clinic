@@ -105,7 +105,7 @@ describe("verifyLoginOtp", () => {
     ]);
     mockDb.seed("otp_codes", [activeCode()]);
 
-    const result = await verifyLoginOtp("+989121234567", "123456");
+    const result = await verifyLoginOtp({ phone: "+989121234567" }, "123456");
 
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -124,7 +124,7 @@ describe("verifyLoginOtp", () => {
     mockDb.seed("users", [{ ...baseUser, phoneVerifiedAt: verifiedAt }]);
     mockDb.seed("otp_codes", [activeCode()]);
 
-    await verifyLoginOtp("+989121234567", "123456");
+    await verifyLoginOtp({ phone: "+989121234567" }, "123456");
 
     expect(mockDb.data.users[0].phoneVerifiedAt).toBe(verifiedAt);
   });
@@ -133,7 +133,7 @@ describe("verifyLoginOtp", () => {
     mockDb.seed("users", [baseUser]);
     mockDb.seed("otp_codes", [activeCode()]);
 
-    const result = await verifyLoginOtp("+989100000000", "123456");
+    const result = await verifyLoginOtp({ phone: "+989100000000" }, "123456");
 
     expect(result).toEqual({ ok: false, reason: "USER_NOT_FOUND" });
     expect(mockDb.data.otp_codes[0].consumedAt).toBeNull();
@@ -144,7 +144,7 @@ describe("verifyLoginOtp", () => {
     mockDb.seed("users", [{ ...baseUser, isActive: false }]);
     mockDb.seed("otp_codes", [activeCode()]);
 
-    expect(await verifyLoginOtp("+989121234567", "123456")).toMatchObject({
+    expect(await verifyLoginOtp({ phone: "+989121234567" }, "123456")).toMatchObject({
       ok: false,
       reason: "ACCOUNT_INACTIVE",
     });
@@ -154,7 +154,7 @@ describe("verifyLoginOtp", () => {
     mockDb.seed("users", [{ ...baseUser, isBanned: true }]);
     mockDb.seed("otp_codes", [activeCode()]);
 
-    expect(await verifyLoginOtp("+989121234567", "123456")).toMatchObject({
+    expect(await verifyLoginOtp({ phone: "+989121234567" }, "123456")).toMatchObject({
       ok: false,
       reason: "ACCOUNT_BANNED",
     });
@@ -166,7 +166,7 @@ describe("verifyLoginOtp", () => {
     ]);
     mockDb.seed("otp_codes", [activeCode()]);
 
-    const result = await verifyLoginOtp("+989121234567", "123456");
+    const result = await verifyLoginOtp({ phone: "+989121234567" }, "123456");
 
     expect(result).toMatchObject({ ok: false, reason: "LOCKED_OUT" });
     if (!result.ok && result.reason === "LOCKED_OUT") {
@@ -178,7 +178,7 @@ describe("verifyLoginOtp", () => {
   it("returns NO_CODE when no active code exists", async () => {
     mockDb.seed("users", [baseUser]);
 
-    expect(await verifyLoginOtp("+989121234567", "123456")).toMatchObject({
+    expect(await verifyLoginOtp({ phone: "+989121234567" }, "123456")).toMatchObject({
       ok: false,
       reason: "NO_CODE",
     });
@@ -190,7 +190,7 @@ describe("verifyLoginOtp", () => {
       activeCode({ expiresAt: new Date(Date.now() - 1_000) }),
     ]);
 
-    const result = await verifyLoginOtp("+989121234567", "123456");
+    const result = await verifyLoginOtp({ phone: "+989121234567" }, "123456");
 
     expect(result).toMatchObject({ ok: false, reason: "CODE_EXPIRED" });
     expect(mockDb.data.otp_codes[0].consumedAt).toBeInstanceOf(Date);
@@ -200,7 +200,7 @@ describe("verifyLoginOtp", () => {
     mockDb.seed("users", [baseUser]);
     mockDb.seed("otp_codes", [activeCode()]);
 
-    const result = await verifyLoginOtp("+989121234567", "000000");
+    const result = await verifyLoginOtp({ phone: "+989121234567" }, "000000");
 
     expect(result).toEqual({
       ok: false,
@@ -217,7 +217,7 @@ describe("verifyLoginOtp", () => {
       activeCode({ attempts: OTP_MAX_VERIFY_ATTEMPTS - 1 }),
     ]);
 
-    const result = await verifyLoginOtp("+989121234567", "000000");
+    const result = await verifyLoginOtp({ phone: "+989121234567" }, "000000");
 
     expect(result).toEqual({
       ok: false,
@@ -232,7 +232,7 @@ describe("verifyLoginOtp", () => {
     mockDb.seed("users", [{ ...baseUser, failedLoginAttempts: 4 }]);
     mockDb.seed("otp_codes", [activeCode()]);
 
-    const result = await verifyLoginOtp("+989121234567", "000000");
+    const result = await verifyLoginOtp({ phone: "+989121234567" }, "000000");
 
     expect(result).toEqual({
       ok: false,
@@ -242,6 +242,47 @@ describe("verifyLoginOtp", () => {
     const user = mockDb.data.users[0];
     expect(user.failedLoginAttempts).toBe(5);
     expect(user.lockedUntil).toBeInstanceOf(Date);
+  });
+
+  it("signs in by email, marking the email verified and leaving the phone alone", async () => {
+    mockDb.seed("users", [{ ...baseUser, phone: null }]);
+    mockDb.seed("otp_codes", [activeCode({ channel: "email" })]);
+
+    const result = await verifyLoginOtp(
+      { email: "Jane@Example.COM" },
+      "123456",
+    );
+
+    expect(result.ok).toBe(true);
+    const user = mockDb.data.users[0];
+    expect(user.emailVerifiedAt).toBeInstanceOf(Date);
+    expect(user.phoneVerifiedAt).toBeNull();
+    expect(mockDb.data.otp_codes[0].consumedAt).toBeInstanceOf(Date);
+  });
+
+  it("returns USER_NOT_FOUND for an unknown email (no code probing)", async () => {
+    mockDb.seed("users", [baseUser]);
+    mockDb.seed("otp_codes", [activeCode()]);
+
+    const result = await verifyLoginOtp(
+      { email: "nobody@example.com" },
+      "123456",
+    );
+
+    expect(result).toEqual({ ok: false, reason: "USER_NOT_FOUND" });
+    expect(mockDb.data.otp_codes[0].consumedAt).toBeNull();
+    expect(mockDb.data.otp_codes[0].attempts).toBe(0);
+  });
+
+  it("keeps an existing emailVerifiedAt when signing in by email", async () => {
+    const verifiedAt = new Date();
+    mockDb.seed("users", [{ ...baseUser, phone: null, emailVerifiedAt: verifiedAt }]);
+    mockDb.seed("otp_codes", [activeCode({ channel: "email" })]);
+
+    await verifyLoginOtp({ email: "jane@example.com" }, "123456");
+
+    expect(mockDb.data.users[0].emailVerifiedAt).toBe(verifiedAt);
+    expect(mockDb.data.users[0].phoneVerifiedAt).toBeNull();
   });
 });
 

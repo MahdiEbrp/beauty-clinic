@@ -47,6 +47,22 @@ export async function getLoginUserByPhone(phone: string) {
   });
 }
 
+/** Finds a non-deleted user by (already normalized) email. */
+export async function getLoginUserByEmail(email: string) {
+  return db.query.users.findFirst({
+    where: and(eq(users.email, email.toLowerCase()), isNull(users.deletedAt)),
+  });
+}
+
+export type LoginIdentifier = { phone?: string; email?: string };
+
+/** Resolves a non-deleted user by whichever identifier the client supplied. */
+export async function getLoginUserByIdentifier(identifier: LoginIdentifier) {
+  return identifier.email !== undefined
+    ? getLoginUserByEmail(identifier.email)
+    : getLoginUserByPhone(identifier.phone ?? "");
+}
+
 export type IssuedOtp = {
   code: string;
   expiresAt: Date;
@@ -90,7 +106,7 @@ export async function issueLoginOtp(
 }
 
 export type VerifyLoginOtpResult =
-  | { ok: true; user: NonNullable<Awaited<ReturnType<typeof getLoginUserByPhone>>> }
+  | { ok: true; user: NonNullable<Awaited<ReturnType<typeof getLoginUserByIdentifier>>> }
   | {
       ok: false;
       reason:
@@ -127,13 +143,14 @@ async function findActiveLoginCode(userId: string) {
 
 /**
  * Verifies a login code and, on success, resets the user's lockout state and
- * marks the phone verified. Session creation is left to the caller.
+ * marks the verified identifier (phone or email) confirmed. Session creation
+ * is left to the caller.
  */
 export async function verifyLoginOtp(
-  phone: string,
+  identifier: LoginIdentifier,
   code: string,
 ): Promise<VerifyLoginOtpResult> {
-  const user = await getLoginUserByPhone(phone);
+  const user = await getLoginUserByIdentifier(identifier);
   if (!user) return { ok: false, reason: "USER_NOT_FOUND" };
   if (!user.isActive) return { ok: false, reason: "ACCOUNT_INACTIVE" };
   if (user.isBanned) return { ok: false, reason: "ACCOUNT_BANNED" };
@@ -199,7 +216,14 @@ export async function verifyLoginOtp(
       failedLoginAttempts: 0,
       lockedUntil: null,
       lastLoginAt: new Date(),
-      phoneVerifiedAt: user.phoneVerifiedAt ?? new Date(),
+      phoneVerifiedAt:
+        identifier.phone !== undefined
+          ? user.phoneVerifiedAt ?? new Date()
+          : user.phoneVerifiedAt,
+      emailVerifiedAt:
+        identifier.email !== undefined
+          ? user.emailVerifiedAt ?? new Date()
+          : user.emailVerifiedAt,
     })
     .where(eq(users.id, user.id));
 

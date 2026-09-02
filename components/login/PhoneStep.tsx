@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Loader2, Phone, Send } from "lucide-react";
+import { Loader2, Mail, Phone, Send } from "lucide-react";
 import { ChannelPicker } from "./ChannelPicker";
 
 const fieldClass =
@@ -11,59 +11,92 @@ const labelClass = "block text-caption font-medium text-content-secondary mb-2";
 export function PhoneStep({
   phone,
   onPhoneChange,
+  email,
+  onEmailChange,
   channel,
   onChannelChange,
-  invalidPhone,
+  invalid,
   pending,
   onSubmit,
 }: {
   phone: string;
   onPhoneChange: (phone: string) => void;
+  email: string;
+  onEmailChange: (email: string) => void;
   channel: "sms" | "email";
   onChannelChange: (channel: "sms" | "email") => void;
-  invalidPhone: boolean;
+  invalid: boolean;
   pending: boolean;
   onSubmit: (event: React.SyntheticEvent<HTMLFormElement>) => void;
 }) {
   const t = useTranslations();
+  const isEmail = channel === "email";
 
   return (
     <form onSubmit={onSubmit} noValidate className="grid gap-6">
       <div>
-        <label htmlFor="otp-login-phone" className={labelClass}>
-          {t("login.otp.phone")}
+        <label htmlFor="otp-login-contact" className={labelClass}>
+          {isEmail ? t("login.otp.email") : t("login.otp.phone")}
         </label>
         <div className="relative">
-          <Phone
-            className="w-5 h-5 text-content-tertiary absolute top-1/2 -translate-y-1/2 inset-s-4 pointer-events-none"
-            strokeWidth={2}
-            aria-hidden="true"
-          />
-          <input
-            type="tel"
-            id="otp-login-phone"
-            name="phone"
-            value={phone}
-            onChange={(event) =>
-              onPhoneChange(event.target.value.replace(/[^0-9+]/g, ""))
-            }
-            autoComplete="tel"
-            inputMode="tel"
-            dir="ltr"
-            autoFocus
-            placeholder={t("login.otp.phonePlaceholder")}
-            aria-invalid={invalidPhone}
-            aria-describedby={invalidPhone ? "otp-login-phone-error" : undefined}
-            className={`${fieldClass} ps-12 text-end`}
-          />
+          {isEmail ? (
+            <Mail
+              className="w-5 h-5 text-content-tertiary absolute top-1/2 -translate-y-1/2 inset-s-4 pointer-events-none"
+              strokeWidth={2}
+              aria-hidden="true"
+            />
+          ) : (
+            <Phone
+              className="w-5 h-5 text-content-tertiary absolute top-1/2 -translate-y-1/2 inset-s-4 pointer-events-none"
+              strokeWidth={2}
+              aria-hidden="true"
+            />
+          )}
+          {isEmail ? (
+            <input
+              type="email"
+              id="otp-login-contact"
+              name="email"
+              value={email}
+              onChange={(event) => onEmailChange(event.target.value.trim())}
+              autoComplete="email"
+              inputMode="email"
+              dir="ltr"
+              autoFocus
+              placeholder={t("login.otp.emailPlaceholder")}
+              aria-invalid={invalid}
+              aria-describedby={invalid ? "otp-login-contact-error" : undefined}
+              className={`${fieldClass} ps-12 text-end`}
+            />
+          ) : (
+            <input
+              type="tel"
+              id="otp-login-contact"
+              name="phone"
+              value={phone}
+              onChange={(event) =>
+                onPhoneChange(event.target.value.replace(/[^0-9+]/g, ""))
+              }
+              autoComplete="tel"
+              inputMode="tel"
+              dir="ltr"
+              autoFocus
+              placeholder={t("login.otp.phonePlaceholder")}
+              aria-invalid={invalid}
+              aria-describedby={invalid ? "otp-login-contact-error" : undefined}
+              className={`${fieldClass} ps-12 text-end`}
+            />
+          )}
         </div>
-        {invalidPhone && (
+        {invalid && (
           <p
-            id="otp-login-phone-error"
+            id="otp-login-contact-error"
             className="text-body-sm text-error mt-2"
             role="alert"
           >
-            {t("login.otp.errors.invalidPhone")}
+            {isEmail
+              ? t("login.otp.errors.invalidEmail")
+              : t("login.otp.errors.invalidPhone")}
           </p>
         )}
       </div>
@@ -112,4 +145,14 @@ export function maskPhone(phone: string): string {
   const digits = phone.replace(/\D/g, "");
   if (digits.length <= 7) return `${phone.slice(0, 3)}•••`;
   return `${digits.slice(0, Math.min(4, digits.length - 3))}•••${digits.slice(-3)}`;
+}
+
+/** Masks an email for display (client-safe, e.g. `jo••••@gmail.com`). */
+export function maskEmail(email: string): string {
+  const value = email.trim().toLowerCase();
+  const atIndex = value.indexOf("@");
+  if (atIndex <= 1) return "••••";
+  const local = value.slice(0, atIndex);
+  const domain = value.slice(atIndex);
+  return `${local.slice(0, 2)}••••${domain}`;
 }

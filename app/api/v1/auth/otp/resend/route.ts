@@ -5,7 +5,7 @@ import type { NextResponse } from "next/server";
 import { ApiError } from "@/lib/api/errors";
 import { rateLimit } from "@/lib/rate-limit";
 import {
-  getLoginUserByPhone,
+  getLoginUserByIdentifier,
   invalidateLatestLoginOtp,
   issueLoginOtp,
   resendLoginOtp,
@@ -34,17 +34,23 @@ export const POST = withSecurity(
   },
   async (request, ctx) => {
     const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
+    const identifier =
+      body.channel === "sms"
+        ? { phone: body.phone }
+        : { email: body.email };
+    const identifierKey =
+      body.channel === "sms" ? body.phone : body.email;
 
-    const phoneLimit = await rateLimit(
-      `otp-resend-phone:${body.phone}`,
+    const identifierLimit = await rateLimit(
+      `otp-resend-${body.channel}:${identifierKey}`,
       RESEND_RATE_LIMIT.limit,
       RESEND_RATE_LIMIT.windowMs,
     );
-    if (!phoneLimit.allowed) {
+    if (!identifierLimit.allowed) {
       return jsonError("RATE_LIMITED", "Too many attempts. Please try again later.", 429);
     }
 
-    const user = await getLoginUserByPhone(body.phone);
+    const user = await getLoginUserByIdentifier(identifier);
     const canReceive =
       user &&
       user.isActive &&
@@ -72,7 +78,7 @@ export const POST = withSecurity(
     // requested channel so the user is never stuck on the verify step.
     const code =
       resend.ok ? resend.code : (await issueLoginOtp(user.id, body.channel)).code;
-    return deliver(user.id, user.phone ?? body.phone, user.email, body.channel, code);
+    return deliver(user.id, user.phone ?? identifierKey, user.email, body.channel, code);
   },
 );
 
