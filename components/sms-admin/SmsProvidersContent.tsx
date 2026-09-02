@@ -110,6 +110,7 @@ export function SmsProvidersContent({
         ? SMS_LIMITS.emptyLength
         : (data.page - SMS_LIMITS.pageMin) * data.perPage + SMS_LIMITS.pageMin,
     to: Math.min(data.page * data.perPage, data.total),
+    total: data.total,
   };
   const hasFilters = Boolean(debouncedSearch) || status !== "all";
   const statusOptions: SmsManagementFilterOption[] = [

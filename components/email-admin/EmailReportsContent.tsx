@@ -102,6 +102,7 @@ export function EmailReportsContent({
         ? EMAIL_LIMITS.emptyLength
         : (data.page - EMAIL_LIMITS.pageMin) * data.perPage + EMAIL_LIMITS.pageMin,
     to: Math.min(data.page * data.perPage, data.total),
+    total: data.total,
   };
   const hasFilters =
     Boolean(debouncedSearch) || status !== "all" || providerId !== "all";
