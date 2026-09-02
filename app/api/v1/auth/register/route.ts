@@ -31,8 +31,10 @@ export const POST = withSecurity(
 
     if (!result.ok) {
       return jsonError(
-        "EMAIL_TAKEN",
-        "An account with this email already exists.",
+        result.reason === "PHONE_TAKEN" ? "PHONE_TAKEN" : "EMAIL_TAKEN",
+        result.reason === "PHONE_TAKEN"
+          ? "An account with this phone number already exists."
+          : "An account with this email already exists.",
         409,
       );
     }

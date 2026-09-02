@@ -169,6 +169,13 @@
       "when": 1788292309496,
       "tag": "0023_eminent_vin_gonzales",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1788332916835,
+      "tag": "0024_robust_stone_men",
+      "breakpoints": true
     }
   ]
 }

@@ -33,6 +33,8 @@ export default function RegisterForm() {
     switch (error.code) {
       case "EMAIL_TAKEN":
         return t("register.errors.emailTaken");
+      case "PHONE_TAKEN":
+        return t("register.errors.phoneTaken");
       case "RATE_LIMITED":
         return t("register.errors.rateLimited");
       case "VALIDATION_ERROR":
@@ -79,9 +81,7 @@ export default function RegisterForm() {
       const response = await fetch("/api/v1/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // Send "" for an empty phone: signupSchema transforms "" -> null, so
-        // sending the transformed null would fail server-side re-validation.
-        body: JSON.stringify({ ...parsed.data, phone: parsed.data.phone ?? "" }),
+        body: JSON.stringify(parsed.data),
       });
 
       const payload = (await response.json()) as {

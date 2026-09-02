@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 
 import {
   listUsersQuerySchema,
-  loginSchema,
   signupSchema,
   updateUserStatusSchema,
   createUserSchema,
@@ -25,10 +24,14 @@ describe("signupSchema", () => {
     }
   });
 
-  it("accepts an empty phone", () => {
+  it("requires a phone (the login identifier)", () => {
     const result = signupSchema.safeParse({ ...validSignup, phone: "" });
-    expect(result.success).toBe(true);
-    if (result.success) expect(result.data.phone).toBeNull();
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a malformed phone", () => {
+    const result = signupSchema.safeParse({ ...validSignup, phone: "abc" });
+    expect(result.success).toBe(false);
   });
 
   it("rejects an invalid email", () => {
@@ -48,27 +51,6 @@ describe("signupSchema", () => {
 
   it("rejects unknown fields (mass-assignment protection)", () => {
     const result = signupSchema.safeParse({ ...validSignup, role: "admin" });
-    expect(result.success).toBe(false);
-  });
-});
-
-describe("loginSchema", () => {
-  it("accepts valid credentials", () => {
-    const result = loginSchema.safeParse({ email: "Jane@Example.COM", password: "x".repeat(12) });
-    expect(result.success).toBe(true);
-  });
-
-  it("rejects a missing password", () => {
-    const result = loginSchema.safeParse({ email: "jane@example.com", password: "" });
-    expect(result.success).toBe(false);
-  });
-
-  it("rejects unknown fields", () => {
-    const result = loginSchema.safeParse({
-      email: "jane@example.com",
-      password: "x".repeat(12),
-      isAdmin: true,
-    });
     expect(result.success).toBe(false);
   });
 });
@@ -161,26 +143,37 @@ describe("updateUserStatusSchema", () => {
 });
 
 describe("createUserSchema", () => {
-  it("accepts a complete admin-created user", () => {
+  it("accepts a complete admin-created user with a phone", () => {
     const result = createUserSchema.safeParse({
       fullName: "Jane Doe",
       email: "Jane@Example.COM",
-      phone: "",
+      phone: "+989121234567",
       password: "Correct-Horse-1!",
       roleKey: "customer",
     });
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.email).toBe("jane@example.com");
-      expect(result.data.phone).toBeNull();
+      expect(result.data.phone).toBe("+989121234567");
     }
+  });
+
+  it("rejects an admin-created user without a phone", () => {
+    const result = createUserSchema.safeParse({
+      fullName: "Jane Doe",
+      email: "jane@example.com",
+      phone: "",
+      password: "Correct-Horse-1!",
+      roleKey: "customer",
+    });
+    expect(result.success).toBe(false);
   });
 
   it("rejects weak passwords and mass-assigned fields", () => {
     expect(createUserSchema.safeParse({
       fullName: "Jane Doe",
       email: "jane@example.com",
-      phone: "",
+      phone: "+989121234567",
       password: "weak",
       roleKey: "customer",
       isAdmin: true,

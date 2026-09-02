@@ -71,6 +71,12 @@ export type SmsProviderAdapter = {
   receiveLatest?(count?: number): Promise<SmsReceivedMessage[]>;
 };
 
+/**
+ * An adapter that implements every optional operation. Returned by providers
+ * that support the full feature set, so callers can invoke them directly.
+ */
+export type CompleteSmsProviderAdapter = Required<SmsProviderAdapter>;
+
 export class SmsProviderError extends Error {
   constructor(
     message: string,

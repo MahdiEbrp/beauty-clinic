@@ -11,23 +11,18 @@ export const passwordSchema = z
   .regex(/[0-9]/, "a number")
   .regex(/[^a-zA-Z0-9]/, "a special character");
 
-export const phoneSchema = z.string().trim().regex(/^\+?[0-9]{7,15}$/);
+/** Phone is the login identifier (OTP), so it is required everywhere. */
+export const phoneSchema = z
+  .string()
+  .trim()
+  .regex(/^\+?[0-9]{7,15}$/, "a valid phone number");
 
 export const signupSchema = z
   .object({
     fullName: z.string().trim().min(2).max(100),
     email: emailSchema,
-    phone: z
-      .union([phoneSchema, z.literal("")])
-      .transform((value) => (value === "" ? null : value)),
+    phone: phoneSchema,
     password: passwordSchema,
-  })
-  .strict();
-
-export const loginSchema = z
-  .object({
-    email: emailSchema,
-    password: z.string().min(1).max(128),
   })
   .strict();
 
@@ -58,7 +53,7 @@ export const createUserSchema = z
   .object({
     fullName: z.string().trim().min(2).max(100),
     email: emailSchema,
-    phone: z.union([phoneSchema, z.literal("")]).transform((value) => (value === "" ? null : value)),
+    phone: phoneSchema,
     password: passwordSchema,
     roleKey: z.string().trim().min(1).max(50),
   })
@@ -92,7 +87,6 @@ export const bulkUsersSchema = z
   });
 
 export type SignupInput = z.infer<typeof signupSchema>;
-export type LoginInput = z.infer<typeof loginSchema>;
 export type ListUsersQuery = z.infer<typeof listUsersQuerySchema>;
 export type UpdateUserStatusInput = z.infer<typeof updateUserStatusSchema>;
 export type CreateUserInput = z.infer<typeof createUserSchema>;

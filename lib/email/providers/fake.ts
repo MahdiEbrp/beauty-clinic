@@ -18,6 +18,7 @@ export function createFakeAdapter(config: EmailProviderConfig): EmailProviderAda
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/require-await -- must satisfy the async EmailProviderAdapter interface
 async function send(
   config: EmailProviderConfig,
   input: EmailSendInput,

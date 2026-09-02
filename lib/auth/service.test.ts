@@ -1,10 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { MockDb, Row } from "@/lib/test/mock-db";
+import type { MockDb } from "@/lib/test/mock-db";
 
 const passwordMock = vi.hoisted(() => ({
   hashPassword: vi.fn((plain: string) => `hash:${plain}`),
-  verifyPassword: vi.fn(() => true),
 }));
 
 const sessionMock = vi.hoisted(() => ({
@@ -23,127 +22,35 @@ vi.mock("@/src/db", async () => {
 });
 
 import { db } from "@/src/db";
-import { loginUser, registerUser } from "./service";
+import { registerUser } from "./service";
 
 const mockDb = db as unknown as MockDb;
 
-const baseUser: Row = {
-  id: "u1",
-  email: "jane@example.com",
-  phone: null,
-  passwordHash: "hash:secret",
-  fullName: "Jane Doe",
-  avatarUrl: null,
-  isActive: true,
-  isBanned: false,
-  bannedAt: null,
-  banReason: null,
-  bannedBy: null,
-  deletedAt: null,
-  emailVerifiedAt: null,
-  phoneVerifiedAt: null,
-  failedLoginAttempts: 0,
-  lockedUntil: null,
-  passwordChangedAt: null,
-  twoFactorEnabled: false,
-  twoFactorSecret: null,
+const customerRole = {
+  id: "r-customer",
+  key: "customer",
+  name: "Customer",
   createdAt: new Date(),
   updatedAt: new Date(),
-  lastLoginAt: null,
 };
 
 beforeEach(() => {
   mockDb.reset();
-  passwordMock.verifyPassword.mockResolvedValue(true);
   passwordMock.hashPassword.mockImplementation((plain: string) => `hash:${plain}`);
   sessionMock.createSession.mockClear();
 });
 
-describe("loginUser", () => {
-  it("returns false and does not create a session for an unknown email", async () => {
-    mockDb.seed("users", [baseUser]);
-    expect(await loginUser("nobody@example.com", "whatever")).toBe(false);
-    expect(sessionMock.createSession).not.toHaveBeenCalled();
-    // No failed-attempt update was applied to any user.
-    expect(mockDb.data.users[0].failedLoginAttempts).toBe(0);
-  });
-
-  it("returns false for an inactive account", async () => {
-    mockDb.seed("users", [{ ...baseUser, isActive: false }]);
-    expect(await loginUser("jane@example.com", "secret")).toBe(false);
-    expect(sessionMock.createSession).not.toHaveBeenCalled();
-  });
-
-  it("returns false for a banned account", async () => {
-    mockDb.seed("users", [{ ...baseUser, isBanned: true }]);
-    expect(await loginUser("jane@example.com", "secret")).toBe(false);
-    expect(sessionMock.createSession).not.toHaveBeenCalled();
-  });
-
-  it("returns false while the account is locked out", async () => {
-    mockDb.seed("users", [
-      { ...baseUser, lockedUntil: new Date(Date.now() + 60_000) },
-    ]);
-    expect(await loginUser("jane@example.com", "secret")).toBe(false);
-    expect(passwordMock.verifyPassword).not.toHaveBeenCalled();
-  });
-
-  it("increments failed attempts on a wrong password", async () => {
-    passwordMock.verifyPassword.mockResolvedValue(false);
-    mockDb.seed("users", [baseUser]);
-
-    expect(await loginUser("jane@example.com", "wrong")).toBe(false);
-    expect(mockDb.data.users[0]).toMatchObject({
-      failedLoginAttempts: 1,
-      lockedUntil: null,
-    });
-    expect(sessionMock.createSession).not.toHaveBeenCalled();
-  });
-
-  it("locks the account after five failed attempts", async () => {
-    passwordMock.verifyPassword.mockResolvedValue(false);
-    mockDb.seed("users", [{ ...baseUser, failedLoginAttempts: 4 }]);
-
-    expect(await loginUser("jane@example.com", "wrong")).toBe(false);
-    const user = mockDb.data.users[0];
-    expect(user.failedLoginAttempts).toBe(5);
-    expect(user.lockedUntil).toBeInstanceOf(Date);
-    expect((user.lockedUntil as Date).getTime()).toBeGreaterThan(Date.now());
-  });
-
-  it("resets counters and logs in on success", async () => {
-    mockDb.seed("users", [
-      { ...baseUser, failedLoginAttempts: 3, lockedUntil: new Date() },
-    ]);
-
-    const result = await loginUser("jane@example.com", "secret", {
-      userAgent: "test-agent",
-      ip: "1.2.3.4",
-    });
-
-    expect(result).toBe(true);
-    expect(mockDb.data.users[0]).toMatchObject({
-      failedLoginAttempts: 0,
-      lockedUntil: null,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- test matcher
-      lastLoginAt: expect.any(Date),
-    });
-    expect(sessionMock.createSession).toHaveBeenCalledWith(
-      "u1",
-      "test-agent",
-      "1.2.3.4",
-    );
-  });
-});
-
 describe("registerUser", () => {
-  it("creates a user, assigns the customer role and signs them in", async () => {
-    mockDb.seed("roles", [
-      { id: "r-customer", key: "customer", name: "Customer", createdAt: new Date(), updatedAt: new Date() },
-    ]);
+  it("creates a user with the phone, assigns the customer role and signs them in", async () => {
+    mockDb.seed("roles", [customerRole]);
 
     const result = await registerUser(
-      { fullName: "Jane Doe", email: "jane@example.com", phone: null, password: "secret" },
+      {
+        fullName: "Jane Doe",
+        email: "jane@example.com",
+        phone: "+989121234567",
+        password: "secret",
+      },
       { userAgent: "ua", ip: "1.2.3.4" },
     );
 
@@ -151,6 +58,7 @@ describe("registerUser", () => {
     expect(mockDb.data.users).toHaveLength(1);
     expect(mockDb.data.users[0]).toMatchObject({
       email: "jane@example.com",
+      phone: "+989121234567",
       fullName: "Jane Doe",
       passwordHash: "hash:secret",
     });
@@ -164,12 +72,12 @@ describe("registerUser", () => {
     );
   });
 
-      it("throws CUSTOMER_ROLE_NOT_FOUND when the customer role is missing", async () => {
+  it("throws CUSTOMER_ROLE_NOT_FOUND when the customer role is missing", async () => {
     await expect(
       registerUser({
         fullName: "Jane Doe",
         email: "jane@example.com",
-        phone: null,
+        phone: "+989121234567",
         password: "secret",
       }),
     ).rejects.toMatchObject({
@@ -181,17 +89,31 @@ describe("registerUser", () => {
     expect(sessionMock.createSession).not.toHaveBeenCalled();
   });
 
-  it("returns EMAIL_TAKEN on a unique-violation error", async () => {
-    mockDb.failInsert = () => ({ code: "23505" });
+  it("returns EMAIL_TAKEN on an email unique-violation error", async () => {
+    mockDb.failInsert = () => ({ code: "23505", constraint: "users_email_key" });
 
     const result = await registerUser({
       fullName: "Jane Doe",
       email: "taken@example.com",
-      phone: null,
+      phone: "+989121234567",
       password: "secret",
     });
 
     expect(result).toEqual({ ok: false, reason: "EMAIL_TAKEN" });
+    expect(sessionMock.createSession).not.toHaveBeenCalled();
+  });
+
+  it("returns PHONE_TAKEN on a phone unique-violation error", async () => {
+    mockDb.failInsert = () => ({ code: "23505", constraint: "users_phone_idx" });
+
+    const result = await registerUser({
+      fullName: "Jane Doe",
+      email: "jane@example.com",
+      phone: "+989121234567",
+      password: "secret",
+    });
+
+    expect(result).toEqual({ ok: false, reason: "PHONE_TAKEN" });
     expect(sessionMock.createSession).not.toHaveBeenCalled();
   });
 
@@ -202,7 +124,7 @@ describe("registerUser", () => {
       registerUser({
         fullName: "Jane Doe",
         email: "jane@example.com",
-        phone: null,
+        phone: "+989121234567",
         password: "secret",
       }),
     ).rejects.toThrow("db is down");

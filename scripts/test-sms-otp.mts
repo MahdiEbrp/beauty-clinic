@@ -23,6 +23,7 @@
 import { createDecipheriv } from "node:crypto";
 import postgres from "postgres";
 import { createSmsProviderAdapter, type SmsProviderConfig } from "@/lib/sms/providers";
+import type { SmsProviderKind } from "@/src/db/schema";
 
 const REQUIRED_ENV = ["DATABASE_URL", "ENCRYPTION_KEY"] as const;
 for (const name of REQUIRED_ENV) {
@@ -45,6 +46,17 @@ function decryptSecret(payload: string): string {
     decipher.update(Buffer.from(dataB64, "base64url")),
     decipher.final(),
   ]).toString("utf8");
+}
+
+/** The `sms_providers` row fields this script reads. */
+interface SmsProviderRow {
+  id: string;
+  name: string;
+  kind: SmsProviderKind;
+  sender: string | null;
+  settings_encrypted: string;
+  api_url_encrypted: string;
+  token_encrypted: string;
 }
 
 function parseArgs(args: string[]): Record<string, string> {
@@ -93,7 +105,7 @@ async function main() {
   const parameters = parseParams(args.params);
 
   const sql = postgres(DATABASE_URL, { max: 2, ssl: "require" });
-  let row;
+  let row: SmsProviderRow | undefined;
   try {
     if (providerId) {
       [row] = await sql`
@@ -149,9 +161,16 @@ async function main() {
   }
 
   const adapter = createSmsProviderAdapter(config);
+  const sendVerify = adapter.sendVerify;
+  if (!sendVerify) {
+    console.error(
+      "The selected SMS provider does not support OTP verification (sendVerify).",
+    );
+    process.exit(2);
+  }
   try {
     const startedAt = Date.now();
-    const result = await adapter.sendVerify!(request);
+    const result = await sendVerify(request);
     const durationMs = Date.now() - startedAt;
 
     console.log(JSON.stringify(

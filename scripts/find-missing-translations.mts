@@ -1,17 +1,23 @@
 import { readFileSync } from "fs";
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
+
+type MessagesFile = Record<string, unknown>;
+
+function loadMessages(path: string): MessagesFile {
+  return JSON.parse(readFileSync(path, "utf-8")) as MessagesFile;
+}
 
 // Load translation files
-const en = JSON.parse(readFileSync("messages/en.json", "utf-8"));
-const fa = JSON.parse(readFileSync("messages/fa.json", "utf-8"));
+const en = loadMessages("messages/en.json");
+const fa = loadMessages("messages/fa.json");
 
 // Flatten a nested JSON into dot-notation keys
-function flattenKeys(obj: Record<string, any>, prefix = ""): Set<string> {
+function flattenKeys(obj: MessagesFile, prefix = ""): Set<string> {
   const keys = new Set<string>();
   for (const [k, v] of Object.entries(obj)) {
     const path = prefix ? `${prefix}.${k}` : k;
     if (typeof v === "object" && v !== null && !Array.isArray(v)) {
-      for (const inner of flattenKeys(v, path)) keys.add(inner);
+      for (const inner of flattenKeys(v as MessagesFile, path)) keys.add(inner);
     } else {
       keys.add(path);
     }
@@ -27,14 +33,34 @@ const inEnNotFa = [...enKeys].filter((k) => !faKeys.has(k));
 const inFaNotEn = [...faKeys].filter((k) => !enKeys.has(k));
 
 // Find all t("...") and t('...') calls in the codebase
-const rgOutput = execSync(
-  `rg -n "t\\([\"']([a-zA-Z][a-zA-Z0-9]*(?:\\.[a-zA-Z][a-zA-Z0-9]*)*)[\"']" --type ts --type js -g '!node_modules' -g '!*.d.ts' -g '!scripts/find-missing-translations.mts'`,
+// (execFileSync: no shell layer, so patterns need no shell-level quoting)
+const keyPattern =
+  't\\(["\'][a-zA-Z][a-zA-Z0-9]*(?:\\.[a-zA-Z][a-zA-Z0-9]*)*["\']';
+const rgOutput = execFileSync(
+  "rg",
+  [
+    "-n",
+    "--type",
+    "ts",
+    "--type",
+    "js",
+    "-g",
+    "!node_modules",
+    "-g",
+    "!*.d.ts",
+    "-g",
+    "!scripts/find-missing-translations.mts",
+    keyPattern,
+    ".",
+  ],
   { encoding: "utf-8", maxBuffer: 10 * 1024 * 1024 }
 );
 
 // Also find useTranslations("namespace") to map files to namespaces
-const nsOutput = execSync(
-  `rg -n "useTranslations\\([\"']([a-zA-Z]+)[\"']\\)" --type ts --type js -g '!node_modules' -g '!*.d.ts'`,
+const nsPattern = 'useTranslations\\(["\']([a-zA-Z]+)["\']\\)';
+const nsOutput = execFileSync(
+  "rg",
+  ["-n", "--type", "ts", "--type", "js", "-g", "!node_modules", "-g", "!*.d.ts", nsPattern, "."],
   { encoding: "utf-8", maxBuffer: 10 * 1024 * 1024 }
 );
 

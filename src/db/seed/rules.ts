@@ -1,5 +1,7 @@
-/** Seed data for the `rules` / `rules_i18n` tables. */
+/** Seed data + upsert for the `rules` / `rules_i18n` tables. */
 import type { RuleContent } from "@/lib/services/rules-types";
+import { db } from "../index";
+import { rules, rulesI18n } from "../schema";
 import { IMG } from "./images";
 
 export interface SeedRule {
@@ -157,4 +159,51 @@ export const RULES_SEED: SeedRule[] = [
 // Helper for tests.
 export function asRuleContent(name: string, description: string | null): RuleContent {
   return { name, description };
+}
+
+/** Upserts every rule and its translations, keyed on the rule slug. */
+export async function seedRules(): Promise<void> {
+  for (const def of RULES_SEED) {
+    const [row] = await db
+      .insert(rules)
+      .values({
+        slug: def.slug,
+        icon: def.icon,
+        image: def.image,
+        color: def.color,
+        highlighted: def.highlighted,
+        displayOrder: def.displayOrder,
+        isActive: def.isActive,
+      })
+      .onConflictDoUpdate({
+        target: rules.slug,
+        set: {
+          icon: def.icon,
+          image: def.image,
+          color: def.color,
+          highlighted: def.highlighted,
+          displayOrder: def.displayOrder,
+          isActive: def.isActive,
+        },
+      })
+      .returning({ id: rules.id });
+    for (const entry of def.i18n) {
+      await db
+        .insert(rulesI18n)
+        .values({
+          ruleId: row.id,
+          locale: entry.locale,
+          name: entry.name,
+          description: entry.description,
+        })
+        .onConflictDoUpdate({
+          target: [rulesI18n.ruleId, rulesI18n.locale],
+          set: {
+            name: entry.name,
+            description: entry.description,
+          },
+        });
+    }
+  }
+  console.log("Rules seeded.");
 }

@@ -51,7 +51,7 @@ describe("fake SMS adapter", () => {
     const fetchMock = vi.spyOn(globalThis, "fetch");
     const adapter = createFakeAdapter(CONFIG);
 
-    const verify = await adapter.sendVerify!({
+    const verify = await adapter.sendVerify({
       recipients: ["09120000001"],
       templateId: 100,
       parameters: [{ name: "code", value: "1234" }],
@@ -59,11 +59,11 @@ describe("fake SMS adapter", () => {
     expect(verify.accepted).toHaveLength(1);
     expect(verify.accepted[0].providerStatus).toBe("sent");
 
-    await expect(adapter.getCredit!()).resolves.toBeGreaterThan(0);
-    await expect(adapter.getLines!()).resolves.toBeInstanceOf(Array);
-    const report = await adapter.getMessage!("fake-abc");
+    await expect(adapter.getCredit()).resolves.toBeGreaterThan(0);
+    await expect(adapter.getLines()).resolves.toBeInstanceOf(Array);
+    const report = await adapter.getMessage("fake-abc");
     expect(report?.deliveryState).toBe(1);
-    await expect(adapter.receiveLatest!()).resolves.toEqual([]);
+    await expect(adapter.receiveLatest()).resolves.toEqual([]);
 
     expect(fetchMock).not.toHaveBeenCalled();
   });

@@ -3,7 +3,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { siteUrl, localizedHref } from "@/lib/site";
 import { getSessionCached } from "@/lib/auth/dal";
-import LoginForm from "@/components/LoginForm";
+import OtpLoginForm from "@/components/login/OtpLoginForm";
 
 export async function generateMetadata({
   params,
@@ -34,5 +34,5 @@ export default async function LoginPage() {
     redirect(localizedHref(locale, "/dashboard"));
   }
 
-  return <LoginForm />;
+  return <OtpLoginForm />;
 }

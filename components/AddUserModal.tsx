@@ -9,7 +9,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import AddUserForm from "@/components/users/AddUserForm";
 
 const roles = ["admin", "doctor", "receptionist", "customer"] as const;
-const addUserSchema = z.object({ fullName: z.string().trim().min(2).max(100), email: z.email().trim().toLowerCase(), phone: z.string().trim().refine((value) => value === "" || /^\+?[0-9]{7,15}$/.test(value)), password: z.string().min(8).max(128).regex(/[a-z]/).regex(/[A-Z]/).regex(/[0-9]/).regex(/[^a-zA-Z0-9]/), roleKey: z.string().min(1) });
+const addUserSchema = z.object({ fullName: z.string().trim().min(2).max(100), email: z.email().trim().toLowerCase(), phone: z.string().trim().regex(/^\+?[0-9]{7,15}$/),password: z.string().min(8).max(128).regex(/[a-z]/).regex(/[A-Z]/).regex(/[0-9]/).regex(/[^a-zA-Z0-9]/), roleKey: z.string().min(1) });
 export type AddUserValues = z.infer<typeof addUserSchema>;
 export type EmailState = "idle" | "checking" | "available" | "taken";
 function passwordRules(value: string) { return [{ key: "length", valid: value.length >= 8 }, { key: "number", valid: /[0-9]/.test(value) }, { key: "uppercase", valid: /[A-Z]/.test(value) }, { key: "special", valid: /[^a-zA-Z0-9]/.test(value) }]; }

@@ -1,7 +1,7 @@
 import { logInfo } from "@/lib/log";
 import type {
+  CompleteSmsProviderAdapter,
   SmsMessageReport,
-  SmsProviderAdapter,
   SmsProviderConfig,
   SmsReceivedMessage,
   SmsSendInput,
@@ -15,7 +15,9 @@ import type {
  * the SMS send pipeline, campaigns and check/test flows work end-to-end without
  * any external provider or credentials.
  */
-export function createFakeAdapter(config: SmsProviderConfig): SmsProviderAdapter {
+export function createFakeAdapter(
+  config: SmsProviderConfig,
+): CompleteSmsProviderAdapter {
   return {
     send: (input) => send(config, input),
     sendVerify: (input) => sendVerify(config, input),
@@ -26,6 +28,7 @@ export function createFakeAdapter(config: SmsProviderConfig): SmsProviderAdapter
   };
 }
 
+/* eslint-disable @typescript-eslint/require-await -- every fake method must satisfy the async CompleteSmsProviderAdapter interface */
 async function send(
   config: SmsProviderConfig,
   input: SmsSendInput,

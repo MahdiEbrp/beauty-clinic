@@ -117,7 +117,7 @@ describe("SMS.ir OTP verify", () => {
     );
 
     const adapter = createSmsIrAdapter(CONFIG);
-    const result = await adapter.sendVerify!({
+    const result = await adapter.sendVerify({
       recipients: ["09120000001", "09120000002"],
       templateId: 123456,
       parameters: [{ name: "Code", value: "4821" }],
@@ -125,8 +125,7 @@ describe("SMS.ir OTP verify", () => {
 
     expect(fetchMock.mock.calls).toHaveLength(2);
     expect(fetchMock.mock.calls[0][0]).toBe("https://api.sms.ir/v1/send/verify");
-    const body = JSON.parse(String(fetchMock.mock.calls[0][1]?.body));
-    expect(body).toEqual({
+    expect(JSON.parse(String(fetchMock.mock.calls[0][1]?.body))).toEqual({
       mobile: "09120000001",
       templateId: 123456,
       parameters: [{ name: "Code", value: "4821" }],
@@ -148,8 +147,8 @@ describe("SMS.ir OTP verify", () => {
     });
 
     const adapter = createSmsIrAdapter(CONFIG);
-    expect(await adapter.getCredit!()).toBe(165.3);
-    expect(await adapter.getLines!()).toEqual(["30004505000017"]);
+    expect(await adapter.getCredit()).toBe(165.3);
+    expect(await adapter.getLines()).toEqual(["30004505000017"]);
     expect(fetchMock.mock.calls[0][0]).toBe("https://api.sms.ir/v1/credit");
   });
 });

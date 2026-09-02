@@ -133,6 +133,7 @@ export default function AddUserForm({
         label={t("users.form.phone")}
         error={errorText("phone")}
         hint={t("users.form.phoneHint")}
+        required
       >
         <input
           inputMode="numeric"

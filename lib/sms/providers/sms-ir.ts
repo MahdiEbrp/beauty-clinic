@@ -3,8 +3,8 @@ import { logError, logInfo } from "@/lib/log";
 import { requestProvider } from "./http";
 import { asArray, asRecord, readNumber, readString } from "./parsing";
 import type {
+  CompleteSmsProviderAdapter,
   SmsMessageReport,
-  SmsProviderAdapter,
   SmsProviderConfig,
   SmsReceivedMessage,
   SmsSendInput,
@@ -18,7 +18,9 @@ const { smsIr } = SMS_PROVIDER_PROTOCOL;
 // SMS.ir vouches results with a numeric `status` field (1 = success). The body
 // carries a `data` field whose shape depends on the endpoint. See
 // https://docs.sms.ir/v1 for the authoritative reference.
-export function createSmsIrAdapter(config: SmsProviderConfig): SmsProviderAdapter {
+export function createSmsIrAdapter(
+  config: SmsProviderConfig,
+): CompleteSmsProviderAdapter {
   return {
     send: (input) => sendBulk(config, input),
     sendVerify: (input) => sendVerify(config, input),
