@@ -6382,8 +6382,7 @@
         "sms_ir",
         "ippanel",
         "melipayamak",
-        "custom",
-        "fake"
+        "custom"
       ]
     },
     "public.email_campaign_status": {
@@ -6449,8 +6448,7 @@
         "gmail",
         "outlook",
         "yahoo",
-        "custom",
-        "fake"
+        "custom"
       ]
     }
   },
