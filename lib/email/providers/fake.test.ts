@@ -1,3 +1,4 @@
+import net from "node:net";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { createFakeAdapter } from "./fake";
@@ -27,7 +28,7 @@ describe("fake email adapter", () => {
 
   it("accepts every recipient without opening an SMTP connection", async () => {
     const connectMock = vi.spyOn(globalThis, "fetch");
-    const netConnect = vi.spyOn(require("node:net"), "connect");
+    const netConnect = vi.spyOn(net, "connect");
     const adapter = createFakeAdapter(CONFIG);
 
     const result = await adapter.send({
