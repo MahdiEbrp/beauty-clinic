@@ -33,7 +33,7 @@ export function AdminListPagination<T extends { id: string }>() {
           disabled={page <= 1}
           className="inline-flex min-h-9 items-center justify-center gap-1 rounded-pill border border-border-interactive bg-surface-secondary px-3 text-accent transition hover:bg-surface-tertiary disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
-          <ChevronRight className="size-4 rtl-mirror rtl:rotate-180" aria-hidden="true" />
+          <ChevronLeft className="size-4 rtl-mirror" aria-hidden="true" />
           {t(`${config.namespace}.pagination.previous`)}
         </button>
         <span className="px-1 text-dash-caption text-content-tertiary">
@@ -46,7 +46,7 @@ export function AdminListPagination<T extends { id: string }>() {
           className="inline-flex min-h-9 items-center justify-center gap-1 rounded-pill border border-border-interactive bg-surface-secondary px-3 text-accent transition hover:bg-surface-tertiary disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           {t(`${config.namespace}.pagination.next`)}
-          <ChevronLeft className="size-4 rtl-mirror rtl:rotate-180" aria-hidden="true" />
+          <ChevronRight className="size-4 rtl-mirror" aria-hidden="true" />
         </button>
       </div>
     </nav>

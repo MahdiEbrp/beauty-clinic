@@ -27,7 +27,7 @@ export function EmailManagementHeader({
         className="inline-flex min-h-11 items-center gap-2 self-start rounded-pill border border-border-interactive bg-surface-secondary px-4 text-dash-body-sm font-bold text-accent transition-colors hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         <ArrowLeft
-          className="size-4 rtl-mirror rtl:rotate-180"
+          className="size-4 rtl-mirror"
           aria-hidden="true"
         />
         <span>{backLabel}</span>

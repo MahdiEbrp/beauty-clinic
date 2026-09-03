@@ -50,7 +50,7 @@ export function WizardShell({
         href={backHref}
         className="inline-flex min-h-11 items-center gap-1.5 self-start text-dash-body-sm font-semibold text-content-secondary no-underline transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
-        <ArrowLeft className="size-4 rtl-mirror rtl:rotate-180" aria-hidden="true" />
+        <ArrowLeft className="size-4 rtl-mirror" aria-hidden="true" />
         {tRoot("bookingAdmin.back")}
       </Link>
 
@@ -155,7 +155,7 @@ export function WizardShell({
             disabled={step === 0 || submitting}
             className="inline-flex min-h-11 items-center gap-2 rounded-pill border border-border-interactive bg-surface-secondary px-4 text-dash-body-sm font-bold text-accent transition hover:bg-surface-tertiary disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
-            <ArrowLeft className="size-4 rtl-mirror rtl:rotate-180" aria-hidden="true" />
+            <ArrowLeft className="size-4 rtl-mirror" aria-hidden="true" />
             {tRoot("common.back")}
           </button>
 
@@ -183,7 +183,7 @@ export function WizardShell({
                 className="inline-flex min-h-11 items-center gap-2 rounded-pill bg-accent px-5 py-2.5 text-dash-body-sm font-bold text-content-contrast shadow-elevation-1 transition hover:bg-accent-hover disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 {tRoot(msgKey(`${namespace}.nav.continue`))}
-                <ArrowRight className="size-4 rtl-mirror rtl:rotate-180" aria-hidden="true" />
+                <ArrowRight className="size-4 rtl-mirror" aria-hidden="true" />
               </button>
             )}
           </div>

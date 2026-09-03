@@ -43,7 +43,7 @@ export function AdminListMobileCards<T extends { id: string }>() {
             <div className="shrink-0">
               <AdminListRowActions row={row} />
             </div>
-            <ChevronLeft className="size-4 shrink-0 self-center text-content-tertiary rtl-mirror rtl:rotate-180" aria-hidden="true" />
+            <ChevronLeft className="size-4 shrink-0 self-center text-content-tertiary rtl-mirror" aria-hidden="true" />
           </li>
         );
       })}
