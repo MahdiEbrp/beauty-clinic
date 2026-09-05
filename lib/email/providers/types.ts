@@ -1,3 +1,4 @@
+import { EMAIL_ERROR_CODES } from "@/lib/email/constants";
 import type { EmailEncryption, EmailProviderKind } from "@/src/db/schema";
 
 export type EmailProviderConfig = {
@@ -52,4 +53,14 @@ export class EmailProviderError extends Error {
     super(message);
     this.name = "EmailProviderError";
   }
+}
+
+export function smtpResponseError(text: string, code: number): EmailProviderError {
+  return new EmailProviderError(
+    `SMTP rejected the message: ${text}`,
+    code === 421 || code >= 500
+      ? EMAIL_ERROR_CODES.providerSmtpError
+      : EMAIL_ERROR_CODES.providerRejected,
+    code,
+  );
 }

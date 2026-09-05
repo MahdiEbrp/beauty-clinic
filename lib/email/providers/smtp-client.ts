@@ -6,7 +6,7 @@ import {
   EMAIL_NETWORK,
   EMAIL_PROVIDER_SMTP,
 } from "@/lib/email/constants";
-import { EmailProviderError } from "./types";
+import { EmailProviderError, smtpResponseError } from "./types";
 import { openTcpSocket, openTlsSocket, upgradeSocketToTls } from "./smtp-connect";
 import { buildMessagePayload, extractMessageId } from "./smtp-message";
 import { parseCapabilities, parseResponseLines } from "./smtp-response";
@@ -161,11 +161,9 @@ class SmtpSession {
     const final = await this.writePayload(payload, timeout);
     this.lastCode = final.code;
     this.lastMessage = final.text;
+    if (final.code < 200 || final.code >= 300) throw smtpResponseError(final.text, final.code);
     this.messageId = extractMessageId(final.text);
-    return {
-      recipients: results,
-      rejected: results.filter((row) => !row.accepted),
-    };
+    return { recipients: results, rejected: results.filter((row) => !row.accepted) };
   }
 
   async quit(): Promise<void> {

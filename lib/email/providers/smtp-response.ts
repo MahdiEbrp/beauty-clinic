@@ -22,13 +22,15 @@ export function parseResponseLines(lines: string[]): SmtpResponse {
 export function parseCapabilities(lines: string[]): Set<string> {
   const capabilities = new Set<string>();
   for (const line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed || /^\d{3}\s/.test(trimmed)) continue;
-    const parts = trimmed.split(" ");
+    const body = line.trim().replace(/^\d{3}[- ]/, "");
+    if (!body) continue;
+    const parts = body.split(/\s+/);
     const feature = parts[0]?.toUpperCase() ?? "";
     capabilities.add(feature);
-    if (feature === "AUTH") {
-      for (const mechanism of parts.slice(1)) capabilities.add(mechanism.toUpperCase());
+    if (feature === "AUTH" || feature.startsWith("AUTH=")) {
+      const mechanisms =
+        feature === "AUTH" ? parts.slice(1) : [feature.slice("AUTH=".length), ...parts.slice(1)];
+      for (const mechanism of mechanisms) capabilities.add(mechanism.toUpperCase());
     }
   }
   return capabilities;
