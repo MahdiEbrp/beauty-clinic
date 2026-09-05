@@ -176,6 +176,13 @@
       "when": 1788332916835,
       "tag": "0024_robust_stone_men",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1788353758875,
+      "tag": "0025_flaky_silver_sable",
+      "breakpoints": true
     }
   ]
 }

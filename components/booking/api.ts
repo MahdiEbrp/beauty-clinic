@@ -46,12 +46,12 @@ export function fetchAvailableSlots(date: string, serviceId?: string): Promise<S
 export function createBookingGroup(payload: {
   fullName: string;
   phone: string;
-  email?: string | null;
   locale: "fa" | "en";
   notes?: string | null;
-  consultationRequired: boolean;
   hasAllergies: boolean;
   isPregnant: boolean;
+  /** Acceptance of the clinic booking rules. */
+  termsAccepted: boolean;
   items: { serviceId: string; slotId: string; quantity: number }[];
 }): Promise<CreatedBookingGroup> {
   return handle<CreatedBookingGroup>(
@@ -63,8 +63,10 @@ export function createBookingGroup(payload: {
   );
 }
 
-/** Mock-pays the deposit for the whole group. */
-export function payBookingGroup(bookingId: string): Promise<CreatedBookingGroup["items"][number]> {
+/** Mock-pays the deposit for the whole group (returns the paid row). */
+export function payBookingGroup(
+  bookingId: string,
+): Promise<{ id: string; status: string; paymentReference: string | null }> {
   return handle(
     fetch("/api/public/bookings/batch/pay", {
       method: "POST",

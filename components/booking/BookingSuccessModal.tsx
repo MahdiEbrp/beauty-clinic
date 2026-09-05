@@ -6,7 +6,6 @@ import {
   CheckCircle,
   FileText,
   MapPin,
-  QrCode,
   RotateCcw,
   X,
 } from "lucide-react";
@@ -71,7 +70,7 @@ export default function BookingSuccessModal({
         </div>
 
         <div className="space-y-4 overflow-y-auto p-4 sm:p-6">
-          {/* Reference + QR */}
+          {/* Reference */}
           <div className="flex items-center justify-between gap-3 rounded-panel border border-border-interactive bg-surface-primary p-3.5">
             <div>
               <span className="block text-[10px] font-bold uppercase tracking-wider text-content-tertiary">
@@ -84,11 +83,6 @@ export default function BookingSuccessModal({
                 <CheckCircle className="size-3 text-copper" aria-hidden="true" />
                 {t("success.depositBadge")}
               </span>
-            </div>
-
-            <div className="shrink-0 rounded-control bg-white p-2 text-center shadow-elevation-1 ring-1 ring-border-primary">
-              <QrCode className="mx-auto size-14 text-primary-deep" aria-hidden="true" />
-              <span className="mt-0.5 block text-[9px] font-bold text-gray-500">{t("success.scanTip")}</span>
             </div>
           </div>
 

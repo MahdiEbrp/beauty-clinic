@@ -116,6 +116,8 @@ export const createBookingGroupSchema = z
     consultationRequired: z.boolean().default(false),
     hasAllergies: z.boolean().default(false),
     isPregnant: z.boolean().default(false),
+    /** Public orders must accept the clinic booking rules before creation. */
+    termsAccepted: z.literal(true),
     items: z.array(bookingItemSchema).min(1).max(10),
   })
   .strict();

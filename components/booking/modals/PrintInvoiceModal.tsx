@@ -17,8 +17,7 @@ export type InvoiceData = {
   groupRef: string;
   fullName: string;
   phone: string;
-  consultationRequired: boolean;
-  paymentReference: string;
+  paymentReference: string | null;
   items: InvoiceItem[];
   total: number;
   deposit: number;
@@ -126,9 +125,6 @@ export default function PrintInvoiceModal({ data, onClose, address, phoneDisplay
                   <span dir="ltr" className="font-bold text-slate-900">{data.phone}</span>
                 </div>
               </div>
-              {data.consultationRequired ? (
-                <div className="text-[11px] font-bold text-copper-deep">✓ {t("invoiceModal.consultLine")}</div>
-              ) : null}
             </div>
 
             <div className="space-y-2 rounded-control border border-slate-300 bg-slate-50/50 p-3.5">
@@ -144,7 +140,7 @@ export default function PrintInvoiceModal({ data, onClose, address, phoneDisplay
                 </div>
                 <div>
                   <span className="block text-[11px] text-slate-500">{t("invoiceModal.rrn")}</span>
-                  <span dir="ltr" className="font-bold text-slate-900">{data.paymentReference}</span>
+                  <span dir="ltr" className="font-bold text-slate-900">{data.paymentReference ?? "–"}</span>
                 </div>
                 <div>
                   <span className="block text-[11px] text-slate-500">{t("invoiceModal.cancelRule")}</span>

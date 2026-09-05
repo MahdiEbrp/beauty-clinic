@@ -2,7 +2,6 @@
 
 import BookingSuccessModal from "./BookingSuccessModal";
 import MyBookingsModal from "./MyBookingsModal";
-import ConsultationModal from "./modals/ConsultationModal";
 import ClinicInfoModal from "./modals/ClinicInfoModal";
 import PrintInvoiceModal, { type InvoiceData } from "./modals/PrintInvoiceModal";
 import type { CartItem, ContactInfo, CreatedBookingGroup } from "./types";
@@ -32,14 +31,12 @@ type BookingModalsProps = {
   }[];
   showMyBookings: boolean;
   minCancelHours: number;
-  showConsultation: boolean;
   showClinicInfo: boolean;
   invoice: InvoiceData | null;
   onCloseSuccess: () => void;
   onNew: () => void;
   onPrintInvoice: () => void;
   onCloseMyBookings: () => void;
-  onCloseConsultation: () => void;
   onCloseClinic: () => void;
   onCloseInvoice: () => void;
 };
@@ -56,14 +53,12 @@ export default function BookingModals({
   openingHours,
   showMyBookings,
   minCancelHours,
-  showConsultation,
   showClinicInfo,
   invoice,
   onCloseSuccess,
   onNew,
   onPrintInvoice,
   onCloseMyBookings,
-  onCloseConsultation,
   onCloseClinic,
   onCloseInvoice,
 }: BookingModalsProps) {
@@ -86,10 +81,6 @@ export default function BookingModals({
 
       {showMyBookings ? (
         <MyBookingsModal minCancelHours={minCancelHours} onClose={onCloseMyBookings} />
-      ) : null}
-
-      {showConsultation ? (
-        <ConsultationModal onClose={onCloseConsultation} telephone={clinic.telephone} phoneDisplay={clinic.phoneDisplay} />
       ) : null}
 
       {showClinicInfo ? (

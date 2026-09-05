@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Check, Stethoscope } from "lucide-react";
+import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type StepperProps = {
@@ -10,7 +10,6 @@ type StepperProps = {
   /** Whether each step index can be navigated back to. */
   canStepTo: (index: number) => boolean;
   onStepClick: (index: number) => void;
-  onOpenConsultation: () => void;
   onOpenMyBookings?: () => void;
   bookingsCount?: number;
 };
@@ -19,14 +18,13 @@ const STEP_LABELS = ["service", "schedule", "contact", "review"] as const;
 
 /**
  * Sticky full-width top progress bar (Template parity). Shows the step badge,
- * current-step title, a "needs consultation" call-to-action, the completion
- * percentage and 4 milestone buttons arranged along the progress line.
+ * current-step title, the "my bookings" quick link, the completion percentage
+ * and 4 milestone buttons arranged along the progress line.
  */
 export default function Stepper({
   current,
   canStepTo,
   onStepClick,
-  onOpenConsultation,
   onOpenMyBookings,
   bookingsCount = 0,
 }: StepperProps) {
@@ -49,16 +47,6 @@ export default function Stepper({
           </div>
 
           <div className="ms-auto flex items-center gap-2">
-            {/* Free consultation request */}
-            <button
-              type="button"
-              onClick={onOpenConsultation}
-              className="flex cursor-pointer items-center gap-1.5 rounded-full border border-copper/40 bg-surface-primary px-3 py-1 text-xs font-black text-accent shadow-elevation-1 transition-all hover:border-accent hover:bg-surface-tertiary active:scale-95"
-            >
-              <Stethoscope className="size-3.5 shrink-0 text-copper" aria-hidden="true" />
-              <span>{t("stepper.needsConsultation")}</span>
-            </button>
-
             {/* My bookings quick link */}
             {onOpenMyBookings ? (
               <button

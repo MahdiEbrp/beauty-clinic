@@ -103,6 +103,8 @@ export const bookings = pgTable(
     consultationRequired: boolean("consultation_required").notNull().default(false),
     hasAllergies: boolean("has_allergies").notNull().default(false),
     isPregnant: boolean("is_pregnant").notNull().default(false),
+    /** When the client accepted the clinic booking rules (null = not yet). */
+    termsAcceptedAt: timestamp("terms_accepted_at", { withTimezone: true }),
     createdBy: uuid("created_by").references(() => users.id, {
       onDelete: "set null",
     }),

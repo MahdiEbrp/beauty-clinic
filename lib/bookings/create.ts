@@ -46,6 +46,8 @@ export type BookingGroupInput = {
   consultationRequired?: boolean;
   hasAllergies?: boolean;
   isPregnant?: boolean;
+  /** Acceptance of the clinic booking rules (required for public orders). */
+  termsAccepted?: boolean;
   items: BookingItemInput[];
 };
 
@@ -219,6 +221,7 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
           consultationRequired: input.consultationRequired ?? false,
           hasAllergies: input.hasAllergies ?? false,
           isPregnant: input.isPregnant ?? false,
+          termsAcceptedAt: input.termsAccepted ? new Date() : null,
         })
         .returning();
       inserted.push(row);

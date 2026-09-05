@@ -5,7 +5,11 @@ import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
-  ArrowRight,FileText,LoaderCircle,Mail,Phone,ShieldAlert,Stethoscope,
+  ArrowRight,
+  FileText,
+  LoaderCircle,
+  Phone,
+  ShieldAlert,
   User,
 } from "lucide-react";
 import { bookingErrorKey } from "@/lib/bookings/errors";
@@ -31,9 +35,7 @@ function schema(t: (key: string) => string) {
       .trim()
       .regex(/^[0-9+][0-9\s()-]{6,19}$/, t("contact.errors.phone"))
       .max(24),
-    email: z.union([z.literal(""), z.email().trim().max(254)]),
     notes: z.string().trim().max(1000),
-    consultationRequired: z.boolean(),
     hasAllergies: z.boolean(),
     isPregnant: z.boolean(),
     agreeToTerms: z.boolean().refine((v) => v, t("contact.errors.terms")),
@@ -58,12 +60,12 @@ export default function ContactStep({ defaultValues, onBack, onContinue }: Conta
     defaultValues,
   });
 
-  const [consultationRequired, hasAllergies, isPregnant, agreeToTerms] = useWatch<ContactInfo>({
+  const [hasAllergies, isPregnant, agreeToTerms] = useWatch<ContactInfo>({
     control,
-    name: ["consultationRequired", "hasAllergies", "isPregnant", "agreeToTerms"],
+    name: ["hasAllergies", "isPregnant", "agreeToTerms"],
   });
 
-  const setToggle = (name: "consultationRequired" | "hasAllergies" | "isPregnant" | "agreeToTerms", value: boolean) =>
+  const setToggle = (name: "hasAllergies" | "isPregnant" | "agreeToTerms", value: boolean) =>
     setValue(name, value, { shouldValidate: true });
 
   const onSubmit = async (data: ContactInfo) => {
@@ -160,48 +162,6 @@ export default function ContactStep({ defaultValues, onBack, onContinue }: Conta
               </p>
             ) : null}
           </div>
-        </div>
-
-        <div className="space-y-1.5">
-          <label htmlFor="booking-email" className="block text-sm font-bold text-content-primary">
-            {t("contact.email")}{" "}
-            <span aria-hidden="true" className="text-content-tertiary">
-              · {t("contact.emailOptional")}
-            </span>
-          </label>
-          <div className="relative">
-            <div className={iconWrap}>
-              <Mail className="size-4" aria-hidden="true" />
-            </div>
-            <input
-              id="booking-email"
-              type="email"
-              autoComplete="email"
-              dir="ltr"
-              className={fieldClass}
-              aria-invalid={Boolean(errors.email)}
-              {...register("email")}
-            />
-          </div>
-          {errors.email ? (
-            <p role="alert" className="text-[11px] font-bold text-error">
-              {errors.email.message}
-            </p>
-          ) : null}
-        </div>
-
-        {/* Doctor consultation toggle bar */}
-        <div className="flex items-center justify-between gap-3 rounded-control border border-border-interactive bg-surface-primary p-3.5">
-          <div className="flex items-start gap-3">
-            <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-control bg-surface-secondary text-copper">
-              <Stethoscope className="size-4" aria-hidden="true" />
-            </div>
-            <div>
-              <div className="text-sm font-extrabold text-content-primary">{t("contact.consultation")}</div>
-              <p className="mt-0.5 text-xs leading-relaxed text-content-secondary">{t("contact.consultationHint")}</p>
-            </div>
-          </div>
-          <Switch checked={consultationRequired === true} onCheckedChange={(v) => setToggle("consultationRequired", v)} aria-label={t("contact.consultation")} />
         </div>
 
         {/* Medical toggles */}

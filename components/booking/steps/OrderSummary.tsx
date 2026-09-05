@@ -21,6 +21,8 @@ type OrderSummaryProps = {
   currency: string;
   selectionCount: number;
   isSubmitting: boolean;
+  /** Disable the pay action until the booking rules are re-accepted. */
+  payDisabled?: boolean;
   onPay: () => void;
   onPreviewInvoice: () => void;
   clinic: ClinicInfo;
@@ -36,6 +38,7 @@ export default function OrderSummary({
   currency,
   selectionCount,
   isSubmitting,
+  payDisabled = false,
   onPay,
   onPreviewInvoice,
   clinic,
@@ -97,11 +100,11 @@ export default function OrderSummary({
 
         <button
           type="button"
-          disabled={isSubmitting}
+          disabled={isSubmitting || payDisabled}
           onClick={onPay}
           className={cn(
             "flex w-full cursor-pointer items-center justify-center gap-2 rounded-control bg-linear-to-r from-accent to-primary-deep px-4 py-3.5 text-sm font-black text-content-contrast shadow-md transition-all hover:from-accent-hover active:scale-[0.98] sm:text-base",
-            isSubmitting && "cursor-not-allowed opacity-70 active:scale-100",
+            (isSubmitting || payDisabled) && "cursor-not-allowed opacity-60 active:scale-100",
           )}
         >
           {isSubmitting ? (

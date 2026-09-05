@@ -1,124 +1,154 @@
-import {
-  addDays,
-  addMonths as addJalaliMonths,
-  format as formatJalali,
-  getMonth as getJalaliMonth,
-  startOfMonth as jalaliStartOfMonth,
-} from "date-fns-jalali";
+import { addMonths, eachDayOfInterval, format as formatJalali, getDate as getJalaliDay, getDaysInMonth as getJalaliDaysInMonth, getDay as getJalaliWeekday, startOfMonth as startJalaliMonth } from "date-fns-jalali";
+import type { CalendarKind } from "./dates";
 
-import type { CalendarKind } from "@/lib/bookings/dates";
+export type CalendarDay = {
+  /** Gregorian Date at 00:00 local. */
+  date: Date;
+  /** "YYYY-MM-DD" (Gregorian) — the wire format for slot lookups. */
+  dateStr: string;
+  /** Day-of-month shown on the cell (Jalali day in fa, Gregorian day in en). */
+  dayNumber: number;
+  /** JS weekday: 0=Sunday … 6=Saturday. */
+  weekday: number;
+  /** True when the cell belongs to the current month (no trailing filler). */
+  inMonth: boolean;
+  /** True when the cell is the current calendar day. */
+  isToday: boolean;
+};
 
-const PERSIAN_MONTHS = [
-  "فروردین",
-  "اردیبهشت",
-  "خرداد",
-  "تیر",
-  "مرداد",
-  "شهریور",
-  "مهر",
-  "آبان",
-  "آذر",
-  "دی",
-  "بهمن",
-  "اسفند",
-];
+export type CalendarMonth = {
+  key: string;
+  /** Month anchor (first of month) as a Gregorian Date. */
+  monthDate: Date;
+  /** Month label, e.g. "1405/06" (Latin digits, ss01 renders Persian glyphs). */
+  label: string;
+  /** Weekday short labels in display (column) order. */
+  weekdays: string[];
+  /** Weeks of 7 cells each — fixed grid that never shifts between renders. */
+  weeks: CalendarDay[][];
+  /** Inclusive date range of the cells shown (first..last). */
+  startsAt: Date;
+  endsAt: Date;
+};
 
-const GREGORIAN_MONTHS_FA = [
-  "ژانویه",
-  "فوریه",
-  "مارس",
-  "آوریل",
-  "مه",
-  "ژوئن",
-  "ژوئیه",
-  "اوت",
-  "سپتامبر",
-  "اکتبر",
-  "نوامبر",
-  "دسامبر",
-];
-
-const GREGORIAN_MONTHS_EN = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-/** Pad a number to 2 Latin digits (ss01 renders them in fa). */
-function pad(value: number): string {
+function pad2(value: number): string {
   return String(value).padStart(2, "0");
 }
 
-/** Gregorian "YYYY-MM-DD" key from a real `Date`. */
-export function toKey(date: Date): string {
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+export function toWireDate(date: Date): string {
+  return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
 }
 
-export function parseKey(key: string): Date {
-  const [y, m, d] = key.split("-").map(Number);
-  return new Date(y, (m ?? 1) - 1, d ?? 1);
+/** Weekday letters in display (column) order per calendar kind. */
+function weekdayLabels(kind: CalendarKind): string[] {
+  return kind === "jalali"
+    ? ["ش", "ی", "د", "س", "چ", "پ", "ج"]
+    : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 }
 
-/** First real Gregorian `Date` of the displayed month in the active calendar. */
-export function monthAnchor(cursor: Date, calendar: CalendarKind): Date {
-  if (calendar === "gregorian") {
-    return new Date(cursor.getFullYear(), cursor.getMonth(), 1);
-  }
-  return jalaliStartOfMonth(cursor);
+/** Column offset of the first cell of a month. Jalali weeks start Saturday,
+ *  Gregorian weeks start Sunday (matches the weekday labels). */
+function leadingBlanks(kind: CalendarKind, monthStart: Date): number {
+  const weekday = kind === "jalali" ? getJalaliWeekday(monthStart) : monthStart.getDay();
+  return kind === "jalali" ? (weekday + 1) % 7 : weekday;
 }
 
-export function shiftMonth(cursor: Date, dir: number, calendar: CalendarKind): Date {
-  if (calendar === "gregorian") {
-    return new Date(cursor.getFullYear(), cursor.getMonth() + dir, 1);
-  }
-  return addJalaliMonths(cursor, dir);
-}
-
-export type MonthCell = { key: string; date: Date; leading: boolean };
-
-/** A 6×7 grid of cells for the active month, plus the weekday of the 1st. */
-export function monthGrid(cursor: Date, calendar: CalendarKind): MonthCell[] {
-  const anchor = monthAnchor(cursor, calendar);
-  const leadingCount = anchor.getDay(); // 0 = Sunday, column offset
-
-  const cells: MonthCell[] = [];
-  const start = addDays(anchor, -leadingCount);
-  for (let i = 0; i < 42; i += 1) {
-    const date = addDays(start, i);
-    cells.push({ key: toKey(date), date, leading: i < leadingCount });
+function buildCells(
+  kind: CalendarKind,
+  monthStart: Date,
+  daysInMonth: number,
+  today: Date,
+): CalendarDay[] {
+  const offset = leadingBlanks(kind, monthStart);
+  const total = Math.ceil((offset + daysInMonth) / 7) * 7;
+  const cells: CalendarDay[] = [];
+  for (let i = 0; i < total; i += 1) {
+    const date = new Date(monthStart);
+    date.setDate(monthStart.getDate() + (i - offset));
+    const inMonth = i >= offset && i < offset + daysInMonth;
+    const sameDay =
+      date.getFullYear() === today.getFullYear() &&
+      date.getMonth() === today.getMonth() &&
+      date.getDate() === today.getDate();
+    cells.push({
+      date,
+      dateStr: toWireDate(date),
+      dayNumber: kind === "jalali" ? getJalaliDay(date) : date.getDate(),
+      weekday: kind === "jalali" ? getJalaliWeekday(date) : date.getDay(),
+      inMonth,
+      isToday: sameDay,
+    });
   }
   return cells;
 }
 
-/** Human label for the displayed month, in the UI language, Latin digits. */
-export function monthLabel(
-  cursor: Date,
-  calendar: CalendarKind,
-  locale: "fa" | "en",
-): string {
-  const anchor = monthAnchor(cursor, calendar);
-  if (calendar === "gregorian") {
-    const months = locale === "fa" ? GREGORIAN_MONTHS_FA : GREGORIAN_MONTHS_EN;
-    return `${months[anchor.getMonth()]} ${anchor.getFullYear()}`;
+/** Builds `count` consecutive month grids starting from the month containing
+ *  `from`. All date handling stays in local wall-clock time. */
+export function buildMonthGrids(from: Date, kind: CalendarKind, count = 1): CalendarMonth[] {
+  const today = new Date();
+  const months: CalendarMonth[] = [];
+  let cursor = kind === "jalali" ? startJalaliMonth(from) : new Date(from.getFullYear(), from.getMonth(), 1);
+  for (let m = 0; m < count; m += 1) {
+    const daysInMonth =
+      kind === "jalali"
+        ? getJalaliDaysInMonth(cursor)
+        : new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate();
+    const cells = buildCells(kind, cursor, daysInMonth, today);
+    const weeks: CalendarDay[][] = [];
+    for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+    months.push({
+      key: `${cursor.getFullYear()}-${cursor.getMonth()}`,
+      monthDate: cursor,
+      label:
+        kind === "jalali"
+          ? formatJalali(cursor, "yyyy/MM")
+          : `${cursor.getFullYear()}/${pad2(cursor.getMonth() + 1)}`,
+      weekdays: weekdayLabels(kind),
+      weeks,
+      startsAt: cells[0]?.date ?? cursor,
+      endsAt: cells[cells.length - 1]?.date ?? cursor,
+    });
+    cursor = kind === "jalali" ? addMonths(cursor, 1) : new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1);
   }
-  const year = formatJalali(anchor, "yyyy");
-  const month = PERSIAN_MONTHS[getJalaliMonth(anchor)] ?? "";
-  return `${month} ${year}`;
+  return months;
 }
 
-/** Weekday header labels in the UI language. Lucide-free; uses tokens only. */
-export function weekdayHeaders(locale: "fa" | "en"): string[] {
-  if (locale === "fa") {
-    return ["ش", "ی", "د", "س", "چ", "پ", "ج"];
-  }
-  return ["S", "M", "T", "W", "T", "F", "S"];
+/** Range of Gregorian `Date`s from `start` (inclusive) to `end` (exclusive)
+ *  reused by smart auto-scheduling. */
+export function eachDate(start: Date, end: Date): Date[] {
+  return eachDayOfInterval({ start, end });
+}
+
+export type OpeningHourRow = {
+  readonly days: readonly string[];
+  readonly opens: string;
+  readonly closes: string;
+};
+
+const EN_WEEKDAYS = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+] as const;
+
+/** English weekday name (opening-hours rows are stored with English names). */
+export function weekdayNameEn(date: Date): string {
+  return EN_WEEKDAYS[date.getDay()] ?? "";
+}
+
+/** True when the clinic lists the date's weekday in its opening hours. */
+export function isClinicOpenOn(date: Date, openingHours: readonly OpeningHourRow[]): boolean {
+  const name = weekdayNameEn(date);
+  return openingHours.some((row) => row.days.includes(name));
+}
+
+/** True when the date is not strictly before today (selectable past-free). */
+export function isPastDay(date: Date, today: Date = new Date()): boolean {
+  const d = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+  const t = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+  return t < d;
 }

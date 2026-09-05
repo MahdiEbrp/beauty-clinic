@@ -68,9 +68,9 @@ function VerifiedWizard({
   const [step, setStep] = useState<WizardStep>(0);
   const [contact, setContact] = useState<ContactInfo | null>(null);
   const [group, setGroup] = useState<CreatedBookingGroup | null>(null);
+  const [paymentReference, setPaymentReference] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showMyBookings, setShowMyBookings] = useState(false);
-  const [showConsultation, setShowConsultation] = useState(false);
   const [showClinicInfo, setShowClinicInfo] = useState(false);
   const [invoice, setInvoice] = useState<InvoiceData | null>(null);
 
@@ -144,12 +144,11 @@ function VerifiedWizard({
       const created = await createBookingGroup({
         fullName: data.fullName,
         phone: data.phone,
-        email: data.email || null,
         locale,
         notes: data.notes || null,
-        consultationRequired: data.consultationRequired,
         hasAllergies: data.hasAllergies,
         isPregnant: data.isPregnant,
+        termsAccepted: data.agreeToTerms,
         items: cart.map((line) => ({
           serviceId: line.service.id,
           slotId: line.slot?.id ?? "",
@@ -174,7 +173,8 @@ function VerifiedWizard({
   };
 
   const canStepTo = (index: number) => (index === 0 ? true : index === 1 ? cart.length > 0 : allScheduled);
-  const makeInvoice = (g: CreatedBookingGroup) => buildInvoice(g, cart, contact, currency, totals);
+  const makeInvoice = (g: CreatedBookingGroup, ref: string | null = null) =>
+    buildInvoice(g, cart, contact, currency, totals, ref);
 
   const resetAll = () => {
     setCart([]);
@@ -182,6 +182,7 @@ function VerifiedWizard({
     setGroup(null);
     setShowSuccess(false);
     setContact(null);
+    setPaymentReference(null);
     setInvoice(null);
     window.localStorage.removeItem(CART_STORAGE_KEY);
   };
@@ -192,7 +193,6 @@ function VerifiedWizard({
         current={step}
         canStepTo={canStepTo}
         onStepClick={(i) => setStep(i as WizardStep)}
-        onOpenConsultation={() => setShowConsultation(true)}
         onOpenMyBookings={() => setShowMyBookings(true)}
         bookingsCount={0}
       />
@@ -217,7 +217,10 @@ function VerifiedWizard({
             onSlotContinue={() => setStep(2)}
             onContactBack={() => setStep(1)}
             onSubmitContact={submitBooking}
-            onPaid={() => setShowSuccess(true)}
+            onPaid={(ref) => {
+              setPaymentReference(ref);
+              setShowSuccess(true);
+            }}
             onReviewBack={() => setStep(2)}
             onPreviewInvoice={(g) => setInvoice(makeInvoice(g))}
             clinic={clinic}
@@ -260,16 +263,14 @@ function VerifiedWizard({
         openingHours={openingHours}
         showMyBookings={showMyBookings}
         minCancelHours={minCancelHours}
-        showConsultation={showConsultation}
         showClinicInfo={showClinicInfo}
         invoice={invoice}
         onCloseSuccess={() => setShowSuccess(false)}
         onNew={resetAll}
         onPrintInvoice={() => {
-          if (group) setInvoice(makeInvoice(group));
+          if (group) setInvoice(makeInvoice(group, paymentReference));
         }}
         onCloseMyBookings={() => setShowMyBookings(false)}
-        onCloseConsultation={() => setShowConsultation(false)}
         onCloseClinic={() => setShowClinicInfo(false)}
         onCloseInvoice={() => setInvoice(null)}
       />

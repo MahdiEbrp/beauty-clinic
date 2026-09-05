@@ -7,12 +7,10 @@ import ServiceStep from "./steps/ServiceStep";
 const EMPTY_CONTACT: ContactInfo = {
   fullName: "",
   phone: "",
-  email: "",
   notes: "",
-  consultationRequired: true,
   hasAllergies: false,
   isPregnant: false,
-  agreeToTerms: true,
+  agreeToTerms: false,
 };
 import SlotStep from "./steps/SlotStep";
 import ContactStep from "./steps/ContactStep";
@@ -46,7 +44,7 @@ type BookingPanelProps = {
   onSlotContinue: () => void;
   onContactBack: () => void;
   onSubmitContact: (data: ContactInfo) => Promise<unknown>;
-  onPaid: () => void;
+  onPaid: (paymentReference: string | null) => void;
   onReviewBack: () => void;
   onPreviewInvoice: (group: CreatedBookingGroup) => void;
   clinic: ReviewClinicInfo;

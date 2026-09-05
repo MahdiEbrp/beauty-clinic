@@ -10,14 +10,14 @@ export function buildInvoice(
   contact: ContactInfo | null,
   currency: string,
   totals: Totals,
+  paymentReference?: string | null,
 ): InvoiceData {
   return {
     invoiceNumber: `INV-${group.groupRef}`,
     groupRef: group.groupRef,
     fullName: contact?.fullName ?? "",
     phone: contact?.phone ?? "",
-    consultationRequired: contact?.consultationRequired ?? false,
-    paymentReference: `SHP-${Math.floor(10000000 + Math.random() * 90000000)}`,
+    paymentReference: paymentReference ?? null,
     items: cart.map((line) => ({
       title: line.service.title,
       slotDate: line.slot?.slotDate ?? "",

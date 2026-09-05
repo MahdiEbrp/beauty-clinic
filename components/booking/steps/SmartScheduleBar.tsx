@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { CalendarDays, Check, ChevronDown, Layers, Wand2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SlotLabel } from "../SlotLabel";
 import type { CartItem } from "../types";
 
 type SmartScheduleBarProps = {
@@ -135,8 +136,8 @@ export default function SmartScheduleBar({
                   )}
                 </div>
                 <div className="flex items-center justify-between gap-1 text-[11px] font-semibold">
-                  <span className={isActive ? "text-copper-light" : "text-content-secondary"}>
-                    {isScheduled ? t("schedule.noTime") : t("schedule.noTime")}
+                  <span className={cn("min-w-0 truncate", isActive ? "text-copper-light" : "text-content-secondary")}>
+                    {isScheduled ? <SlotLabel line={line} /> : t("schedule.noTime")}
                   </span>
                   <span className="text-[10px] opacity-75">
                     {t("schedule.durationShort", { n: line.service.durationMin ?? 45 })}

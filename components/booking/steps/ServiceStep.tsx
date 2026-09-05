@@ -37,8 +37,9 @@ export default function ServiceStep({ tree, currency, cart, onToggle, onRemove }
   // Flatten groups → categories → filtered services into sections.
   const sections = useMemo(() => {
     const out: {
+      groupSlug: string;
       groupTitle: string;
-      category: { title: string };
+      category: { slug: string; title: string };
       services: CartItem["service"][];
     }[] = [];
     for (const group of tree.groups) {
@@ -51,8 +52,9 @@ export default function ServiceStep({ tree, currency, cart, onToggle, onRemove }
         );
         if (services.length === 0) continue;
         out.push({
+          groupSlug: group.slug,
           groupTitle: group.title,
-          category,
+          category: { slug: category.slug, title: category.title },
           services: services.map((s) => ({
             ...s,
             groupSlug: group.slug,
@@ -159,33 +161,45 @@ export default function ServiceStep({ tree, currency, cart, onToggle, onRemove }
           </button>
         </div>
       ) : (
-        <div className="space-y-6">
-          {sections.map((section) => (
-            <section key={section.category.title} className="space-y-2.5">
-              <div className="flex items-center justify-between gap-2 border-b border-border-primary pb-1.5">
-                <h3 className="flex items-center gap-2 text-sm font-extrabold text-content-primary sm:text-base">
-                  <span aria-hidden="true" className="inline-block h-4 w-2 rounded-full bg-copper" />
-                  <span>{section.category.title}</span>
-                </h3>
-                <span className="text-[11px] font-semibold text-content-tertiary">
-                  {t("services.options", { n: section.services.length })}
-                </span>
-              </div>
+        <div className="space-y-8">
+          {sections.map((section, index) => {
+            const isNewGroup = index === 0 || sections[index - 1]?.groupSlug !== section.groupSlug;
+            return (
+              <section key={`${section.groupSlug}-${section.category.slug}`} className="space-y-3">
+                {isNewGroup ? (
+                  <h2 className="flex items-center gap-2 pt-1 text-lg font-black leading-snug tracking-tight text-content-primary sm:text-xl">
+                    <span
+                      aria-hidden="true"
+                      className="inline-block h-6 w-1.5 shrink-0 rounded-full bg-linear-to-b from-copper to-accent"
+                    />
+                    {section.groupTitle}
+                  </h2>
+                ) : null}
 
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {section.services.map((service) => {
-                  const selected = inCart(service.id);
-                  return (
-                    <div
-                      key={service.id}
-                      onClick={() => toggle(service)}
-                      className={cn(
-                        "relative mx-auto flex w-full max-w-md cursor-pointer select-none flex-col justify-between rounded-panel border p-3.5 transition-all duration-200 sm:p-4",
-                        selected
-                          ? "border-copper bg-surface-secondary shadow-md ring-2 ring-copper"
-                          : "border-border-primary bg-surface-secondary/90 shadow-elevation-1 hover:border-copper hover:bg-surface-secondary",
-                      )}
-                    >
+                <div className="flex items-center justify-between gap-2 border-b-2 border-border-primary pb-1.5">
+                  <h3 className="flex items-center gap-1.5 text-sm font-extrabold text-copper-deep sm:text-base">
+                    <span aria-hidden="true" className="inline-block h-4 w-1 rounded-full bg-copper" />
+                    <span>{section.category.title}</span>
+                  </h3>
+                  <span className="text-[11px] font-semibold text-content-tertiary">
+                    {t("services.options", { n: section.services.length })}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {section.services.map((service) => {
+                    const selected = inCart(service.id);
+                    return (
+                      <div
+                        key={service.id}
+                        onClick={() => toggle(service)}
+                        className={cn(
+                          "relative mx-auto flex w-full max-w-md cursor-pointer select-none flex-col justify-between rounded-panel border p-3.5 transition-all duration-200 sm:p-4",
+                          selected
+                            ? "border-copper bg-surface-secondary shadow-md ring-2 ring-copper"
+                            : "border-border-primary bg-surface-secondary shadow-elevation-1 hover:border-copper hover:bg-surface-secondary",
+                        )}
+                      >
                       {/* Top badges + switch */}
                       <div className="mb-2 flex items-start justify-between gap-2">
                         <div className="flex flex-wrap items-center gap-1.5">
@@ -224,7 +238,7 @@ export default function ServiceStep({ tree, currency, cart, onToggle, onRemove }
                       {/* Title + desc */}
                       <div className="my-1 flex-1">
                         <div className="flex items-center gap-1.5">
-                          <h4 className="text-sm font-extrabold leading-tight text-content-primary sm:text-base">
+                          <h4 className="text-sm font-black leading-snug tracking-tight text-content-primary sm:text-base">
                             {service.title}
                           </h4>
                           {selected ? (
@@ -232,7 +246,7 @@ export default function ServiceStep({ tree, currency, cart, onToggle, onRemove }
                           ) : null}
                         </div>
                         {service.shortDesc ? (
-                          <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-content-secondary">
+                          <p className="mt-1 line-clamp-1 text-xs leading-relaxed text-content-secondary">
                             {service.shortDesc}
                           </p>
                         ) : null}
@@ -266,7 +280,8 @@ export default function ServiceStep({ tree, currency, cart, onToggle, onRemove }
                 })}
               </div>
             </section>
-          ))}
+              );
+            })}
         </div>
       )}
 

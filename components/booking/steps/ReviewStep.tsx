@@ -2,13 +2,15 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowRight, CalendarDays, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CalendarDays, ShieldCheck } from "lucide-react";
 import { formatNumber } from "@/lib/services/format";
 import { payBookingGroup } from "../api";
-import type { CartItem, CreatedBookingGroup } from "../types";
+import type { CartItem, ContactInfo, CreatedBookingGroup } from "../types";
 import { SlotLabel } from "../SlotLabel";
+import { Switch } from "../Switch";
 import ShaparakGateway from "./ShaparakGateway";
 import OrderSummary from "./OrderSummary";
+import PatientHistory from "./PatientHistory";
 
 type ClinicInfo = {
   addressTitle: string;
@@ -23,8 +25,8 @@ type ReviewStepProps = {
   cart: CartItem[];
   currency: string;
   deposit: number;
-  contact: { fullName: string; phone: string; consultationRequired: boolean } | null;
-  onPaid: () => void;
+  contact: Pick<ContactInfo, "fullName" | "phone"> | null;
+  onPaid: (paymentReference: string | null) => void;
   onBack: () => void;
   onPreviewInvoice?: (group: CreatedBookingGroup, cart: CartItem[]) => void;
   clinic: ClinicInfo;
@@ -45,6 +47,7 @@ export default function ReviewStep({
 }: ReviewStepProps) {
   const t = useTranslations("booking");
   const [paying, setPaying] = useState(false);
+  const [rulesAccepted, setRulesAccepted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const total = cart.reduce((sum, line) => sum + Number(line.service.price) * line.quantity, 0);
@@ -52,12 +55,12 @@ export default function ReviewStep({
   const firstItem = group.items[0];
 
   const handlePay = async () => {
-    if (!firstItem) return;
+    if (!firstItem || !rulesAccepted) return;
     setPaying(true);
     setError(null);
     try {
-      await payBookingGroup(firstItem.id);
-      onPaid();
+      const paid = await payBookingGroup(firstItem.id);
+      onPaid(paid.paymentReference);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -144,6 +147,11 @@ export default function ReviewStep({
             </div>
           </div>
 
+          {/* Patient history — previous & upcoming visits (same phone) */}
+          {contact?.phone ? (
+            <PatientHistory phone={contact.phone} groupRef={group.groupRef} />
+          ) : null}
+
           {/* Client recap */}
           <div className="rounded-panel border border-border-primary bg-surface-secondary p-4 shadow-elevation-1">
             <h3 className="mb-2 text-sm font-extrabold text-content-primary">{t("review.clientTitle")}</h3>
@@ -157,19 +165,29 @@ export default function ReviewStep({
                 <span className="font-bold text-content-primary" dir="ltr">{contact?.phone ?? ""}</span>
               </div>
             </div>
-            {contact?.consultationRequired ? (
-              <div className="mt-2 flex items-center gap-1.5 rounded-control border border-copper/30 bg-surface-tertiary p-2.5 text-[11px] font-bold text-copper-deep">
-                <CheckCircle2 className="size-4 shrink-0 text-copper" aria-hidden="true" />
-                {t("review.consultNeeded")}
-              </div>
-            ) : null}
           </div>
 
           <ShaparakGateway deposit={deposit} currency={currency} />
         </div>
 
-        {/* Right: order summary + address */}
+        {/* Right: rules re-confirmation, order summary + address */}
         <div className="lg:col-span-5">
+          <div className="mb-3 flex items-start justify-between gap-3 rounded-panel border-2 border-copper/70 bg-surface-secondary p-3.5 shadow-md sm:p-4">
+            <div className="text-xs leading-relaxed text-content-secondary">
+              <span className="mb-0.5 flex items-center gap-1.5 font-black text-content-primary">
+                <ShieldCheck className="size-4 text-copper" aria-hidden="true" />
+                {t("contact.terms")}
+              </span>
+              {t("contact.termsHint")}
+            </div>
+            <Switch
+              checked={rulesAccepted}
+              onCheckedChange={setRulesAccepted}
+              aria-label={t("contact.terms")}
+              className="mt-0.5 shrink-0"
+            />
+          </div>
+
           <OrderSummary
             total={total}
             deposit={deposit}
@@ -177,6 +195,7 @@ export default function ReviewStep({
             currency={currency}
             selectionCount={cart.length}
             isSubmitting={paying}
+            payDisabled={!rulesAccepted}
             onPay={() => void handlePay()}
             onPreviewInvoice={() => onPreviewInvoice?.(group, cart)}
             clinic={clinic}

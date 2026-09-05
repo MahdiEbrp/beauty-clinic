@@ -73,10 +73,6 @@ export default function SummarySidebar({
               <span className="font-bold text-content-tertiary">{t("appointment.notSelected")}</span>
             </div>
             <div className="flex items-center justify-between gap-2">
-              <span>{t("sidebar.consultRow")}</span>
-              <span className="font-bold text-content-primary">{t("sidebar.consultRowValue")}</span>
-            </div>
-            <div className="flex items-center justify-between gap-2">
               <span>{t("sidebar.depositRow")}</span>
               <span className="font-bold text-copper-deep">{money(totals.deposit, currency)}</span>
             </div>
