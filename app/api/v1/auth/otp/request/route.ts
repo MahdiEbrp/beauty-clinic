@@ -1,6 +1,6 @@
 import { withSecurity, jsonError, jsonOk } from "@/lib/api/security";
 import { clientIp } from "@/lib/api/request";
-import { getTranslations, getLocale } from "next-intl/server";
+import { getApiTranslations } from "@/lib/i18n/api-translations";
 import { ApiError } from "@/lib/api/errors";
 import { rateLimit } from "@/lib/rate-limit";
 import {
@@ -65,8 +65,7 @@ export const POST = withSecurity(
     }
 
     const { code } = await issueLoginOtp(user.id, body.channel);
-    const locale = await getLocale();
-    const t = await getTranslations({ locale, namespace: "login" });
+    const t = await getApiTranslations(new URL(request.url).pathname);
 
     try {
       await sendLoginOtp({
@@ -74,9 +73,9 @@ export const POST = withSecurity(
         phone: user.phone ?? identifierKey,
         email: user.email,
         code,
-        smsText: t("otp.smsMessage", { code }),
-        emailSubject: t("otp.emailSubject"),
-        emailHtml: t("otp.emailBody", { code, name: user.fullName }),
+        smsText: t("login.otp.smsMessage", { code }),
+        emailSubject: t("login.otp.emailSubject"),
+        emailHtml: t("login.otp.emailBody", { code, name: user.fullName }),
       });
     } catch (error) {
       await invalidateLatestLoginOtp(user.id);
