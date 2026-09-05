@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 
 import { hashPassword } from "@/lib/auth/password";
 import { db } from "./index";
@@ -17,6 +17,7 @@ import { seedServiceCatalog } from "./seed/service-catalog";
 import { seedCareGuides } from "./seed/care-guides";
 import { seedLanding } from "./seed/landing";
 import { seedFakeProviders } from "./seed/fake-providers";
+import { seedGmailProviderFromEnv } from "./seed/gmail-provider";
 import { seedRules } from "./seed/rules";
 import {
   ROLE_DEFS,
@@ -53,39 +54,10 @@ async function seed(): Promise<void> {
     }
   }
 
-  const adminEmail = process.env.SEED_ADMIN_EMAIL;
+  const adminEmail = process.env.SEED_ADMIN_EMAIL?.trim().toLowerCase();
   const adminPassword = process.env.SEED_ADMIN_PASSWORD;
   if (adminEmail && adminPassword) {
-    const existing = await db.query.users.findFirst({
-      where: eq(users.email, adminEmail),
-      columns: { id: true },
-    });
-
-    if (!existing) {
-      const adminPhone = process.env.SEED_ADMIN_PHONE;
-      if (!adminPhone) {
-        console.warn(
-          "SEED_ADMIN_PHONE not set — the seeded admin cannot sign in via OTP login.",
-        );
-      }
-      const [admin] = await db
-        .insert(users)
-        .values({
-          email: adminEmail,
-          fullName: "Super Admin",
-          phone: adminPhone,
-          passwordHash: await hashPassword(adminPassword),
-        })
-        .returning({ id: users.id });
-
-      const adminRole = roleByKey.get("admin");
-      if (admin && adminRole) {
-        await db.insert(userRoles).values({ userId: admin.id, roleId: adminRole.id });
-      }
-      console.log(`Superadmin created: ${adminEmail}`);
-    } else {
-      console.log(`Superadmin already exists: ${adminEmail}`);
-    }
+    await upsertSuperAdmin({ email: adminEmail, password: adminPassword, roleByKey });
   } else {
     console.warn("SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD not set — skipping superadmin creation.");
   }
@@ -158,6 +130,7 @@ async function seed(): Promise<void> {
   await seedRules();
   await seedLanding();
   await seedFakeProviders();
+  await seedGmailProviderFromEnv();
 
   console.log("Seed complete.");
 }
@@ -168,3 +141,89 @@ seed()
     console.error("Seed failed:", error);
     process.exit(1);
   });
+
+/**
+ * Creates the default superadmin from SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD.
+ * When a "Super Admin" account already exists under a different address (a
+ * previous run's default), it is renamed to the configured email instead of
+ * leaving a stale default behind or creating a duplicate.
+ */
+async function upsertSuperAdmin(options: {
+  email: string;
+  password: string;
+  roleByKey: Map<string, { id: string }>;
+}): Promise<void> {
+  const { email, password, roleByKey } = options;
+
+  const [active] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(and(eq(users.email, email), isNull(users.deletedAt)))
+    .limit(1);
+  if (active) {
+    console.log(`Superadmin already exists: ${email}`);
+    return;
+  }
+
+  const adminRole = roleByKey.get("admin");
+  if (!adminRole) {
+    console.warn("admin role not seeded — skipping superadmin creation.");
+    return;
+  }
+
+  const seeded = await findSeededAdminUser(adminRole.id);
+  if (seeded) {
+    await db
+      .update(users)
+      .set({ email, updatedAt: new Date() })
+      .where(and(eq(users.id, seeded.id), isNull(users.deletedAt)));
+    console.log(`Default superadmin email updated to: ${email}`);
+    return;
+  }
+
+  const adminPhone = process.env.SEED_ADMIN_PHONE;
+  if (!adminPhone) {
+    console.warn(
+      "SEED_ADMIN_PHONE not set — the seeded admin cannot sign in via OTP login.",
+    );
+  }
+  const [admin] = await db
+    .insert(users)
+    .values({
+      email,
+      fullName: "Super Admin",
+      phone: adminPhone,
+      passwordHash: await hashPassword(password),
+    })
+    .returning({ id: users.id });
+
+  if (admin) {
+    await db.insert(userRoles).values({ userId: admin.id, roleId: adminRole.id });
+  }
+  console.log(`Superadmin created: ${email}`);
+}
+
+/** The admin-role user created by an earlier seed run (fullName "Super Admin"). */
+async function findSeededAdminUser(adminRoleId: string): Promise<{ id: string } | null> {
+  const holders = await db
+    .select({ userId: userRoles.userId })
+    .from(userRoles)
+    .where(eq(userRoles.roleId, adminRoleId));
+  if (holders.length === 0) return null;
+
+  const [candidate] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(
+      and(
+        inArray(
+          users.id,
+          holders.map((row) => row.userId),
+        ),
+        eq(users.fullName, "Super Admin"),
+        isNull(users.deletedAt),
+      ),
+    )
+    .limit(1);
+  return candidate ?? null;
+}
