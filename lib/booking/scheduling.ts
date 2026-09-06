@@ -80,8 +80,8 @@ export function toDateStr(date: Date): string {
 }
 
 /**
- * Next `count` days with open/closed status resolved from the DB
- * `clinic.opening_hours` setting (weekday names are English in the setting).
+ * Next `count` days with open/closed status resolved from the `working_hours`
+ * table (weekday names are English, matching the stored days).
  */
 export function buildDayOptions(
   openingHours: readonly { readonly days: readonly string[]; readonly opens: string; readonly closes: string }[],

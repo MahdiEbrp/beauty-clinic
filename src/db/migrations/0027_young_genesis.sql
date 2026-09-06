@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "booking_slots_date_start_idx" ON "booking_slots" USING btree ("slot_date","start_time");

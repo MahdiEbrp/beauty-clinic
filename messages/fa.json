@@ -456,7 +456,8 @@
    "delete": "حذف",
    "deleteConfirm": "حذف این نوبت؟",
    "edit": "ویرایش",
-   "menu": "عملیات"
+   "menu": "عملیات",
+   "generate": "ساخت همه نوبت‌ها"
   },
   "add": "افزودن نوبت",
   "allServices": "همه خدمات",
@@ -525,6 +526,92 @@
    "deleted": "نوبت حذف شد",
    "error": "خطایی رخ داد",
    "success": "نوبت به‌روزرسانی شد",
+   "syncing": "در حال همگام‌سازی...",
+   "generated": "{count} نوبت ساخته شد",
+   "generateError": "ساخت نوبت‌ها انجام نشد"
+  }
+ },
+ "workingHours": {
+  "actions": {
+   "activate": "فعال‌سازی",
+   "deactivate": "غیرفعال‌سازی",
+   "delete": "حذف",
+   "deleteConfirm": "این ساعات کاری حذف شود؟",
+   "edit": "ویرایش",
+   "menu": "عملیات"
+  },
+  "add": "افزودن ساعات کاری",
+  "bulk": {
+   "activate": "فعال‌سازی",
+   "apply": "اعمال",
+   "clear": "پاک‌کردن",
+   "confirmDescription": "این عملیات روی همه ساعات کاری انتخابی اعمال می‌شود.",
+   "confirmTitle": "{action} ساعات کاری انتخابی؟",
+   "deactivate": "غیرفعال‌سازی",
+   "delete": "حذف",
+   "pageSelected": "صفحه انتخاب شد",
+   "resultDescription": "{count} سطر ساعات کاری با موفقیت به‌روزرسانی شد",
+   "resultPartialDescription": "{count} به‌روزرسانی شد، {failed} ناموفق",
+   "resultPartialTitle": "تکمیل با خطا",
+   "resultTitle": "عملیات گروهی انجام شد",
+   "selectFiltered": "انتخاب هر {count} مورد فیلترشده",
+   "selected": "{count} انتخاب شد",
+   "selectedFiltered": "{count} انتخاب شد (فیلترشده)"
+  },
+  "clearFilters": "پاک‌کردن فیلترها",
+  "days": {
+   "Friday": "جمعه",
+   "Monday": "دوشنبه",
+   "Saturday": "شنبه",
+   "Sunday": "یکشنبه",
+   "Thursday": "پنجشنبه",
+   "Tuesday": "سه‌شنبه",
+   "Wednesday": "چهارشنبه"
+  },
+  "dialog": {
+   "cancel": "انصراف",
+   "confirm": "تأیید",
+   "done": "انجام شد"
+  },
+  "empty": "هنوز ساعات کاری ثبت نشده است.",
+  "emptySearch": "هیچ ساعات کاری با جستجوی شما مطابقت ندارد.",
+  "errorDescription": "بارگذاری ساعات کاری ممکن نشد. دوباره تلاش کنید.",
+  "errorTitle": "خطایی رخ داد",
+  "heading": "ساعات کاری",
+  "loading": "در حال بارگذاری",
+  "meta": {
+   "description": "مدیریت ساعات کاری هفتگی و ظرفیت هر روز.",
+   "title": "ساعات کاری | کلینیک نفس"
+  },
+  "pagination": {
+   "next": "بعدی",
+   "pageInfo": "صفحه {page} از {totalPages}",
+   "previous": "قبلی",
+   "showing": "نمایش {from} تا {to} از {total}"
+  },
+  "resultsLabel": "{count} ساعات کاری",
+  "retry": "تلاش دوباره",
+  "search": "جستجوی ساعات کاری",
+  "searchPlaceholder": "جستجو بر اساس روز، زمان باز یا بسته‌شدن...",
+  "select": "انتخاب",
+  "selectPage": "انتخاب همه ساعات کاری این صفحه",
+  "selectRow": "انتخاب این ردیف ساعات کاری",
+  "status": "وضعیت",
+  "statusAll": "همه",
+  "statuses": {
+   "active": "فعال",
+   "inactive": "غیرفعال"
+  },
+  "table": {
+   "capacity": "ظرفیت",
+   "day": "روز",
+   "hours": "ساعت کاری",
+   "status": "وضعیت"
+  },
+  "toast": {
+   "deleted": "ساعات کاری حذف شد",
+   "error": "خطایی رخ داد",
+   "success": "ساعات کاری به‌روزرسانی شد",
    "syncing": "در حال همگام‌سازی..."
   }
  },
@@ -953,9 +1040,10 @@
    "users": "کاربران",
    "viewSite": "مشاهده وب‌سایت",
    "workspace": "فضای کاری",
-   "email": "ایمیل"
-  },
-  "topbar": {
+    "email": "ایمیل",
+    "workingHours": "ساعات کاری"
+   },
+   "topbar": {
    "access": "مدیریت دسترسی",
    "breadcrumbLabel": "مسیر داشبورد",
    "dashboard": "داشبورد",
@@ -3307,6 +3395,99 @@
    "created": "نوبت ایجاد شد.",
    "error": "ذخیره نوبت انجام نشد.",
    "updated": "نوبت به‌روزرسانی شد."
+  }
+ },
+ "workingHoursHub": {
+  "generator": {
+   "auto": "ساخت خودکار نوبت‌ها",
+   "days": "{count} روز آینده",
+   "duration": "مدت نوبت",
+   "interval": "فاصله نوبت‌ها",
+   "minutes": "{count} دقیقه",
+   "off": "خاموش",
+   "on": "روشن",
+   "readOnly": "فقط‌خواندنی · تنظیم در تنظیمات",
+   "timezone": "منطقه زمانی",
+   "title": "مولد نوبت‌ها",
+   "window": "بازه تولید"
+  },
+  "heading": "ساعات کاری",
+  "manage": {
+   "description": "ساعات باز بودن و ظرفیت هر روز هفته را مشخص کنید.",
+   "featureCapacity": "ظرفیت روزانه",
+   "featureHours": "زمان باز / بسته",
+   "featureToggle": "کلید فعال‌سازی",
+   "name": "برنامه هفتگی",
+   "title": "برنامه هفتگی"
+  },
+  "manageAdd": "افزودن",
+  "manageManage": "مدیریت",
+  "meta": {
+   "description": "نمای کلی ساعات کاری و تنظیمات تولید نوبت.",
+   "title": "ساعات کاری | کلینیک نفس"
+  },
+  "performance": {
+   "title": "نمای کلی"
+  },
+  "stats": {
+   "capacity": "ظرفیت پیش‌فرض",
+   "closedDays": "روزهای تعطیل",
+   "openDays": "روزهای باز",
+   "weeklyHours": "دقیقه در هفته"
+  },
+  "subtitle": "ساعات کاری مسیر تولید خودکار نوبت‌های در دسترس را تعیین می‌کند."
+ },
+ "workingHoursForm": {
+  "errors": {
+   "closesBeforeOpens": "زمان بسته شدن باید بعد از زمان باز شدن باشد."
+  },
+  "fields": {
+   "capacity": {
+    "hint": "نوبت‌های ساخته‌شده برای این روز از این ظرفیت استفاده می‌کنند",
+    "label": "ظرفیت"
+   },
+   "closes": {
+    "label": "زمان بسته شدن",
+    "placeholder": "HH:MM"
+   },
+   "day": {
+    "label": "روز",
+    "placeholder": "یک روز را انتخاب کنید…"
+   },
+   "displayOrder": {
+    "hint": "اعداد کوچک‌تر اول نمایش داده می‌شوند",
+    "label": "ترتیب نمایش"
+   },
+   "isActive": {
+    "hintOff": "بسته — برای این روز نوبتی ساخته نمی‌شود.",
+    "hintOn": "باز — برای این روز نوبت ساخته می‌شود.",
+    "label": "فعال"
+   },
+   "opens": {
+    "label": "زمان باز شدن",
+    "placeholder": "HH:MM"
+   }
+  },
+  "nav": {
+   "stepOf": "مرحله {current} از {total}"
+  },
+  "steps": {
+   "details": {
+    "name": "جزئیات"
+   }
+  },
+  "submit": {
+   "create": "افزودن ساعات کاری",
+   "save": "ذخیره تغییرات"
+  },
+  "title": {
+   "add": "افزودن ساعات کاری",
+   "edit": "ویرایش ساعات کاری"
+  },
+  "toast": {
+   "created": "ساعات کاری افزوده شد.",
+   "error": "ذخیره ساعات کاری انجام نشد.",
+   "updated": "ساعات کاری به‌روزرسانی شد."
   }
  },
  "emailAdmin": {

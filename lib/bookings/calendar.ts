@@ -123,6 +123,8 @@ export type OpeningHourRow = {
   readonly days: readonly string[];
   readonly opens: string;
   readonly closes: string;
+  /** Default seat capacity for this window (used by the slot generator). */
+  readonly capacity?: number;
 };
 
 const EN_WEEKDAYS = [

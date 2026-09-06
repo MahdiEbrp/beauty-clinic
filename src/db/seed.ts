@@ -19,6 +19,7 @@ import { seedLanding } from "./seed/landing";
 import { seedFakeProviders } from "./seed/fake-providers";
 import { seedGmailProviderFromEnv } from "./seed/gmail-provider";
 import { seedRules } from "./seed/rules";
+import { seedWorkingHours } from "./seed/working-hours";
 import {
   ROLE_DEFS,
   PERMISSION_DEFS,
@@ -129,6 +130,7 @@ async function seed(): Promise<void> {
   await seedCareGuides();
   await seedRules();
   await seedLanding();
+  await seedWorkingHours();
   await seedFakeProviders();
   await seedGmailProviderFromEnv();
 

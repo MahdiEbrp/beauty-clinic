@@ -7,7 +7,7 @@ import {
   usePathname,
   useRouter,
 } from "@/src/i18n/navigation";
-import { CalendarClock, CalendarRange, Files, HeartPulse, LayoutDashboard, LayoutTemplate, Mail, MessageSquareText, Settings, Shield, Sparkles, Users } from "lucide-react";
+import { CalendarClock, CalendarRange, Clock, Files, HeartPulse, LayoutDashboard, LayoutTemplate, Mail, MessageSquareText, Settings, Shield, Sparkles, Users } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { SidebarNavItem } from "@/components/dashboard/SidebarSections";
@@ -56,6 +56,7 @@ export default function DashboardShell({
       ? [
           { key: "bookings", href: "/dashboard/bookings", icon: CalendarClock },
           { key: "slots", href: "/dashboard/slots", icon: CalendarRange },
+          { key: "workingHours", href: "/dashboard/working-hours", icon: Clock },
         ]
       : []),
     // Client communication and contacts.

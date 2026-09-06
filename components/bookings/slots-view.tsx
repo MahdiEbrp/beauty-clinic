@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { useRouter } from "@/src/i18n/navigation";
 import type { AuthUser } from "@/lib/auth/dal";
 import type {
@@ -21,6 +23,25 @@ export function SlotsListView({
 }) {
   const router = useRouter();
   const t = useTranslations();
+  const [generating, setGenerating] = useState(false);
+
+  const generateAll = async () => {
+    setGenerating(true);
+    try {
+      const res = await fetch("/api/v1/bookings/slots/generate", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("generate_failed");
+      const result = (await res.json()) as { created: number };
+      toast.success(t("bookingSlots.toast.generated", { count: result.created }));
+      router.refresh();
+    } catch {
+      toast.error(t("bookingSlots.toast.generateError"));
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   const config: AdminListConfig<SlotAdminRow> = {
     namespace: "bookingSlots",
@@ -28,6 +49,12 @@ export function SlotsListView({
     backHref: "/dashboard/bookings",
     addHref: "/dashboard/slots/add",
     listUrl: "/api/v1/bookings/slots/list",
+    headerAction: {
+      labelKey: "bookingSlots.actions.generate",
+      icon: "sparkles",
+      onClick: generateAll,
+      busy: generating,
+    },
     permissions: {
       read: "appointments.read",
       write: "appointments.write",

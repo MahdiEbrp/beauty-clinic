@@ -11,6 +11,7 @@ import {
   text,
   time,
   timestamp,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 
@@ -46,6 +47,12 @@ export const bookingSlots = pgTable(
   },
   (table) => [
     index("booking_slots_date_active_idx").on(table.slotDate, table.isActive),
+    /**
+     * One slot per (date, start_time) — the slot auto-generator relies on this
+     * identity to stay idempotent, and it prevents parallel writers (cron vs.
+     * manual creation) from ever double-inserting.
+     */
+    uniqueIndex("booking_slots_date_start_idx").on(table.slotDate, table.startTime),
   ],
 );
 

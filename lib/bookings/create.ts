@@ -2,6 +2,7 @@ import { and, eq, gte, lte, ne, sql } from "drizzle-orm";
 
 import { ApiError } from "@/lib/api/errors";
 import { loadSystemSettingsMap } from "@/lib/settings/loader";
+import { loadWorkingHours } from "@/lib/bookings/working-hours";
 import { db } from "@/src/db";
 import { bookings, bookingSlotServices, bookingSlots } from "@/src/db/schema";
 import type { Locale } from "@/lib/services/types";
@@ -79,7 +80,7 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
 }> {
   const settings = await loadSystemSettingsMap();
   const deposit = toMoney(settings.get("booking.price"));
-  const openingHours = settings.get("clinic.opening_hours");
+  const openingHours = await loadWorkingHours();
   const now = Date.now();
   const groupRef = generateGroupRef();
 

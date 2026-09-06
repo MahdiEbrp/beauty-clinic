@@ -92,18 +92,12 @@ export const SYSTEM_SETTINGS: SettingInput[] = [
   { key: "contact.map_neshan", value: "https://nshn.ir/rbvg0k2xLMq4", type: "string" },
   // eslint-disable-next-line no-secrets/no-secrets -- public Google Maps search URL, not a secret
   { key: "contact.map_google", value: "https://www.google.com/maps/search/?api=1&query=Andisheh+Phase+2", type: "string" },
-  {
-    key: "clinic.opening_hours",
-    value: [
-      {
-        days: ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday"],
-        opens: "09:00",
-        closes: "19:00",
-      },
-      { days: ["Thursday"], opens: "09:00", closes: "14:00" },
-    ],
-    type: "array",
-  },
+  { key: "booking.timezone", value: "Asia/Tehran", type: "string" },
+  { key: "booking.slot_auto", value: false, type: "boolean" },
+  { key: "booking.slot_interval_min", value: 30, type: "number" },
+  { key: "booking.slot_duration_min", value: 30, type: "number" },
+  { key: "booking.slot_default_capacity", value: 1, type: "number" },
+  { key: "booking.slot_window_days", value: 30, type: "number" },
   { key: "booking.min_cancel_hours", value: 24, type: "number" },
   { key: "booking.price", value: 100000, type: "number" },
   {

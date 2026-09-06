@@ -456,7 +456,8 @@
    "delete": "Delete",
    "deleteConfirm": "Delete this slot?",
    "edit": "Edit",
-   "menu": "Actions"
+   "menu": "Actions",
+   "generate": "Generate all slots"
   },
   "add": "Add Slot",
   "allServices": "All services",
@@ -525,6 +526,92 @@
    "deleted": "Slot deleted",
    "error": "Something went wrong",
    "success": "Slot updated",
+   "syncing": "Syncing...",
+   "generated": "{count} slots generated",
+   "generateError": "Could not generate slots"
+  }
+ },
+ "workingHours": {
+  "actions": {
+   "activate": "Activate",
+   "deactivate": "Deactivate",
+   "delete": "Delete",
+   "deleteConfirm": "Delete these working hours?",
+   "edit": "Edit",
+   "menu": "Actions"
+  },
+  "add": "Add Working Hours",
+  "bulk": {
+   "activate": "Activate",
+   "apply": "Apply",
+   "clear": "Clear",
+   "confirmDescription": "This action applies to all selected working hours.",
+   "confirmTitle": "{action} the selected working hours?",
+   "deactivate": "Deactivate",
+   "delete": "Delete",
+   "pageSelected": "Page selected",
+   "resultDescription": "{count} working-hours rows updated successfully",
+   "resultPartialDescription": "{count} updated, {failed} failed",
+   "resultPartialTitle": "Partly completed",
+   "resultTitle": "Bulk action completed",
+   "selectFiltered": "Select all {count} filtered",
+   "selected": "{count} selected",
+   "selectedFiltered": "{count} selected (filtered)"
+  },
+  "clearFilters": "Clear filters",
+  "days": {
+   "Friday": "Friday",
+   "Monday": "Monday",
+   "Saturday": "Saturday",
+   "Sunday": "Sunday",
+   "Thursday": "Thursday",
+   "Tuesday": "Tuesday",
+   "Wednesday": "Wednesday"
+  },
+  "dialog": {
+   "cancel": "Cancel",
+   "confirm": "Confirm",
+   "done": "Done"
+  },
+  "empty": "No working hours yet.",
+  "emptySearch": "No working hours match your search.",
+  "errorDescription": "We couldn't load the working hours. Please try again.",
+  "errorTitle": "Something went wrong",
+  "heading": "Working Hours",
+  "loading": "Loading",
+  "meta": {
+   "description": "Manage weekly opening hours and per-day capacity.",
+   "title": "Working Hours | Nafas Beauty Clinic"
+  },
+  "pagination": {
+   "next": "Next",
+   "pageInfo": "Page {page} of {totalPages}",
+   "previous": "Previous",
+   "showing": "Showing {from}–{to} of {total}"
+  },
+  "resultsLabel": "{count} Working Hours",
+  "retry": "Try again",
+  "search": "Search working hours",
+  "searchPlaceholder": "Search by day, open or close time...",
+  "select": "Select",
+  "selectPage": "Select all working hours on this page",
+  "selectRow": "Select this working-hours row",
+  "status": "Status",
+  "statusAll": "All",
+  "statuses": {
+   "active": "Active",
+   "inactive": "Inactive"
+  },
+  "table": {
+   "capacity": "Capacity",
+   "day": "Day",
+   "hours": "Hours",
+   "status": "Status"
+  },
+  "toast": {
+   "deleted": "Working hours deleted",
+   "error": "Something went wrong",
+   "success": "Working hours updated",
    "syncing": "Syncing..."
   }
  },
@@ -953,7 +1040,8 @@
    "users": "Users",
    "viewSite": "View Website",
    "workspace": "Workspace",
-   "email": "Email"
+   "email": "Email",
+   "workingHours": "Working Hours"
   },
   "topbar": {
    "access": "Access management",
@@ -3307,6 +3395,99 @@
    "created": "Slot created.",
    "error": "Could not save the slot.",
    "updated": "Slot updated."
+  }
+ },
+ "workingHoursHub": {
+  "generator": {
+   "auto": "Auto-generate slots",
+   "days": "{count} days ahead",
+   "duration": "Slot duration",
+   "interval": "Slot interval",
+   "minutes": "{count} min",
+   "off": "Off",
+   "on": "On",
+   "readOnly": "Read-only · set in Settings",
+   "timezone": "Timezone",
+   "title": "Slot Generator",
+   "window": "Generation window"
+  },
+  "heading": "Working Hours",
+  "manage": {
+   "description": "Define opening hours and per-day capacity for each weekday.",
+   "featureCapacity": "Per-day Capacity",
+   "featureHours": "Open / Close Times",
+   "featureToggle": "Active Toggle",
+   "name": "Weekly Schedule",
+   "title": "Weekly Schedule"
+  },
+  "manageAdd": "Add Hours",
+  "manageManage": "Manage",
+  "meta": {
+   "description": "Overview of opening hours and slot generation settings.",
+   "title": "Working Hours | Nafas Beauty Clinic"
+  },
+  "performance": {
+   "title": "Overview"
+  },
+  "stats": {
+   "capacity": "Default Capacity",
+   "closedDays": "Closed Days",
+   "openDays": "Open Days",
+   "weeklyHours": "Weekly Minutes"
+  },
+  "subtitle": "Opening hours drive automatic availability-slot generation."
+ },
+ "workingHoursForm": {
+  "errors": {
+   "closesBeforeOpens": "Close time must be after open time."
+  },
+  "fields": {
+   "capacity": {
+    "hint": "Slots created for this day use this capacity",
+    "label": "Capacity"
+   },
+   "closes": {
+    "label": "Close Time",
+    "placeholder": "HH:MM"
+   },
+   "day": {
+    "label": "Day",
+    "placeholder": "Select a day…"
+   },
+   "displayOrder": {
+    "hint": "Lower numbers appear first",
+    "label": "Sort Order"
+   },
+   "isActive": {
+    "hintOff": "Closed — no slots will be generated for this day.",
+    "hintOn": "Open — slots will be generated for this day.",
+    "label": "Active"
+   },
+   "opens": {
+    "label": "Open Time",
+    "placeholder": "HH:MM"
+   }
+  },
+  "nav": {
+   "stepOf": "Step {current} of {total}"
+  },
+  "steps": {
+   "details": {
+    "name": "Details"
+   }
+  },
+  "submit": {
+   "create": "Add Working Hours",
+   "save": "Save Changes"
+  },
+  "title": {
+   "add": "Add Working Hours",
+   "edit": "Edit Working Hours"
+  },
+  "toast": {
+   "created": "Working hours added.",
+   "error": "Could not save the working hours.",
+   "updated": "Working hours updated."
   }
  },
  "emailAdmin": {

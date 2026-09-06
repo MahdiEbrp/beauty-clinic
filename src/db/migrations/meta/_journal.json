@@ -183,6 +183,20 @@
       "when": 1788353758875,
       "tag": "0025_flaky_silver_sable",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1788593746293,
+      "tag": "0026_right_shockwave",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1788666355972,
+      "tag": "0027_young_genesis",
+      "breakpoints": true
     }
   ]
 }

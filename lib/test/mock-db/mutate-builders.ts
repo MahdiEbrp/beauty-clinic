@@ -15,6 +15,7 @@ export class InsertBuilder implements PromiseLike<Row[]> {
     targetWhere?: unknown;
     set?: Record<string, unknown>;
   };
+  private conflictNothing = false;
 
   constructor(
     private readonly db: MockDbInternal,
@@ -32,6 +33,16 @@ export class InsertBuilder implements PromiseLike<Row[]> {
     set?: Record<string, unknown>;
   }): this {
     this.conflict = conflict;
+    return this;
+  }
+
+  /** Skips rows that collide with the conflict target (unique index). */
+  onConflictDoNothing(conflict?: {
+    target?: unknown[];
+    targetWhere?: unknown;
+  }): this {
+    this.conflict = conflict;
+    this.conflictNothing = true;
     return this;
   }
 
@@ -65,6 +76,7 @@ export class InsertBuilder implements PromiseLike<Row[]> {
 
         const existing = this.findConflictRow(name, clean);
         if (existing && this.conflict) {
+          if (this.conflictNothing) continue;
           const row = { ...existing };
           for (const [k, v] of Object.entries(this.conflict.set ?? {})) {
             row[k] = v;
@@ -87,7 +99,10 @@ export class InsertBuilder implements PromiseLike<Row[]> {
   ): Row | undefined {
     const conflict = this.conflict;
     if (!conflict) return undefined;
-    const target = (conflict.target ?? []);
+    // Drizzle accepts a single column or an array as the conflict target.
+    const target = (
+      Array.isArray(conflict.target) ? conflict.target : [conflict.target]
+    ).filter(Boolean);
     const rows = this.db.data[table] ?? [];
     return rows.find((row) => {
       for (const column of target) {
@@ -109,6 +124,7 @@ export class InsertBuilder implements PromiseLike<Row[]> {
 export class UpdateBuilder implements PromiseLike<void> {
   private setValues?: Record<string, unknown>;
   private whereClause?: unknown;
+  private withReturning = false;
 
   constructor(
     private readonly db: MockDbInternal,
@@ -125,11 +141,16 @@ export class UpdateBuilder implements PromiseLike<void> {
     return this;
   }
 
+  returning(): this {
+    this.withReturning = true;
+    return this;
+  }
+
   then<TResult1 = void, TResult2 = never>(
     onfulfilled?: ((value: void) => TResult1 | PromiseLike<TResult1>) | null,
     onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null,
   ): PromiseLike<TResult1 | TResult2> {
-    const run = (): Promise<void> => {
+    const run = (): Row[] => {
       const name = tableName(this.table);
       this.db.log.push({
         type: "update",
@@ -138,17 +159,25 @@ export class UpdateBuilder implements PromiseLike<void> {
         values: this.setValues,
       });
       const rows = this.db.data[name] ?? [];
+      const updated: Row[] = [];
       for (const row of rows) {
-        if (evalWhere(this.whereClause, row)) Object.assign(row, this.setValues);
+        if (evalWhere(this.whereClause, row)) {
+          Object.assign(row, this.setValues);
+          updated.push({ ...row });
+        }
       }
-      return Promise.resolve();
+      return updated;
     };
-    return run().then(onfulfilled, onrejected);
+    return Promise.resolve()
+      .then(run)
+      .then((rows) => (this.withReturning ? rows : undefined) as unknown as void)
+      .then(onfulfilled, onrejected);
   }
 }
 
 export class DeleteBuilder implements PromiseLike<void> {
   private whereClause?: unknown;
+  private withReturning = false;
 
   constructor(
     private readonly db: MockDbInternal,
@@ -160,11 +189,16 @@ export class DeleteBuilder implements PromiseLike<void> {
     return this;
   }
 
+  returning(): this {
+    this.withReturning = true;
+    return this;
+  }
+
   then<TResult1 = void, TResult2 = never>(
     onfulfilled?: ((value: void) => TResult1 | PromiseLike<TResult1>) | null,
     onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null,
   ): PromiseLike<TResult1 | TResult2> {
-    const run = (): Promise<void> => {
+    const run = (): Row[] => {
       const name = tableName(this.table);
       this.db.log.push({
         type: "delete",
@@ -172,12 +206,20 @@ export class DeleteBuilder implements PromiseLike<void> {
         sql: this.whereClause ? sqlText(this.whereClause) : undefined,
       });
       const rows = this.db.data[name] ?? [];
-      const remaining = rows.filter((r) => !evalWhere(this.whereClause, r));
+      const deleted = rows
+        .filter((r) => (this.whereClause ? evalWhere(this.whereClause, r) : true))
+        .map((r) => ({ ...r }));
+      const remaining = rows.filter((r) =>
+        this.whereClause ? !evalWhere(this.whereClause, r) : false,
+      );
       if (remaining.length > 0 || rows.length > 0) {
         this.db.data[name] = remaining;
       }
-      return Promise.resolve();
+      return deleted;
     };
-    return run().then(onfulfilled, onrejected);
+    return Promise.resolve()
+      .then(run)
+      .then((rows) => (this.withReturning ? rows : undefined) as unknown as void)
+      .then(onfulfilled, onrejected);
   }
 }

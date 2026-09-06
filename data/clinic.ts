@@ -1,6 +1,11 @@
 import "server-only";
 
 import { loadSocialLinksDataset, loadSystemSettingsDataset } from "@/lib/settings/loader";
+import {
+  DEFAULT_CLINIC_TIMEZONE,
+  loadWorkingHours,
+  type WorkingHoursGroup,
+} from "@/lib/bookings/working-hours";
 import type { Locale } from "@/lib/services/types";
 
 export type SocialLinkData = {
@@ -30,11 +35,8 @@ export type ClinicData = {
     addressRegion: string;
     addressCountry: string;
   };
-  openingHours: readonly {
-    readonly days: readonly string[];
-    readonly opens: string;
-    readonly closes: string;
-  }[];
+  openingHours: readonly WorkingHoursGroup[];
+  timezone: string;
   social: SocialLinkData[];
   maps: {
     neshan: string;
@@ -73,9 +75,11 @@ const DEFAULT_CLINIC: Omit<ClinicData, "content"> = {
       days: ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday"],
       opens: "09:00",
       closes: "19:00",
+      capacity: 1,
     },
-    { days: ["Thursday"], opens: "09:00", closes: "14:00" },
+    { days: ["Thursday"], opens: "09:00", closes: "14:00", capacity: 1 },
   ],
+  timezone: DEFAULT_CLINIC_TIMEZONE,
   social: [
     { url: "https://rubika.ir/nafasclinic", imageUrl: null, label: "روبیکا" },
     { url: "https://ble.ir/nafasclinic", imageUrl: null, label: "بله" },
@@ -90,23 +94,6 @@ const DEFAULT_CLINIC: Omit<ClinicData, "content"> = {
   minCancelHours: 24,
   defaultDeposit: 100000,
 };
-
-type OpeningSlot = {
-  days: string[];
-  opens: string;
-  closes: string;
-};
-
-function isOpeningSlot(value: unknown): value is OpeningSlot {
-  if (typeof value !== "object" || value === null) return false;
-  const slot = value as Record<string, unknown>;
-  return (
-    Array.isArray(slot.days) &&
-    slot.days.every((day) => typeof day === "string") &&
-    typeof slot.opens === "string" &&
-    typeof slot.closes === "string"
-  );
-}
 
 function localized(
   translations: { fa?: unknown; en?: unknown } | undefined,
@@ -128,9 +115,10 @@ function numberSetting(value: unknown, fallback: number): number {
 
 /** Resolves the clinic-wide public data from cached system settings + social links. */
 export async function getClinicData(locale: Locale): Promise<ClinicData> {
-  const [settingsRows, socialRows] = await Promise.all([
+  const [settingsRows, socialRows, openingHours] = await Promise.all([
     loadSystemSettingsDataset(),
     loadSocialLinksDataset(),
+    loadWorkingHours(),
   ]);
 
   const byKey = new Map(settingsRows.map((row) => [row.key, row]));
@@ -140,13 +128,8 @@ export async function getClinicData(locale: Locale): Promise<ClinicData> {
     return text(localized(row?.translations, row?.value, locale), fallback);
   };
 
-  const openingHoursSetting = byKey.get("clinic.opening_hours")?.value;
-  const openingHours =
-    Array.isArray(openingHoursSetting) &&
-    openingHoursSetting.length > 0 &&
-    openingHoursSetting.every(isOpeningSlot)
-      ? openingHoursSetting
-      : DEFAULT_CLINIC.openingHours;
+  const timezoneSetting = byKey.get("booking.timezone")?.value;
+  const timezone = typeof timezoneSetting === "string" && timezoneSetting.trim() ? timezoneSetting : DEFAULT_CLINIC_TIMEZONE;
 
   const social = socialRows
     .filter((row) => row.isActive)
@@ -165,6 +148,7 @@ export async function getClinicData(locale: Locale): Promise<ClinicData> {
       addressCountry: s("contact.country", DEFAULT_CLINIC.address.addressCountry),
     },
     openingHours,
+    timezone,
     social,
     maps: {
       neshan: s("contact.map_neshan", DEFAULT_CLINIC.maps.neshan),

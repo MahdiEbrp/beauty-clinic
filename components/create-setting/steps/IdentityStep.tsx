@@ -52,7 +52,7 @@ export default function IdentityStep({
               value={keyValue}
               onChange={(event) => onKeyChange(event.target.value.toLowerCase().replace(/[^a-z0-9_.]/g, ""))}
               disabled={!editableKey}
-              placeholder="clinic.opening_hours"
+              placeholder="booking.timezone"
               className={inputClass(Boolean(errors.key))}
             />
           </Field>

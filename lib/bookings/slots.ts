@@ -3,6 +3,7 @@ import { and, eq, gte, inArray, lte, ne, or, sql } from "drizzle-orm";
 import { ApiError } from "@/lib/api/errors";
 import { db } from "@/src/db";
 import { bookingSlotServices, bookings, bookingSlots } from "@/src/db/schema";
+import { existingSlotKeys, requireSlot, replaceSlotServices } from "./slot-support";
 import { computeSlotStatus, type SlotStatus } from "./slot-status";
 
 export type SlotSummary = {
@@ -157,10 +158,22 @@ export async function createSlots(
     }
   }
 
+  // The (slot_date, start_time) unique index makes duplicates impossible; skip
+  // any that already exist and create the rest (idempotent, like the generator).
+  const existing = await existingSlotKeys(input);
+  const toCreate = input.filter((item) => {
+    const key = `${item.slotDate}|${item.startTime}`;
+    if (existing.has(key)) return false;
+    existing.add(key);
+    return true;
+  });
+
+  if (toCreate.length === 0) return [];
+
   const rows = await db
     .insert(bookingSlots)
     .values(
-      input.map((i) => ({
+      toCreate.map((i) => ({
         slotDate: i.slotDate,
         startTime: i.startTime,
         endTime: i.endTime,
@@ -171,13 +184,14 @@ export async function createSlots(
     .returning();
 
   // One bulk insert per unique link set keeps queries low even for batches.
-  const links = rows.flatMap((row, index) =>
-    (input[index]?.serviceIds ?? []).map((serviceId) => ({
-      slotId: row.id,
+  const links = toCreate.flatMap((item, index) =>
+    (item.serviceIds ?? []).map((serviceId) => ({
+      slotId: rows[index]?.id,
       serviceId,
     })),
   );
-  if (links.length > 0) await db.insert(bookingSlotServices).values(links);
+  const validLinks = links.filter((l): l is { slotId: string; serviceId: string } => Boolean(l.slotId));
+  if (validLinks.length > 0) await db.insert(bookingSlotServices).values(validLinks);
 
   const ids = rows.map((r) => r.id);
   const [counts, serviceMap] = await Promise.all([
@@ -188,19 +202,9 @@ export async function createSlots(
     toSummary(
       row,
       counts.get(row.id) ?? 0,
-      serviceMap.get(row.id) ?? input[index]?.serviceIds ?? [],
+      serviceMap.get(row.id) ?? toCreate[index]?.serviceIds ?? [],
     ),
   );
-}
-
-async function requireSlot(id: string): Promise<SlotRow> {
-  const [row] = await db
-    .select()
-    .from(bookingSlots)
-    .where(eq(bookingSlots.id, id))
-    .limit(1);
-  if (!row) throw new ApiError(404, "SLOT_NOT_FOUND", "Slot not found.");
-  return row;
 }
 
 export async function getSlot(id: string): Promise<SlotSummary> {
@@ -213,15 +217,6 @@ export async function getSlot(id: string): Promise<SlotSummary> {
 }
 
 /** Replaces the slot ↔ service links wholesale (delete + insert). */
-async function replaceSlotServices(slotId: string, serviceIds: string[]) {
-  await db.delete(bookingSlotServices).where(eq(bookingSlotServices.slotId, slotId));
-  if (serviceIds.length > 0) {
-    await db.insert(bookingSlotServices).values(
-      serviceIds.map((serviceId) => ({ slotId, serviceId })),
-    );
-  }
-}
-
 export async function updateSlot(
   id: string,
   patch: {
@@ -239,6 +234,30 @@ export async function updateSlot(
   const nextStart = patch.startTime ?? existing.startTime;
   if (nextEnd <= nextStart) {
     throw new ApiError(400, "INVALID_SLOT_TIME", "End time must be after start time.");
+  }
+
+  // Moving a slot onto an already-taken (date, start_time) is a clean 409
+  // instead of a unique-violation 500.
+  if (patch.slotDate || patch.startTime) {
+    const nextDate = patch.slotDate ?? existing.slotDate;
+    const [collision] = await db
+      .select({ id: bookingSlots.id })
+      .from(bookingSlots)
+      .where(
+        and(
+          eq(bookingSlots.slotDate, nextDate),
+          eq(bookingSlots.startTime, nextStart),
+          ne(bookingSlots.id, id),
+        ),
+      )
+      .limit(1);
+    if (collision) {
+      throw new ApiError(
+        409,
+        "SLOT_EXISTS",
+        "A slot already exists at this date and time.",
+      );
+    }
   }
 
   const { serviceIds, ...rest } = patch;

@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { asTranslate } from "@/src/i18n/message-key";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Loader2, Plus, RefreshCw, Sparkles } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
 import { useAdminListContext } from "./context";
 
@@ -10,6 +10,7 @@ export function AdminListHeader<T extends { id: string }>() {
   const t = asTranslate(useTranslations());
     const ctx = useAdminListContext<T>();
   const { data, canWrite, canManage, config, selectionMode, toggleSelectionMode } = ctx;
+  const action = config.headerAction;
   return (
     <div className="space-y-3">
       <Link
@@ -29,6 +30,23 @@ export function AdminListHeader<T extends { id: string }>() {
           </span>
         </div>
         <div className="flex items-center gap-2 shrink-0">
+          {canManage && action && (
+            <button
+              type="button"
+              onClick={() => void action.onClick()}
+              disabled={action.busy}
+              className="hidden shrink-0 min-h-11 items-center justify-center gap-2 rounded-pill border border-border-interactive bg-surface-tertiary px-4 py-2.5 text-dash-body-sm font-bold text-accent transition hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-50 sm:inline-flex"
+            >
+              {action.busy ? (
+                <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+              ) : action.icon === "refresh" ? (
+                <RefreshCw className="size-4" aria-hidden="true" />
+              ) : (
+                <Sparkles className="size-4" aria-hidden="true" />
+              )}
+              <span>{t(action.labelKey)}</span>
+            </button>
+          )}
           {canWrite && (
             <Link
               href={config.addHref}

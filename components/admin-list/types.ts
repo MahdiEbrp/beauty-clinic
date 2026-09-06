@@ -79,5 +79,12 @@ export interface AdminListConfig<T extends { id: string }> {
   itemUrl: (row: T) => string;
   deleteRow: (row: T) => Promise<void>;
   patchRow: (row: T, patch: Record<string, unknown>) => Promise<void>;
+  /** Optional extra button rendered in the header (e.g. "Generate all slots"). */
+  headerAction?: {
+    labelKey: MessageKey;
+    icon: "sparkles" | "refresh";
+    onClick: () => void | Promise<void>;
+    busy?: boolean;
+  };
   perPage?: number;
 }
