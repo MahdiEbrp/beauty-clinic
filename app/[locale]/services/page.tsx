@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 import ServicesContent from "@/components/ServicesContent";
 
 export async function generateMetadata({
@@ -15,10 +15,10 @@ export async function generateMetadata({
     title: t("meta.title"),
     description: t("meta.description"),
     alternates: {
-      canonical: `${siteUrl}/${locale}/services`,
+      canonical: pageUrl(locale, "/services"),
       languages: {
-        fa: `${siteUrl}/fa/services`,
-        en: `${siteUrl}/en/services`,
+        fa: pageUrl("fa", "/services"),
+        en: pageUrl("en", "/services"),
       },
     },
     openGraph: {

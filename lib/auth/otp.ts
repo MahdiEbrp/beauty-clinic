@@ -2,8 +2,9 @@ import "server-only";
 
 import { createHash, randomInt, timingSafeEqual } from "node:crypto";
 
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, isNull, sql } from "drizzle-orm";
 
+import { ApiError } from "@/lib/api/errors";
 import { db } from "@/src/db";
 import { otpCodes, users } from "@/src/db/schema";
 import type { OtpChannel } from "@/src/db/schema";
@@ -72,37 +73,47 @@ export type IssuedOtp = {
 
 /**
  * Invalidates the user's previous active login code and issues a fresh one.
- * The plaintext code is returned once — only its hash is stored.
+ * Race-safe via the partial unique index `otp_codes_login_active_one_per_user`
+ * (concurrent issues consume each other's rows and retry until one wins).
  */
 export async function issueLoginOtp(
   userId: string,
   channel: OtpChannel,
 ): Promise<IssuedOtp> {
-  await db
-    .update(otpCodes)
-    .set({ consumedAt: new Date() })
-    .where(
-      and(
-        eq(otpCodes.userId, userId),
-        eq(otpCodes.purpose, "login"),
-        isNull(otpCodes.consumedAt),
-      ),
-    );
-
   const code = generateOtpCode();
   const now = Date.now();
   const expiresAt = new Date(now + OTP_TTL_MS);
 
-  await db.insert(otpCodes).values({
-    userId,
-    purpose: "login",
-    channel,
-    codeHash: hashOtpCode(code),
-    expiresAt,
-    lastSentAt: new Date(now),
-  });
+  for (let attempt = 0; attempt < 5; attempt++) {
+    await db
+      .update(otpCodes)
+      .set({ consumedAt: new Date() })
+      .where(
+        and(eq(otpCodes.userId, userId), eq(otpCodes.purpose, "login"), isNull(otpCodes.consumedAt)),
+      );
 
-  return { code, expiresAt, resendAt: new Date(now + OTP_RESEND_COOLDOWN_MS) };
+    const [row] = await db
+      .insert(otpCodes)
+      .values({
+        userId,
+        purpose: "login",
+        channel,
+        codeHash: hashOtpCode(code),
+        expiresAt,
+        lastSentAt: new Date(now),
+      })
+      .onConflictDoNothing({
+        target: otpCodes.userId,
+        where: sql`${otpCodes.purpose} = 'login' AND ${otpCodes.consumedAt} IS NULL`,
+      })
+      .returning({ id: otpCodes.id });
+
+    if (row) {
+      return { code, expiresAt, resendAt: new Date(now + OTP_RESEND_COOLDOWN_MS) };
+    }
+  }
+
+  throw new ApiError(503, "OTP_CONTENTION", "Could not issue a login code right now. Please try again.");
 }
 
 export type VerifyLoginOtpResult =
@@ -130,11 +141,7 @@ async function findActiveLoginCode(userId: string) {
     .select()
     .from(otpCodes)
     .where(
-      and(
-        eq(otpCodes.userId, userId),
-        eq(otpCodes.purpose, "login"),
-        isNull(otpCodes.consumedAt),
-      ),
+      and(eq(otpCodes.userId, userId), eq(otpCodes.purpose, "login"), isNull(otpCodes.consumedAt)),
     )
     .orderBy(desc(otpCodes.createdAt))
     .limit(1);
@@ -165,19 +172,28 @@ export async function verifyLoginOtp(
   const codeRow = await findActiveLoginCode(user.id);
   if (!codeRow) return { ok: false, reason: "NO_CODE" };
   if (codeRow.expiresAt.getTime() <= Date.now()) {
-    await db
-      .update(otpCodes)
-      .set({ consumedAt: new Date() })
-      .where(eq(otpCodes.id, codeRow.id));
+    await db.update(otpCodes).set({ consumedAt: new Date() }).where(eq(otpCodes.id, codeRow.id));
     return { ok: false, reason: "CODE_EXPIRED" };
   }
 
   const valid = safeEqual(hashOtpCode(code), codeRow.codeHash);
   if (!valid) {
-    const codeAttempts = codeRow.attempts + 1;
-    const userAttempts = user.failedLoginAttempts + 1;
-    const consumedAt =
-      codeAttempts >= OTP_MAX_VERIFY_ATTEMPTS ? new Date() : null;
+    // Atomic increments: concurrent wrong guesses must not lose updates.
+    const [codeOut] = await db
+      .update(otpCodes)
+      .set({ attempts: sql`${otpCodes.attempts} + 1` })
+      .where(eq(otpCodes.id, codeRow.id))
+      .returning({ attempts: otpCodes.attempts });
+
+    const [userOut] = await db
+      .update(users)
+      .set({ failedLoginAttempts: sql`${users.failedLoginAttempts} + 1` })
+      .where(eq(users.id, user.id))
+      .returning({ failedLoginAttempts: users.failedLoginAttempts });
+
+    const codeAttempts = codeOut?.attempts ?? codeRow.attempts + 1;
+    const userAttempts = userOut?.failedLoginAttempts ?? user.failedLoginAttempts + 1;
+    const consumedAt = codeAttempts >= OTP_MAX_VERIFY_ATTEMPTS ? new Date() : null;
     const lockedUntil =
       userAttempts >= MAX_FAILED_LOGIN_ATTEMPTS
         ? new Date(Date.now() + LOGIN_LOCKOUT_MS)
@@ -185,14 +201,10 @@ export async function verifyLoginOtp(
 
     await db
       .update(otpCodes)
-      .set({ attempts: codeAttempts, ...(consumedAt ? { consumedAt } : {}) })
+      .set({ ...(consumedAt ? { consumedAt } : {}) })
       .where(eq(otpCodes.id, codeRow.id));
-    await db
-      .update(users)
-      .set({ failedLoginAttempts: userAttempts, lockedUntil })
-      .where(eq(users.id, user.id));
+    await db.update(users).set({ lockedUntil }).where(eq(users.id, user.id));
 
-    // User-level lockout wins over code exhaustion when both happen together.
     if (userAttempts >= MAX_FAILED_LOGIN_ATTEMPTS) {
       return { ok: false, reason: "LOCKED_OUT", retryAfterMs: LOGIN_LOCKOUT_MS };
     }
@@ -206,10 +218,7 @@ export async function verifyLoginOtp(
     };
   }
 
-  await db
-    .update(otpCodes)
-    .set({ consumedAt: new Date() })
-    .where(eq(otpCodes.id, codeRow.id));
+  await db.update(otpCodes).set({ consumedAt: new Date() }).where(eq(otpCodes.id, codeRow.id));
   await db
     .update(users)
     .set({

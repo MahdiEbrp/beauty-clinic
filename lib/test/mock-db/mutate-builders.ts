@@ -1,5 +1,6 @@
 import {
   columnKey,
+  evalAssign,
   evalWhere,
   isColumn,
   sqlText,
@@ -13,6 +14,7 @@ export class InsertBuilder implements PromiseLike<Row[]> {
   private conflict?: {
     target?: unknown[];
     targetWhere?: unknown;
+    where?: unknown;
     set?: Record<string, unknown>;
   };
   private conflictNothing = false;
@@ -30,6 +32,7 @@ export class InsertBuilder implements PromiseLike<Row[]> {
   onConflictDoUpdate(conflict: {
     target?: unknown[];
     targetWhere?: unknown;
+    where?: unknown;
     set?: Record<string, unknown>;
   }): this {
     this.conflict = conflict;
@@ -40,6 +43,7 @@ export class InsertBuilder implements PromiseLike<Row[]> {
   onConflictDoNothing(conflict?: {
     target?: unknown[];
     targetWhere?: unknown;
+    where?: unknown;
   }): this {
     this.conflict = conflict;
     this.conflictNothing = true;
@@ -113,7 +117,8 @@ export class InsertBuilder implements PromiseLike<Row[]> {
           return false;
         }
       }
-      if (conflict.targetWhere && !evalWhere(conflict.targetWhere, row)) {
+      const predicate = conflict.where ?? conflict.targetWhere;
+      if (predicate && !evalWhere(predicate, row)) {
         return false;
       }
       return true;
@@ -162,7 +167,11 @@ export class UpdateBuilder implements PromiseLike<void> {
       const updated: Row[] = [];
       for (const row of rows) {
         if (evalWhere(this.whereClause, row)) {
-          Object.assign(row, this.setValues);
+          const applied: Row = {};
+          for (const [k, v] of Object.entries(this.setValues ?? {})) {
+            applied[k] = evalAssign(v, row);
+          }
+          Object.assign(row, applied);
           updated.push({ ...row });
         }
       }

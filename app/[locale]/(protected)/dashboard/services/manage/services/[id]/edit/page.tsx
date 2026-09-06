@@ -6,7 +6,7 @@ import CreateServiceServiceForm from "@/components/create-service/CreateServiceS
 import { ApiError } from "@/lib/api/errors";
 import { requirePermission } from "@/lib/auth/dal";
 import { getService, listServiceCategoryOptions } from "@/lib/services/service";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/services/manage/services/[id]/edit";
 
@@ -23,10 +23,10 @@ export async function generateMetadata({
     title: t("meta.title", { name: service.title }),
     description: t("meta.description"),
     alternates: {
-      canonical: `${siteUrl}/${locale}${ROUTE.replace("[id]", id)}`,
+      canonical: pageUrl(locale, `${ROUTE.replace("[id]", id)}`),
       languages: {
-        fa: `${siteUrl}/fa${ROUTE.replace("[id]", id)}`,
-        en: `${siteUrl}/en${ROUTE.replace("[id]", id)}`,
+        fa: pageUrl("fa", `${ROUTE.replace("[id]", id)}`),
+        en: pageUrl("en", `${ROUTE.replace("[id]", id)}`),
       },
     },
     robots: { index: false, follow: false },

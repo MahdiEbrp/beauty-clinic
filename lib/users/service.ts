@@ -6,6 +6,7 @@ import { hashPassword } from "@/lib/auth/password";
 import { revokeUserSessions } from "@/lib/auth/session";
 import { db } from "@/src/db";
 import { roles, userRoles, users } from "@/src/db/schema";
+import { assertCanGrantRole, assertNotLastActiveAdmin } from "@/lib/users/guards";
 import type { UserStatusFilter } from "@/lib/validation/user";
 
 export type AdminUser = {
@@ -30,13 +31,17 @@ export type ListUsersResult = {
   totalPages: number;
 };
 
-export async function createUser(input: {
-  fullName: string;
-  email: string;
-  phone: string | null;
-  password: string;
-  roleKey: string;
-}): Promise<{ id: string }> {
+export async function createUser(
+  input: {
+    fullName: string;
+    email: string;
+    phone: string | null;
+    password: string;
+    roleKey: string;
+  },
+  actorPermissions: readonly string[],
+): Promise<{ id: string }> {
+  assertCanGrantRole(actorPermissions, input.roleKey);
   const role = await db.query.roles.findFirst({ where: eq(roles.key, input.roleKey) });
   if (!role) throw new ApiError(400, "INVALID_ROLE", "The selected role does not exist.");
 
@@ -171,6 +176,7 @@ export async function updateUserStatus(
 
   const isActive = patch.isActive ?? existing.isActive;
   const isBanned = patch.isBanned ?? existing.isBanned;
+  if (!isActive || isBanned) await assertNotLastActiveAdmin(userId);
 
   const set: Record<string, unknown> = { isActive, isBanned };
   if (patch.isBanned !== undefined) {
@@ -187,7 +193,15 @@ export async function updateUserStatus(
   }
 }
 
-export async function updateUserRole(userId: string, roleKey: string): Promise<void> {
+export async function updateUserRole(
+  userId: string,
+  roleKey: string,
+  actor: { id: string; permissions: string[] },
+): Promise<void> {
+  if (userId === actor.id) {
+    throw new ApiError(403, "SELF_ROLE_CHANGE", "You cannot change your own role.");
+  }
+  assertCanGrantRole(actor.permissions, roleKey);
   const role = await db.query.roles.findFirst({ where: eq(roles.key, roleKey), columns: { id: true } });
   if (!role) throw new ApiError(400, "INVALID_ROLE", "The selected role does not exist.");
 
@@ -197,6 +211,8 @@ export async function updateUserRole(userId: string, roleKey: string): Promise<v
     .where(and(eq(users.id, userId), isNull(users.deletedAt)))
     .limit(1);
   if (!existing) throw new ApiError(404, "USER_NOT_FOUND", "User not found.");
+
+  if (roleKey !== "admin") await assertNotLastActiveAdmin(userId);
 
   await db.transaction(async (tx) => {
     await tx.delete(userRoles).where(eq(userRoles.userId, userId));
@@ -231,6 +247,7 @@ export async function softDeleteUser(userId: string): Promise<void> {
     .limit(1);
   if (!existing) throw new ApiError(404, "USER_NOT_FOUND", "User not found.");
 
+  await assertNotLastActiveAdmin(userId);
   await db.update(users).set({ deletedAt: new Date() }).where(eq(users.id, userId));
   await revokeUserSessions(userId);
 }

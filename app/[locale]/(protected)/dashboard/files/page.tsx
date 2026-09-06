@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 import { requirePermission } from "@/lib/auth/dal";
 import FilesContent from "@/components/FilesContent";
 
@@ -16,10 +16,10 @@ export async function generateMetadata({
     title: t("meta.title"),
     description: t("meta.description"),
     alternates: {
-      canonical: `${siteUrl}/${locale}/dashboard/files`,
+      canonical: pageUrl(locale, "/dashboard/files"),
       languages: {
-        fa: `${siteUrl}/fa/dashboard/files`,
-        en: `${siteUrl}/en/dashboard/files`,
+        fa: pageUrl("fa", "/dashboard/files"),
+        en: pageUrl("en", "/dashboard/files"),
       },
     },
     robots: { index: false, follow: false },

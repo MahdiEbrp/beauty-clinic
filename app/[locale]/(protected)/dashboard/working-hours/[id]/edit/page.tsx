@@ -9,7 +9,7 @@ import {
 } from "@/components/working-hours/working-hours-form";
 import { requirePermission } from "@/lib/auth/dal";
 import { getWorkingHour } from "@/lib/bookings/working-hours-admin";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/working-hours";
 
@@ -23,10 +23,10 @@ export async function generateMetadata({
   return {
     title: `${t("title.edit")} | Nafas Beauty Clinic`,
     alternates: {
-      canonical: `${siteUrl}/${locale}${ROUTE}/${id}/edit`,
+      canonical: pageUrl(locale, `${ROUTE}/${id}/edit`),
       languages: {
-        fa: `${siteUrl}/fa${ROUTE}/${id}/edit`,
-        en: `${siteUrl}/en${ROUTE}/${id}/edit`,
+        fa: pageUrl("fa", `${ROUTE}/${id}/edit`),
+        en: pageUrl("en", `${ROUTE}/${id}/edit`),
       },
     },
     robots: { index: false, follow: false },

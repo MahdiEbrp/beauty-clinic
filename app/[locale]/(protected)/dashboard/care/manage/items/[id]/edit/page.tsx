@@ -6,7 +6,7 @@ import CreateCareGuideItemForm from "@/components/create-care-guide-item/CreateC
 import { ApiError } from "@/lib/api/errors";
 import { requirePermission } from "@/lib/auth/dal";
 import { getCareGuideItem, listGuideOptions } from "@/lib/services/service";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/care/manage/items";
 
@@ -22,10 +22,10 @@ export async function generateMetadata({
     title: t("metaEdit.title"),
     description: t("metaEdit.description"),
     alternates: {
-      canonical: `${siteUrl}/${locale}${ROUTE}/edit`,
+      canonical: pageUrl(locale, `${ROUTE}/edit`),
       languages: {
-        fa: `${siteUrl}/fa${ROUTE}/edit`,
-        en: `${siteUrl}/en${ROUTE}/edit`,
+        fa: pageUrl("fa", `${ROUTE}/edit`),
+        en: pageUrl("en", `${ROUTE}/edit`),
       },
     },
     robots: { index: false, follow: false },

@@ -6,7 +6,7 @@ import SettingsWizard from "@/components/landing-admin/wizard/SettingsWizard";
 import { ApiError } from "@/lib/api/errors";
 import { requirePermission } from "@/lib/auth/dal";
 import { getLandingSettings } from "@/lib/landing/admin";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/landing/settings";
 
@@ -22,10 +22,10 @@ export async function generateMetadata({
     title: t("metaEdit.title"),
     description: t("metaEdit.description"),
     alternates: {
-      canonical: `${siteUrl}/${locale}${ROUTE}`,
+      canonical: pageUrl(locale, `${ROUTE}`),
       languages: {
-        fa: `${siteUrl}/fa${ROUTE}`,
-        en: `${siteUrl}/en${ROUTE}`,
+        fa: pageUrl("fa", `${ROUTE}`),
+        en: pageUrl("en", `${ROUTE}`),
       },
     },
     robots: { index: false, follow: false },

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { siteUrl, localizedHref } from "@/lib/site";
+import { localizedHref, pageUrl } from "@/lib/site";
 import { getSessionCached } from "@/lib/auth/dal";
 import OtpLoginForm from "@/components/login/OtpLoginForm";
 
@@ -17,10 +17,10 @@ export async function generateMetadata({
     title: t("meta.title"),
     description: t("meta.description"),
     alternates: {
-      canonical: `${siteUrl}/${locale}/login`,
+      canonical: pageUrl(locale, "/login"),
       languages: {
-        fa: `${siteUrl}/fa/login`,
-        en: `${siteUrl}/en/login`,
+        fa: pageUrl("fa", "/login"),
+        en: pageUrl("en", "/login"),
       },
     },
     robots: { index: false, follow: false },

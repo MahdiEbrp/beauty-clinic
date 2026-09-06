@@ -96,6 +96,17 @@ describe("issueLoginOtp", () => {
       codeHash: hashOtpCode(issued.code),
     });
   });
+
+  it("keeps only one active code per user across re-issues", async () => {
+    mockDb.seed("users", [baseUser]);
+    const first = await issueLoginOtp("u1", "sms");
+    const second = await issueLoginOtp("u1", "sms");
+
+    const active = mockDb.data.otp_codes.filter((c) => c.consumedAt === null);
+    expect(active).toHaveLength(1);
+    expect(active[0].codeHash).toBe(hashOtpCode(second.code));
+    expect(first.code).not.toBe(second.code);
+  });
 });
 
 describe("verifyLoginOtp", () => {

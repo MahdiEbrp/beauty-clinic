@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 import { requireAuth, getActiveSessions } from "@/lib/auth/dal";
 import DashboardContent from "@/components/DashboardContent";
 
@@ -16,10 +16,10 @@ export async function generateMetadata({
     title: t("meta.title"),
     description: t("meta.description"),
     alternates: {
-      canonical: `${siteUrl}/${locale}/dashboard`,
+      canonical: pageUrl(locale, "/dashboard"),
       languages: {
-        fa: `${siteUrl}/fa/dashboard`,
-        en: `${siteUrl}/en/dashboard`,
+        fa: pageUrl("fa", "/dashboard"),
+        en: pageUrl("en", "/dashboard"),
       },
     },
     robots: { index: false, follow: false },

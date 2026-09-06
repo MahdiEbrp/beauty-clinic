@@ -6,7 +6,7 @@ import { z } from "zod";
 import { SlotWizard, type SlotEditData } from "@/components/bookings/slot-wizard";
 import { requirePermission } from "@/lib/auth/dal";
 import { getSlot } from "@/lib/bookings/slots";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/slots";
 
@@ -20,10 +20,10 @@ export async function generateMetadata({
   return {
     title: `${t("title.edit")} | Nafas Beauty Clinic`,
     alternates: {
-      canonical: `${siteUrl}/${locale}${ROUTE}/${id}/edit`,
+      canonical: pageUrl(locale, `${ROUTE}/${id}/edit`),
       languages: {
-        fa: `${siteUrl}/fa${ROUTE}/${id}/edit`,
-        en: `${siteUrl}/en${ROUTE}/${id}/edit`,
+        fa: pageUrl("fa", `${ROUTE}/${id}/edit`),
+        en: pageUrl("en", `${ROUTE}/${id}/edit`),
       },
     },
     robots: { index: false, follow: false },

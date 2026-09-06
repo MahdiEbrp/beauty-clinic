@@ -30,7 +30,6 @@ export const POST = withSecurity(
     audit: true,
     notification: {
       entityType: "email_provider",
-      entityId: (ctx) => (ctx.body as { name?: string } | undefined)?.name,
       entityLabel: () => "New email provider created",
       action: "created",
     },

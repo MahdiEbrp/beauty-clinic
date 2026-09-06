@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import CreateCareGuideItemForm from "@/components/create-care-guide-item/CreateCareGuideItemForm";
 import { requirePermission } from "@/lib/auth/dal";
 import { listGuideOptions } from "@/lib/services/service";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/care/manage/items/add";
 
@@ -20,10 +20,10 @@ export async function generateMetadata({
     title: t("meta.title"),
     description: t("meta.description"),
     alternates: {
-      canonical: `${siteUrl}/${locale}${ROUTE}`,
+      canonical: pageUrl(locale, `${ROUTE}`),
       languages: {
-        fa: `${siteUrl}/fa${ROUTE}`,
-        en: `${siteUrl}/en${ROUTE}`,
+        fa: pageUrl("fa", `${ROUTE}`),
+        en: pageUrl("en", `${ROUTE}`),
       },
     },
     robots: { index: false, follow: false },

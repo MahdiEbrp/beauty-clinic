@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { LandingCollectionContent } from "@/components/landing-admin/landing-collection";
 import { requirePermission } from "@/lib/auth/dal";
 import { listCollectionRows } from "@/lib/landing/admin";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/landing/stats";
 
@@ -20,10 +20,10 @@ export async function generateMetadata({
     title: t("collections.stats.metaTitle"),
     description: t("collections.stats.metaDescription"),
     alternates: {
-      canonical: `${siteUrl}/${locale}${ROUTE}`,
+      canonical: pageUrl(locale, `${ROUTE}`),
       languages: {
-        fa: `${siteUrl}/fa${ROUTE}`,
-        en: `${siteUrl}/en${ROUTE}`,
+        fa: pageUrl("fa", `${ROUTE}`),
+        en: pageUrl("en", `${ROUTE}`),
       },
     },
     robots: { index: false, follow: false },

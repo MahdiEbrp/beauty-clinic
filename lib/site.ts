@@ -42,3 +42,14 @@ export function localizedHref(locale: string, path: string): string {
   if (path === "/") return base;
   return base === "/" ? path : `${base}${path}`;
 }
+
+/**
+ * Absolute canonical URL for an app path. The default locale resolves to "/"
+ * (no prefix), so canonical tags and `languages` alternates never point at a
+ * "/fa" redirect: `${siteUrl}/${locale}/x` is wrong for fa and must not be
+ * emitted.
+ */
+export function pageUrl(locale: string, path: string): string {
+  const href = localizedHref(locale, path);
+  return href === "/" ? `${siteUrl}/` : `${siteUrl}${href}`;
+}

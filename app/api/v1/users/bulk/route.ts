@@ -25,7 +25,10 @@ export const POST = withSecurity(
         if (input.action === "unban") await updateUserStatus(id, { isBanned: false });
         if (input.action === "change-role") {
           const roleKey = input.roleKey ?? (() => { throw new Error("Role key is missing"); })();
-          await updateUserRole(id, roleKey);
+          await updateUserRole(id, roleKey, {
+            id: session.user.id,
+            permissions: session.user.permissions,
+          });
         }
         if (input.action === "delete") await softDeleteUser(id);
         if (input.action === "reset-password") temporaryPasswords.push({ id, password: await resetUserPassword(id) });

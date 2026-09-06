@@ -11,7 +11,11 @@ export const PATCH = withSecurity(
     const targetId = ctx.params?.id;
     if (!targetId || !z.uuid().safeParse(targetId).success) return jsonError("INVALID_USER_ID", "Invalid user id.", 400);
     const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
-    await updateUserRole(targetId, body.roleKey);
+    const session = ctx.session ?? (() => { throw new Error("Session is missing"); })();
+    await updateUserRole(targetId, body.roleKey, {
+      id: session.user.id,
+      permissions: session.user.permissions,
+    });
     return jsonOk({ ok: true });
   },
 );

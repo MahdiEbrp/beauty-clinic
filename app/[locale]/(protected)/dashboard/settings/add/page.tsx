@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 
 import CreateSettingForm from "@/components/create-setting/CreateSettingForm";
 import { requirePermission } from "@/lib/auth/dal";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/settings/add";
 
@@ -19,10 +19,10 @@ export async function generateMetadata({
     title: t("meta.title"),
     description: t("meta.description"),
     alternates: {
-      canonical: `${siteUrl}/${locale}${ROUTE}`,
+      canonical: pageUrl(locale, `${ROUTE}`),
       languages: {
-        fa: `${siteUrl}/fa${ROUTE}`,
-        en: `${siteUrl}/en${ROUTE}`,
+        fa: pageUrl("fa", `${ROUTE}`),
+        en: pageUrl("en", `${ROUTE}`),
       },
     },
     robots: { index: false, follow: false },

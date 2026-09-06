@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { SmsProviderForm } from "@/components/sms-admin/SmsProviderForm";
 import { requirePermission } from "@/lib/auth/dal";
 import { getSmsProviderById } from "@/lib/sms/provider-service";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/sms/providers/[id]/edit";
 
@@ -21,10 +21,10 @@ export async function generateMetadata({
     title: t("meta.title"),
     description: t("meta.description"),
     alternates: {
-      canonical: `${siteUrl}/${locale}${route}`,
+      canonical: pageUrl(locale, `${route}`),
       languages: {
-        fa: `${siteUrl}/fa${route}`,
-        en: `${siteUrl}/en${route}`,
+        fa: pageUrl("fa", `${route}`),
+        en: pageUrl("en", `${route}`),
       },
     },
     robots: { index: false, follow: false },

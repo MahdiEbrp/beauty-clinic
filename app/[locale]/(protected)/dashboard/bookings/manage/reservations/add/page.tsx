@@ -5,7 +5,7 @@ import { ReservationWizard } from "@/components/bookings/reservation-wizard";
 import { requirePermission } from "@/lib/auth/dal";
 import { getClinicData } from "@/data/clinic";
 import type { Locale } from "@/lib/services/types";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/bookings/manage/reservations";
 
@@ -19,10 +19,10 @@ export async function generateMetadata({
   return {
     title: `${t("title.add")} | Nafas Beauty Clinic`,
     alternates: {
-      canonical: `${siteUrl}/${locale}${ROUTE}/add`,
+      canonical: pageUrl(locale, `${ROUTE}/add`),
       languages: {
-        fa: `${siteUrl}/fa${ROUTE}/add`,
-        en: `${siteUrl}/en${ROUTE}/add`,
+        fa: pageUrl("fa", `${ROUTE}/add`),
+        en: pageUrl("en", `${ROUTE}/add`),
       },
     },
     robots: { index: false, follow: false },

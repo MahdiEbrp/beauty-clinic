@@ -20,7 +20,10 @@ export const notifications = pgTable(
     }),
     action: text("action").notNull(),
     entityType: text("entity_type").notNull(),
-    entityId: uuid("entity_id").notNull(),
+    // Nullable: some notifications (e.g. "provider created") have no entity
+    // row yet at insert time, and a non-UUID reference must never reach the
+    // column (uuid) — the security layer skips invalid ids instead.
+    entityId: uuid("entity_id"),
     entityLabel: text("entity_label").notNull(),
     meta: jsonb("meta"),
     isRead: boolean("is_read").notNull().default(false),

@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { EmailTemplateForm } from "@/components/email-admin/EmailTemplateForm";
 import { requirePermission } from "@/lib/auth/dal";
 import { getEmailTemplateById } from "@/lib/email/template-service";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/email/templates/[id]/edit";
 
@@ -21,10 +21,10 @@ export async function generateMetadata({
     title: t("meta.title"),
     description: t("meta.description"),
     alternates: {
-      canonical: `${siteUrl}/${locale}${route}`,
+      canonical: pageUrl(locale, `${route}`),
       languages: {
-        fa: `${siteUrl}/fa${route}`,
-        en: `${siteUrl}/en${route}`,
+        fa: pageUrl("fa", `${route}`),
+        en: pageUrl("en", `${route}`),
       },
     },
     robots: { index: false, follow: false },

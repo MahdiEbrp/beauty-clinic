@@ -35,15 +35,21 @@ export async function requireSlot(id: string): Promise<SlotRow> {
   return row;
 }
 
-/** Replaces the slot ↔ service links wholesale (delete + insert). */
+/**
+ * Replaces the slot ↔ service links wholesale (delete + insert). Runs inside a
+ * single transaction so a concurrent booking can never read a slot with its
+ * services half-deleted.
+ */
 export async function replaceSlotServices(
   slotId: string,
   serviceIds: string[],
 ) {
-  await db.delete(bookingSlotServices).where(eq(bookingSlotServices.slotId, slotId));
-  if (serviceIds.length > 0) {
-    await db.insert(bookingSlotServices).values(
-      serviceIds.map((serviceId) => ({ slotId, serviceId })),
-    );
-  }
+  await db.transaction(async (tx) => {
+    await tx.delete(bookingSlotServices).where(eq(bookingSlotServices.slotId, slotId));
+    if (serviceIds.length > 0) {
+      await tx.insert(bookingSlotServices).values(
+        serviceIds.map((serviceId) => ({ slotId, serviceId })),
+      );
+    }
+  });
 }

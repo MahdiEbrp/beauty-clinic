@@ -5,7 +5,7 @@ import { SmsReportsContent } from "@/components/sms-admin/SmsReportsContent";
 import { requirePermission } from "@/lib/auth/dal";
 import { listSmsMessages } from "@/lib/sms/report-service";
 import { listSmsProviders } from "@/lib/sms/provider-service";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/sms/messages";
 
@@ -20,10 +20,10 @@ export async function generateMetadata({
     title: t("meta.title"),
     description: t("meta.description"),
     alternates: {
-      canonical: `${siteUrl}/${locale}${ROUTE}`,
+      canonical: pageUrl(locale, `${ROUTE}`),
       languages: {
-        fa: `${siteUrl}/fa${ROUTE}`,
-        en: `${siteUrl}/en${ROUTE}`,
+        fa: pageUrl("fa", `${ROUTE}`),
+        en: pageUrl("en", `${ROUTE}`),
       },
     },
     robots: { index: false, follow: false },

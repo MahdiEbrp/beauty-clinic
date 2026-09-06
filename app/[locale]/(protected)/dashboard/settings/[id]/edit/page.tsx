@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server";
 import CreateSettingForm from "@/components/create-setting/CreateSettingForm";
 import { requirePermission } from "@/lib/auth/dal";
 import { getSystemSettingById } from "@/lib/settings/admin";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/settings/[id]/edit";
 
@@ -21,10 +21,10 @@ export async function generateMetadata({
     title: t("meta.title"),
     description: t("meta.description"),
     alternates: {
-      canonical: `${siteUrl}/${locale}${ROUTE.replace("[id]", id)}`,
+      canonical: pageUrl(locale, `${ROUTE.replace("[id]", id)}`),
       languages: {
-        fa: `${siteUrl}/fa${ROUTE.replace("[id]", id)}`,
-        en: `${siteUrl}/en${ROUTE.replace("[id]", id)}`,
+        fa: pageUrl("fa", `${ROUTE.replace("[id]", id)}`),
+        en: pageUrl("en", `${ROUTE.replace("[id]", id)}`),
       },
     },
     robots: { index: false, follow: false },

@@ -1,24 +1,3 @@
-CREATE TABLE "rules" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"slug" text NOT NULL,
-	"icon" text,
-	"image" text,
-	"color" text,
-	"highlighted" boolean DEFAULT false NOT NULL,
-	"display_order" integer DEFAULT 0 NOT NULL,
-	"is_active" boolean DEFAULT true NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE "rules_i18n" (
-	"rule_id" uuid NOT NULL,
-	"locale" text NOT NULL,
-	"name" text NOT NULL,
-	"description" text,
-	CONSTRAINT "rules_i18n_rule_id_locale_pk" PRIMARY KEY("rule_id","locale")
-);
---> statement-breakpoint
 CREATE TABLE "landing_about_stats" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"section_id" uuid NOT NULL,
@@ -144,7 +123,6 @@ CREATE TABLE "landing_services_i18n" (
 	CONSTRAINT "landing_services_i18n_landing_service_id_locale_pk" PRIMARY KEY("landing_service_id","locale")
 );
 --> statement-breakpoint
-ALTER TABLE "rules_i18n" ADD CONSTRAINT "rules_i18n_rule_id_rules_id_fk" FOREIGN KEY ("rule_id") REFERENCES "public"."rules"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "landing_about_stats" ADD CONSTRAINT "landing_about_stats_section_id_landing_sections_id_fk" FOREIGN KEY ("section_id") REFERENCES "public"."landing_sections"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "landing_about_stats_i18n" ADD CONSTRAINT "landing_about_stats_i18n_stat_id_landing_about_stats_id_fk" FOREIGN KEY ("stat_id") REFERENCES "public"."landing_about_stats"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "landing_gallery_items" ADD CONSTRAINT "landing_gallery_items_section_id_landing_sections_id_fk" FOREIGN KEY ("section_id") REFERENCES "public"."landing_sections"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
@@ -159,7 +137,6 @@ ALTER TABLE "landing_sections_i18n" ADD CONSTRAINT "landing_sections_i18n_sectio
 ALTER TABLE "landing_services" ADD CONSTRAINT "landing_services_section_id_landing_sections_id_fk" FOREIGN KEY ("section_id") REFERENCES "public"."landing_sections"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "landing_services" ADD CONSTRAINT "landing_services_service_id_services_id_fk" FOREIGN KEY ("service_id") REFERENCES "public"."services"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "landing_services_i18n" ADD CONSTRAINT "landing_services_i18n_landing_service_id_landing_services_id_fk" FOREIGN KEY ("landing_service_id") REFERENCES "public"."landing_services"("id") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
-CREATE UNIQUE INDEX "rules_slug_idx" ON "rules" USING btree ("slug");--> statement-breakpoint
 CREATE UNIQUE INDEX "landing_about_stats_section_key_idx" ON "landing_about_stats" USING btree ("section_id","key");--> statement-breakpoint
 CREATE INDEX "landing_about_stats_section_active_idx" ON "landing_about_stats" USING btree ("section_id","is_active");--> statement-breakpoint
 CREATE UNIQUE INDEX "landing_gallery_items_section_key_idx" ON "landing_gallery_items" USING btree ("section_id","key");--> statement-breakpoint

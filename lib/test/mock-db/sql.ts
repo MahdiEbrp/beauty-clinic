@@ -195,3 +195,31 @@ function evalLeaf(chunks: Chunk[], row: Row): boolean {
 }
 
 export { columnOf };
+
+/**
+ * Evaluates a drizzle `set` value against the current row. Plain values pass
+ * through unchanged; SQL templates shaped like `"col" + 3` (column + number)
+ * are evaluated so atomic counters such as `attempts + 1` behave like Postgres
+ * in tests. Anything more complex is passed through verbatim.
+ */
+export function evalAssign(value: unknown, row: Row): unknown {
+  if (!isSQL(value)) return value;
+  const column = columnOf(value);
+  if (!column) return value;
+  const prev = row[columnKey(column)] ?? 0;
+
+  let opText = "";
+  for (const chunk of asAny(value).queryChunks as unknown[]) {
+    if (isStringChunk(chunk)) opText += chunk.value.join("");
+  }
+  // Matches shapes like `"col" + 3`, `"col" - 1` (column + number).
+  const match = opText
+    .replace(/["a-z_]+/gi, " ")
+    .trim()
+    .match(/^([+-])\s*(\d+(?:\.\d+)?)$/);
+  if (typeof prev === "number" && match) {
+    const amount = Number(match[2]);
+    return match[1] === "-" ? prev - amount : prev + amount;
+  }
+  return value;
+}

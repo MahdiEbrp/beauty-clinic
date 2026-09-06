@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { getPublicServiceTree } from "@/lib/services/service";
 import { getClinicData } from "@/data/clinic";
 import type { Locale } from "@/lib/services/types";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 import BookingWizard from "@/components/booking/BookingWizard";
 
 export async function generateMetadata({
@@ -19,10 +19,10 @@ export async function generateMetadata({
     title: t("meta.title"),
     description: t("meta.description"),
     alternates: {
-      canonical: `${siteUrl}/${locale}/booking`,
+      canonical: pageUrl(locale, "/booking"),
       languages: {
-        fa: `${siteUrl}/fa/booking`,
-        en: `${siteUrl}/en/booking`,
+        fa: pageUrl("fa", "/booking"),
+        en: pageUrl("en", "/booking"),
       },
     },
     openGraph: {

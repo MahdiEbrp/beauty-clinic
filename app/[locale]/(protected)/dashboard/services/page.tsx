@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import ServicesAnalyticsContent from "@/components/ServicesAnalyticsContent";
 import { requirePermission } from "@/lib/auth/dal";
 import { getPerformanceView } from "@/lib/services/performance";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 
 export async function generateMetadata({
   params,
@@ -18,10 +18,10 @@ export async function generateMetadata({
     title: t("meta.title"),
     description: t("meta.description"),
     alternates: {
-      canonical: `${siteUrl}/${locale}/dashboard/services`,
+      canonical: pageUrl(locale, "/dashboard/services"),
       languages: {
-        fa: `${siteUrl}/fa/dashboard/services`,
-        en: `${siteUrl}/en/dashboard/services`,
+        fa: pageUrl("fa", "/dashboard/services"),
+        en: pageUrl("en", "/dashboard/services"),
       },
     },
     robots: { index: false, follow: false },

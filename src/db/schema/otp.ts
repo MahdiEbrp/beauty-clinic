@@ -5,6 +5,7 @@ import {
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 import { users } from "./auth";
@@ -38,6 +39,17 @@ export const otpCodes = pgTable(
     index("otp_codes_user_active_idx")
       .on(table.userId, table.consumedAt)
       .where(sql`${table.purpose} = 'login'`),
+    /*
+     * At most one verifiable login code per user. Without this, two concurrent
+     * `issueLoginOtp` calls can both consume the old codes and insert fresh
+     * ones, leaving two active rows that both verify — an account-takeover
+     * vector. The partial index makes the second insert fail instead.
+     */
+    uniqueIndex("otp_codes_login_active_one_per_user")
+      .on(table.userId)
+      .where(
+        sql`${table.purpose} = 'login' AND ${table.consumedAt} IS NULL`,
+      ),
   ],
 );
 

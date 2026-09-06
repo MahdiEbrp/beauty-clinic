@@ -10,13 +10,21 @@ import { toFieldErrors } from "@/lib/validation/field-errors";
 import { logError, logInfo } from "@/lib/log";
 import { createNotification } from "@/lib/notifications/service";
 
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function isUuid(value: string | undefined): string | undefined {
+  return value && UUID_PATTERN.test(value) ? value : undefined;
+}
+
 export { jsonError, jsonOk };
 
 const MUTATION_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
 export type NotificationConfig<Body = unknown, Query = unknown> = {
   entityType: string;
-  entityId: (ctx: ApiContext<Body, Query>) => string | undefined;
+  /** Optional uuid referencing the affected row; skipped when absent/invalid. */
+  entityId?: (ctx: ApiContext<Body, Query>) => string | undefined;
   entityLabel: (ctx: ApiContext<Body, Query>) => string;
   action?: string | ((method: string) => string);
   meta?: (ctx: ApiContext<Body, Query>) => Record<string, unknown> | undefined;
@@ -196,13 +204,17 @@ export function withSecurity<Body = unknown, Query = unknown>(
           typeof n.action === "function"
             ? n.action(request.method)
             : n.action ?? request.method.toLowerCase();
-        const entityId = n.entityId(ctx);
-        if (entityId) {
+        const entityId = n.entityId?.(ctx);
+        // `entity_id` is a uuid column; a non-UUID reference (e.g. a provider
+        // name) must not reach the insert or the notification is lost to a
+        // caught Postgres error. Skip instead of crashing/losing it.
+        const validEntityId = isUuid(entityId);
+        if (validEntityId) {
           createNotification({
             actorId: ctx.session?.user.id,
             action,
             entityType: n.entityType,
-            entityId,
+            entityId: validEntityId,
             entityLabel: n.entityLabel(ctx),
             meta: n.meta?.(ctx),
           }).catch((err: unknown) => {

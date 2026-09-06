@@ -6,7 +6,7 @@ import { requirePermission } from "@/lib/auth/dal";
 import { listWorkingHoursAdmin } from "@/lib/bookings/working-hours-admin";
 import type { ListResult } from "@/components/admin-list/types";
 import type { WorkingHoursAdminRow } from "@/lib/bookings/working-hours-admin";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/working-hours/manage";
 
@@ -22,10 +22,10 @@ export async function generateMetadata({
     title: t("meta.title"),
     description: t("meta.description"),
     alternates: {
-      canonical: `${siteUrl}/${locale}${ROUTE}`,
+      canonical: pageUrl(locale, `${ROUTE}`),
       languages: {
-        fa: `${siteUrl}/fa${ROUTE}`,
-        en: `${siteUrl}/en${ROUTE}`,
+        fa: pageUrl("fa", `${ROUTE}`),
+        en: pageUrl("en", `${ROUTE}`),
       },
     },
     robots: { index: false, follow: false },

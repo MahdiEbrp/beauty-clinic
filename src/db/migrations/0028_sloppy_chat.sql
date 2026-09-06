@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "otp_codes_login_active_one_per_user" ON "otp_codes" USING btree ("user_id") WHERE "otp_codes"."purpose" = 'login' AND "otp_codes"."consumed_at" IS NULL;

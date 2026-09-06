@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getClinicData } from "@/data/clinic";
 import HomePage from "@/components/HomePage";
 import { getPublicLanding } from "@/lib/landing";
-import { siteUrl, localePath, canonicalUrl } from "@/lib/site";
+import { canonicalUrl, pageUrl } from "@/lib/site";
 import type { Locale } from "@/lib/services/types";
 
 export async function generateMetadata({
@@ -27,7 +27,7 @@ export async function generateMetadata({
       title: landing.seo.title ?? undefined,
       description: landing.seo.description ?? undefined,
       type: "website",
-      url: `${siteUrl}${localePath(locale)}`,
+      url: pageUrl(locale, "/"),
     },
   };
 }

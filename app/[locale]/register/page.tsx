@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, getLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { siteUrl, localizedHref } from "@/lib/site";
+import { localizedHref, pageUrl } from "@/lib/site";
 import { getSessionCached } from "@/lib/auth/dal";
 import RegisterForm from "@/components/RegisterForm";
 
@@ -17,10 +17,10 @@ export async function generateMetadata({
     title: t("meta.title"),
     description: t("meta.description"),
     alternates: {
-      canonical: `${siteUrl}/${locale}/register`,
+      canonical: pageUrl(locale, "/register"),
       languages: {
-        fa: `${siteUrl}/fa/register`,
-        en: `${siteUrl}/en/register`,
+        fa: pageUrl("fa", "/register"),
+        en: pageUrl("en", "/register"),
       },
     },
     robots: { index: false, follow: false },

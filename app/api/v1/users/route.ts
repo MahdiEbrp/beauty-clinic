@@ -33,7 +33,8 @@ export const POST = withSecurity(
   },
   async (_request, ctx) => {
     const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
-    const user = await createUser(body);
+    const session = ctx.session ?? (() => { throw new Error("Session is missing"); })();
+    const user = await createUser(body, session.user.permissions);
     return jsonOk(user, 201);
   },
 );

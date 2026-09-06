@@ -7,7 +7,7 @@ import { listBookings } from "@/lib/bookings/service";
 import { mapReservations } from "@/lib/bookings/admin-types";
 import type { ListResult } from "@/components/admin-list/types";
 import type { ReservationAdmin } from "@/lib/bookings/admin-types";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/bookings/manage/reservations";
 
@@ -23,10 +23,10 @@ export async function generateMetadata({
     title: t("meta.title"),
     description: t("meta.description"),
     alternates: {
-      canonical: `${siteUrl}/${locale}${ROUTE}`,
+      canonical: pageUrl(locale, `${ROUTE}`),
       languages: {
-        fa: `${siteUrl}/fa${ROUTE}`,
-        en: `${siteUrl}/en${ROUTE}`,
+        fa: pageUrl("fa", `${ROUTE}`),
+        en: pageUrl("en", `${ROUTE}`),
       },
     },
     robots: { index: false, follow: false },

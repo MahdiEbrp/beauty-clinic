@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { EmailProvidersContent } from "@/components/email-admin/EmailProvidersContent";
 import { requirePermission } from "@/lib/auth/dal";
 import { listEmailProviders } from "@/lib/email/provider-service";
-import { siteUrl } from "@/lib/site";
+import { pageUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/email/providers";
 
@@ -19,10 +19,10 @@ export async function generateMetadata({
     title: t("meta.title"),
     description: t("meta.description"),
     alternates: {
-      canonical: `${siteUrl}/${locale}${ROUTE}`,
+      canonical: pageUrl(locale, `${ROUTE}`),
       languages: {
-        fa: `${siteUrl}/fa${ROUTE}`,
-        en: `${siteUrl}/en${ROUTE}`,
+        fa: pageUrl("fa", `${ROUTE}`),
+        en: pageUrl("en", `${ROUTE}`),
       },
     },
     robots: { index: false, follow: false },

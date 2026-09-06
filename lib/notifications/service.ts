@@ -12,7 +12,8 @@ export type CreateNotificationInput = {
   actorId?: string;
   action: string;
   entityType: string;
-  entityId: string;
+  /** Optional uuid referencing the affected row; omitted when none exists yet. */
+  entityId?: string;
   entityLabel: string;
   meta?: Record<string, unknown>;
 };
@@ -24,7 +25,7 @@ export async function createNotification(
     actorId: input.actorId ?? null,
     action: input.action,
     entityType: input.entityType,
-    entityId: input.entityId,
+    entityId: input.entityId ?? null,
     entityLabel: input.entityLabel,
     meta: input.meta ?? null,
   });
