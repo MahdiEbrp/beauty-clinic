@@ -12,6 +12,11 @@ vi.mock("@/src/db", async () => {
 
 vi.mock("server-only", () => ({}));
 
+vi.mock("./generator", () => ({
+  readGeneratorConfig: () => ({ durationMin: 15 }),
+  ensureAutoSlots: () => ({ created: 0 }),
+}));
+
 import { db } from "@/src/db";
 import {
   createWorkingHour,
@@ -196,5 +201,75 @@ describe("bulk operations", () => {
     const blocked = await deleteWorkingHours(["a", "b"]);
     expect(blocked).toEqual([]);
     expect(mockDb.data.working_hours).toHaveLength(1);
+  });
+});
+describe("slot patterns", () => {
+  const base = {
+    opens: "09:00",
+    closes: "18:00",
+    capacity: 1,
+    displayOrder: 0,
+    isActive: true,
+  };
+
+  it("create persists sorted patterns and getWorkingHour returns them", async () => {
+    const row = await createWorkingHour({
+      ...base,
+      day: "Saturday",
+      patterns: [
+        { startTime: "17:30", capacity: 2 },
+        { startTime: "13:15", capacity: 2 },
+        { startTime: "13:30", capacity: 1 },
+      ],
+    });
+    expect(mockDb.data.slot_patterns).toHaveLength(3);
+    expect(mockDb.data.slot_patterns.map((p) => p.startTime)).toEqual([
+      "13:15",
+      "13:30",
+      "17:30",
+    ]);
+    const detail = await getWorkingHour(row.id);
+    expect(detail?.patterns).toEqual([
+      { startTime: "13:15", capacity: 2 },
+      { startTime: "13:30", capacity: 1 },
+      { startTime: "17:30", capacity: 2 },
+    ]);
+  });
+
+  it("update with empty patterns clears the day's pattern", async () => {
+    mockDb.seed("working_hours", [makeRecord({ id: "wh", day: "Sunday" })]);
+    mockDb.seed("slot_patterns", [
+      { id: randomUUID(), day: "Sunday", start_time: "13:15:00", capacity: 1 },
+    ]);
+    await updateWorkingHour("wh", {
+      patterns: [],
+    });
+    expect(mockDb.data.slot_patterns ?? []).toHaveLength(0);
+  });
+
+  it("delete removes the day's patterns too", async () => {
+    mockDb.seed("working_hours", [makeRecord({ id: "wh", day: "Saturday" })]);
+    mockDb.seed("slot_patterns", [
+      { id: randomUUID(), day: "Saturday", start_time: "13:15:00", capacity: 1 },
+      { id: randomUUID(), day: "Sunday", start_time: "10:00:00", capacity: 1 },
+    ]);
+    await deleteWorkingHour("wh");
+    expect(mockDb.data.working_hours).toHaveLength(0);
+    expect(mockDb.data.slot_patterns).toHaveLength(1);
+    expect(mockDb.data.slot_patterns[0].day).toBe("Sunday");
+  });
+
+  it("deleteWorkingHours cleans the patterns of targeted days", async () => {
+    mockDb.seed("working_hours", [
+      makeRecord({ id: "a", day: "Saturday" }),
+      makeRecord({ id: "b", day: "Sunday" }),
+    ]);
+    mockDb.seed("slot_patterns", [
+      { id: randomUUID(), day: "Saturday", start_time: "13:15:00", capacity: 1 },
+      { id: randomUUID(), day: "Sunday", start_time: "10:00:00", capacity: 1 },
+    ]);
+    await deleteWorkingHours(["a"]);
+    expect(mockDb.data.slot_patterns).toHaveLength(1);
+    expect(mockDb.data.slot_patterns[0].day).toBe("Sunday");
   });
 });

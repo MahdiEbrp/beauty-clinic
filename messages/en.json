@@ -3513,7 +3513,12 @@
  },
  "workingHoursForm": {
   "errors": {
-   "closesBeforeOpens": "Close time must be after open time."
+   "closesBeforeOpens": "Close time must be after open time.",
+   "patternEmpty": "Enter at least one slot for pattern mode.",
+   "patternDuplicate": "Duplicate start times are not allowed.",
+   "patternCapacity": "Capacity must be between 1 and 500.",
+   "patternTime": "Invalid start time.",
+   "patternInvalid": "Invalid pattern: enter at least one slot with a valid, non-duplicate time and a capacity between 1 and 500."
   },
   "fields": {
    "capacity": {
@@ -3562,6 +3567,30 @@
    "created": "Working hours added.",
    "error": "Could not save the working hours.",
    "updated": "Working hours updated."
+  },
+  "mode": {
+   "label": "Schedule type",
+   "uniform": "Automatic (uniform window)",
+   "uniformHint": "Slots are generated on a fixed step between opens and closes, all with one capacity.",
+   "pattern": "Time pattern",
+   "patternHint": "Slots are generated exactly at these times with these per-slot capacities."
+  },
+  "pattern": {
+   "rowsLabel": "Day slots",
+   "startTimeLabel": "Start time",
+   "capacityLabel": "Capacity (seats)",
+   "addRow": "Add slot",
+   "removeRow": "Remove this slot",
+   "fillTitle": "Build from range",
+   "fillHint": "Generate the row list on a regular step, then adjust each slot's capacity. Slot duration comes from the global slot_duration_min setting.",
+   "fillFrom": "From",
+   "fillTo": "To",
+   "fillStep": "Step (minutes)",
+   "fillDefaultCapacity": "Default capacity",
+   "fillAction": "Generate slots",
+   "noRows": "No slots entered for this day yet.",
+   "replaceConfirm": "This replaces the current list with the new range.",
+   "capacityToggle": "Decrease/increase capacity"
   }
  },
  "emailAdmin": {

@@ -51,6 +51,7 @@ export default async function EditWorkingHoursPage({
     capacity: record.capacity,
     displayOrder: record.displayOrder,
     isActive: record.isActive,
+    patterns: record.patterns,
   };
   return (
     <WorkingHoursForm mode="edit" record={editData} backHref={`${ROUTE}/manage`} />

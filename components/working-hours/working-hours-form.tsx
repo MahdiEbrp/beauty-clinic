@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { CalendarClock, ClipboardList, TriangleAlert } from "lucide-react";
 
 import { TimePickerField } from "@/components/date-time-picker/time-picker-field";
 import { useRouter } from "@/src/i18n/navigation";
@@ -10,6 +11,10 @@ import { msgKey } from "@/src/i18n/message-key";
 import { WizardShell, type WizardStep } from "../bookings/wizard-shell";
 import { Field, inputClass } from "../bookings/wizard-fields";
 import { DaySelect, type DayOption } from "./day-select";
+import {
+  SlotPatternEditor,
+  type SlotPatternRow,
+} from "./slot-pattern-editor";
 
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 
@@ -31,8 +36,10 @@ export type WorkingHoursEditData = {
   capacity: number;
   displayOrder: number;
   isActive: boolean;
+  patterns?: SlotPatternRow[];
 };
 
+type ScheduleMode = "uniform" | "pattern";
 const STEPS: WizardStep[] = [
   { key: "details", labelKey: "workingHoursForm.steps.details.name" },
 ];
@@ -50,7 +57,6 @@ export function WorkingHoursForm({
   const tRoot = useTranslations();
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
-
   const [day, setDay] = useState(record?.day ?? "");
   const [opens, setOpens] = useState(record?.opens ?? "");
   const [closes, setCloses] = useState(record?.closes ?? "");
@@ -59,19 +65,33 @@ export function WorkingHoursForm({
     String(record?.displayOrder ?? 0),
   );
   const [isActive, setIsActive] = useState(record?.isActive ?? true);
+  const [scheduleMode, setScheduleMode] = useState<ScheduleMode>(
+    record?.patterns && record.patterns.length > 0 ? "pattern" : "uniform",
+  );
+  const [rows, setRows] = useState<SlotPatternRow[]>(record?.patterns ?? []);
 
   const dayOptions: DayOption[] = WEEKDAYS.map((value) => ({
     value,
     label: tRoot(msgKey(`workingHours.days.${value}`)),
   }));
-
   const timeValid =
     TIME_PATTERN.test(opens) && TIME_PATTERN.test(closes) && closes > opens;
   const capacityValid = Number(capacity) >= 1;
   const orderValid = Number(displayOrder) >= 0;
+  const patternValid =
+    rows.length > 0 &&
+    rows.every(
+      (row) =>
+        TIME_PATTERN.test(row.startTime) &&
+        row.capacity >= 1 &&
+        row.capacity <= 500,
+    ) &&
+    new Set(rows.map((row) => row.startTime)).size === rows.length;
   const detailsValid =
-    Boolean(day) && timeValid && capacityValid && orderValid;
-
+    Boolean(day) &&
+    timeValid &&
+    orderValid &&
+    (scheduleMode === "uniform" ? capacityValid : patternValid);
   const submit = async () => {
     setSubmitting(true);
     try {
@@ -81,6 +101,13 @@ export function WorkingHoursForm({
         capacity: Number(capacity),
         displayOrder: Number(displayOrder),
         isActive,
+        patterns:
+          scheduleMode === "pattern"
+            ? rows.map((row) => ({
+                startTime: row.startTime,
+                capacity: row.capacity,
+              }))
+            : [],
       };
       const body =
         mode === "create"
@@ -109,6 +136,30 @@ export function WorkingHoursForm({
       setSubmitting(false);
     }
   };
+  const modeButton = (value: ScheduleMode, labelKey: string, hintKey: string) => (
+    <button
+      type="button"
+      aria-pressed={scheduleMode === value}
+      onClick={() => setScheduleMode(value)}
+      className={`flex min-h-11 flex-1 items-center justify-center gap-2 rounded-pill border px-4 py-2.5 text-start text-dash-body-sm font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+        scheduleMode === value
+          ? "border-copper bg-surface-secondary text-accent shadow-elevation-1"
+          : "border-border-primary bg-surface-tertiary text-content-secondary hover:border-border-interactive hover:text-accent"
+      }`}
+    >
+      {value === "uniform" ? (
+        <CalendarClock className="size-4 shrink-0" aria-hidden="true" />
+      ) : (
+        <ClipboardList className="size-4 shrink-0" aria-hidden="true" />
+      )}
+      <span className="min-w-0">
+        <span className="block truncate">{t(labelKey as never)}</span>
+        <span className="block truncate text-dash-caption font-normal text-content-tertiary">
+          {t(hintKey as never)}
+        </span>
+      </span>
+    </button>
+  );
 
   return (
     <WizardShell
@@ -123,6 +174,11 @@ export function WorkingHoursForm({
       mode={mode}
       onSubmit={submit}
     >
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row">
+        {modeButton("uniform", "mode.uniform", "mode.uniformHint")}
+        {modeButton("pattern", "mode.pattern", "mode.patternHint")}
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label={t("fields.day.label")}>
           {mode === "create" ? (
@@ -142,24 +198,25 @@ export function WorkingHoursForm({
           )}
         </Field>
 
-        <Field label={t("fields.capacity.label")} hint={t("fields.capacity.hint")}>
-          <input
-            type="number"
-            min={1}
-            max={500}
-            required
-            value={capacity}
-            onChange={(event) => setCapacity(event.target.value)}
-            className={inputClass(capacityValid)}
-          />
-        </Field>
+        {scheduleMode === "uniform" && (
+          <Field
+            label={t("fields.capacity.label")}
+            hint={t("fields.capacity.hint")}
+          >
+            <input
+              type="number"
+              min={1}
+              max={500}
+              required
+              value={capacity}
+              onChange={(event) => setCapacity(event.target.value)}
+              className={inputClass(capacityValid)}
+            />
+          </Field>
+        )}
 
         <Field label={t("fields.opens.label")}>
-          <TimePickerField
-            value={opens}
-            onChange={setOpens}
-            invalid={!opens}
-          />
+          <TimePickerField value={opens} onChange={setOpens} invalid={!opens} />
         </Field>
 
         <Field
@@ -226,6 +283,18 @@ export function WorkingHoursForm({
           </button>
         </Field>
       </div>
+
+      {scheduleMode === "pattern" && (
+        <div className="mt-4 space-y-3">
+          <SlotPatternEditor rows={rows} onChange={setRows} disabled={submitting} />
+          {!patternValid && (
+            <p role="alert" className="flex items-center gap-2 text-dash-caption font-bold text-error">
+              <TriangleAlert className="size-4 shrink-0" aria-hidden="true" />
+              {t("errors.patternInvalid")}
+            </p>
+          )}
+        </div>
+      )}
     </WizardShell>
   );
 }

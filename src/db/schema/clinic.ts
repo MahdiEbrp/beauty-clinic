@@ -38,6 +38,28 @@ export const workingHours = pgTable(
   ],
 );
 
+/**
+ * Optional per-weekday slot pattern: explicit (start_time → capacity) rows that
+ * override interval-based generation for a weekday. A weekday with at least one
+ * row here is generated exactly from these times; weekdays without rows fall
+ * back to the working-hours window + global interval/duration/capacity.
+ */
+export const slotPatterns = pgTable(
+  "slot_patterns",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    day: text("day").notNull(),
+    startTime: time("start_time").notNull(),
+    capacity: integer("capacity").notNull().default(1),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("slot_patterns_day_idx").on(table.day),
+    uniqueIndex("slot_patterns_day_start_idx").on(table.day, table.startTime),
+  ],
+);
+
 /** Social network links shown in the contact/footer sections. */
 export const socialLinks = pgTable(
   "social_links",
@@ -79,3 +101,5 @@ export const socialLinksI18nRelations = relations(socialLinksI18n, ({ one }) => 
 
 export type WorkingHoursRow = typeof workingHours.$inferSelect;
 export type NewWorkingHours = typeof workingHours.$inferInsert;
+export type SlotPatternRow = typeof slotPatterns.$inferSelect;
+export type NewSlotPattern = typeof slotPatterns.$inferInsert;

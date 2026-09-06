@@ -12,6 +12,7 @@ import {
   weekdayOf,
 } from "./generator";
 import { loadWorkingHourRecords } from "./working-hours";
+import { loadSlotPatternMap } from "./slot-patterns";
 import { loadSystemSettingsMap } from "@/lib/settings/loader";
 import { db } from "@/src/db";
 
@@ -22,6 +23,10 @@ vi.mock("@/lib/settings/loader", () => ({
 vi.mock("./working-hours", () => ({
   loadWorkingHourRecords: vi.fn(),
   DEFAULT_CLINIC_TIMEZONE: "Asia/Tehran",
+}));
+
+vi.mock("./slot-patterns", () => ({
+  loadSlotPatternMap: vi.fn(),
 }));
 
 vi.mock("@/src/db", () => ({
@@ -191,6 +196,7 @@ describe("ensureAutoSlotsWithConfig", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(db.transaction).mockImplementation(async (fn) => fn(mockTx() as never));
+    vi.mocked(loadSlotPatternMap).mockResolvedValue(new Map());
   });
 
   it("creates slots for a 30-minute interval", async () => {
@@ -251,6 +257,7 @@ describe("ensureAutoSlots", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(db.transaction).mockImplementation(async (fn) => fn(mockTx() as never));
+    vi.mocked(loadSlotPatternMap).mockResolvedValue(new Map());
   });
 
   it("returns 0 when auto is disabled without loading working hours", async () => {

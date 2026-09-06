@@ -13,6 +13,29 @@ export const workingHoursDaySchema = z.enum([
   "Saturday",
 ]);
 
+/** One explicit start time + capacity row of a per-weekday slot pattern. */
+export const slotPatternSchema = z
+  .object({
+    startTime: z.string().trim().regex(TIME_PATTERN, "Time must be HH:MM"),
+    capacity: z.number().int().min(1).max(500),
+  })
+  .strict();
+
+export type SlotPatternInput = z.infer<typeof slotPatternSchema>;
+
+const MAX_PATTERN_ROWS = 96;
+
+function duplicateStartIssue(ctx: z.RefinementCtx, patterns: SlotPatternInput[]) {
+  const times = patterns.map((pattern) => pattern.startTime);
+  if (new Set(times).size !== times.length) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["patterns"],
+      message: "Each pattern start time must be unique.",
+    });
+  }
+}
+
 export const createWorkingHourSchema = z
   .object({
     day: workingHoursDaySchema,
@@ -21,6 +44,7 @@ export const createWorkingHourSchema = z
     capacity: z.number().int().min(1).max(500).default(1),
     displayOrder: z.number().int().min(0).max(1000).default(0),
     isActive: z.boolean().default(true),
+    patterns: z.array(slotPatternSchema).max(MAX_PATTERN_ROWS).optional(),
   })
   .strict()
   .superRefine((data, ctx) => {
@@ -31,6 +55,9 @@ export const createWorkingHourSchema = z
         message: "Closes must be after opens",
       });
     }
+  })
+  .superRefine((data, ctx) => {
+    if (data.patterns) duplicateStartIssue(ctx, data.patterns);
   });
 
 export type CreateWorkingHourInput = z.infer<typeof createWorkingHourSchema>;
@@ -43,6 +70,7 @@ export const updateWorkingHourSchema = z
     capacity: z.number().int().min(1).max(500).optional(),
     displayOrder: z.number().int().min(0).max(1000).optional(),
     isActive: z.boolean().optional(),
+    patterns: z.array(slotPatternSchema).max(MAX_PATTERN_ROWS).optional(),
   })
   .strict()
   .superRefine((data, ctx) => {
@@ -53,6 +81,9 @@ export const updateWorkingHourSchema = z
         message: "Closes must be after opens",
       });
     }
+  })
+  .superRefine((data, ctx) => {
+    if (data.patterns) duplicateStartIssue(ctx, data.patterns);
   });
 
 export type UpdateWorkingHourInput = z.infer<typeof updateWorkingHourSchema>;
