@@ -37,7 +37,7 @@ export type SettingMutation = {
   translations?: { fa?: unknown; en?: unknown };
 };
 
-function toAdminSetting(
+export function toAdminSetting(
   row: typeof settings.$inferSelect,
   translations: Map<string, { fa?: unknown; en?: unknown }>,
 ): AdminSetting {
@@ -80,7 +80,7 @@ function settingListConditions(opts: {
   return conditions;
 }
 
-async function loadTranslations(
+export async function loadTranslations(
   ids: string[],
 ): Promise<Map<string, { fa?: unknown; en?: unknown }>> {
   if (ids.length === 0) return new Map();

@@ -3308,6 +3308,80 @@
    "number": "Number",
    "object": "Object",
    "string": "String"
+  },
+  "groupsLabel": "Jump to group:",
+  "resultsCount": "{count} settings",
+  "emptyHint": "Try a different search term or change the status filter.",
+  "deleteDialog": {
+   "description": "This setting will be permanently deleted and cannot be recovered."
+  },
+  "groups": {
+   "booking": {
+    "title": "Bookings",
+    "subtitle": "Scheduling, capacity and booking rules."
+   },
+   "contact": {
+    "title": "Contact & Addresses",
+    "subtitle": "Contact details, address and footer copy."
+   },
+   "pricing": {
+    "title": "Pricing",
+    "subtitle": "Price page copy and call-to-action."
+   },
+   "social": {
+    "title": "Social Media",
+    "subtitle": "The clinic's social media links."
+   },
+   "other": {
+    "title": "Other Settings",
+    "subtitle": "Clinic name and general copy."
+   },
+   "unknown": {
+    "title": "Uncategorized",
+    "subtitle": "Keys that have not been categorized yet."
+   }
+  },
+  "keys": {
+   "booking.timezone": "Timezone",
+   "booking.slot_auto": "Automatic scheduling",
+   "booking.slot_interval_min": "Slot interval (minutes)",
+   "booking.slot_duration_min": "Slot duration (minutes)",
+   "booking.slot_default_capacity": "Default slot capacity",
+   "booking.slot_window_days": "Booking window (days)",
+   "booking.min_cancel_hours": "Minimum cancel hours",
+   "booking.price": "Booking fee",
+   "booking.currency": "Currency",
+   "booking.select_service": "Select-service prompt",
+   "contact.phone": "Phone number",
+   "contact.address_full": "Full address",
+   "contact.city": "City",
+   "contact.province": "Province",
+   "contact.country": "Country",
+   "contact.map_neshan": "Neshan map link",
+   "contact.map_google": "Google Maps link",
+   "contact.address_title": "Address section title",
+   "contact.social_title": "Social media section title",
+   "contact.booking_title": "Booking section title",
+   "contact.neshan_map": "View-on-Neshan label",
+   "contact.neshan_desc": "Neshan navigation label",
+   "contact.google_map": "View-on-Google label",
+   "contact.google_desc": "Google navigation label",
+   "pricing.page.title": "Pricing page title",
+   "pricing.page.intro": "Pricing page intro",
+   "pricing.page.seo_title": "Pricing SEO title",
+   "pricing.page.seo_description": "Pricing SEO description",
+   "pricing.page.updated": "Pricing last-updated",
+   "pricing.cta.title": "CTA title",
+   "pricing.cta.description": "CTA description",
+   "pricing.cta.primary_label": "Primary button label",
+   "pricing.cta.primary_url": "Primary button URL",
+   "pricing.cta.secondary_label": "Secondary button label",
+   "pricing.cta.secondary_url": "Secondary button URL",
+   "clinic.name": "Clinic name",
+   "common.opens_in_new_tab": "Open-in-new-tab label",
+   "social.bale": "Bale",
+   "social.instagram": "Instagram",
+   "social.rubika": "Rubika"
   }
  },
  "site": {
@@ -4672,7 +4746,8 @@
   },
   "meta": {
    "description": "Add a social network link for the clinic.",
-   "title": "Add Social Link | Nafas Beauty Clinic"
+   "title": "Add Social Link | Nafas Beauty Clinic",
+   "close": "Close"
   },
   "nav": {
    "back": "Back",

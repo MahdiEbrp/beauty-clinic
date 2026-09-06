@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/src/i18n/navigation";
 import { toast } from "sonner";
 import type { AdminSocialLink } from "@/lib/social/admin";
 import { STEPS, URL_PATTERN } from "./helpers";
@@ -10,10 +9,14 @@ import { emptySeed, seedFromLink } from "./initial-state";
 import { submitSocialLinkRequest } from "./submit";
 import type { FieldErrors, Locale } from "./types";
 
-export function useCreateSocialLinkForm(initialLink?: AdminSocialLink) {
+export function useCreateSocialLinkForm(
+  initialLink?: AdminSocialLink,
+  onSuccess?: () => void,
+  opts?: { stepCount?: number },
+) {
   const t = useTranslations("socialWizard");
-  const router = useRouter();
   const mode: "create" | "edit" = initialLink ? "edit" : "create";
+  const stepCount = Math.min(STEPS.length, opts?.stepCount ?? STEPS.length);
   const seed = initialLink ? seedFromLink(initialLink) : emptySeed();
 
   const [step, setStep] = useState(1);
@@ -29,7 +32,7 @@ export function useCreateSocialLinkForm(initialLink?: AdminSocialLink) {
   const [submitting, setSubmitting] = useState(false);
 
   const goTo = (next: number) => {
-    if (next >= 1 && next <= STEPS.length) setStep(next);
+    if (next >= 1 && next <= stepCount) setStep(next);
   };
 
   const currentStepKey = STEPS.find((s) => s.id === step)?.key ?? "identity";
@@ -76,8 +79,7 @@ export function useCreateSocialLinkForm(initialLink?: AdminSocialLink) {
         return;
       }
       toast.success(t(mode === "edit" ? "toast.updated" : "toast.created"), { id: pending });
-      router.push("/dashboard/settings/social");
-      router.refresh();
+      onSuccess?.();
     } catch {
       setServerError(t("toast.error"));
       toast.error(t("toast.error"), { id: pending });
@@ -87,7 +89,8 @@ export function useCreateSocialLinkForm(initialLink?: AdminSocialLink) {
   };
 
   const handlePrimary = () => {
-    if (step === STEPS.length) {
+    if (step === stepCount) {
+      if (!validateStep(step)) return;
       void handleSubmit();
       return;
     }

@@ -2,32 +2,36 @@
 
 import { SettingsProvider } from "./settings-context";
 import type { AuthUser } from "@/lib/auth/dal";
-import type { SettingsListState } from "./use-settings-list";
+import type { AdminSetting } from "@/lib/settings/admin";
+import type { AdminSocialLink } from "@/lib/social/admin";
 import { SettingsHeader } from "./header";
 import { SettingsFilters } from "./filters";
-import { SelectionBar, SelectFilteredRow } from "./selection";
-import { DesktopTable } from "./table";
-import { MobileCards } from "./cards";
-import { Pagination } from "./pagination";
-import { MobileAdd } from "./mobile-add";
+import { SettingsAccordion } from "./settings-accordion";
+import type { SettingGroupId } from "./grouping";
 import { SettingsDialogs } from "./dialogs";
 
-export function SettingsContent({ user, initialData }: { user: AuthUser; initialData: SettingsListState["data"] }) {
+export function SettingsContent({
+  user,
+  initialItems,
+  initialSocialLinks,
+  initialOpenGroups,
+}: {
+  user: AuthUser;
+  initialItems: AdminSetting[];
+  initialSocialLinks: AdminSocialLink[];
+  initialOpenGroups: SettingGroupId[];
+}) {
   return (
-    <SettingsProvider user={user} initialData={initialData}>
+    <SettingsProvider user={user} initialItems={initialItems}>
       <SettingsHeader />
       <div className="mt-4 space-y-4">
         <SettingsFilters />
-        <SelectFilteredRow />
-        <div className="overflow-hidden rounded-card border border-border-primary bg-surface-secondary shadow-elevation-1">
-          <SelectionBar />
-          <DesktopTable />
-          <MobileCards />
-          <Pagination />
-        </div>
+        <SettingsAccordion
+          initialOpenGroups={initialOpenGroups}
+          initialSocialLinks={initialSocialLinks}
+        />
       </div>
       <SettingsDialogs />
-      <MobileAdd />
     </SettingsProvider>
   );
 }

@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 import { SettingsContent } from "@/components/settings-admin";
+import { GROUP_IDS, type SettingGroupId } from "@/components/settings-admin/grouping";
 import { requirePermission } from "@/lib/auth/dal";
-import { listSystemSettings } from "@/lib/settings/admin";
+import { listAllSocialLinks } from "@/lib/social/admin";
+import { listAllSystemSettings } from "@/lib/settings/admin-all";
 import { pageUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/settings";
@@ -30,8 +32,29 @@ export async function generateMetadata({
   };
 }
 
-export default async function SettingsPage() {
+export default async function SettingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ group?: string }>;
+}) {
   const session = await requirePermission("settings.read");
-  const initialData = await listSystemSettings({ page: 1, perPage: 10 });
-  return <SettingsContent user={session.user} initialData={initialData} />;
+  const groupParam = (await searchParams).group;
+
+  const [initialItems, initialSocialLinks] = await Promise.all([
+    listAllSystemSettings(),
+    listAllSocialLinks(),
+  ]);
+
+  const initialOpenGroups = (GROUP_IDS as readonly string[]).includes(groupParam ?? "")
+    ? [groupParam as SettingGroupId]
+    : [];
+
+  return (
+    <SettingsContent
+      user={session.user}
+      initialItems={initialItems}
+      initialSocialLinks={initialSocialLinks}
+      initialOpenGroups={initialOpenGroups}
+    />
+  );
 }

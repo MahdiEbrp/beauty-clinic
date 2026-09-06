@@ -8,15 +8,6 @@ import type { SettingStatusFilter } from "@/lib/validation/settings-admin";
 export interface FilterParams {
   search: string;
   status: SettingStatusFilter;
-  page: number;
-}
-
-export interface SettingsResult {
-  items: AdminSetting[];
-  total: number;
-  perPage: number;
-  totalPages: number;
-  page: number;
 }
 
 export interface SettingsListState {
@@ -27,117 +18,57 @@ export interface SettingsListState {
   setSearch: (value: string) => void;
   status: SettingStatusFilter;
   setStatus: (value: SettingStatusFilter) => void;
-  page: number;
-  setPage: (value: number | ((prev: number) => number)) => void;
   debouncedSearch: string;
-  data: SettingsResult;
+  items: AdminSetting[];
+  total: number;
   isLoading: boolean;
   hasLoadFailed: boolean;
   load: (params: FilterParams) => Promise<void>;
-  visibleIds: string[];
-  selectedIds: string[];
-  setSelectedIds: (value: string[]) => void;
-  selectionScope: "page" | "filtered";
-  setSelectionScope: (value: "page" | "filtered") => void;
-  selectedVisibleCount: number;
-  allVisibleSelected: boolean;
-  selectAllRef: React.RefObject<HTMLInputElement | null>;
-  toggleSettingSelection: (id: string) => void;
-  togglePageSelection: () => void;
-  selectAllFiltered: () => void;
-  clearSelection: () => void;
-  bulkAction: "activate" | "deactivate" | "delete";
-  setBulkAction: (value: "activate" | "deactivate" | "delete") => void;
-  selectionMode: boolean;
-  toggleSelectionMode: () => void;
-  totalPages: number;
-  from: number;
-  to: number;
+  refresh: () => Promise<void>;
 }
+
+const PER_PAGE = 50;
 
 export function useSettingsList(
   currentUser: AuthUser,
-  initialData: SettingsResult,
+  initialItems: AdminSetting[],
 ): SettingsListState {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [status, setStatus] = useState<SettingStatusFilter>("all");
-  const [page, setPage] = useState(1);
-  const [data, setData] = useState<SettingsResult>(initialData);
+  const [items, setItems] = useState<AdminSetting[]>(initialItems);
+  const [total, setTotal] = useState(initialItems.length);
   const [isLoading, setIsLoading] = useState(false);
   const [hasLoadFailed, setHasLoadFailed] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [selectionScope, setSelectionScope] = useState<"page" | "filtered">("page");
-  const [bulkAction, setBulkAction] = useState<"activate" | "deactivate" | "delete">("activate");
-  const [selectionMode, setSelectionMode] = useState(false);
-  const selectAllRef = useRef<HTMLInputElement>(null);
   const firstRun = useRef(true);
 
   const canManage = currentUser.permissions.includes("settings.manage");
   const canWrite = currentUser.permissions.includes("settings.write");
 
-  const visibleIds = data.items.map((item) => item.id);
-  const selectedVisibleCount = visibleIds.filter((id) => selectedIds.includes(id)).length;
-  const allVisibleSelected = visibleIds.length > 0 && selectedVisibleCount === visibleIds.length;
-
-  useEffect(() => {
-    if (!selectAllRef.current) return;
-    selectAllRef.current.indeterminate = selectedVisibleCount > 0 && !allVisibleSelected;
-  }, [selectedVisibleCount, allVisibleSelected]);
-
-  const toggleSettingSelection = (id: string) => {
-    setSelectionScope("page");
-    setSelectedIds((current) =>
-      current.includes(id) ? current.filter((value) => value !== id) : [...current, id],
-    );
-  };
-
-  const togglePageSelection = () => {
-    setSelectionScope("page");
-    setSelectedIds((current) =>
-      allVisibleSelected
-        ? current.filter((id) => !visibleIds.includes(id))
-        : [...new Set([...current, ...visibleIds])],
-    );
-  };
-
-  const selectAllFiltered = () => {
-    setSelectionScope("filtered");
-    setSelectedIds(visibleIds);
-  };
-
-  const clearSelection = () => {
-    setSelectedIds([]);
-    setSelectionScope("page");
-  };
-
-  const toggleSelectionMode = () => {
-    if (selectionMode) clearSelection();
-    setSelectionMode(!selectionMode);
-  };
-
-  const load = useCallback(async (params: FilterParams) => {
+  const load = useCallback(async ({ search: term, status: filter }: FilterParams) => {
     setIsLoading(true);
     setHasLoadFailed(false);
     try {
-      const qs = new URLSearchParams({
-        page: String(params.page),
-        perPage: "10",
-        status: params.status,
-      });
-      if (params.search) qs.set("search", params.search);
+      const qs = new URLSearchParams({ page: "1", perPage: String(PER_PAGE), status: filter });
+      if (term) qs.set("search", term);
       const response = await fetch(`/api/v1/admin/settings?${qs.toString()}`, {
         credentials: "include",
       });
       if (!response.ok) throw new Error("load_failed");
-      const payload = (await response.json()) as { data: SettingsResult };
-      setData(payload.data);
+      const payload = (await response.json()) as { data: { items: AdminSetting[]; total: number } };
+      setItems(payload.data.items);
+      setTotal(payload.data.total);
     } catch {
       setHasLoadFailed(true);
     } finally {
       setIsLoading(false);
     }
   }, []);
+
+  const refresh = useCallback(
+    () => load({ search: debouncedSearch, status }),
+    [load, debouncedSearch, status],
+  );
 
   useEffect(() => {
     const id = setTimeout(() => setDebouncedSearch(search.trim()), 400);
@@ -149,12 +80,8 @@ export function useSettingsList(
       firstRun.current = false;
       return;
     }
-    void load({ search: debouncedSearch, status, page });
-  }, [debouncedSearch, status, page, load]);
-
-  const totalPages = data.totalPages;
-  const from = data.total === 0 ? 0 : (page - 1) * data.perPage + 1;
-  const to = Math.min(page * data.perPage, data.total);
+    void load({ search: debouncedSearch, status });
+  }, [debouncedSearch, status, load]);
 
   return {
     currentUser,
@@ -164,31 +91,12 @@ export function useSettingsList(
     setSearch,
     status,
     setStatus,
-    page,
-    setPage,
     debouncedSearch,
-    data,
+    items,
+    total,
     isLoading,
     hasLoadFailed,
     load,
-    visibleIds,
-    selectedIds,
-    setSelectedIds,
-    selectionScope,
-    setSelectionScope,
-    selectedVisibleCount,
-    allVisibleSelected,
-    selectAllRef,
-    toggleSettingSelection,
-    togglePageSelection,
-    selectAllFiltered,
-    clearSelection,
-    bulkAction,
-    setBulkAction,
-    selectionMode,
-    toggleSelectionMode,
-    totalPages,
-    from,
-    to,
+    refresh,
   };
 }

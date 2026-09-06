@@ -141,6 +141,16 @@ export async function findSocialLinkIds(opts: {
   return rows.map((row) => row.id);
 }
 
+/** Every social link for the embedded settings screen (no pagination). */
+export async function listAllSocialLinks(): Promise<AdminSocialLink[]> {
+  const rows = await db
+    .select()
+    .from(socialLinks)
+    .orderBy(socialLinks.displayOrder, socialLinks.createdAt);
+  const labels = await loadLabels(rows.map((row) => row.id));
+  return rows.map((row) => toAdminSocialLink(row, labels));
+}
+
 /** Full admin row for the edit screen, or null when not found. */
 export async function getSocialLinkById(id: string): Promise<AdminSocialLink | null> {
   const [row] = await db.select().from(socialLinks).where(eq(socialLinks.id, id));

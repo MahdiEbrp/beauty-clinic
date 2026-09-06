@@ -20,7 +20,7 @@ const STATUS_OPTIONS: Array<{ value: SettingStatusFilter; labelKey: MessageKey }
 
 export function SettingsFilters() {
   const t = useTranslations();
-  const { search, setSearch, status, setStatus, setPage, isLoading, clearSelection } = useSettings();
+  const { search, setSearch, status, setStatus, isLoading } = useSettings();
   const statusLabel = status === "all" ? t("settingsAdmin.statusAll") : t(`settingsAdmin.statuses.${status}`);
   const hasActiveFilters = status !== "all" || Boolean(search);
   return (
@@ -30,11 +30,7 @@ export function SettingsFilters() {
         <input
           type="search"
           value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(1);
-            clearSelection();
-          }}
+          onChange={(event) => setSearch(event.target.value)}
           placeholder={t("settingsAdmin.searchPlaceholder")}
           aria-label={t("settingsAdmin.search")}
           className="h-9 w-full rounded-control border border-form-input-border bg-form-input-bg ps-9 pe-9 text-dash-body-sm text-accent outline-none transition-colors hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
@@ -62,11 +58,7 @@ export function SettingsFilters() {
             {STATUS_OPTIONS.map((option) => (
               <DropdownMenuItem
                 key={option.value}
-                onSelect={() => {
-                  setStatus(option.value);
-                  setPage(1);
-                  clearSelection();
-                }}
+                onSelect={() => setStatus(option.value)}
                 className="justify-between gap-3"
               >
                 <span>{t(option.labelKey)}</span>
@@ -81,8 +73,6 @@ export function SettingsFilters() {
             onClick={() => {
               setSearch("");
               setStatus("all");
-              setPage(1);
-              clearSelection();
             }}
             className="inline-flex shrink-0 items-center gap-1.5 rounded-pill border border-border-primary bg-surface-tertiary px-3.5 py-2 text-dash-body-sm font-bold text-content-secondary transition-colors hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >

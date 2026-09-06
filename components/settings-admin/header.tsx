@@ -2,12 +2,12 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/navigation";
-import { ArrowLeft, Plus, Settings as SettingsIcon } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import { useSettings } from "./settings-context";
 
 export function SettingsHeader() {
   const t = useTranslations();
-  const { data, canWrite } = useSettings();
+  const { total, canWrite } = useSettings();
   return (
     <div className="space-y-3">
       <Link
@@ -23,27 +23,18 @@ export function SettingsHeader() {
             {t("settingsAdmin.heading")}
           </h1>
           <span className="shrink-0 text-dash-caption font-bold text-content-tertiary">
-            {data.total} {t("settingsAdmin.resultsLabel")}
+            {total} {t("settingsAdmin.resultsLabel")}
           </span>
         </div>
-        <div className="flex items-center gap-2">
+        {canWrite && (
           <Link
-            href="/dashboard/settings/social"
-            className="inline-flex min-h-11 items-center gap-2 rounded-pill border border-border-interactive bg-surface-secondary px-4 text-dash-body-sm font-bold text-accent transition-colors hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            href="/dashboard/settings/add"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill bg-accent px-4 py-2.5 text-dash-body-sm font-bold text-content-contrast shadow-elevation-1 transition hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
-            <SettingsIcon className="size-4" aria-hidden="true" />
-            {t("settingsAdmin.socialLinks")}
+            <Plus className="size-4" aria-hidden="true" />
+            {t("settingsAdmin.add")}
           </Link>
-          {canWrite && (
-            <Link
-              href="/dashboard/settings/add"
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-pill bg-accent px-4 py-2.5 text-dash-body-sm font-bold text-content-contrast shadow-elevation-1 transition hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
-              <Plus className="size-4" aria-hidden="true" />
-              {t("settingsAdmin.add")}
-            </Link>
-          )}
-        </div>
+        )}
       </header>
     </div>
   );

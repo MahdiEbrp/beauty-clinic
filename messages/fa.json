@@ -1040,10 +1040,10 @@
    "users": "کاربران",
    "viewSite": "مشاهده وب‌سایت",
    "workspace": "فضای کاری",
-    "email": "ایمیل",
-    "workingHours": "ساعات کاری"
-   },
-   "topbar": {
+   "email": "ایمیل",
+   "workingHours": "ساعات کاری"
+  },
+  "topbar": {
    "access": "مدیریت دسترسی",
    "breadcrumbLabel": "مسیر داشبورد",
    "dashboard": "داشبورد",
@@ -3308,6 +3308,80 @@
    "number": "عدد",
    "object": "شیء",
    "string": "متن"
+  },
+  "groupsLabel": "پرش به گروه:",
+  "resultsCount": "{count} تنظیمات",
+  "emptyHint": "عبارت دیگری جستجو کنید یا فیلتر وضعیت را تغییر دهید.",
+  "deleteDialog": {
+   "description": "این تنظیم برای همیشه حذف می‌شود و قابل بازیابی نیست."
+  },
+  "groups": {
+   "booking": {
+    "title": "رزروها",
+    "subtitle": "زمان‌بندی، ظرفیت و قواعد رزرو."
+   },
+   "contact": {
+    "title": "تماس و آدرس‌ها",
+    "subtitle": "اطلاعات تماس، آدرس و متن بخش‌های فوتر."
+   },
+   "pricing": {
+    "title": "تعرفه‌ها",
+    "subtitle": "متن صفحه قیمت و دعوت به اقدام."
+   },
+   "social": {
+    "title": "شبکه‌های اجتماعی",
+    "subtitle": "لینک‌های رسانه‌های اجتماعی کلینیک."
+   },
+   "other": {
+    "title": "سایر تنظیمات",
+    "subtitle": "نام کلینیک و متن‌های عمومی."
+   },
+   "unknown": {
+    "title": "تنظیمات ناشناخته",
+    "subtitle": "کلیدهایی که هنوز دسته‌بندی نشده‌اند."
+   }
+  },
+  "keys": {
+   "booking.timezone": "منطقه زمانی",
+   "booking.slot_auto": "زمان‌بندی خودکار",
+   "booking.slot_interval_min": "فاصله هر نوبت (دقیقه)",
+   "booking.slot_duration_min": "مدت هر نوبت (دقیقه)",
+   "booking.slot_default_capacity": "ظرفیت پیش‌فرض هر نوبت",
+   "booking.slot_window_days": "پنجره رزرو (روز)",
+   "booking.min_cancel_hours": "حداقل ساعت برای لغو",
+   "booking.price": "هزینه رزرو",
+   "booking.currency": "واحد پول",
+   "booking.select_service": "متن «انتخاب خدمت»",
+   "contact.phone": "شماره تلفن",
+   "contact.address_full": "آدرس کامل",
+   "contact.city": "شهر",
+   "contact.province": "استان",
+   "contact.country": "کشور",
+   "contact.map_neshan": "لینک نقشه نشان",
+   "contact.map_google": "لینک نقشه گوگل",
+   "contact.address_title": "عنوان بخش آدرس",
+   "contact.social_title": "عنوان بخش شبکه‌های اجتماعی",
+   "contact.booking_title": "عنوان بخش رزرو",
+   "contact.neshan_map": "متن «مشاهده روی نشان»",
+   "contact.neshan_desc": "متن مسیریابی نشان",
+   "contact.google_map": "متن «مشاهده روی گوگل»",
+   "contact.google_desc": "متن مسیریابی گوگل",
+   "pricing.page.title": "عنوان صفحه تعرفه",
+   "pricing.page.intro": "مقدمه صفحه تعرفه",
+   "pricing.page.seo_title": "عنوان سئو تعرفه",
+   "pricing.page.seo_description": "توضیحات سئو تعرفه",
+   "pricing.page.updated": "تاریخ به‌روزرسانی تعرفه",
+   "pricing.cta.title": "عنوان دعوت به اقدام",
+   "pricing.cta.description": "توضیح دعوت به اقدام",
+   "pricing.cta.primary_label": "برچسب دکمه اصلی",
+   "pricing.cta.primary_url": "آدرس دکمه اصلی",
+   "pricing.cta.secondary_label": "برچسب دکمه دوم",
+   "pricing.cta.secondary_url": "آدرس دکمه دوم",
+   "clinic.name": "نام کلینیک",
+   "common.opens_in_new_tab": "متن «باز شدن در تب جدید»",
+   "social.bale": "بله",
+   "social.instagram": "اینستاگرام",
+   "social.rubika": "روبیکا"
   }
  },
  "site": {
@@ -4672,7 +4746,8 @@
   },
   "meta": {
    "description": "افزودن لینک شبکه اجتماعی کلینیک",
-   "title": "افزودن لینک شبکه اجتماعی | کلینیک زیبایی نفس"
+   "title": "افزودن لینک شبکه اجتماعی | کلینیک زیبایی نفس",
+   "close": "بستن"
   },
   "nav": {
    "back": "بازگشت",
