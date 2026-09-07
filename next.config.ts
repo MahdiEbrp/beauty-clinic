@@ -28,6 +28,10 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Keep the postgres driver out of the server bundle so Node built-ins like
+  // `net`/`tls` resolve at runtime (instrumentation + API routes import it via
+  // the db pool; bundling fails dev compilation with "Can't resolve 'net'").
+  serverExternalPackages: ["postgres"],
   // eslint-disable-next-line @typescript-eslint/require-await -- Next.js requires async headers()
   async headers() {
     const isDev = process.env.NODE_ENV !== "production";

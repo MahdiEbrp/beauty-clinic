@@ -3512,6 +3512,30 @@
   "subtitle": "Opening hours drive automatic availability-slot generation."
  },
  "workingHoursForm": {
+  "sections": {
+   "schedule": {
+    "title": "Slot generation",
+    "description": "Choose whether this day uses an automatic window or specific slot times."
+   },
+   "status": {
+    "title": "Day status",
+    "description": "Inactive days stay out of the booking calendar and do not generate slots."
+   },
+   "window": {
+    "title": "Working day and window",
+    "description": "Set the hours and display settings for this day."
+   }
+  },
+  "summary": {
+   "title": "Settings summary",
+   "day": "Selected day",
+   "window": "Working window",
+   "capacity": "Capacity",
+   "slots": "Slot count",
+   "perSlot": "Per slot",
+   "generatedAutomatically": "Automatic",
+   "notSet": "Not set"
+  },
   "errors": {
    "closesBeforeOpens": "Close time must be after open time.",
    "patternEmpty": "Enter at least one slot for pattern mode.",
@@ -3545,7 +3569,9 @@
    "opens": {
     "label": "Open Time",
     "placeholder": "HH:MM"
-   }
+   },
+   "hour": "Hour",
+   "minute": "Minute"
   },
   "nav": {
    "stepOf": "Step {current} of {total}"
