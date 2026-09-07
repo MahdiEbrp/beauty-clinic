@@ -140,10 +140,10 @@
    "phonePlaceholder": "Phone number used for booking",
    "search": "Search",
    "status": {
-    "cancelled": "Cancelled",
-    "confirmed": "Confirmed",
-    "paid": "Paid",
-    "pending": "Pending"
+    "pending": "Pending",
+    "processing": "In progress",
+    "canceled": "Canceled",
+    "refund": "Refunded"
    },
    "title": "My bookings"
   },
@@ -430,10 +430,10 @@
   "status": "Status",
   "statusAll": "All",
   "statuses": {
-   "cancelled": "Cancelled",
-   "confirmed": "Confirmed",
-   "paid": "Paid",
-   "pending": "Pending"
+   "pending": "Pending",
+   "processing": "In progress",
+   "canceled": "Canceled",
+   "refund": "Refunded"
   },
   "table": {
    "amount": "Amount",
@@ -2262,10 +2262,10 @@
    "uncategorized": "Other Services"
   },
   "statuses": {
-   "cancelled": "Cancelled",
-   "confirmed": "Confirmed",
-   "paid": "Paid",
-   "pending": "Pending"
+   "pending": "Pending",
+   "processing": "In progress",
+   "canceled": "Canceled",
+   "refund": "Refunded"
   },
   "steps": {
    "customer": {
@@ -5041,6 +5041,29 @@
    "success": "User status updated successfully.",
    "syncing": "Syncing changes...",
    "userCreated": "User created successfully."
+  }
+ },
+ "bookingCancellations": {
+  "meta": {
+   "title": "Cancellations",
+   "description": "Review canceled and refunded orders."
+  },
+  "heading": "Cancellations",
+  "resultsLabel": "{count} orders",
+  "statusAll": "All",
+  "empty": "No canceled orders yet.",
+  "emptySearch": "No orders match your filters.",
+  "errorTitle": "Could not load cancellations",
+  "errorDescription": "Something went wrong while loading cancellations.",
+  "retry": "Try again",
+  "actions": {
+   "refund": "Refund",
+   "refundConfirm": "Refund \"{name}\"?",
+   "refundConfirmDescription": "Marks the paid order as refunded.",
+   "edit": "Edit",
+   "delete": "Delete",
+   "deleteConfirm": "Delete this order?",
+   "deleteConfirmDescription": "The order will be permanently removed."
   }
  }
 }

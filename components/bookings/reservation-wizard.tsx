@@ -259,7 +259,7 @@ export function ReservationWizard({
                 onChange={(event) => setStatus(event.target.value as BookingStatus)}
                 className={inputClass(true)}
               >
-                {(["pending", "confirmed", "paid", "cancelled"] as const).map((value) => (
+                {(["pending", "processing", "canceled", "refund"] as const).map((value) => (
                   <option key={value} value={value}>
                     {t(`statuses.${value}`)}
                   </option>

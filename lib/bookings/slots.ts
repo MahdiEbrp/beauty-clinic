@@ -1,4 +1,4 @@
-import { and, eq, gte, inArray, lte, ne, or, sql } from "drizzle-orm";
+import { and, eq, gte, inArray, lte, ne, notInArray, or, sql } from "drizzle-orm";
 
 import { ApiError } from "@/lib/api/errors";
 import { db } from "@/src/db";
@@ -52,7 +52,7 @@ async function bookedCounts(slotIds: string[]): Promise<Map<string, number>> {
     .where(
       and(
         inArray(bookings.slotId, slotIds),
-        ne(bookings.status, "cancelled"),
+        notInArray(bookings.status, ["canceled", "refund"]),
         sql`${bookings.slotId} IS NOT NULL`,
       ),
     )

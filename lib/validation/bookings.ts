@@ -5,9 +5,9 @@ const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 export const bookingStatusSchema = z.enum([
   "pending",
-  "confirmed",
-  "paid",
-  "cancelled",
+  "processing",
+  "canceled",
+  "refund",
 ]);
 
 export const calendarTypeSchema = z.enum(["gregorian", "jalali"]);

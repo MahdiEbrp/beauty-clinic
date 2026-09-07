@@ -87,4 +87,6 @@ export interface AdminListConfig<T extends { id: string }> {
     busy?: boolean;
   };
   perPage?: number;
+  /** Initial status filter for the list (defaults to "all"). */
+  defaultStatus?: string;
 }

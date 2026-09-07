@@ -10,7 +10,7 @@ export function AdminListMobileAdd<T extends { id: string }>() {
   const t = asTranslate(useTranslations());
   const ctx = useAdminListContext<T>();
   const { config, canWrite } = ctx;
-  if (!canWrite) return null;
+  if (!canWrite || !config.addHref) return null;
   return (
     <Link
       href={config.addHref}

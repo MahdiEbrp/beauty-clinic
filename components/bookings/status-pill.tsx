@@ -31,7 +31,7 @@ export function StatusPill({
     );
   }
   const key = String(status);
-  const cls = RESERVE_STATUS_CLASS[key] ?? RESERVE_STATUS_CLASS.cancelled;
+  const cls = RESERVE_STATUS_CLASS[key] ?? RESERVE_STATUS_CLASS.canceled;
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-pill border px-2 py-0.5 text-dash-caption font-bold ${cls}`}

@@ -47,7 +47,7 @@ export function AdminListHeader<T extends { id: string }>() {
               <span>{t(action.labelKey)}</span>
             </button>
           )}
-          {canWrite && (
+          {canWrite && config.addHref && (
             <Link
               href={config.addHref}
               className="hidden shrink-0 min-h-11 items-center justify-center gap-2 rounded-pill bg-accent px-4 py-2.5 text-dash-body-sm font-bold text-content-contrast shadow-elevation-1 transition hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent md:inline-flex"

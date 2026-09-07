@@ -15,9 +15,9 @@ type PatientHistoryProps = {
 
 const STATUS_KEYS = {
   pending: "myBookings.status.pending",
-  confirmed: "myBookings.status.confirmed",
-  paid: "myBookings.status.paid",
-  cancelled: "myBookings.status.cancelled",
+  processing: "myBookings.status.processing",
+  canceled: "myBookings.status.canceled",
+  refund: "myBookings.status.refund",
 } as const;
 
 function toLabel(item: BookingGroup["items"][number], locale: "fa" | "en"): string {

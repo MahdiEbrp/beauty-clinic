@@ -1,4 +1,4 @@
-import { and, eq, gte, lte, ne, sql } from "drizzle-orm";
+import { and, eq, gte, lte, ne, notInArray, sql } from "drizzle-orm";
 
 import { ApiError } from "@/lib/api/errors";
 import { loadSystemSettingsMap } from "@/lib/settings/loader";
@@ -11,6 +11,7 @@ import { toMoney } from "./money";
 import { snapshotServices } from "./snapshot";
 import { MAX_ADVANCE_DAYS } from "./errors";
 import { computeSlotStatus } from "./slot-status";
+import { ensureCustomerUser } from "@/lib/users/customers";
 
 export { toMoney } from "./money";
 export function toLocalTimestamp(date: string, time: string): Date {
@@ -156,7 +157,7 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
       const [used] = await tx
         .select({ seats: sql<number>`coalesce(sum(${bookings.quantity}), 0)::int` })
         .from(bookings)
-        .where(and(eq(bookings.slotId, item.slotId), ne(bookings.status, "cancelled")));
+        .where(and(eq(bookings.slotId, item.slotId), notInArray(bookings.status, ["canceled", "refund"])));
       if (Number(used?.seats ?? 0) + totalRequested > slot.capacity) {
         throw new ApiError(409, "SLOT_FULL", "This time slot has just been taken.");
       }
@@ -172,7 +173,7 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
         .where(
           and(
             eq(bookings.phone, input.phone),
-            ne(bookings.status, "cancelled"),
+            notInArray(bookings.status, ["canceled", "refund"]),
             ne(bookings.groupRef, groupRef),
             lte(bookings.slotStart, end),
             gte(bookings.slotEnd, start),
@@ -194,7 +195,14 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
       planned.push({ ...item, start, end });
     }
 
-    // Phase 3 — insert the group rows (still inside the locked transaction).
+    // Phase 3 — link/auto-provision the customer, then insert the group rows
+    // (still inside the locked transaction, so a failed order leaves no user).
+    const customerId = await ensureCustomerUser(tx, {
+      phone: input.phone,
+      fullName: input.fullName,
+      email: input.email,
+    });
+
     const inserted: BookingSummary[] = [];
     for (const line of planned) {
       const service = snapshots.get(line.serviceId);
@@ -203,6 +211,7 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
         .insert(bookings)
         .values({
           groupRef,
+          customerId,
           fullName: input.fullName,
           phone: input.phone,
           email: input.email ?? null,

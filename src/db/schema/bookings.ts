@@ -20,9 +20,9 @@ import { services } from "./service-catalog";
 
 export const bookingStatusEnum = pgEnum("booking_status", [
   "pending",
-  "confirmed",
-  "paid",
-  "cancelled",
+  "processing",
+  "canceled",
+  "refund",
 ]);
 
 /**
@@ -103,6 +103,10 @@ export const bookings = pgTable(
     }),
     slotStart: timestamp("slot_start", { withTimezone: true }),
     slotEnd: timestamp("slot_end", { withTimezone: true }),
+    /** The customer user this order belongs to (auto-provisioned by phone). */
+    customerId: uuid("customer_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
     totalAmount: numeric("total_amount", { precision: 12, scale: 2 }).notNull().default("0"),
     status: bookingStatusEnum("status").notNull().default("pending"),
     paymentReference: text("payment_reference"),
@@ -120,6 +124,7 @@ export const bookings = pgTable(
   },
   (table) => [
     index("bookings_slot_id_idx").on(table.slotId),
+    index("bookings_customer_id_idx").on(table.customerId),
     index("bookings_status_idx").on(table.status),
     index("bookings_service_id_idx").on(table.serviceId),
     index("bookings_created_at_idx").on(table.createdAt),

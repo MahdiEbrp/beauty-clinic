@@ -140,10 +140,10 @@
    "phonePlaceholder": "شماره‌ای که با آن رزرو کرده‌اید",
    "search": "جستجو",
    "status": {
-    "cancelled": "لغو شده",
-    "confirmed": "تأیید شده",
-    "paid": "پرداخت شده",
-    "pending": "در انتظار"
+    "pending": "در انتظار",
+    "processing": "در حال انجام",
+    "canceled": "لغو شده",
+    "refund": "مسترد شده"
    },
    "title": "نوبت‌های من"
   },
@@ -430,10 +430,10 @@
   "status": "وضعیت",
   "statusAll": "همه",
   "statuses": {
-   "cancelled": "لغو شده",
-   "confirmed": "تأیید شده",
-   "paid": "پرداخت شده",
-   "pending": "در انتظار"
+   "pending": "در انتظار",
+   "processing": "در حال انجام",
+   "canceled": "لغو شده",
+   "refund": "مسترد شده"
   },
   "table": {
    "amount": "مبلغ",
@@ -2262,10 +2262,10 @@
    "uncategorized": "سایر خدمات"
   },
   "statuses": {
-   "cancelled": "لغو شده",
-   "confirmed": "تأیید شده",
-   "paid": "پرداخت شده",
-   "pending": "در انتظار"
+   "pending": "در انتظار",
+   "processing": "در حال انجام",
+   "canceled": "لغو شده",
+   "refund": "مسترد شده"
   },
   "steps": {
    "customer": {
@@ -5041,6 +5041,29 @@
    "success": "وضعیت کاربر با موفقیت به‌روزرسانی شد.",
    "syncing": "در حال همگام‌سازی تغییرات...",
    "userCreated": "کاربر با موفقیت ایجاد شد."
+  }
+ },
+ "bookingCancellations": {
+  "meta": {
+   "title": "لغوها",
+   "description": "بررسی سفارش‌های لغو شده و مسترد شده."
+  },
+  "heading": "لغوها",
+  "resultsLabel": "{count} سفارش",
+  "statusAll": "همه",
+  "empty": "هنوز سفارش لغو شده‌ای نیست.",
+  "emptySearch": "سفارشی با فیلترهای شما یافت نشد.",
+  "errorTitle": "بارگذاری لغوها ناموفق بود",
+  "errorDescription": "خطایی در بارگذاری لغوها رخ داد.",
+  "retry": "تلاش مجدد",
+  "actions": {
+   "refund": "استرداد",
+   "refundConfirm": "استرداد \"{name}\"؟",
+   "refundConfirmDescription": "این سفارش پرداخت‌شده به‌عنوان مسترد شده علامت می‌خورد.",
+   "edit": "ویرایش",
+   "delete": "حذف",
+   "deleteConfirm": "حذف این سفارش؟",
+   "deleteConfirmDescription": "سفارش برای همیشه حذف می‌شود."
   }
  }
 }

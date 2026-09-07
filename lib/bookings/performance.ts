@@ -18,7 +18,7 @@ export async function getBookingsPerformance(): Promise<BookingsPerformance> {
   const [bookingRow] = await db
     .select({
       total: sql<number>`count(*)::int`,
-      active: sql<number>`count(*) filter (where ${bookings.status} in ('confirmed','paid'))::int`,
+      active: sql<number>`count(*) filter (where ${bookings.status} in ('pending','processing'))::int`,
     })
     .from(bookings);
 

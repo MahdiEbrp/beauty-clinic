@@ -25,8 +25,8 @@ export const POST = withSecurity(
 
     let blocked: string[] = [];
     try {
-      if (input.action === "confirm") await setBookingsStatus(ids, "confirmed");
-      else if (input.action === "cancel") await setBookingsStatus(ids, "cancelled");
+      if (input.action === "confirm") await setBookingsStatus(ids, "processing");
+      else if (input.action === "cancel") await setBookingsStatus(ids, "canceled");
       else await deleteBookings(ids);
     } catch {
       blocked = ids;

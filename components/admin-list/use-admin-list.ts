@@ -47,7 +47,7 @@ export function useAdminList<T extends { id: string }>(
 ): AdminListState<T> {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [status, setStatus] = useState("all");
+  const [status, setStatus] = useState(config.defaultStatus ?? "all");
   const [page, setPage] = useState(1);
   const [data, setData] = useState<ListResult<T>>(initialData);
   const [isLoading, setIsLoading] = useState(false);

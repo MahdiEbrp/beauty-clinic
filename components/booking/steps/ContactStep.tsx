@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, type FocusEvent } from "react";
 import { useTranslations } from "next-intl";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,6 +15,7 @@ import {
 import { bookingErrorKey } from "@/lib/bookings/errors";
 import { cn } from "@/lib/utils";
 import { asTranslate } from "@/src/i18n/message-key";
+import { fetchMyBookings } from "../api";
 import { Switch } from "../Switch";
 import type { ContactInfo } from "../types";
 
@@ -67,6 +68,21 @@ export default function ContactStep({ defaultValues, onBack, onContinue }: Conta
 
   const setToggle = (name: "hasAllergies" | "isPregnant" | "agreeToTerms", value: boolean) =>
     setValue(name, value, { shouldValidate: true });
+
+  /** Returning customer: prefill the name from their latest order by phone. */
+  const prefillReturningCustomer = async (phoneRaw: string) => {
+    const phone = phoneRaw.trim();
+    if (phone.length < 6) return;
+    try {
+      const groups = await fetchMyBookings(phone);
+      const latest = groups[0];
+      if (latest?.fullName) {
+        setValue("fullName", latest.fullName, { shouldValidate: true });
+      }
+    } catch {
+      // Lookup is best-effort; the customer can type their name instead.
+    }
+  };
 
   const onSubmit = async (data: ContactInfo) => {
     setSubmitting(true);
@@ -153,7 +169,10 @@ export default function ContactStep({ defaultValues, onBack, onContinue }: Conta
                 dir="ltr"
                 className={cn(fieldClass, "font-bold tracking-wider")}
                 aria-invalid={Boolean(errors.phone)}
-                {...register("phone")}
+                {...register("phone", {
+                  onBlur: (event: FocusEvent<HTMLInputElement>) =>
+                    void prefillReturningCustomer(event.target.value),
+                })}
               />
             </div>
             {errors.phone ? (

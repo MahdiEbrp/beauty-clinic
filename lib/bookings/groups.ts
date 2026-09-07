@@ -102,7 +102,9 @@ export async function cancelBookingGroup(
     .where(and(eq(bookings.groupRef, groupRef), eq(bookings.phone, phone)));
 
   if (rows.length === 0) throw new ApiError(404, "BOOKING_NOT_FOUND", "Booking not found.");
-  if (rows.every((row) => row.status === "cancelled")) return { cancelled: 0 };
+  const isTerminal = (row: BookingSummary) =>
+    row.status === "canceled" || row.status === "refund";
+  if (rows.every(isTerminal)) return { cancelled: 0 };
 
   const settings = await loadSystemSettingsMap();
   const minCancelHours = toMoney(settings.get("booking.min_cancel_hours"));
@@ -122,10 +124,10 @@ export async function cancelBookingGroup(
     }
   }
 
-  const ids = rows.filter((row) => row.status !== "cancelled").map((row) => row.id);
+  const ids = rows.filter((row) => !isTerminal(row)).map((row) => row.id);
   await db
     .update(bookings)
-    .set({ status: "cancelled", updatedAt: new Date() })
+    .set({ status: "canceled", updatedAt: new Date() })
     .where(inArray(bookings.id, ids));
   return { cancelled: ids.length };
 }

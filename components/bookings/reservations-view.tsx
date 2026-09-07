@@ -32,9 +32,9 @@ export function ReservationsListView({
     statusOptions: [
       { value: "all", labelKey: "bookingReservations.statusAll" },
       { value: "pending", labelKey: "bookingReservations.statuses.pending" },
-      { value: "confirmed", labelKey: "bookingReservations.statuses.confirmed" },
-      { value: "paid", labelKey: "bookingReservations.statuses.paid" },
-      { value: "cancelled", labelKey: "bookingReservations.statuses.cancelled" },
+      { value: "processing", labelKey: "bookingReservations.statuses.processing" },
+      { value: "canceled", labelKey: "bookingReservations.statuses.canceled" },
+      { value: "refund", labelKey: "bookingReservations.statuses.refund" },
     ],
     columns: reservationColumns(),
     renderMobileCard: (row) => <ReservationMobileCard row={row} />,
@@ -56,7 +56,7 @@ export function ReservationsListView({
           icon: "confirm",
         });
       }
-      if (row.status !== "cancelled") {
+      if (row.status !== "canceled" && row.status !== "refund") {
         buttons.push({
           key: "cancel",
           labelKey: "bookingReservations.actions.cancel",
@@ -74,7 +74,7 @@ export function ReservationsListView({
       return buttons;
     },
     statusPatch: (action) =>
-      action === "confirm" ? { status: "confirmed" } : { status: "cancelled" },
+      action === "confirm" ? { status: "processing" } : { status: "canceled" },
         confirmPhrase: (action) => ({
       title:
         action === "delete"

@@ -122,8 +122,9 @@ export async function deleteBooking(id: string): Promise<void> {
 
 /**
  * Idempotent mock payment for a whole booking GROUP: marks every row in the
- * group paid with a shared reference. Calling again with any member id
- * returns the existing reference.
+ * group processing (paid) with a shared reference. Calling again with any
+ * member id returns the existing reference. Canceled/refunded groups cannot
+ * be paid.
  */
 export async function recordMockPayment(id: string): Promise<BookingSummary> {
   const [member] = await db.select().from(bookings).where(eq(bookings.id, id)).limit(1);
@@ -131,17 +132,21 @@ export async function recordMockPayment(id: string): Promise<BookingSummary> {
 
   const group = await db.select().from(bookings).where(eq(bookings.groupRef, member.groupRef));
 
-  const paidRow = group.find((row) => row.status === "paid" && row.paymentReference);
+  const isTerminal = (row: BookingSummary) =>
+    row.status === "canceled" || row.status === "refund";
+  const paidRow = group.find(
+    (row) => row.status === "processing" && row.paymentReference,
+  );
   if (paidRow) return paidRow;
-  if (group.every((row) => row.status === "cancelled")) {
+  if (group.every(isTerminal)) {
     throw new ApiError(409, "BOOKING_CANCELLED", "A cancelled booking cannot be paid.");
   }
 
   const reference = crypto.randomUUID();
-  const ids = group.filter((row) => row.status !== "cancelled").map((row) => row.id);
+  const ids = group.filter((row) => !isTerminal(row)).map((row) => row.id);
   const [updated] = await db
     .update(bookings)
-    .set({ status: "paid", paymentReference: reference, updatedAt: new Date() })
+    .set({ status: "processing", paymentReference: reference, updatedAt: new Date() })
     .where(inArray(bookings.id, ids))
     .returning();
   return updated;

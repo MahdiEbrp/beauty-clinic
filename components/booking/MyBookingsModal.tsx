@@ -15,9 +15,9 @@ type MyBookingsModalProps = {
 
 const STATUS_KEYS = {
   pending: "myBookings.status.pending",
-  confirmed: "myBookings.status.confirmed",
-  paid: "myBookings.status.paid",
-  cancelled: "myBookings.status.cancelled",
+  processing: "myBookings.status.processing",
+  canceled: "myBookings.status.canceled",
+  refund: "myBookings.status.refund",
 } as const;
 
 /** My-bookings lookup (template parity): by phone, DB-backed, with cancel. */
@@ -48,7 +48,7 @@ export default function MyBookingsModal({ minCancelHours, onClose }: MyBookingsM
     try {
       await cancelBookingGroup(groupRef, phone.trim());
       setGroups((prev) =>
-        prev?.map((g) => (g.groupRef === groupRef ? { ...g, status: "cancelled" } : g)) ?? null,
+        prev?.map((g) => (g.groupRef === groupRef ? { ...g, status: "canceled" } : g)) ?? null,
       );
     } catch (err) {
       setError(looseT(`errors.${bookingErrorKey(err)}`));
@@ -146,7 +146,7 @@ export default function MyBookingsModal({ minCancelHours, onClose }: MyBookingsM
                   </li>
                 ))}
               </ul>
-              {group.status === "pending" || group.status === "confirmed" ? (
+              {group.status === "pending" || group.status === "processing" ? (
                 <button
                   type="button"
                   onClick={() => void cancel(group.groupRef)}
