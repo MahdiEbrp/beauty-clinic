@@ -11,24 +11,14 @@ type ServiceDetailModalProps = {
   service: SelectedService;
   theme: GroupTheme;
   selected: boolean;
-  currency: string;
   onToggle: () => void;
   onClose: () => void;
 };
 
-/** Service "more info" dialog (Template parity): price, duration, description. */
-export function ServiceDetailModal({
-  service,
-  theme,
-  selected,
-  currency,
-  onToggle,
-  onClose,
-}: ServiceDetailModalProps) {
+/** Service "more info" dialog (Template parity): duration + short description. */
+export function ServiceDetailModal({ service, theme, selected, onToggle, onClose }: ServiceDetailModalProps) {
   const t = useTranslations("booking");
   const GroupIcon = theme.icon;
-
-  const price = service.price != null ? `${formatNumber(service.price)} ${currency}` : "";
 
   return (
     <div
@@ -64,22 +54,16 @@ export function ServiceDetailModal({
 
         {/* Content */}
         <div className="space-y-4 overflow-y-auto p-4 sm:p-5">
-          <div className="grid grid-cols-2 gap-2.5">
-            <div className="rounded-control border border-border-primary bg-surface-secondary p-3 text-center">
-              <span className="block text-caption font-bold text-content-tertiary">{t("serviceDetail.price")}</span>
-              <span className="mt-0.5 block text-body font-black text-accent">{price}</span>
-            </div>
-            <div className="rounded-control border border-border-primary bg-surface-secondary p-3 text-center">
-              <span className="block text-caption font-bold text-content-tertiary">{t("serviceDetail.duration")}</span>
-              <span className="mt-0.5 block text-body font-black text-copper-deep">
-                {formatNumber(service.durationMin)} {t("appointment.minutes")}
-              </span>
-            </div>
+          <div className="rounded-control border border-border-primary bg-surface-secondary p-3 text-center">
+            <span className="block text-caption font-bold text-content-tertiary">{t("serviceDetail.duration")}</span>
+            <span className="mt-0.5 block text-body font-black text-copper-deep">
+              {formatNumber(service.durationMin)} {t("appointment.minutes")}
+            </span>
           </div>
 
           <div className="space-y-1.5 rounded-control border border-border-primary/80 bg-surface-secondary/50 p-3.5">
             <span className="block text-body-sm font-black text-copper-deep">{t("serviceDetail.about")}</span>
-            <p className="text-body-sm leading-relaxed text-content-secondary">{service.fullDesc || service.shortDesc || t("serviceDetail.noDescription")}</p>
+            <p className="text-body-sm leading-relaxed text-content-secondary">{service.shortDesc || t("serviceDetail.noDescription")}</p>
           </div>
 
           <div className="flex items-start gap-2.5 rounded-control border border-accent/20 bg-accent/5 p-3 text-caption leading-relaxed text-content-secondary">

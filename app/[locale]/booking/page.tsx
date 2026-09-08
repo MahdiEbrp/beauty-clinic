@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import { getPublicServiceTree } from "@/lib/services/service";
+import { getPublicServiceTree, getRulesForPublic } from "@/lib/services/service";
 import { getClinicData } from "@/data/clinic";
 import type { Locale } from "@/lib/services/types";
 import { pageUrl } from "@/lib/site";
@@ -41,10 +41,12 @@ export default async function BookingPage({
   const { locale } = await params;
   const tree = await getPublicServiceTree(locale as Locale);
   const clinic = await getClinicData(locale as Locale);
+  const rules = await getRulesForPublic(locale as Locale, { status: "active" });
 
   return (
     <BookingWizard
       tree={tree}
+      rules={rules}
       currency={clinic.currency}
       openingHours={clinic.openingHours}
       minCancelHours={clinic.minCancelHours}

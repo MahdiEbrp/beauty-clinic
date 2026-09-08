@@ -7,15 +7,18 @@ import { cn } from "@/lib/utils";
 import type { PublicServiceTree } from "@/lib/services/types";
 import { getGroupTheme } from "../group-theme";
 import { Root as SelectRoot, Value as SelectValue, Trigger as SelectTrigger, Content as SelectContent, Item as SelectItem } from "../booking-select";
-import type { SelectedService, CartItem } from "../types";
+import type { SelectedService, CartItem, HealthFlags } from "../types";
+import { HealthNotice } from "./HealthNotice";
 import { ServiceRow } from "./ServiceRow";
 import { ServiceDetailModal } from "./ServiceDetailModal";
 import { ServicesPagination } from "./ServicesPagination";
 
 type ServicesStepProps = {
   tree: PublicServiceTree;
-  currency: string;
   cart: CartItem[];
+  health: HealthFlags;
+  phone: string;
+  onHealthChange: (kind: keyof HealthFlags, value: boolean) => void;
   onToggle: (service: CartItem) => void;
   onRemove: (serviceId: string) => void;
 };
@@ -30,7 +33,7 @@ function buildItem(service: SelectedService): CartItem {
  * Step 1 — services (Template parity): filter + search + paginated table with
  * themed rows (group palette by index) and a comprehensive detail modal.
  */
-export default function ServicesStep({ tree, currency, cart, onToggle, onRemove }: ServicesStepProps) {
+export default function ServicesStep({ tree, cart, health, phone, onHealthChange, onToggle, onRemove }: ServicesStepProps) {
   const t = useTranslations("booking");
   const [query, setQuery] = useState("");
   const [groupSlug, setGroupSlug] = useState("all");
@@ -112,6 +115,9 @@ export default function ServicesStep({ tree, currency, cart, onToggle, onRemove 
 
   return (
     <div id="services-table-root" className="w-full space-y-3 sm:space-y-4">
+      {/* Health gate */}
+      <HealthNotice pregnant={health.pregnant} illness={health.illness} phone={phone} onChange={onHealthChange} />
+
       {/* Top filter & search bar */}
       <div className="rounded-panel border border-border-primary/80 bg-surface-secondary/70 p-3 shadow-xs sm:p-3.5">
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
@@ -235,13 +241,12 @@ export default function ServicesStep({ tree, currency, cart, onToggle, onRemove 
           {/* Desktop header */}
           <div
             role="row"
-            className="hidden grid-cols-[3rem_minmax(0,1fr)_9rem_6rem_8rem_7.5rem] items-center gap-3 border-b border-border-primary bg-surface-tertiary/90 px-4 py-3 text-caption font-black text-content-secondary select-none md:grid"
+            className="hidden grid-cols-[3rem_minmax(0,1fr)_9rem_6rem_7.5rem] items-center gap-3 border-b border-border-primary bg-surface-tertiary/90 px-4 py-3 text-caption font-black text-content-secondary select-none md:grid"
           >
             <div className="text-center">{t("services.colIndex")}</div>
             <div>{t("services.colService")}</div>
             <div className="text-center">{t("services.colCategory")}</div>
             <div className="text-center">{t("services.colDuration")}</div>
-            <div className="text-center">{t("services.colPrice")}</div>
             <div className="text-center">{t("services.colAction")}</div>
           </div>
 
@@ -254,7 +259,6 @@ export default function ServicesStep({ tree, currency, cart, onToggle, onRemove 
                 rowNumber={start + index + 1}
                 selected={inCart(service.id)}
                 theme={getGroupTheme(service.groupIndex)}
-                currency={currency}
                 onToggle={() => toggle(service)}
                 onInfo={() => setActiveDetail(service)}
               />
@@ -283,7 +287,6 @@ export default function ServicesStep({ tree, currency, cart, onToggle, onRemove 
           service={activeDetail}
           theme={getGroupTheme(rows.find((r) => r.id === activeDetail.id)?.groupIndex ?? 0)}
           selected={inCart(activeDetail.id)}
-          currency={currency}
           onToggle={() => toggle(activeDetail)}
           onClose={() => setActiveDetail(null)}
         />

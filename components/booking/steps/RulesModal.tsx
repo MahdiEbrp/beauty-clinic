@@ -1,22 +1,19 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { BookOpen, CheckCircle2, Clock, Receipt, ShieldCheck, Sparkles, X } from "lucide-react";
+import { BookOpen, CheckCircle2, X } from "lucide-react";
+import GroupGlyph from "@/components/create-group/GroupGlyph";
+import { cn } from "@/lib/utils";
+import type { PublicRule } from "@/lib/services/rules-types";
 
 type RulesModalProps = {
+  rules: PublicRule[];
   onAccept: () => void;
   onClose: () => void;
 };
 
-const RULES = [
-  { icon: Clock, titleKey: "summary.rules.s1Title", bodyKey: "summary.rules.s1Body" },
-  { icon: Receipt, titleKey: "summary.rules.s2Title", bodyKey: "summary.rules.s2Body" },
-  { icon: ShieldCheck, titleKey: "summary.rules.s3Title", bodyKey: "summary.rules.s3Body" },
-  { icon: Sparkles, titleKey: "summary.rules.s4Title", bodyKey: "summary.rules.s4Body" },
-] as const;
-
-/** Full clinic booking charter (Template parity) shown from the terms strip. */
-export default function RulesModal({ onAccept, onClose }: RulesModalProps) {
+/** Clinic booking charter fed by the DB rules table (Template parity). */
+export default function RulesModal({ rules, onAccept, onClose }: RulesModalProps) {
   const t = useTranslations("booking");
 
   return (
@@ -52,19 +49,29 @@ export default function RulesModal({ onAccept, onClose }: RulesModalProps) {
         </div>
 
         <div className="max-h-[70vh] space-y-4 overflow-y-auto p-4 sm:p-6">
-          <div className="rounded-control border border-border-interactive bg-surface-tertiary/70 p-3 text-caption font-medium leading-relaxed text-copper-strong">
-            {t("summary.rules.intro")}
-          </div>
-
-          {RULES.map((rule) => (
-            <div key={rule.titleKey} className="space-y-1.5 rounded-control border border-border-primary bg-surface-secondary p-3.5">
-              <h4 className="flex items-center gap-2 text-body-sm font-black text-accent">
-                <rule.icon className="size-4 shrink-0 text-copper" aria-hidden="true" />
-                {t(rule.titleKey)}
-              </h4>
-              <p className="text-caption leading-relaxed text-content-secondary">{t(rule.bodyKey)}</p>
-            </div>
-          ))}
+          {rules.length === 0 ? (
+            <p className="rounded-control border border-dashed border-border-interactive bg-surface-secondary px-4 py-8 text-center text-caption text-content-tertiary">
+              {t("summary.rules.empty")}
+            </p>
+          ) : (
+            rules.map((rule) => (
+              <div
+                key={rule.id}
+                className={cn("space-y-1.5 rounded-control border p-3.5", rule.highlighted ? "border-copper/60 bg-copper/5" : "border-border-primary bg-surface-secondary")}
+              >
+                <h4 className="flex flex-wrap items-center gap-2 text-body-sm font-black text-accent">
+                  <GroupGlyph name={rule.icon ?? "Sparkles"} className="size-4 shrink-0 text-copper" />
+                  {rule.name}
+                  {rule.highlighted ? (
+                    <span className="rounded-pill bg-copper/15 px-2 py-0.5 text-caption font-black text-copper-deep">{t("summary.rules.highlighted")}</span>
+                  ) : null}
+                </h4>
+                {rule.description ? (
+                  <p className="text-caption leading-relaxed text-content-secondary">{rule.description}</p>
+                ) : null}
+              </div>
+            ))
+          )}
         </div>
 
         <div className="flex flex-col items-center justify-between gap-3 border-t border-border-primary bg-surface-secondary p-4 sm:flex-row">

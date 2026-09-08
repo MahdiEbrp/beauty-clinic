@@ -158,7 +158,6 @@ export default function PrintInvoiceModal({ data, onClose, address, phoneDisplay
                 <th className="p-2.5 text-right">{t("invoiceModal.colService")}</th>
                 <th className="p-2.5 text-center">{t("invoiceModal.colWhen")}</th>
                 <th className="p-2.5 text-center">{t("invoiceModal.colDuration")}</th>
-                <th className="p-2.5 text-left">{t("invoiceModal.colAmount")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -171,7 +170,6 @@ export default function PrintInvoiceModal({ data, onClose, address, phoneDisplay
                     <div className="text-[11px] text-copper-deep">{t("invoiceModal.time", { time: item.startTime.slice(0, 5) })}</div>
                   </td>
                   <td className="p-3 text-center font-medium text-slate-600">{item.durationMin} min</td>
-                  <td className="p-3 text-left text-sm font-black text-slate-900">{formatNumber(item.amount)}</td>
                 </tr>
               ))}
             </tbody>
@@ -187,20 +185,12 @@ export default function PrintInvoiceModal({ data, onClose, address, phoneDisplay
             </div>
 
             <div className="overflow-hidden rounded-control border-2 border-slate-300 text-xs sm:col-span-6">
-              <div className="flex justify-between border-b border-slate-200 bg-slate-100 p-2.5">
-                <span className="font-bold text-slate-700">{t("invoiceModal.total")}</span>
-                <span className="font-black text-slate-900">{formatNumber(data.total)} {data.currency}</span>
-              </div>
-              <div className="flex justify-between border-b border-slate-200 bg-amber-50/70 p-2.5">
+              <div className="flex justify-between bg-amber-50/70 p-3">
                 <div>
                   <span className="block font-black text-[#530916]">{t("invoiceModal.deposit")}</span>
                   <span className="text-[10px] text-slate-500">{t("invoiceModal.depositHint")}</span>
                 </div>
                 <span className="text-base font-black text-[#530916]">{formatNumber(data.deposit)} {data.currency}</span>
-              </div>
-              <div className="flex justify-between bg-slate-900 p-3 text-white">
-                <span className="text-sm font-extrabold">{t("invoiceModal.remaining")}</span>
-                <span className="text-base font-black text-amber-300">{formatNumber(data.remaining)} {data.currency}</span>
               </div>
             </div>
           </div>

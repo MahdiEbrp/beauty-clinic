@@ -32,7 +32,6 @@ export default function ConfirmationStep({
   const calendar: CalendarKind = locale === "fa" ? "jalali" : "gregorian";
 
   const paid = Boolean(paymentReference);
-  const totalSum = group.items.reduce((sum, item) => sum + Number(item.totalAmount), 0);
   const whatsapp = clinic.phoneDisplay
     ? `https://wa.me/${clinic.phoneDisplay.replace(/\D/g, "")}?text=${encodeURIComponent(
         t("confirmation.whatsappText", {
@@ -87,9 +86,6 @@ export default function ConfirmationStep({
                     </div>
                   ) : null}
                 </div>
-                <span className="shrink-0 text-caption font-black text-copper-deep">
-                  {formatNumber(Number(item.totalAmount))} {currency}
-                </span>
               </div>
             ))}
           </div>
@@ -124,21 +120,6 @@ export default function ConfirmationStep({
               <span>{t("confirmation.depositPaid")}</span>
               <span className="font-black">
                 {formatNumber(group.deposit)} {currency}
-              </span>
-            </div>
-            <div className="my-2 flex items-center gap-4 text-content-contrast/40" aria-hidden="true">
-              <Sparkles className="size-3 delay-0" />
-              <Sparkles className="size-3" />
-              <Sparkles className="size-3" />
-              <span className="mx-auto h-0.5 w-0.5 rounded-full bg-copper-light" />
-              <Sparkles className="size-3" />
-              <Sparkles className="size-3" />
-              <Sparkles className="size-3 delay-0" />
-            </div>
-            <div className="flex items-center justify-between gap-3 border-t border-content-contrast/15 pt-2">
-              <span className="text-body-sm font-black text-content-contrast">{t("confirmation.total")}</span>
-              <span className="text-body font-black text-copper-light">
-                {formatNumber(totalSum)} {currency}
               </span>
             </div>
           </div>

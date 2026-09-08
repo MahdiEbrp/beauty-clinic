@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { findCartConflicts } from "@/lib/booking/scheduling";
 import type { PublicServiceTree } from "@/lib/services/types";
+import type { PublicRule } from "@/lib/services/rules-types";
 import { createBookingGroup, payBookingGroup } from "./api";
 import { invalidateSlots } from "./slots-cache";
 import Stepper from "./Stepper";
@@ -16,7 +17,7 @@ import SummaryStep from "./steps/SummaryStep";
 import ConfirmationStep from "./steps/ConfirmationStep";
 import { buildInvoice } from "./invoice";
 import type { InvoiceData } from "./modals/PrintInvoiceModal";
-import type { CartItem, ContactInfo, WizardStep } from "./types";
+import type { CartItem, ContactInfo, HealthFlags, WizardStep } from "./types";
 
 export type ClinicBookingInfo = {
   clinicName: string;
@@ -30,6 +31,7 @@ export type ClinicBookingInfo = {
 
 export type BookingWizardProps = {
   tree: PublicServiceTree;
+  rules: PublicRule[];
   currency: string;
   openingHours: readonly {
     readonly days: readonly string[];
@@ -54,7 +56,7 @@ function loadCart(): CartItem[] {
 }
 
 function VerifiedWizard(props: BookingWizardProps) {
-  const { tree, currency, clinic, minCancelHours, defaultDeposit } = props;
+  const { tree, rules, currency, clinic, minCancelHours, defaultDeposit } = props;
   const t = useTranslations("booking");
   const locale = useLocale() as "fa" | "en";
   const searchParams = useSearchParams();
@@ -62,6 +64,7 @@ function VerifiedWizard(props: BookingWizardProps) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const [step, setStep] = useState<WizardStep>(0);
+  const [health, setHealth] = useState<HealthFlags>({ pregnant: false, illness: false });
   const [contact, setContact] = useState<ContactInfo | null>(null);
   const [group, setGroup] = useState<Awaited<ReturnType<typeof createBookingGroup>> | null>(null);
   const [paymentReference, setPaymentReference] = useState<string | null>(null);
@@ -115,6 +118,11 @@ function VerifiedWizard(props: BookingWizardProps) {
   const allScheduled = cart.length > 0 && cart.every((line) => line.slot);
   const conflicts = useMemo(() => findCartConflicts(cart), [cart]);
   const readyToNext = allScheduled && conflicts.length === 0;
+  const healthBlocked = health.pregnant || health.illness;
+
+  const setHealthFlag = useCallback((kind: keyof HealthFlags, value: boolean) => {
+    setHealth((prev) => ({ ...prev, [kind]: value }));
+  }, []);
 
   const toggleService = useCallback((item: CartItem) => {
     setCart((prev) =>
@@ -168,15 +176,18 @@ function VerifiedWizard(props: BookingWizardProps) {
   const canStepTo = useCallback(
     (index: number) => {
       if (index === 0) return true;
-      if (index === 1) return cart.length > 0;
+      if (index === 1) return cart.length > 0 && !healthBlocked;
       if (index === 2) return readyToNext;
-      return true;
+      return group !== null;
     },
-    [cart.length, readyToNext],
+    [cart.length, group, healthBlocked, readyToNext],
   );
 
   const goNext = () => setStep((current) => (current === 0 || current === 1 ? ((current + 1) as WizardStep) : current));
   const goBack = () => setStep((current) => (current > 0 ? ((current - 1) as WizardStep) : current));
+
+  // Defensive: never render the confirmation step without a saved group.
+  const effectiveStep: WizardStep = step === 3 && !group ? 0 : step;
 
   const openInvoice = useCallback(() => {
     if (!group) return;
@@ -187,7 +198,7 @@ function VerifiedWizard(props: BookingWizardProps) {
   return (
     <>
       <Stepper
-        current={step}
+        current={effectiveStep}
         canStepTo={canStepTo}
         onStepClick={(index) => setStep(index as WizardStep)}
         onOpenMyBookings={() => setShowMyBookings(true)}
@@ -197,12 +208,14 @@ function VerifiedWizard(props: BookingWizardProps) {
       <h1 className="sr-only">{t("title")}</h1>
 
       <main className="mx-auto w-full max-w-4xl flex-1 px-2 pb-40 pt-4 sm:px-5 sm:py-6">
-        {step === 0 ? <ServicesStep tree={tree} currency={currency} cart={cart} onToggle={toggleService} onRemove={removeLine} /> : null}
-        {step === 1 ? <ScheduleStep cart={cart} currency={currency} onAssignSlot={assignSlot} onBack={() => setStep(0)} /> : null}
-        {step === 2 ? (
-          <SummaryStep cart={cart} currency={currency} totals={totals} onSubmit={submitBooking} />
+        {effectiveStep === 0 ? (
+          <ServicesStep tree={tree} cart={cart} health={health} phone={clinic.phoneDisplay} onHealthChange={setHealthFlag} onToggle={toggleService} onRemove={removeLine} />
         ) : null}
-        {step === 3 && group ? (
+        {effectiveStep === 1 ? <ScheduleStep cart={cart} onAssignSlot={assignSlot} onBack={() => setStep(0)} /> : null}
+        {effectiveStep === 2 ? (
+          <SummaryStep cart={cart} currency={currency} totals={totals} rules={rules} onSubmit={submitBooking} />
+        ) : null}
+        {effectiveStep === 3 && group ? (
           <ConfirmationStep
             group={group}
             contact={contact}
@@ -213,7 +226,7 @@ function VerifiedWizard(props: BookingWizardProps) {
           />
         ) : null}
 
-        <BottomBar step={step} canProceed={step === 0 ? cart.length > 0 : readyToNext} onNext={goNext} onPrev={goBack} />
+        <BottomBar step={effectiveStep} canProceed={effectiveStep === 0 ? cart.length > 0 && !healthBlocked : readyToNext} onNext={goNext} onPrev={goBack} />
       </main>
 
       <BookingModals

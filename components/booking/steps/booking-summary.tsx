@@ -64,9 +64,9 @@ export function BookingSummary({ cart, currency, deposit, open, onToggle }: Book
                       </div>
                     ) : null}
                   </div>
-                  <span className="shrink-0 text-caption font-black text-copper-deep">
-                    {formatNumber(line.service.price)} {currency}
-                  </span>
+                  {line.quantity > 1 ? (
+                    <span className="shrink-0 text-caption font-bold text-content-tertiary">× {formatNumber(line.quantity)}</span>
+                  ) : null}
                 </div>
               ))}
             </div>

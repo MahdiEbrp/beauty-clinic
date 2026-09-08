@@ -8,6 +8,7 @@ import { bookingErrorKey } from "@/lib/bookings/errors";
 import { asTranslate } from "@/src/i18n/message-key";
 import { fetchMyBookings } from "../api";
 import type { CartItem, ContactInfo } from "../types";
+import type { PublicRule } from "@/lib/services/rules-types";
 import { BookingSummary } from "./booking-summary";
 import { TermsPanel } from "./terms-panel";
 import RulesModal from "./RulesModal";
@@ -17,6 +18,7 @@ type SummaryStepProps = {
   cart: CartItem[];
   currency: string;
   totals: { total: number; deposit: number; remaining: number };
+  rules: PublicRule[];
   onSubmit: (contact: ContactInfo) => Promise<unknown>;
 };
 
@@ -25,7 +27,7 @@ type FieldErrors = { fullName?: string; phone?: string; terms?: string };
 const PHONE_RE = /^0?9\d{9}$/;
 
 /** Step 3 — customer details, terms & deposit payment (Template parity). */
-export default function SummaryStep({ cart, currency, totals, onSubmit }: SummaryStepProps) {
+export default function SummaryStep({ cart, currency, totals, rules, onSubmit }: SummaryStepProps) {
   const t = useTranslations("booking");
   const looseT = asTranslate(t);
 
@@ -182,6 +184,7 @@ export default function SummaryStep({ cart, currency, totals, onSubmit }: Summar
 
         {/* Terms & rules */}
         <TermsPanel
+          rules={rules}
           accepted={accepted}
           error={errors.terms}
           onChange={(checked) => {
@@ -216,6 +219,7 @@ export default function SummaryStep({ cart, currency, totals, onSubmit }: Summar
 
       {showRules ? (
         <RulesModal
+          rules={rules}
           onAccept={() => {
             setTerms(true);
             setErrors((prev) => ({ ...prev, terms: undefined }));
@@ -232,6 +236,7 @@ export default function SummaryStep({ cart, currency, totals, onSubmit }: Summar
           cart={cart}
           deposit={totals.deposit}
           currency={currency}
+          rules={rules}
           processing={processing}
           onConfirm={() => void handleConfirmPay()}
           onClose={() => {

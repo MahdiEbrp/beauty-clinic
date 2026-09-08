@@ -3,9 +3,9 @@
 import { useTranslations } from "next-intl";
 import { CreditCard, ShieldCheck, X } from "lucide-react";
 import { formatNumber } from "@/lib/services/format";
+import type { PublicRule } from "@/lib/services/rules-types";
 import { SlotLabel } from "../SlotLabel";
 import type { CartItem } from "../types";
-import { termsList } from "./summary-rules";
 
 type PreGatewayModalProps = {
   fullName: string;
@@ -13,6 +13,7 @@ type PreGatewayModalProps = {
   cart: CartItem[];
   deposit: number;
   currency: string;
+  rules: PublicRule[];
   processing: boolean;
   onConfirm: () => void;
   onClose: () => void;
@@ -25,6 +26,7 @@ export default function PreGatewayModal({
   cart,
   deposit,
   currency,
+  rules,
   processing,
   onConfirm,
   onClose,
@@ -89,11 +91,15 @@ export default function PreGatewayModal({
 
           <div className="space-y-2 rounded-control border border-border-interactive bg-surface-secondary/70 p-3.5">
             <span className="block border-b border-border-primary/60 pb-1 text-body-sm font-black text-accent">{t("summary.preGatewayCharter")}</span>
-            <ul className="list-inside list-disc space-y-1.5 text-caption leading-relaxed text-content-secondary">
-              {termsList(t).map((term) => (
-                <li key={term}>{term}</li>
-              ))}
-            </ul>
+            {rules.length > 0 ? (
+              <ul className="list-inside list-disc space-y-1.5 text-caption leading-relaxed text-content-secondary">
+                {rules.map((rule) => (
+                  <li key={rule.id}>{rule.name}</li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-caption text-content-tertiary">{t("summary.rules.empty")}</p>
+            )}
           </div>
 
           <div className="flex flex-col gap-2.5 border-t border-border-primary pt-3 sm:flex-row">

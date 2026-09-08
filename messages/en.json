@@ -285,7 +285,7 @@
     "today": "Today",
     "verified": "All Set",
     "year": "Year",
-    "yearValue": "Select year"
+    "yearValue": "{year}"
    },
    "service": "Select Service",
    "serviceDetail": {
@@ -316,6 +316,12 @@
     "featuredTag": "Featured",
     "groupFilter": "Filter by group",
     "allCategories": "All categories",
+    "healthBlockedDesc": "Online booking is not available for these situations. Please call the clinic to arrange your appointment with our specialists.",
+    "healthBlockedTitle": "Please contact the clinic",
+    "healthIllness": "I have a specific illness",
+    "healthPregnant": "I am pregnant or breastfeeding",
+    "healthSubtitle": "Please let us know so we can guide you correctly.",
+    "healthTitle": "Your condition",
     "increase": "Increase quantity",
     "moreInfo": "More info",
     "noResultsDesc": "Try searching for a different keyword or brand.",
@@ -336,7 +342,7 @@
     "selectedCount": "{n} services selected",
     "selectedLabel": "Selected",
     "showAll": "All",
-    "showingRange": "{start}–{end} of {total}",
+    "showingRange": "{from}–{to} of {total}",
     "subtitle": "Pick the services and gels you need.",
     "title": "Select Aesthetic Services"
    },  "sidebar": {
@@ -433,6 +439,8 @@
      "accept": "I have read and accept the rules",
      "close": "Close",
      "dismiss": "Close",
+     "empty": "The clinic has not published any rules yet.",
+     "highlighted": "Important",
      "intro": "By booking an appointment at Nafas Beauty Clinic, you agree to the following terms.",
      "s1Body": "Arrive at least 15 minutes before your appointment time to complete reception paperwork.",
      "s1Title": "Arrival time",

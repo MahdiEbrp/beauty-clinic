@@ -3,8 +3,10 @@
 import { useTranslations } from "next-intl";
 import { AlertCircle, BookOpen, CheckCircle2, FileCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { PublicRule } from "@/lib/services/rules-types";
 
 type TermsPanelProps = {
+  rules: PublicRule[];
   accepted: boolean;
   error?: string;
   onChange: (checked: boolean) => void;
@@ -12,7 +14,7 @@ type TermsPanelProps = {
 };
 
 /** Terms & clinic-rules consent block with live accepted / error state. */
-export function TermsPanel({ accepted, error, onChange, onReadRules }: TermsPanelProps) {
+export function TermsPanel({ rules, accepted, error, onChange, onReadRules }: TermsPanelProps) {
   const t = useTranslations("booking");
 
   return (
@@ -32,14 +34,21 @@ export function TermsPanel({ accepted, error, onChange, onReadRules }: TermsPane
         </button>
       </div>
 
-      <div className="space-y-2 rounded-control border border-copper/25 bg-copper/5 p-3 text-body-sm">
-        {[t("summary.ruleArrival"), t("summary.ruleCancel"), t("summary.ruleDeposit")].map((rule) => (
-          <div key={rule} className="flex items-start gap-2">
-            <span className="mt-1.5 size-2 shrink-0 rounded-full bg-copper" aria-hidden="true" />
-            <p className="font-extrabold leading-relaxed text-content-primary">{rule}</p>
-          </div>
-        ))}
-      </div>
+      {rules.length > 0 ? (
+        <div className="space-y-2 rounded-control border border-copper/25 bg-copper/5 p-3 text-body-sm">
+          {rules.map((rule) => (
+            <div key={rule.id} className="flex items-start gap-2">
+              <span className="mt-1.5 size-2 shrink-0 rounded-full bg-copper" aria-hidden="true" />
+              <div className="min-w-0">
+                <p className="font-extrabold leading-relaxed text-content-primary">{rule.name}</p>
+                {rule.description ? (
+                  <p className="mt-0.5 line-clamp-2 text-caption leading-relaxed text-content-secondary">{rule.description}</p>
+                ) : null}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
 
       <label className="flex cursor-pointer select-none items-center justify-between gap-2 pt-1">
         <span className="flex items-center gap-2">

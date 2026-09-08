@@ -68,6 +68,11 @@ export type BookingGroup = {
 
 export type WizardStep = 0 | 1 | 2 | 3;
 
+/** Step-0 health gate answers (pregnant / specific illness). */
+export type HealthFlags = { pregnant: boolean; illness: boolean };
+
+export const EMPTY_HEALTH: HealthFlags = { pregnant: false, illness: false };
+
 export type ClinicBookingProps = {
   currency: string;
   minCancelHours: number;

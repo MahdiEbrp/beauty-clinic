@@ -12,7 +12,6 @@ import type { CartItem, SelectedService, SlotOption } from "../types";
 
 type ScheduleStepProps = {
   cart: CartItem[];
-  currency: string;
   onAssignSlot: (serviceId: string, slot: SlotOption | null) => void;
   onBack: () => void;
 };
@@ -21,7 +20,7 @@ type ScheduleStepProps = {
  * Step 2 — per-service date & time (Template parity). Each cart line opens its
  * own themed DateModal fed by REAL slot availability.
  */
-export default function ScheduleStep({ cart, currency, onAssignSlot, onBack }: ScheduleStepProps) {
+export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleStepProps) {
   const t = useTranslations("booking");
   const [activeService, setActiveService] = useState<SelectedService | null>(null);
 
@@ -89,10 +88,9 @@ export default function ScheduleStep({ cart, currency, onAssignSlot, onBack }: S
       {/* Table */}
       <div className="overflow-hidden rounded-panel border border-border-primary bg-surface-primary shadow-xs">
         {/* Desktop header */}
-        <div className="hidden grid-cols-[3.5rem_minmax(0,1fr)_8rem_6rem_16rem] items-center gap-3 border-b border-border-primary/80 bg-surface-secondary/90 px-4 py-3 text-caption font-black text-accent md:grid">
+        <div className="hidden grid-cols-[3.5rem_minmax(0,1fr)_6rem_16rem] items-center gap-3 border-b border-border-primary/80 bg-surface-secondary/90 px-4 py-3 text-caption font-black text-accent md:grid">
           <div className="text-center">{t("schedule.colIndex")}</div>
           <div>{t("schedule.colService")}</div>
-          <div className="text-center">{t("schedule.colPrice")}</div>
           <div className="text-center">{t("schedule.colDuration")}</div>
           <div className="text-center">{t("schedule.colSlot")}</div>
         </div>
@@ -103,7 +101,7 @@ export default function ScheduleStep({ cart, currency, onAssignSlot, onBack }: S
             return (
               <div key={line.service.id} className="w-full bg-surface-primary even:bg-surface-secondary/15 hover:bg-surface-secondary/50">
                 {/* Desktop row */}
-                <div className="hidden grid-cols-[3.5rem_minmax(0,1fr)_8rem_6rem_16rem] items-center gap-3 px-4 py-3 md:grid">
+                <div className="hidden grid-cols-[3.5rem_minmax(0,1fr)_6rem_16rem] items-center gap-3 px-4 py-3 md:grid">
                   <div className="flex items-center justify-center">
                     <span className="flex size-6 shrink-0 items-center justify-center rounded-lg border border-border-interactive/70 bg-surface-secondary text-caption font-black text-content-secondary">
                       {index + 1}
@@ -120,12 +118,6 @@ export default function ScheduleStep({ cart, currency, onAssignSlot, onBack }: S
                     {line.service.shortDesc ? (
                       <p className="mt-0.5 max-w-lg truncate text-caption leading-tight text-content-tertiary">{line.service.shortDesc}</p>
                     ) : null}
-                  </div>
-
-                  <div className="text-center">
-                    <span className="text-body-sm font-black text-copper-deep">
-                      {formatNumber(line.service.price)} {currency}
-                    </span>
                   </div>
 
                   <div className="flex items-center justify-center gap-1 text-body-sm font-bold text-content-secondary">
@@ -166,9 +158,6 @@ export default function ScheduleStep({ cart, currency, onAssignSlot, onBack }: S
                       </span>
                       <span className="min-w-0 truncate text-body-sm font-black text-content-primary">{line.service.title}</span>
                     </div>
-                    <span className="shrink-0 text-body-sm font-black text-copper-deep">
-                      {formatNumber(line.service.price)} {currency}
-                    </span>
                   </div>
 
                   <div className="flex items-center justify-between border-t border-border-primary/40 pt-2 text-caption text-content-tertiary">

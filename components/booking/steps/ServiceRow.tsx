@@ -12,7 +12,6 @@ type ServiceRowProps = {
   rowNumber: number;
   selected: boolean;
   theme: GroupTheme;
-  currency: string;
   onToggle: () => void;
   onInfo: () => void;
 };
@@ -22,19 +21,9 @@ type ServiceRowProps = {
  * multi-column grid row; mobile renders a compact two-tier card. Both tiers
  * are fluid so the table never overflows horizontally.
  */
-export function ServiceRow({
-  service,
-  rowNumber,
-  selected,
-  theme,
-  currency,
-  onToggle,
-  onInfo,
-}: ServiceRowProps) {
+export function ServiceRow({ service, rowNumber, selected, theme, onToggle, onInfo }: ServiceRowProps) {
   const t = useTranslations("booking");
   const GroupIcon = theme.icon;
-
-  const price = service.price != null ? `${formatNumber(service.price)} ${currency}` : "";
 
   const checkBadge = selected ? (
     <div className={cn("flex size-6 shrink-0 items-center justify-center rounded-lg shadow-xs transition-all", theme.buttonCheckBg)}>
@@ -110,7 +99,7 @@ export function ServiceRow({
       )}
     >
       {/* Desktop row */}
-      <div className="hidden grid-cols-[3rem_minmax(0,1fr)_9rem_6rem_8rem_7.5rem] items-center gap-3 px-4 py-3 md:grid">
+      <div className="hidden grid-cols-[3rem_minmax(0,1fr)_9rem_6rem_7.5rem] items-center gap-3 px-4 py-3 md:grid">
         <div className="flex items-center justify-center">{checkBadge}</div>
 
         <div className="min-w-0">
@@ -141,10 +130,6 @@ export function ServiceRow({
           <span>
             {formatNumber(service.durationMin)} {t("appointment.minutes")}
           </span>
-        </div>
-
-        <div className="text-center">
-          <span className="text-body-sm font-black text-copper-deep">{price}</span>
         </div>
 
         <div className="flex flex-col items-center justify-center gap-1 py-1">
@@ -189,10 +174,6 @@ export function ServiceRow({
                 {formatNumber(service.durationMin)} {t("appointment.minutes")}
               </span>
             </span>
-            <span className="text-border-interactive" aria-hidden="true">
-              |
-            </span>
-            <span className="font-black text-copper-deep">{price}</span>
           </div>
 
           <div className="flex items-center justify-end gap-1.5">
