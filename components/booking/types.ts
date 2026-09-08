@@ -32,8 +32,6 @@ export type ContactInfo = {
   fullName: string;
   phone: string;
   notes: string;
-  hasAllergies: boolean;
-  isPregnant: boolean;
   agreeToTerms: boolean;
 };
 

@@ -22,6 +22,8 @@ const EXCLUDED = new Set([
   "dist",
   ".git",
   "coverage",
+  // Design reference sketches, not shipped source.
+  ".template",
 ]);
 
 function collectTsFiles(dir, files = []) {

@@ -60,6 +60,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Design reference sketches, not shipped source (break size/lint rules
+    // by design; adapted per-feature during implementation).
+    ".template/**",
   ]),
 ]);
 

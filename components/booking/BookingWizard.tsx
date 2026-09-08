@@ -5,16 +5,18 @@ import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { findCartConflicts } from "@/lib/booking/scheduling";
 import type { PublicServiceTree } from "@/lib/services/types";
-import { createBookingGroup } from "./api";
+import { createBookingGroup, payBookingGroup } from "./api";
 import { invalidateSlots } from "./slots-cache";
 import Stepper from "./Stepper";
-import SummarySidebar from "./SummarySidebar";
-import MobileSummaryBar from "./MobileSummaryBar";
+import BottomBar from "./BottomBar";
 import BookingModals from "./BookingModals";
-import BookingPanel from "./BookingPanel";
+import ServicesStep from "./steps/ServicesStep";
+import ScheduleStep from "./steps/ScheduleStep";
+import SummaryStep from "./steps/SummaryStep";
+import ConfirmationStep from "./steps/ConfirmationStep";
 import { buildInvoice } from "./invoice";
 import type { InvoiceData } from "./modals/PrintInvoiceModal";
-import type { CartItem, ContactInfo, CreatedBookingGroup, WizardStep } from "./types";
+import type { CartItem, ContactInfo, WizardStep } from "./types";
 
 export type ClinicBookingInfo = {
   clinicName: string;
@@ -51,14 +53,8 @@ function loadCart(): CartItem[] {
   }
 }
 
-function VerifiedWizard({
-  tree,
-  currency,
-  openingHours,
-  minCancelHours,
-  defaultDeposit,
-  clinic,
-}: BookingWizardProps) {
+function VerifiedWizard(props: BookingWizardProps) {
+  const { tree, currency, clinic, minCancelHours, defaultDeposit } = props;
   const t = useTranslations("booking");
   const locale = useLocale() as "fa" | "en";
   const searchParams = useSearchParams();
@@ -67,11 +63,9 @@ function VerifiedWizard({
   const [hydrated, setHydrated] = useState(false);
   const [step, setStep] = useState<WizardStep>(0);
   const [contact, setContact] = useState<ContactInfo | null>(null);
-  const [group, setGroup] = useState<CreatedBookingGroup | null>(null);
+  const [group, setGroup] = useState<Awaited<ReturnType<typeof createBookingGroup>> | null>(null);
   const [paymentReference, setPaymentReference] = useState<string | null>(null);
-  const [showSuccess, setShowSuccess] = useState(false);
   const [showMyBookings, setShowMyBookings] = useState(false);
-  const [showClinicInfo, setShowClinicInfo] = useState(false);
   const [invoice, setInvoice] = useState<InvoiceData | null>(null);
 
   // One-time hydration + ?service= preselect.
@@ -120,14 +114,14 @@ function VerifiedWizard({
 
   const allScheduled = cart.length > 0 && cart.every((line) => line.slot);
   const conflicts = useMemo(() => findCartConflicts(cart), [cart]);
+  const readyToNext = allScheduled && conflicts.length === 0;
 
   const toggleService = useCallback((item: CartItem) => {
-    setCart((prev) => {
-      const exists = prev.some((line) => line.service.id === item.service.id);
-      return exists
+    setCart((prev) =>
+      prev.some((line) => line.service.id === item.service.id)
         ? prev.filter((line) => line.service.id !== item.service.id)
-        : [...prev, { ...item, quantity: 1, slot: null }];
-    });
+        : [...prev, { ...item, quantity: 1, slot: null }],
+    );
   }, []);
 
   const removeLine = useCallback((serviceId: string) => {
@@ -139,15 +133,15 @@ function VerifiedWizard({
   }, []);
 
   const submitBooking = useCallback(
-    async (data: ContactInfo): Promise<CreatedBookingGroup> => {
+    async (data: ContactInfo): Promise<void> => {
       setContact(data);
       const created = await createBookingGroup({
         fullName: data.fullName,
         phone: data.phone,
         locale,
         notes: data.notes || null,
-        hasAllergies: data.hasAllergies,
-        isPregnant: data.isPregnant,
+        hasAllergies: false,
+        isPregnant: false,
         termsAccepted: data.agreeToTerms,
         items: cart.map((line) => ({
           serviceId: line.service.id,
@@ -155,123 +149,79 @@ function VerifiedWizard({
           quantity: line.quantity,
         })),
       });
+      let reference: string | null = null;
+      try {
+        const payment = await payBookingGroup(created.groupRef);
+        reference = payment.paymentReference ?? null;
+      } catch {
+        reference = null;
+      }
       setGroup(created);
+      setPaymentReference(reference);
       setStep(3);
       invalidateSlots();
       window.localStorage.removeItem(CART_STORAGE_KEY);
-      return created;
     },
     [cart, locale],
   );
 
-  const nextDisabled = step === 0 ? cart.length === 0 : !(allScheduled && conflicts.length === 0);
-  const nextLabel =
-    step === 0 ? t("sidebar.nextSchedule") : step === 1 ? t("sidebar.nextContact") : "";
-  const goNext = () => {
-    if (step === 0) setStep(1);
-    else if (step === 1) setStep(2);
-  };
+  const canStepTo = useCallback(
+    (index: number) => {
+      if (index === 0) return true;
+      if (index === 1) return cart.length > 0;
+      if (index === 2) return readyToNext;
+      return true;
+    },
+    [cart.length, readyToNext],
+  );
 
-  const canStepTo = (index: number) => (index === 0 ? true : index === 1 ? cart.length > 0 : allScheduled);
-  const makeInvoice = (g: CreatedBookingGroup, ref: string | null = null) =>
-    buildInvoice(g, cart, contact, currency, totals, ref);
+  const goNext = () => setStep((current) => (current === 0 || current === 1 ? ((current + 1) as WizardStep) : current));
+  const goBack = () => setStep((current) => (current > 0 ? ((current - 1) as WizardStep) : current));
 
-  const resetAll = () => {
-    setCart([]);
-    setStep(0);
-    setGroup(null);
-    setShowSuccess(false);
-    setContact(null);
-    setPaymentReference(null);
-    setInvoice(null);
-    window.localStorage.removeItem(CART_STORAGE_KEY);
-  };
+  const openInvoice = useCallback(() => {
+    if (!group) return;
+    setInvoice(buildInvoice(group, cart, contact, currency, totals, paymentReference));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- group only
+  }, [group]);
 
   return (
     <>
       <Stepper
         current={step}
         canStepTo={canStepTo}
-        onStepClick={(i) => setStep(i as WizardStep)}
+        onStepClick={(index) => setStep(index as WizardStep)}
         onOpenMyBookings={() => setShowMyBookings(true)}
         bookingsCount={0}
       />
 
       <h1 className="sr-only">{t("title")}</h1>
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-2 xs:px-3.5 sm:px-5 lg:px-6 py-4 pb-32 sm:py-6 sm:pb-40 lg:pb-10">
-        <div className="flex flex-col items-start gap-4 sm:gap-6 lg:flex-row">
-          <BookingPanel
-            step={step}
-            tree={tree}
-            currency={currency}
-            openingHours={openingHours}
-            cart={cart}
+      <main className="mx-auto w-full max-w-4xl flex-1 px-2 pb-40 pt-4 sm:px-5 sm:py-6">
+        {step === 0 ? <ServicesStep tree={tree} currency={currency} cart={cart} onToggle={toggleService} onRemove={removeLine} /> : null}
+        {step === 1 ? <ScheduleStep cart={cart} currency={currency} onAssignSlot={assignSlot} onBack={() => setStep(0)} /> : null}
+        {step === 2 ? (
+          <SummaryStep cart={cart} currency={currency} totals={totals} onSubmit={submitBooking} />
+        ) : null}
+        {step === 3 && group ? (
+          <ConfirmationStep
             group={group}
             contact={contact}
-            defaultDeposit={defaultDeposit}
-            onToggleCart={toggleService}
-            onRemove={removeLine}
-            onAssignSlot={assignSlot}
-            onSlotBack={() => setStep(0)}
-            onSlotContinue={() => setStep(2)}
-            onContactBack={() => setStep(1)}
-            onSubmitContact={submitBooking}
-            onPaid={(ref) => {
-              setPaymentReference(ref);
-              setShowSuccess(true);
-            }}
-            onReviewBack={() => setStep(2)}
-            onPreviewInvoice={(g) => setInvoice(makeInvoice(g))}
-            clinic={clinic}
-          />
-
-          <SummarySidebar
-            cart={cart}
             currency={currency}
-            totals={totals}
-            step={step}
-            nextLabel={nextLabel}
-            nextDisabled={nextDisabled}
-            onRemove={removeLine}
-            onNext={goNext}
-            addressTitle={clinic.addressTitle}
-            address={clinic.address}
+            paymentReference={paymentReference}
+            clinic={clinic}
+            onOpenInvoice={openInvoice}
           />
-        </div>
+        ) : null}
+
+        <BottomBar step={step} canProceed={step === 0 ? cart.length > 0 : readyToNext} onNext={goNext} onPrev={goBack} />
       </main>
 
-      <MobileSummaryBar
-        cart={cart}
-        currency={currency}
-        totals={totals}
-        step={step}
-        nextLabel={nextLabel}
-        nextDisabled={nextDisabled}
-        onNext={goNext}
-        address={clinic.address}
-      />
-
       <BookingModals
-        showSuccess={showSuccess}
-        group={group}
-        cart={cart}
-        contact={contact}
-        currency={currency}
-        deposit={defaultDeposit}
-        clinic={clinic}
-        openingHours={openingHours}
         showMyBookings={showMyBookings}
-        minCancelHours={minCancelHours}
-        showClinicInfo={showClinicInfo}
         invoice={invoice}
-        onCloseSuccess={() => setShowSuccess(false)}
-        onNew={resetAll}
-        onPrintInvoice={() => {
-          if (group) setInvoice(makeInvoice(group, paymentReference));
-        }}
+        clinic={clinic}
+        minCancelHours={minCancelHours}
         onCloseMyBookings={() => setShowMyBookings(false)}
-        onCloseClinic={() => setShowClinicInfo(false)}
         onCloseInvoice={() => setInvoice(null)}
       />
     </>

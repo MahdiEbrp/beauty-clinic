@@ -14,7 +14,7 @@ type StepperProps = {
   bookingsCount?: number;
 };
 
-const STEP_LABELS = ["service", "schedule", "contact", "review"] as const;
+const STEP_LABELS = ["service", "schedule", "review", "confirmation"] as const;
 
 /**
  * Sticky full-width top progress bar (Template parity). Shows the step badge,
