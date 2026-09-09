@@ -46,7 +46,7 @@ async function main() {
   const booked = await sql`
     SELECT slot_id,
            count(*)::int AS total,
-           bool_or(status <> 'cancelled') AS has_active
+           bool_or(status <> 'canceled') AS has_active
     FROM bookings
     WHERE slot_id IN ${sql(slots.map((s) => s.id))}
     GROUP BY slot_id

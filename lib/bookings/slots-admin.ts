@@ -99,7 +99,7 @@ async function bookedCounts(slotIds: string[]): Promise<Map<string, number>> {
       and(
         inArray(bookings.slotId, slotIds),
         sql`${bookings.slotId} IS NOT NULL`,
-        sql`${bookings.status} <> 'cancelled'`,
+        sql`${bookings.status} <> 'canceled'`,
       ),
     )
     .groupBy(bookings.slotId);
