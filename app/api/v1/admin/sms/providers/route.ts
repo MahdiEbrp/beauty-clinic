@@ -30,7 +30,6 @@ export const POST = withSecurity(
     audit: true,
     notification: {
       entityType: "sms_provider",
-      entityLabel: () => "New SMS provider created",
       action: "created",
     },
   },

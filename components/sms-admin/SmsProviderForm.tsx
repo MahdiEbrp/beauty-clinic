@@ -9,11 +9,13 @@ import { Panel } from "@/components/create-group/ui";
 import WizardActionBar from "@/components/create-group/WizardActionBar";
 import WizardHeader from "@/components/create-group/WizardHeader";
 import { SMS_API_ROUTES, SMS_DASHBOARD_ROUTES, SMS_PROVIDER_DEFAULTS } from "@/lib/sms/constants";
+import { smsAdminErrorKey } from "@/lib/sms/error-messages";
 import type { AdminSmsProvider } from "@/lib/sms/provider-service";
 import {
   getSmsProviderDefaultAuthScheme,
   getSmsProviderOption,
 } from "@/data/sms-providers";
+import { asTranslate } from "@/src/i18n/message-key";
 import { useRouter } from "@/src/i18n/navigation";
 import {
   SmsProviderCredentialsFields,
@@ -40,6 +42,7 @@ export function SmsProviderForm({
   canSend?: boolean;
 }) {
   const t = useTranslations("smsProviderForm");
+  const adminErrorT = asTranslate(useTranslations("smsAdmin.errors"));
   const router = useRouter();
   const initialKind = provider?.kind ?? "kavenegar";
   const [step, setStep] = useState(1);
@@ -122,9 +125,11 @@ export function SmsProviderForm({
       });
       if (!response.ok) {
         const body = (await response.json().catch(() => null)) as {
-          error?: { message?: string };
+          error?: { code?: string; message?: string };
         } | null;
-        throw new Error(body?.error?.message ?? t("errors.server"));
+        const code = body?.error?.code;
+        const fallback = body?.error?.message ?? t("errors.server");
+        throw Object.assign(new Error(fallback), { code });
       }
       toast.success(t(provider ? "toast.updated" : "toast.created"), {
         id: pending,
@@ -132,8 +137,13 @@ export function SmsProviderForm({
       router.push(SMS_DASHBOARD_ROUTES.providers);
       router.refresh();
     } catch (error) {
-      const message = error instanceof Error ? error.message : t("errors.server");
-      setServerError(message);
+      const code = (error as { code?: string })?.code;
+      const key = code ? smsAdminErrorKey({ code }) : "errors.server";
+      setServerError(
+        key === "errors.server"
+          ? t("errors.server")
+          : adminErrorT(key, { fallback: t("errors.server") }),
+      );
       toast.error(t("toast.error"), { id: pending });
     } finally {
       setSubmitting(false);

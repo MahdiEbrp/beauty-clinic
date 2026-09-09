@@ -44,7 +44,6 @@ export const PATCH = withSecurity(
     notification: {
       entityType: "booking",
       entityId: (ctx) => ctx.params?.id,
-      entityLabel: () => "Booking updated",
       action: "updated",
     },
   },
@@ -69,7 +68,6 @@ export const DELETE = withSecurity(
     notification: {
       entityType: "booking",
       entityId: (ctx) => ctx.params?.id,
-      entityLabel: () => "Booking deleted",
       action: "deleted",
     },
   },

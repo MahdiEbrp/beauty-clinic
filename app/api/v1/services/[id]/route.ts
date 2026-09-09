@@ -29,7 +29,6 @@ export const PATCH = withSecurity(
     notification: {
       entityType: "service",
       entityId: (ctx) => ctx.params?.id,
-      entityLabel: () => "Service updated",
       action: "updated",
     },
   },
@@ -50,7 +49,6 @@ export const DELETE = withSecurity(
     notification: {
       entityType: "service",
       entityId: (ctx) => ctx.params?.id,
-      entityLabel: () => "Service deleted",
       action: "deleted",
     },
   },

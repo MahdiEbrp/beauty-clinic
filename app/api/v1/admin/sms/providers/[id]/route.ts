@@ -35,7 +35,6 @@ export const PATCH = withSecurity(
     notification: {
       entityType: "sms_provider",
       entityId: (ctx) => ctx.params?.id,
-      entityLabel: () => "SMS provider updated",
       action: "updated",
     },
   },
@@ -56,7 +55,6 @@ export const DELETE = withSecurity(
     notification: {
       entityType: "sms_provider",
       entityId: (ctx) => ctx.params?.id,
-      entityLabel: () => "SMS provider deleted",
       action: "deleted",
     },
   },

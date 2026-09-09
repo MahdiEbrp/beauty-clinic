@@ -26,7 +26,6 @@ export const POST = withSecurity(
     notification: {
       entityType: "booking",
       entityId: (ctx) => (ctx.body as { serviceId?: string } | undefined)?.serviceId,
-      entityLabel: () => "New booking created",
       action: "created",
     },
   },

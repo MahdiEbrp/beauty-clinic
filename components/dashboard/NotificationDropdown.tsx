@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
-import { msgKey } from "@/src/i18n/message-key";
+import { useFormatter, useTranslations } from "next-intl";
+import { msgKey, type MessageKey } from "@/src/i18n/message-key";
 import {
   Bell,
   Calendar,
@@ -18,7 +18,6 @@ type Notification = {
   action: string;
   entityType: string;
   entityId: string;
-  entityLabel: string;
   meta: Record<string, unknown> | null;
   isRead: boolean;
   createdAt: string;
@@ -36,25 +35,48 @@ const ENTITY_ICONS: Record<string, typeof Bell> = {
   role: Shield,
 };
 
-function relativeTime(dateStr: string, locale: string): string {
-  const now = Date.now();
-  const then = new Date(dateStr).getTime();
-  const diffMs = now - then;
-  const diffSec = Math.floor(diffMs / 1000);
-  const diffMin = Math.floor(diffSec / 60);
-  const diffHr = Math.floor(diffMin / 60);
-  const diffDay = Math.floor(diffHr / 24);
+/**
+ * A relative timestamp rendered only on the client (the panel only opens after
+ * a user interaction), so the locale-aware formatter never causes a hydration
+ * mismatch.
+ */
+function relativeTimeLabel(
+  format: ReturnType<typeof useFormatter>,
+  dateStr: string,
+): string {
+  return format.relativeTime(new Date(dateStr), new Date());
+}
 
-  if (locale === "fa") {
-    if (diffSec < 60) return "همین الان";
-    if (diffMin < 60) return `${diffMin} دقیقه پیش`;
-    if (diffHr < 24) return `${diffHr} ساعت پیش`;
-    return `${diffDay} روز پیش`;
+/** Entity types that ship a full localized sentence under notifications.labels. */
+const LABELED_ENTITY_TYPES = new Set([
+  "booking",
+  "email_provider",
+  "service",
+  "service_category",
+  "service_group",
+  "setting",
+  "sms_provider",
+  "user",
+]);
+
+/**
+ * Localized sentence for a notification. Uses the per-(entityType, action)
+ * template when one exists, then falls back to the generic action word so
+ * legacy or unlabeled rows still read correctly in the active locale.
+ */
+function notificationLabel(
+  t: (key: MessageKey) => string,
+  entityType: string,
+  action: string,
+): string {
+  if (LABELED_ENTITY_TYPES.has(entityType)) {
+    const labelKey = msgKey(`notifications.labels.${entityType}.${action}`);
+    const label = t(labelKey);
+    if (label !== labelKey) return label;
   }
-  if (diffSec < 60) return "just now";
-  if (diffMin < 60) return `${diffMin}m ago`;
-  if (diffHr < 24) return `${diffHr}h ago`;
-  return `${diffDay}d ago`;
+  const actionKey = msgKey(`notifications.actions.${action}`);
+  const actionText = t(actionKey);
+  return actionText === actionKey ? entityType : actionText;
 }
 
 export function NotificationDropdown({
@@ -65,6 +87,7 @@ export function NotificationDropdown({
   onCountChange?: (count: number) => void;
 }) {
   const t = useTranslations();
+  const format = useFormatter();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -149,11 +172,10 @@ export function NotificationDropdown({
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-dash-body-sm text-content-primary">
-                    {n.entityLabel}
+                    {notificationLabel(t, n.entityType, n.action)}
                   </p>
                   <p className="text-dash-caption text-content-tertiary">
-                    {t(msgKey(`notifications.actions.${n.action}`))} ·{" "}
-                    {relativeTime(n.createdAt, "fa")}
+                    {relativeTimeLabel(format, n.createdAt)}
                   </p>
                 </div>
                 {!n.isRead && (

@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNotNull, isNull } from "drizzle-orm";
 
 import { ApiError } from "@/lib/api/errors";
 import { hashPassword } from "@/lib/auth/password";
@@ -68,7 +68,10 @@ export async function ensureCustomerUser(
       passwordHash,
       isActive: true,
     })
-    .onConflictDoNothing({ target: users.phone, where: isNull(users.deletedAt) })
+    .onConflictDoNothing({
+      target: users.phone,
+      where: and(isNull(users.deletedAt), isNotNull(users.phone)),
+    })
     .returning({ id: users.id });
 
   const id =

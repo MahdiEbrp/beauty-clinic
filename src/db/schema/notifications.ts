@@ -24,7 +24,6 @@ export const notifications = pgTable(
     // row yet at insert time, and a non-UUID reference must never reach the
     // column (uuid) — the security layer skips invalid ids instead.
     entityId: uuid("entity_id"),
-    entityLabel: text("entity_label").notNull(),
     meta: jsonb("meta"),
     isRead: boolean("is_read").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

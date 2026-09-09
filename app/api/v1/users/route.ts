@@ -27,7 +27,6 @@ export const POST = withSecurity(
     notification: {
       entityType: "user",
       entityId: (ctx) => (ctx.body as { email?: string } | undefined)?.email,
-      entityLabel: () => "New user created",
       action: "created",
     },
   },

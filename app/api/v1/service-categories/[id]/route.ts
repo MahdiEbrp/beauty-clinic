@@ -33,7 +33,6 @@ export const PATCH = withSecurity(
     notification: {
       entityType: "service_category",
       entityId: (ctx) => ctx.params?.id,
-      entityLabel: () => "Service category updated",
       action: "updated",
     },
   },
@@ -54,7 +53,6 @@ export const DELETE = withSecurity(
     notification: {
       entityType: "service_category",
       entityId: (ctx) => ctx.params?.id,
-      entityLabel: () => "Service category deleted",
       action: "deleted",
     },
   },

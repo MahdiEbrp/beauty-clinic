@@ -8,7 +8,9 @@ import { toast } from "sonner";
 import WizardActionBar from "@/components/create-group/WizardActionBar";
 import WizardHeader from "@/components/create-group/WizardHeader";
 import { SMS_API_ROUTES, SMS_DASHBOARD_ROUTES, SMS_LIMITS } from "@/lib/sms/constants";
+import { smsAdminErrorKey } from "@/lib/sms/error-messages";
 import type { AdminSmsTemplate } from "@/lib/sms/template-service";
+import { asTranslate } from "@/src/i18n/message-key";
 import { useRouter } from "@/src/i18n/navigation";
 import {
   SmsTemplateContentStep,
@@ -51,6 +53,7 @@ export function SmsTemplateForm({
   canSend?: boolean;
 }) {
   const t = useTranslations("smsTemplateForm");
+  const adminErrorT = asTranslate(useTranslations("smsAdmin.errors"));
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<SmsTemplateFormState>(() => initialState(template));
@@ -113,9 +116,11 @@ export function SmsTemplateForm({
       });
       if (!response.ok) {
         const body = (await response.json().catch(() => null)) as {
-          error?: { message?: string };
+          error?: { code?: string; message?: string };
         } | null;
-        throw new Error(body?.error?.message ?? t("errors.server"));
+        const code = body?.error?.code;
+        const fallback = body?.error?.message ?? t("errors.server");
+        throw Object.assign(new Error(fallback), { code });
       }
       toast.success(t(template ? "toast.updated" : "toast.created"), {
         id: pending,
@@ -123,7 +128,13 @@ export function SmsTemplateForm({
       router.push(SMS_DASHBOARD_ROUTES.templates);
       router.refresh();
     } catch (error) {
-      setServerError(error instanceof Error ? error.message : t("errors.server"));
+      const code = (error as { code?: string })?.code;
+      const key = code ? smsAdminErrorKey({ code }) : "errors.server";
+      setServerError(
+        key === "errors.server"
+          ? t("errors.server")
+          : adminErrorT(key, { fallback: t("errors.server") }),
+      );
       toast.error(t("toast.error"), { id: pending });
     } finally {
       setSubmitting(false);

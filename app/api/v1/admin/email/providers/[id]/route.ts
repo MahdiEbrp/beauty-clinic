@@ -35,7 +35,6 @@ export const PATCH = withSecurity(
     notification: {
       entityType: "email_provider",
       entityId: (ctx) => ctx.params?.id,
-      entityLabel: () => "Email provider updated",
       action: "updated",
     },
   },
@@ -56,7 +55,6 @@ export const DELETE = withSecurity(
     notification: {
       entityType: "email_provider",
       entityId: (ctx) => ctx.params?.id,
-      entityLabel: () => "Email provider deleted",
       action: "deleted",
     },
   },

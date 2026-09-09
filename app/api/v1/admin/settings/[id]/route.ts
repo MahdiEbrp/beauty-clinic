@@ -33,7 +33,6 @@ export const PATCH = withSecurity(
     notification: {
       entityType: "setting",
       entityId: (ctx) => ctx.params?.id,
-      entityLabel: () => "System setting updated",
       action: "updated",
     },
   },
@@ -61,7 +60,6 @@ export const DELETE = withSecurity(
     notification: {
       entityType: "setting",
       entityId: (ctx) => ctx.params?.id,
-      entityLabel: () => "System setting deleted",
       action: "deleted",
     },
   },

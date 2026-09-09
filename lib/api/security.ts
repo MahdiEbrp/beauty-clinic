@@ -25,7 +25,6 @@ export type NotificationConfig<Body = unknown, Query = unknown> = {
   entityType: string;
   /** Optional uuid referencing the affected row; skipped when absent/invalid. */
   entityId?: (ctx: ApiContext<Body, Query>) => string | undefined;
-  entityLabel: (ctx: ApiContext<Body, Query>) => string;
   action?: string | ((method: string) => string);
   meta?: (ctx: ApiContext<Body, Query>) => Record<string, unknown> | undefined;
 };
@@ -215,7 +214,6 @@ export function withSecurity<Body = unknown, Query = unknown>(
             action,
             entityType: n.entityType,
             entityId: validEntityId,
-            entityLabel: n.entityLabel(ctx),
             meta: n.meta?.(ctx),
           }).catch((err: unknown) => {
             logError("notification.create_failed", {

@@ -15,7 +15,6 @@ export const PATCH = withSecurity(
     notification: {
       entityType: "user",
       entityId: (ctx) => ctx.params?.id,
-      entityLabel: () => "User status updated",
       action: "updated",
     },
   },
@@ -52,7 +51,6 @@ export const DELETE = withSecurity(
     notification: {
       entityType: "user",
       entityId: (ctx) => ctx.params?.id,
-      entityLabel: () => "User deleted",
       action: "deleted",
     },
   },
