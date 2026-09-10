@@ -232,11 +232,12 @@ export function SlotWizard({
                 }`}
               >
                 <span
-                  className={`flex h-5 w-9 items-center rounded-pill border p-0.5 transition-colors ${
-                    isActive ? "border-success/50 bg-success/30 justify-end" : "justify-start border-border-primary bg-surface-primary"
-                  }`}
+                  className={`flex h-5 w-9 items-center rounded-pill border p-0.5 transition-colors ${isActive
+                      ? "border-success/50 bg-success/30 justify-end"
+                      : "justify-start border-border-primary bg-surface-tertiary"
+                    }`}
                 >
-                  <span className="size-4 rounded-full bg-surface-secondary shadow-elevation-1" />
+                  <span className="size-4 rounded-full bg-surface-secondary shadow-elevation-2 ring-1 ring-border-primary/60" />
                 </span>
                 {isActive
                   ? tRoot("bookingSlots.statuses.active")
