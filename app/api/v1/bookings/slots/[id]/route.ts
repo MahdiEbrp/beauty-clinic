@@ -56,11 +56,7 @@ export const DELETE = withSecurity(
   async (_request, ctx) => {
     const id = ctx.params?.id;
     if (!id || !z.uuid().safeParse(id).success) return invalidId();
-    try {
-      await deleteSlot(id);
-      return jsonOk({ ok: true });
-    } catch {
-      return slotNotFound();
-    }
+    await deleteSlot(id);
+    return jsonOk({ ok: true });
   },
 );

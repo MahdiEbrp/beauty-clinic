@@ -288,7 +288,7 @@ export async function deleteSlot(id: string): Promise<void> {
     throw new ApiError(
       409,
       "SLOT_HAS_BOOKINGS",
-      "This slot has bookings and cannot be deleted. Deactivate it instead.",
+      "This slot has reservations and cannot be deleted.",
     );
   }
 

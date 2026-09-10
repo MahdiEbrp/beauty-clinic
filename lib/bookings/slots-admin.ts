@@ -65,9 +65,10 @@ export async function setSlotsActive(ids: string[], isActive: boolean): Promise<
 }
 
 /**
- * Bulk-deletes slots that have no bookings. Returns the ids that were left in
- * place because they still have reservations (mirrors the single `deleteSlot`
- * guard, batched to stay within a couple of queries).
+ * Bulk-deletes slots that have no reservations. Returns the ids that were left
+ * in place because they still have bookings (slots with reservations are never
+ * hard-deleted; booking `slot_id` references are only nulled for deleted slots,
+ * so slots with history are always kept).
  */
 export async function deleteSlots(ids: string[]): Promise<string[]> {
   if (ids.length === 0) return [];
