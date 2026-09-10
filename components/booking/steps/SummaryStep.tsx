@@ -36,7 +36,7 @@ export default function SummaryStep({ cart, currency, totals, rules, onSubmit }:
   const [notes, setNotes] = useState("");
   const [terms, setTerms] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
-  const [accordionOpen, setAccordionOpen] = useState(true);
+  const [accordionOpen, setAccordionOpen] = useState(false);
   const [showRules, setShowRules] = useState(false);
   const [showPreGateway, setShowPreGateway] = useState(false);
   const [processing, setProcessing] = useState(false);
