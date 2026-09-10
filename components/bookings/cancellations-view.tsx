@@ -4,15 +4,20 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/src/i18n/navigation";
 import { msgKey } from "@/src/i18n/message-key";
 import type { AuthUser } from "@/lib/auth/dal";
-import type { ListResult, AdminListConfig, RowActionItem } from "@/components/admin-list/types";
+import type {
+  AdminListConfig,
+  BulkResult,
+  ListResult,
+  RowActionItem,
+} from "@/components/admin-list/types";
 import { AdminListView } from "@/components/admin-list/list-view";
 import type { ReservationAdmin } from "@/lib/bookings/admin-types";
 import { ReservationMobileCard, reservationColumns } from "./reservation-render";
 
 /**
- * Cancellations list — a clone of the reservations admin screen, defaulting to
- * the `canceled` status. Paid cancellations expose a "refund" action that
- * marks the order `refund` (gated on paymentReference).
+ * Resolved bookings list — a focused view of finished reservations
+ * (done / refunded). Status changes go through the per-row status menu shared
+ * with the reservations page.
  */
 export function CancellationsListView({
   user,
@@ -30,7 +35,7 @@ export function CancellationsListView({
     backHref: "/dashboard/bookings",
     addHref: "",
     listUrl: "/api/v1/bookings",
-    defaultStatus: "canceled",
+    defaultStatus: "refunded",
     permissions: {
       read: "appointments.read",
       write: "appointments.write",
@@ -38,51 +43,67 @@ export function CancellationsListView({
     },
     statusOptions: [
       { value: "all", labelKey: "bookingCancellations.statusAll" },
-      { value: "canceled", labelKey: "bookingReservations.statuses.canceled" },
-      { value: "refund", labelKey: "bookingReservations.statuses.refund" },
+      { value: "done", labelKey: "bookingReservations.statuses.done" },
+      { value: "refunded", labelKey: "bookingReservations.statuses.refunded" },
     ],
     columns: reservationColumns(),
     renderMobileCard: (row) => <ReservationMobileCard row={row} />,
-    rowActionButtons: (row, ctx): RowActionItem[] => {
-      const buttons: RowActionItem[] = [];
-      if (row.status === "canceled" && row.paymentReference) {
-        buttons.push({
-          key: "refund",
-          labelKey: "bookingCancellations.actions.refund",
-          onClick: () => ctx.setConfirm({ kind: "row", action: "refund", row }),
-          icon: "payment",
-        });
-      }
-      buttons.push({
+    rowActionButtons: (row, ctx): RowActionItem[] => [
+      {
         key: "edit",
         labelKey: "bookingCancellations.actions.edit",
         onClick: () =>
           router.push(`/dashboard/bookings/manage/reservations/${row.id}/edit`),
         icon: "edit",
-      });
-      buttons.push({
+      },
+      {
         key: "delete",
         labelKey: "bookingCancellations.actions.delete",
         onClick: () => ctx.setConfirm({ kind: "row", action: "delete", row }),
         icon: "delete",
         danger: true,
-      });
-      return buttons;
-    },
+      },
+    ],
     statusPatch: (action) =>
-      action === "refund" ? { status: "refund" } : {},
-    confirmPhrase: (action) => ({
-      title:
-        action === "delete"
-          ? t(msgKey("bookingCancellations.actions.deleteConfirm"))
-          : t(msgKey("bookingCancellations.actions.refundConfirm")),
-      description:
-        action === "delete"
-          ? t(msgKey("bookingCancellations.actions.deleteConfirmDescription"))
-          : t(msgKey("bookingCancellations.actions.refundConfirmDescription")),
-    }),
-    bulkActions: [],
-    executeBulk: () => Promise.resolve({ requested: 0, succeeded: 0, failures: [] }),
+      action.startsWith("status:") ? { status: action.slice(7) } : {},
+    confirmPhrase: (action, row) => {
+      if (!action.startsWith("status:")) {
+        return {
+          title: t("bookingCancellations.actions.deleteConfirm"),
+          description: t("bookingCancellations.actions.deleteConfirmDescription"),
+        };
+      }
+      const next = action.slice(7);
+      return {
+        title: t(msgKey("bookingReservations.statusConfirm.title"), {
+          status: t(msgKey(`bookingReservations.statuses.${next}`)),
+        }),
+        description: t(msgKey("bookingReservations.statusConfirm.description"), {
+          from: t(msgKey(`bookingReservations.statuses.${row.status}`)),
+          to: t(msgKey(`bookingReservations.statuses.${next}`)),
+        }),
+      };
+    },
+    bulkActions: [
+      { key: "refund", labelKey: "bookingCancellations.bulk.refund" },
+      { key: "delete", labelKey: "bookingCancellations.bulk.delete", dangerous: true },
+    ],
+    executeBulk: async (action, ids, filters) => {
+      const res = await fetch("/api/v1/bookings/bulk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          action,
+          scope: ids.length > 0 ? ("page" as const) : ("filtered" as const),
+          ids,
+          filters: { search: filters.search, status: filters.status },
+        }),
+      });
+      if (!res.ok) throw new Error("bulk_failed");
+      const payload = (await res.json()) as { data: BulkResult };
+      return payload.data;
+    },
     itemUrl: (row) => `/api/v1/bookings/${row.id}`,
     deleteRow: async (row) => {
       const res = await fetch(`/api/v1/bookings/${row.id}`, {

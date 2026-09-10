@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, desc, eq, ilike, inArray, or, sql, type SQL } from "drizzle-orm";
+import { and, desc, eq, ilike, inArray, notInArray, or, sql, type SQL } from "drizzle-orm";
 
 import { db } from "@/src/db";
 import { bookings, bookingSlots, bookingSlotServices, servicesI18n } from "@/src/db/schema";
@@ -86,7 +86,7 @@ export async function deleteSlots(ids: string[]): Promise<string[]> {
   return ids.filter((id) => blocked.has(id));
 }
 
-/** Active (non-cancelled) booking counts per slot, batch-aggregated. */
+/** Active (non-done/refunded) booking counts per slot, batch-aggregated. */
 async function bookedCounts(slotIds: string[]): Promise<Map<string, number>> {
   const map = new Map<string, number>();
   if (slotIds.length === 0) return map;
@@ -100,7 +100,7 @@ async function bookedCounts(slotIds: string[]): Promise<Map<string, number>> {
       and(
         inArray(bookings.slotId, slotIds),
         sql`${bookings.slotId} IS NOT NULL`,
-        sql`${bookings.status} <> 'canceled'`,
+        notInArray(bookings.status, ["done", "refunded"]),
       ),
     )
     .groupBy(bookings.slotId);

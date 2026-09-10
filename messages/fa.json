@@ -158,9 +158,10 @@
       "search": "جستجو",
       "status": {
         "pending": "در انتظار",
-        "processing": "در حال انجام",
-        "canceled": "لغو شده",
-        "refund": "مسترد شده"
+        "paid": "پرداخت‌شده",
+        "waiting": "در نوبت",
+        "done": "انجام‌شده",
+        "refunded": "مسترد شده"
       },
       "title": "نوبت‌های من"
     },
@@ -510,24 +511,22 @@
   },
   "bookingReservations": {
     "actions": {
-      "cancel": "لغو",
-      "confirm": "تأیید",
       "delete": "حذف",
       "deleteConfirm": "حذف این رزرو؟",
-      "edit": "ویرایش",
-      "menu": "عملیات"
+      "edit": "ویرایش"
     },
     "add": "افزودن رزرو",
     "back": "بازگشت به رزروها",
     "bulk": {
       "apply": "اعمال",
-      "cancel": "لغو",
       "clear": "پاک‌کردن",
-      "confirm": "تأیید",
       "confirmDescription": "این عملیات روی همه رزروهای انتخاب‌شده اعمال می‌شود.",
       "confirmTitle": "{action} رزروهای انتخاب‌شده؟",
       "delete": "حذف",
+      "done": "انجام‌شده",
       "pageSelected": "صفحه انتخاب شد",
+      "pay": "دریافت پول",
+      "refund": "مسترد",
       "resultDescription": "{count} رزرو با موفقیت به‌روزرسانی شد",
       "resultPartialDescription": "{count} به‌روزرسانی شد، {failed} ناموفق",
       "resultPartialTitle": "به‌صورت جزئی انجام شد",
@@ -569,9 +568,18 @@
     "statusAll": "همه",
     "statuses": {
       "pending": "در انتظار",
-      "processing": "در حال انجام",
-      "canceled": "لغو شده",
-      "refund": "مسترد شده"
+      "paid": "پرداخت‌شده",
+      "waiting": "در نوبت",
+      "done": "انجام‌شده",
+      "refunded": "مسترد شده"
+    },
+    "statusConfirm": {
+      "title": "انتقال به «{status}»؟",
+      "description": "وضعیت این رزرو از {from} به {to} تغییر می‌کند."
+    },
+    "statusMenu": {
+      "current": "وضعیت فعلی",
+      "label": "تغییر وضعیت رزرو"
     },
     "table": {
       "amount": "مبلغ",
@@ -1137,6 +1145,12 @@
     "meta": {
       "description": "داشبورد حساب کاربری شما در کلینیک نفس.",
       "title": "داشبورد | کلینیک زیبایی نفس"
+    },
+    "recentReservations": {
+      "description": "آخرین رزروهای شما.",
+      "empty": "هنوز رزروی ثبت نشده است.",
+      "heading": "رزروهای اخیر",
+      "viewAll": "مشاهده همه"
     },
     "sessions": {
       "cancel": "انصراف",
@@ -2408,6 +2422,10 @@
       "time": {
         "label": "ساعت",
         "placeholder": "زمان را انتخاب کنید"
+      },
+      "status": {
+        "label": "وضعیت",
+        "placeholder": "وضعیت را انتخاب کنید"
       }
     },
     "nav": {
@@ -2440,9 +2458,10 @@
     },
     "statuses": {
       "pending": "در انتظار",
-      "processing": "در حال انجام",
-      "canceled": "لغو شده",
-      "refund": "مسترد شده"
+      "paid": "پرداخت‌شده",
+      "waiting": "در نوبت",
+      "done": "انجام‌شده",
+      "refunded": "مسترد شده"
     },
     "steps": {
       "customer": {
@@ -5337,20 +5356,21 @@
   "bookingCancellations": {
     "meta": {
       "title": "لغوها",
-      "description": "بررسی سفارش‌های لغو شده و مسترد شده."
+      "description": "بررسی سفارش‌های انجام‌شده و مسترد شده."
     },
     "heading": "لغوها",
     "resultsLabel": "{count} سفارش",
     "statusAll": "همه",
-    "empty": "هنوز سفارش لغو شده‌ای نیست.",
+    "empty": "هنوز سفارش پایانیافته‌ای نیست.",
     "emptySearch": "سفارشی با فیلترهای شما یافت نشد.",
     "errorTitle": "بارگذاری لغوها ناموفق بود",
     "errorDescription": "خطایی در بارگذاری لغوها رخ داد.",
     "retry": "تلاش مجدد",
-    "actions": {
+    "bulk": {
       "refund": "استرداد",
-      "refundConfirm": "استرداد \"{name}\"؟",
-      "refundConfirmDescription": "این سفارش پرداخت‌شده به‌عنوان مسترد شده علامت می‌خورد.",
+      "delete": "حذف"
+    },
+    "actions": {
       "edit": "ویرایش",
       "delete": "حذف",
       "deleteConfirm": "حذف این سفارش؟",

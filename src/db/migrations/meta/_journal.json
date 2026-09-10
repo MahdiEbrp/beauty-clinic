@@ -232,6 +232,13 @@
       "when": 1788954588057,
       "tag": "0032_nosy_callisto",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1789035109941,
+      "tag": "0033_wild_sauron",
+      "breakpoints": true
     }
   ]
 }

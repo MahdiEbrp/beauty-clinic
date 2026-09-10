@@ -1,10 +1,14 @@
 /**
  * Next.js instrumentation — runs once per server process at boot.
  *
- * Schedules the daily slot auto-generator with croner. The generator itself is
- * idempotent (only inserts missing (date, start_time) rows) and single-writer
- * (PostgreSQL advisory xact lock), so multiple server instances can safely all
- * register the same schedule.
+ * Schedules two croner jobs:
+ *
+ * 1. Daily slot auto-generator — idempotent (only inserts missing
+ *    (date, start_time) rows) and single-writer (PostgreSQL advisory xact
+ *    lock), so multiple server instances can safely all register the same
+ *    schedule.
+ * 2. Bookings auto-complete — flips paid/waiting bookings to done once their
+ *    appointment window has passed (every 15 minutes).
  *
  * Enable/disable via the SLOTS_CRON_ENABLED env var (default: enabled outside
  * dev so local servers don't fight over the shared dev database).
@@ -25,7 +29,7 @@ export async function register(): Promise<void> {
   const { readGeneratorConfig } = await import("@/lib/bookings/generator");
 
   // 05 every day at 00:05 in the clinic timezone (config read at fire time).
-  const job = new Cron(
+  const slotJob = new Cron(
     "5 0 * * *",
     { timezone: "UTC", protect: true, name: "slot-auto-generator" },
     async () => {
@@ -46,6 +50,29 @@ export async function register(): Promise<void> {
   );
 
   logInfo("slots.generator_scheduled", {
-    nextRun: job.nextRun()?.toISOString() ?? null,
+    nextRun: slotJob.nextRun()?.toISOString() ?? null,
+  });
+
+  // 15 minutes — marks paid/waiting bookings as done once slot_end passes.
+  const { completePassedBookings } = await import("@/lib/bookings/complete-passed");
+  const completeJob = new Cron(
+    "*/15 * * * *",
+    { timezone: "UTC", protect: true, name: "bookings-complete" },
+    async () => {
+      try {
+        const result = await completePassedBookings();
+        if (result.completed > 0) {
+          logInfo("bookings.complete_tick", result);
+        }
+      } catch (error) {
+        logError("bookings.complete_tick_failed", {
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    },
+  );
+
+  logInfo("bookings.complete_scheduled", {
+    nextRun: completeJob.nextRun()?.toISOString() ?? null,
   });
 }

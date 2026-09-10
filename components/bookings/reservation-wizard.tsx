@@ -8,7 +8,7 @@ import type { BookingStatus } from "@/src/db/schema";
 import type { ReservationAdmin } from "@/lib/bookings/admin-types";
 import { DatePickerField } from "@/components/date-time-picker/date-picker-field";
 import { WizardShell, type WizardStep } from "./wizard-shell";
-import { Field, ReviewBlock, inputClass } from "./wizard-fields";
+import { Field, ReviewBlock, SelectField, inputClass } from "./wizard-fields";
 import {
   ServiceSelectStep,
   type ServiceOption,
@@ -235,36 +235,33 @@ export function ReservationWizard({
               </Field>
 
               <Field label={t("fields.time.label")}>
-                <select
+                <SelectField
                   value={slotId}
-                  onChange={(event) => setSlotId(event.target.value)}
+                  onChange={setSlotId}
+                  placeholder={t("fields.time.placeholder")}
                   disabled={!slotDate || slots.length === 0}
-                  className={`${inputClass(Boolean(slotId))} disabled:opacity-60`}
-                >
-                  <option value="">{t("fields.time.placeholder")}</option>
-                  {slots.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.label}
-                    </option>
-                  ))}
-                </select>
+                  invalid={!slotId}
+                  options={slots.map((item) => ({
+                    value: item.id,
+                    label: item.label,
+                  }))}
+                />
               </Field>
             </>
           )}
 
           {mode === "edit" && (
-            <Field label={t("statuses.pending")}>
-              <select
+            <Field label={t("fields.status.label")}>
+              <SelectField
                 value={status}
-                onChange={(event) => setStatus(event.target.value as BookingStatus)}
-                className={inputClass(true)}
-              >
-                {(["pending", "processing", "canceled", "refund"] as const).map((value) => (
-                  <option key={value} value={value}>
-                    {t(`statuses.${value}`)}
-                  </option>
-                ))}
-              </select>
+                onChange={(value) => setStatus(value as BookingStatus)}
+                options={(
+                  ["pending", "paid", "waiting", "done", "refunded"] as const
+                ).map((value) => ({
+                  value,
+                  label: t(`statuses.${value}`),
+                }))}
+              />
             </Field>
           )}
 

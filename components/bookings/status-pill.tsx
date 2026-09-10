@@ -5,7 +5,11 @@ import { useTranslations } from "next-intl";
 
 import type { SlotStatus } from "@/lib/bookings/slot-status";
 import { msgKey } from "@/src/i18n/message-key";
-import { RESERVE_STATUS_CLASS, SLOT_STATUS_CLASS } from "./status-class";
+import {
+  RESERVE_STATUS_CLASS,
+  RESERVE_STATUS_FALLBACK_CLASS,
+  SLOT_STATUS_CLASS,
+} from "./status-class";
 
 /**
  * Status pill for reservations (variant="reservation", booking status enum)
@@ -31,7 +35,7 @@ export function StatusPill({
     );
   }
   const key = String(status);
-  const cls = RESERVE_STATUS_CLASS[key] ?? RESERVE_STATUS_CLASS.canceled;
+  const cls = RESERVE_STATUS_CLASS[key as keyof typeof RESERVE_STATUS_CLASS] ?? RESERVE_STATUS_FALLBACK_CLASS;
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-pill border px-2 py-0.5 text-dash-caption font-bold ${cls}`}

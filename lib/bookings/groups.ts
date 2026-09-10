@@ -89,8 +89,10 @@ export async function listBookingGroupsByPhone(phone: string): Promise<BookingGr
 }
 
 /**
- * Cancels every non-cancelled row of a booking group after verifying the
+ * Cancels every non-finished row of a booking group after verifying the
  * `booking.min_cancel_hours` policy against the earliest slot start.
+ * Paid/waiting rows → refunded; unpaid (pending) rows are deleted, freeing
+ * their slots.
  */
 export async function cancelBookingGroup(
   groupRef: string,
@@ -103,7 +105,7 @@ export async function cancelBookingGroup(
 
   if (rows.length === 0) throw new ApiError(404, "BOOKING_NOT_FOUND", "Booking not found.");
   const isTerminal = (row: BookingSummary) =>
-    row.status === "canceled" || row.status === "refund";
+    row.status === "done" || row.status === "refunded";
   if (rows.every(isTerminal)) return { cancelled: 0 };
 
   const settings = await loadSystemSettingsMap();
@@ -124,10 +126,21 @@ export async function cancelBookingGroup(
     }
   }
 
-  const ids = rows.filter((row) => !isTerminal(row)).map((row) => row.id);
-  await db
-    .update(bookings)
-    .set({ status: "canceled", updatedAt: new Date() })
-    .where(inArray(bookings.id, ids));
-  return { cancelled: ids.length };
+  const pendingIds = rows
+    .filter((row) => row.status === "pending")
+    .map((row) => row.id);
+  const refundIds = rows
+    .filter((row) => !isTerminal(row) && row.status !== "pending")
+    .map((row) => row.id);
+
+  if (refundIds.length > 0) {
+    await db
+      .update(bookings)
+      .set({ status: "refunded", updatedAt: new Date() })
+      .where(inArray(bookings.id, refundIds));
+  }
+  if (pendingIds.length > 0) {
+    await db.delete(bookings).where(inArray(bookings.id, pendingIds));
+  }
+  return { cancelled: pendingIds.length + refundIds.length };
 }

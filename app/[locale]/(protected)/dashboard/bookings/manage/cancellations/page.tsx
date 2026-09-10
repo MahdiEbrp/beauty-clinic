@@ -35,7 +35,7 @@ export async function generateMetadata({
 
 export default async function ManageCancellationsPage() {
   const session = await requirePermission("appointments.read");
-  const result = await listBookings({ page: 1, perPage: 10, status: "canceled" });
+  const result = await listBookings({ page: 1, perPage: 10, status: "refunded" });
   const initialData: ListResult<ReservationAdmin> = {
     items: mapReservations(result.items),
     total: result.total,

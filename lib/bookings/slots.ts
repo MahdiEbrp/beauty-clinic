@@ -38,7 +38,7 @@ function toSummary(row: SlotRow, bookedCount: number, serviceIds: string[]): Slo
   };
 }
 
-/** Active (non-cancelled) booking counts per slot, batch-aggregated. */
+/** Active (non-done/refunded) booking counts per slot, batch-aggregated. */
 async function bookedCounts(slotIds: string[]): Promise<Map<string, number>> {
   const map = new Map<string, number>();
   if (slotIds.length === 0) return map;
@@ -52,7 +52,7 @@ async function bookedCounts(slotIds: string[]): Promise<Map<string, number>> {
     .where(
       and(
         inArray(bookings.slotId, slotIds),
-        notInArray(bookings.status, ["canceled", "refund"]),
+        notInArray(bookings.status, ["done", "refunded"]),
         sql`${bookings.slotId} IS NOT NULL`,
       ),
     )

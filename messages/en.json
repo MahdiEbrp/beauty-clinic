@@ -158,9 +158,10 @@
       "search": "Search",
       "status": {
         "pending": "Pending",
-        "processing": "In progress",
-        "canceled": "Canceled",
-        "refund": "Refunded"
+        "paid": "Paid",
+        "waiting": "Waiting",
+        "done": "Done",
+        "refunded": "Refunded"
       },
       "title": "My bookings"
     },
@@ -510,24 +511,22 @@
   },
   "bookingReservations": {
     "actions": {
-      "cancel": "Cancel",
-      "confirm": "Confirm",
       "delete": "Delete",
       "deleteConfirm": "Delete this reservation?",
-      "edit": "Edit",
-      "menu": "Actions"
+      "edit": "Edit"
     },
     "add": "Add Reservation",
     "back": "Back to reservations",
     "bulk": {
       "apply": "Apply",
-      "cancel": "Cancel",
       "clear": "Clear",
-      "confirm": "Confirm",
       "confirmDescription": "This action applies to all selected reservations.",
       "confirmTitle": "{action} the selected reservations?",
       "delete": "Delete",
+      "done": "Mark as done",
       "pageSelected": "Page selected",
+      "pay": "Mark as paid",
+      "refund": "Refund",
       "resultDescription": "{count} reservations updated successfully",
       "resultPartialDescription": "{count} updated, {failed} failed",
       "resultPartialTitle": "Partly completed",
@@ -569,9 +568,18 @@
     "statusAll": "All",
     "statuses": {
       "pending": "Pending",
-      "processing": "In progress",
-      "canceled": "Canceled",
-      "refund": "Refunded"
+      "paid": "Paid",
+      "waiting": "Waiting",
+      "done": "Done",
+      "refunded": "Refunded"
+    },
+    "statusConfirm": {
+      "title": "Move to {status}?",
+      "description": "This changes the reservation from {from} to {to}."
+    },
+    "statusMenu": {
+      "current": "Current status",
+      "label": "Change reservation status"
     },
     "table": {
       "amount": "Amount",
@@ -1137,6 +1145,12 @@
     "meta": {
       "description": "Your Nafas Clinic account dashboard.",
       "title": "Dashboard | Nafas Beauty Clinic"
+    },
+    "recentReservations": {
+      "description": "Your most recent reservations.",
+      "empty": "No reservations yet.",
+      "heading": "Recent Reservations",
+      "viewAll": "View all"
     },
     "sessions": {
       "cancel": "Cancel",
@@ -2408,6 +2422,10 @@
       "time": {
         "label": "Time",
         "placeholder": "Select a time"
+      },
+      "status": {
+        "label": "Status",
+        "placeholder": "Select a status"
       }
     },
     "nav": {
@@ -2440,9 +2458,10 @@
     },
     "statuses": {
       "pending": "Pending",
-      "processing": "In progress",
-      "canceled": "Canceled",
-      "refund": "Refunded"
+      "paid": "Paid",
+      "waiting": "Waiting",
+      "done": "Done",
+      "refunded": "Refunded"
     },
     "steps": {
       "customer": {
@@ -5337,20 +5356,21 @@
   "bookingCancellations": {
     "meta": {
       "title": "Cancellations",
-      "description": "Review canceled and refunded orders."
+      "description": "Review finished, done and refunded orders."
     },
     "heading": "Cancellations",
     "resultsLabel": "{count} orders",
     "statusAll": "All",
-    "empty": "No canceled orders yet.",
+    "empty": "No finished orders yet.",
     "emptySearch": "No orders match your filters.",
     "errorTitle": "Could not load cancellations",
     "errorDescription": "Something went wrong while loading cancellations.",
     "retry": "Try again",
-    "actions": {
+    "bulk": {
       "refund": "Refund",
-      "refundConfirm": "Refund \"{name}\"?",
-      "refundConfirmDescription": "Marks the paid order as refunded.",
+      "delete": "Delete"
+    },
+    "actions": {
       "edit": "Edit",
       "delete": "Delete",
       "deleteConfirm": "Delete this order?",

@@ -20,9 +20,10 @@ import { services } from "./service-catalog";
 
 export const bookingStatusEnum = pgEnum("booking_status", [
   "pending",
-  "processing",
-  "canceled",
-  "refund",
+  "paid",
+  "waiting",
+  "done",
+  "refunded",
 ]);
 
 /**

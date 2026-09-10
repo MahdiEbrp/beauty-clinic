@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { pageUrl } from "@/lib/site";
 import { requireAuth, getActiveSessions } from "@/lib/auth/dal";
+import { hasPermission } from "@/lib/auth/rbac";
+import { listRecentBookings } from "@/lib/bookings/service";
+import { mapReservations } from "@/lib/bookings/admin-types";
 import DashboardContent from "@/components/DashboardContent";
 
 export async function generateMetadata({
@@ -29,11 +32,21 @@ export async function generateMetadata({
 export default async function DashboardPage() {
   const session = await requireAuth();
   const activeSessions = await getActiveSessions(session.userId);
+
+  const canReadAppointments = hasPermission(
+    session.user.permissions,
+    "appointments.read",
+  );
+  const recentBookings = canReadAppointments
+    ? await listRecentBookings(10)
+    : [];
+
   return (
     <DashboardContent
       user={session.user}
       sessions={activeSessions}
       currentSessionId={session.sessionId}
+      recentReservations={mapReservations(recentBookings)}
     />
   );
 }

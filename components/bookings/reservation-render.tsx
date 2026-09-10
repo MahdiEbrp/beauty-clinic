@@ -4,7 +4,7 @@ import { Clock, CreditCard } from "lucide-react";
 import type { Column } from "@/components/admin-list/types";
 import { formatPrice } from "@/components/admin-list/helpers";
 import type { ReservationAdmin } from "@/lib/bookings/admin-types";
-import { StatusPill } from "./status-pill";
+import { BookingStatusMenu } from "./booking-status-menu";
 
 export function formatSlotDate(iso: string | null): string {
   if (!iso) return "—";
@@ -65,7 +65,7 @@ export function reservationColumns(): Column<ReservationAdmin>[] {
     {
       key: "status",
       labelKey: "bookingReservations.table.status",
-      render: (row) => <StatusPill status={row.status} />,
+      render: (row) => <BookingStatusMenu row={row} />,
     },
   ];
 }
@@ -75,7 +75,7 @@ export function ReservationMobileCard({ row }: { row: ReservationAdmin }) {
     <div className="min-w-0 space-y-1">
       <div className="flex items-center justify-between gap-2">
         <span className="truncate font-bold text-accent">{row.fullName}</span>
-        <StatusPill status={row.status} />
+        <BookingStatusMenu row={row} />
       </div>
       <p className="text-dash-caption text-content-secondary">
         {row.serviceTitle} · {row.phone}

@@ -5,9 +5,10 @@ const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 export const bookingStatusSchema = z.enum([
   "pending",
-  "processing",
-  "canceled",
-  "refund",
+  "paid",
+  "waiting",
+  "done",
+  "refunded",
 ]);
 
 export const calendarTypeSchema = z.enum(["gregorian", "jalali"]);
@@ -192,7 +193,7 @@ export type ListSlotsAdminQuery = z.infer<typeof listSlotsAdminQuerySchema>;
  */
 export const bulkBookingsSchema = z
   .object({
-    action: z.enum(["confirm", "cancel", "delete"]),
+    action: z.enum(["pay", "done", "refund", "delete"]),
     scope: z.enum(["page", "filtered"]),
     ids: z.array(z.uuid()).max(100).optional(),
     filters: listBookingsQuerySchema

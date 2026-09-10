@@ -77,6 +77,15 @@ export async function getBooking(id: string): Promise<BookingSummary> {
   return row;
 }
 
+/** Most recent reservations for the dashboard home card (newest first). */
+export async function listRecentBookings(limit = 10): Promise<BookingSummary[]> {
+  return db
+    .select()
+    .from(bookings)
+    .orderBy(desc(bookings.createdAt))
+    .limit(limit);
+}
+
 export async function updateBookingStatus(id: string, status: BookingStatus): Promise<BookingSummary> {
   const [row] = await db
     .update(bookings)
@@ -98,12 +107,23 @@ export async function updateBookingDetails(
     status?: BookingStatus;
   },
 ): Promise<BookingSummary> {
+  const [current] = await db.select().from(bookings).where(eq(bookings.id, id)).limit(1);
+  if (!current) throw new ApiError(404, "BOOKING_NOT_FOUND", "Booking not found.");
+
   const set: Record<string, unknown> = { updatedAt: new Date() };
   if (patch.fullName !== undefined) set.fullName = patch.fullName;
   if (patch.phone !== undefined) set.phone = patch.phone;
   if (patch.email !== undefined) set.email = patch.email ?? null;
   if (patch.notes !== undefined) set.notes = patch.notes ?? null;
   if (patch.status !== undefined) set.status = patch.status;
+  // Recording a payment (paid/waiting) without a reference issues one so the
+  // payment is traceable even when the admin records it manually.
+  if (
+    (patch.status === "paid" || patch.status === "waiting") &&
+    !current.paymentReference
+  ) {
+    set.paymentReference = crypto.randomUUID();
+  }
   const [row] = await db.update(bookings).set(set).where(eq(bookings.id, id)).returning();
   if (!row) throw new ApiError(404, "BOOKING_NOT_FOUND", "Booking not found.");
   return row;
@@ -121,10 +141,9 @@ export async function deleteBooking(id: string): Promise<void> {
 }
 
 /**
- * Idempotent mock payment for a whole booking GROUP: marks every row in the
- * group processing (paid) with a shared reference. Calling again with any
- * member id returns the existing reference. Canceled/refunded groups cannot
- * be paid.
+ * Idempotent mock payment for a whole booking GROUP: marks every pending row
+ * in the group paid with a shared reference. Calling again with any member id
+ * returns the existing reference. Done/refunded groups cannot be paid.
  */
 export async function recordMockPayment(id: string): Promise<BookingSummary> {
   const [member] = await db.select().from(bookings).where(eq(bookings.id, id)).limit(1);
@@ -133,20 +152,20 @@ export async function recordMockPayment(id: string): Promise<BookingSummary> {
   const group = await db.select().from(bookings).where(eq(bookings.groupRef, member.groupRef));
 
   const isTerminal = (row: BookingSummary) =>
-    row.status === "canceled" || row.status === "refund";
+    row.status === "done" || row.status === "refunded";
   const paidRow = group.find(
-    (row) => row.status === "processing" && row.paymentReference,
+    (row) => row.status === "paid" && row.paymentReference,
   );
   if (paidRow) return paidRow;
   if (group.every(isTerminal)) {
-    throw new ApiError(409, "BOOKING_CANCELLED", "A cancelled booking cannot be paid.");
+    throw new ApiError(409, "BOOKING_CANCELLED", "A finished booking cannot be paid.");
   }
 
   const reference = crypto.randomUUID();
   const ids = group.filter((row) => !isTerminal(row)).map((row) => row.id);
   const [updated] = await db
     .update(bookings)
-    .set({ status: "processing", paymentReference: reference, updatedAt: new Date() })
+    .set({ status: "paid", paymentReference: reference, updatedAt: new Date() })
     .where(inArray(bookings.id, ids))
     .returning();
   return updated;

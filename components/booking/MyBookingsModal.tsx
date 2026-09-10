@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { ClipboardList, LoaderCircle, X } from "lucide-react";
 import { bookingErrorKey } from "@/lib/bookings/errors";
 import { asTranslate } from "@/src/i18n/message-key";
+import { StatusPill } from "@/components/bookings/status-pill";
 import { cancelBookingGroup, fetchMyBookings } from "./api";
 import type { BookingGroup } from "./types";
 
@@ -12,13 +13,6 @@ type MyBookingsModalProps = {
   minCancelHours: number;
   onClose: () => void;
 };
-
-const STATUS_KEYS = {
-  pending: "myBookings.status.pending",
-  processing: "myBookings.status.processing",
-  canceled: "myBookings.status.canceled",
-  refund: "myBookings.status.refund",
-} as const;
 
 /** My-bookings lookup (template parity): by phone, DB-backed, with cancel. */
 export default function MyBookingsModal({ minCancelHours, onClose }: MyBookingsModalProps) {
@@ -48,7 +42,14 @@ export default function MyBookingsModal({ minCancelHours, onClose }: MyBookingsM
     try {
       await cancelBookingGroup(groupRef, phone.trim());
       setGroups((prev) =>
-        prev?.map((g) => (g.groupRef === groupRef ? { ...g, status: "canceled" } : g)) ?? null,
+        // Pending groups are deleted by the server; paid/waiting become refunded.
+        prev?.flatMap((g) =>
+          g.groupRef !== groupRef
+            ? [g]
+            : g.status === "pending"
+              ? []
+              : [{ ...g, status: "refunded" as const }],
+        ) ?? null,
       );
     } catch (err) {
       setError(looseT(`errors.${bookingErrorKey(err)}`));
@@ -130,9 +131,7 @@ export default function MyBookingsModal({ minCancelHours, onClose }: MyBookingsM
                 <span dir="ltr" className="font-mono text-caption font-bold text-copper-deep">
                   {group.groupRef}
                 </span>
-                <span className="rounded-pill bg-copper/15 px-2.5 py-0.5 text-caption font-bold text-copper-strong">
-                  {t(STATUS_KEYS[group.status as keyof typeof STATUS_KEYS] ?? STATUS_KEYS.pending)}
-                </span>
+                <StatusPill status={group.status} />
               </div>
               <ul role="list" className="space-y-1">
                 {group.items.map((item) => (
@@ -146,7 +145,9 @@ export default function MyBookingsModal({ minCancelHours, onClose }: MyBookingsM
                   </li>
                 ))}
               </ul>
-              {group.status === "pending" || group.status === "processing" ? (
+              {group.status === "pending" ||
+                group.status === "paid" ||
+                group.status === "waiting" ? (
                 <button
                   type="button"
                   onClick={() => void cancel(group.groupRef)}

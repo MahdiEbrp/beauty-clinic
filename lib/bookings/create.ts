@@ -157,7 +157,7 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
       const [used] = await tx
         .select({ seats: sql<number>`coalesce(sum(${bookings.quantity}), 0)::int` })
         .from(bookings)
-        .where(and(eq(bookings.slotId, item.slotId), notInArray(bookings.status, ["canceled", "refund"])));
+        .where(and(eq(bookings.slotId, item.slotId), notInArray(bookings.status, ["done", "refunded"])));
       if (Number(used?.seats ?? 0) + totalRequested > slot.capacity) {
         throw new ApiError(409, "SLOT_FULL", "This time slot has just been taken.");
       }
@@ -173,7 +173,7 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
         .where(
           and(
             eq(bookings.phone, input.phone),
-            notInArray(bookings.status, ["canceled", "refund"]),
+            notInArray(bookings.status, ["done", "refunded"]),
             ne(bookings.groupRef, groupRef),
             lte(bookings.slotStart, end),
             gte(bookings.slotEnd, start),

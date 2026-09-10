@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import type { AuthUser, ActiveSession } from "@/lib/auth/dal";
+import type { ReservationAdmin } from "@/lib/bookings/admin-types";
+import { RecentReservationsCard } from "@/components/dashboard/RecentReservationsCard";
 import { RelativeTime } from "@/components/ui/relative-time";
 import {
   Dialog,
@@ -31,6 +33,7 @@ interface DashboardContentProps {
   user: AuthUser;
   sessions: ActiveSession[];
   currentSessionId: string;
+  recentReservations?: ReservationAdmin[];
 }
 
 function DeviceIcon({ kind }: { kind: ActiveSession["deviceKind"] }) {
@@ -44,6 +47,7 @@ export default function DashboardContent({
   user,
   sessions,
   currentSessionId,
+  recentReservations = [],
 }: DashboardContentProps) {
   const t = useTranslations();
   const format = useFormatter();
@@ -252,6 +256,10 @@ export default function DashboardContent({
           )}
         </div>
       </div>
+
+      {recentReservations.length > 0 ? (
+        <RecentReservationsCard reservations={recentReservations} />
+      ) : null}
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/src/i18n/navigation";
+import { msgKey } from "@/src/i18n/message-key";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { ListResult, AdminListConfig, RowActionItem } from "@/components/admin-list/types";
 import { AdminListView } from "@/components/admin-list/list-view";
@@ -32,64 +33,53 @@ export function ReservationsListView({
     statusOptions: [
       { value: "all", labelKey: "bookingReservations.statusAll" },
       { value: "pending", labelKey: "bookingReservations.statuses.pending" },
-      { value: "processing", labelKey: "bookingReservations.statuses.processing" },
-      { value: "canceled", labelKey: "bookingReservations.statuses.canceled" },
-      { value: "refund", labelKey: "bookingReservations.statuses.refund" },
+      { value: "paid", labelKey: "bookingReservations.statuses.paid" },
+      { value: "waiting", labelKey: "bookingReservations.statuses.waiting" },
+      { value: "done", labelKey: "bookingReservations.statuses.done" },
+      { value: "refunded", labelKey: "bookingReservations.statuses.refunded" },
     ],
     columns: reservationColumns(),
     renderMobileCard: (row) => <ReservationMobileCard row={row} />,
-    rowActionButtons: (row, ctx): RowActionItem[] => {
-      const buttons: RowActionItem[] = [
-        {
-          key: "edit",
-          labelKey: "bookingReservations.actions.edit",
-          onClick: () =>
-            router.push(`/dashboard/bookings/manage/reservations/${row.id}/edit`),
-          icon: "edit",
-        },
-      ];
-      if (row.status === "pending") {
-        buttons.push({
-          key: "confirm",
-          labelKey: "bookingReservations.actions.confirm",
-          onClick: () => ctx.setConfirm({ kind: "row", action: "confirm", row }),
-          icon: "confirm",
-        });
-      }
-      if (row.status !== "canceled" && row.status !== "refund") {
-        buttons.push({
-          key: "cancel",
-          labelKey: "bookingReservations.actions.cancel",
-          onClick: () => ctx.setConfirm({ kind: "row", action: "cancel", row }),
-          icon: "cancel",
-        });
-      }
-      buttons.push({
+    rowActionButtons: (row, ctx): RowActionItem[] => [
+      {
+        key: "edit",
+        labelKey: "bookingReservations.actions.edit",
+        onClick: () =>
+          router.push(`/dashboard/bookings/manage/reservations/${row.id}/edit`),
+        icon: "edit",
+      },
+      {
         key: "delete",
         labelKey: "bookingReservations.actions.delete",
         onClick: () => ctx.setConfirm({ kind: "row", action: "delete", row }),
         icon: "delete",
         danger: true,
-      });
-      return buttons;
-    },
+      },
+    ],
     statusPatch: (action) =>
-      action === "confirm" ? { status: "processing" } : { status: "canceled" },
-        confirmPhrase: (action) => ({
-      title:
-        action === "delete"
-          ? t("bookingReservations.actions.deleteConfirm")
-          : t("bookingReservations.bulk.confirmTitle", {
-              action:
-                action === "confirm"
-                  ? t("bookingReservations.bulk.confirm")
-                  : t("bookingReservations.bulk.cancel"),
-            }),
-      description: t("bookingReservations.bulk.confirmDescription"),
-    }),
+      action.startsWith("status:") ? { status: action.slice(7) } : {},
+    confirmPhrase: (action, row) => {
+      if (!action.startsWith("status:")) {
+        return {
+          title: t("bookingReservations.actions.deleteConfirm"),
+          description: t("bookingReservations.bulk.confirmDescription"),
+        };
+      }
+      const next = action.slice(7);
+      return {
+        title: t(msgKey("bookingReservations.statusConfirm.title") , {
+          status: t(msgKey(`bookingReservations.statuses.${next}`)),
+        }),
+        description: t(msgKey("bookingReservations.statusConfirm.description"), {
+          from: t(msgKey(`bookingReservations.statuses.${row.status}`)),
+          to: t(msgKey(`bookingReservations.statuses.${next}`)),
+        }),
+      };
+    },
     bulkActions: [
-      { key: "confirm", labelKey: "bookingReservations.bulk.confirm" },
-      { key: "cancel", labelKey: "bookingReservations.bulk.cancel" },
+      { key: "pay", labelKey: "bookingReservations.bulk.pay" },
+      { key: "done", labelKey: "bookingReservations.bulk.done" },
+      { key: "refund", labelKey: "bookingReservations.bulk.refund" },
       { key: "delete", labelKey: "bookingReservations.bulk.delete", dangerous: true },
     ],
     executeBulk: async (action, ids, filters) => {
