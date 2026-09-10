@@ -1,7 +1,7 @@
 /**
  * Next.js instrumentation — runs once per server process at boot.
  *
- * Schedules two croner jobs:
+ * Schedules three croner jobs:
  *
  * 1. Daily slot auto-generator — idempotent (only inserts missing
  *    (date, start_time) rows) and single-writer (PostgreSQL advisory xact
@@ -9,6 +9,8 @@
  *    schedule.
  * 2. Bookings auto-complete — flips paid/waiting bookings to done once their
  *    appointment window has passed (every 15 minutes).
+ * 3. Weekly disk cleanup — cleans unreserved past slots and expired logs
+ *    (Fridays at 6:00 UTC).
  *
  * Enable/disable via the SLOTS_CRON_ENABLED env var (default: enabled outside
  * dev so local servers don't fight over the shared dev database).
@@ -74,5 +76,42 @@ export async function register(): Promise<void> {
 
   logInfo("bookings.complete_scheduled", {
     nextRun: completeJob.nextRun()?.toISOString() ?? null,
+  });
+
+  // Weekly cleanup: Fridays at 6:00 UTC
+  const { cleanUnreservedPastSlots, cleanExpiredLogs } = await import(
+    "@/lib/cleanup"
+  );
+  const cleanupJob = new Cron(
+    "0 6 * * 5",
+    { timezone: "UTC", protect: true, name: "weekly-db-cleanup" },
+    async () => {
+      try {
+        logInfo("cleanup.started", {
+          timestamp: new Date().toISOString(),
+        });
+        
+        // Clean unreserved past slots
+        const slotsCleaned = await cleanUnreservedPastSlots();
+        
+        // Clean expired logs
+        const logsCleaned = await cleanExpiredLogs();
+        
+        logInfo("cleanup.completed", {
+          slotsCleaned,
+          logsCleaned,
+          timestamp: new Date().toISOString(),
+        });
+      } catch (error) {
+        logError("cleanup.failed", {
+          error: error instanceof Error ? error.message : String(error),
+          timestamp: new Date().toISOString(),
+        });
+      }
+    },
+  );
+
+  logInfo("cleanup.scheduled", {
+    nextRun: cleanupJob.nextRun()?.toISOString() ?? null,
   });
 }
