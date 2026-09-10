@@ -4,13 +4,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 
 import type { AuthUser } from "@/lib/auth/dal";
-import {
-  EMAIL_API_ROUTES,
-  EMAIL_DASHBOARD_ROUTES,
-  EMAIL_LIMITS,
-} from "@/lib/email/constants";
+import { EMAIL_API_ROUTES, EMAIL_DASHBOARD_ROUTES, EMAIL_LIMITS } from "@/lib/email/constants";
 import type { AdminEmailProvider } from "@/lib/email/provider-service";
-import type { ListEmailMessagesResult } from "@/lib/email/report-service";
+import type { AdminEmailMessage, ListEmailMessagesResult } from "@/lib/email/report-service";
 import {
   EmailManagementFilterPill,
   EmailManagementFilters,
@@ -21,6 +17,10 @@ import { EmailListEmpty, EmailListError } from "./EmailListStates";
 import { EmailListShell } from "./EmailListShell";
 import { EmailPagination } from "./EmailPagination";
 import { MessageCard, MessageRow } from "./EmailMessageListItems";
+import { EmailConfirmDialog } from "./EmailConfirmDialog";
+import { useMessageDelete } from "@/components/admin-list/use-message-delete";
+import { MessageBulkBar } from "@/components/admin-list/MessageBulkBar";
+import { MessagesTable } from "@/components/admin-list/MessagesTable";
 
 type MessageStatus = "all" | "queued" | "sending" | "sent" | "delivered" | "failed";
 
@@ -44,7 +44,6 @@ export function EmailReportsContent({
   const [page, setPage] = useState(initialData.page);
   const [loading, setLoading] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
-
 
   const load = useCallback(
     async (
@@ -95,7 +94,24 @@ export function EmailReportsContent({
     void load(page, debouncedSearch, status, providerId);
   }, [debouncedSearch, load, page, providerId, status]);
 
-  const refresh = () => load(page, debouncedSearch, status, providerId);
+  const refresh = useCallback(() => { void load(page, debouncedSearch, status, providerId); }, [load, page, debouncedSearch, status, providerId]);
+
+  const {
+    selectedIds,
+    deleteTarget,
+    setDeleteTarget,
+    deleting,
+    handleSelect,
+    handleSelectAll,
+    confirmDelete,
+    bulkDelete,
+  } = useMessageDelete<AdminEmailMessage>({
+    apiBase: EMAIL_API_ROUTES.messages,
+    successKey: t("actions.deleteSuccess"),
+    errorKey: t("actions.deleteError"),
+    refresh,
+  });
+
   const range = {
     from:
       data.total === EMAIL_LIMITS.emptyLength
@@ -118,6 +134,15 @@ export function EmailReportsContent({
     { value: "all", label: t("allProviders") },
     ...providers.map((provider) => ({ value: provider.id, label: provider.name })),
   ];
+
+  const messageLabels = {
+    providerFallback: t("notAvailable"),
+    noValue: t("notAvailable"),
+    providerId: t("table.providerId"),
+    created: t("table.created"),
+    error: t("table.error"),
+    delete: t("actions.delete"),
+  };
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -166,6 +191,21 @@ export function EmailReportsContent({
         }
         hasExtraFilters={providerId !== "all"}
       />
+      {selectedIds.size > 0 && (
+        <MessageBulkBar
+          busy={deleting}
+          onDelete={() => void bulkDelete(
+            t("bulk.resultDescription", { count: selectedIds.size }),
+            t("bulk.resultPartialDescription", { count: 0, failed: 0 }),
+          )}
+          onSelectAll={() => handleSelectAll(data.items)}
+          labels={{
+            selected: t("bulk.selected", { count: selectedIds.size }),
+            delete: t("bulk.delete"),
+            selectAll: t("bulk.selectAll", { count: data.total }),
+          }}
+        />
+      )}
       <EmailListShell
         total={data.total}
         resultsLabel={adminT("resultsLabel")}
@@ -182,49 +222,32 @@ export function EmailReportsContent({
         }
         empty={<EmailListEmpty message={t("empty")} filtering={hasFilters} />}
         desktop={
-          <table className="w-full min-w-5xl table-fixed text-start">
-            <thead>
-              <tr className="border-b border-border-primary bg-surface-tertiary/30 text-dash-caption text-content-secondary">
-                <th scope="col" className="w-[16%] px-4 py-4 text-start font-bold">
-                  {t("table.recipient")}
-                </th>
-                <th scope="col" className="w-[16%] px-4 py-4 text-start font-bold">
-                  {t("table.provider")}
-                </th>
-                <th scope="col" className="w-[14%] px-4 py-4 text-start font-bold">
-                  {t("table.status")}
-                </th>
-                <th scope="col" className="w-[18%] px-4 py-4 text-start font-bold">
-                  {t("table.providerId")}
-                </th>
-                <th scope="col" className="w-[15%] px-4 py-4 text-start font-bold">
-                  {t("table.created")}
-                </th>
-                <th scope="col" className="w-[15%] px-4 py-4 text-start font-bold">
-                  {t("table.sent")}
-                </th>
-                <th scope="col" className="w-[18%] px-4 py-4 text-start font-bold">
-                  {t("table.error")}
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border-primary">
-              {data.items.map((message) => (
-                <MessageRow
-                  key={message.id}
-                  message={message}
-                  locale={locale}
-                  labels={{
-                    providerFallback: t("notAvailable"),
-                    noValue: t("notAvailable"),
-                    providerId: t("table.providerId"),
-                    created: t("table.created"),
-                    error: t("table.error"),
-                  }}
-                />
-              ))}
-            </tbody>
-          </table>
+          <MessagesTable
+            items={data.items}
+            selectedIds={selectedIds}
+            selectAllChecked={data.items.length > 0 && selectedIds.size === data.items.length}
+            onSelectAll={() => handleSelectAll(data.items)}
+            columns={[
+              { label: t("table.recipient"), width: "w-[16%]" },
+              { label: t("table.provider"), width: "w-[16%]" },
+              { label: t("table.status"), width: "w-[14%]" },
+              { label: t("table.providerId"), width: "w-[18%]" },
+              { label: t("table.created"), width: "w-[15%]" },
+              { label: t("table.sent"), width: "w-[15%]" },
+              { label: t("table.error") },
+            ]}
+            renderRow={(message, selected) => (
+              <MessageRow
+                key={message.id}
+                message={message as AdminEmailMessage}
+                locale={locale}
+                labels={messageLabels}
+                selected={selected}
+                onSelect={handleSelect}
+                onDelete={setDeleteTarget}
+              />
+            )}
+          />
         }
         mobile={
           <div className="grid gap-2.5 p-3">
@@ -233,13 +256,10 @@ export function EmailReportsContent({
                 key={message.id}
                 message={message}
                 locale={locale}
-                labels={{
-                  providerFallback: t("notAvailable"),
-                  noValue: t("notAvailable"),
-                  providerId: t("table.providerId"),
-                  created: t("table.created"),
-                  error: t("table.error"),
-                }}
+                labels={messageLabels}
+                selected={selectedIds.has(message.id)}
+                onSelect={handleSelect}
+                onDelete={setDeleteTarget}
               />
             ))}
           </div>
@@ -261,6 +281,17 @@ export function EmailReportsContent({
             onPageChange={setPage}
           />
         }
+      />
+      <EmailConfirmDialog
+        open={Boolean(deleteTarget)}
+        title={t("actions.deleteConfirm")}
+        description={t("bulk.confirmDescription")}
+        confirmLabel={t("actions.delete")}
+        cancelLabel={adminT("actions.cancel")}
+        closeLabel={adminT("actions.cancel")}
+        busy={deleting}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onConfirm={() => void confirmDelete()}
       />
     </div>
   );

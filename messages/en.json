@@ -4155,9 +4155,26 @@
     }
   },
   "emailReports": {
+    "actions": {
+      "delete": "Delete",
+      "deleteConfirm": "Delete this message?",
+      "deleteError": "Could not delete message.",
+      "deleteSuccess": "Message deleted"
+    },
     "allProviders": "All providers",
     "allStatuses": "All statuses",
     "back": "Back to email panel",
+    "bulk": {
+      "confirmDescription": "This action applies to all selected messages.",
+      "confirmTitle": "Delete the selected messages?",
+      "delete": "Delete",
+      "resultDescription": "{count} messages deleted successfully",
+      "resultPartialDescription": "{count} deleted, {failed} failed",
+      "resultPartialTitle": "Partly completed",
+      "resultTitle": "Bulk delete completed",
+      "selected": "{count} selected",
+      "selectAll": "Select all {count} filtered"
+    },
     "description": "Review each email and the provider response.",
     "empty": "No emails match these filters.",
     "error": "Reports could not be loaded.",
@@ -4733,9 +4750,26 @@
     }
   },
   "smsReports": {
+    "actions": {
+      "delete": "Delete",
+      "deleteConfirm": "Delete this message?",
+      "deleteError": "Could not delete message.",
+      "deleteSuccess": "Message deleted"
+    },
     "allProviders": "All providers",
     "allStatuses": "All statuses",
     "back": "Back to SMS panel",
+    "bulk": {
+      "confirmDescription": "This action applies to all selected messages.",
+      "confirmTitle": "Delete the selected messages?",
+      "delete": "Delete",
+      "resultDescription": "{count} messages deleted successfully",
+      "resultPartialDescription": "{count} deleted, {failed} failed",
+      "resultPartialTitle": "Partly completed",
+      "resultTitle": "Bulk delete completed",
+      "selected": "{count} selected",
+      "selectAll": "Select all {count} filtered"
+    },
     "description": "Review each message and the provider response.",
     "empty": "No messages match these filters.",
     "error": "Reports could not be loaded.",

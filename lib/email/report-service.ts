@@ -1,5 +1,7 @@
 import { and, count, desc, eq, ilike, isNull, or, sql, type SQL } from "drizzle-orm";
 
+import { ApiError } from "@/lib/api/errors";
+
 import { decryptSecret } from "@/lib/auth/encryption";
 import { EMAIL_LIMITS } from "@/lib/email/constants";
 import { hashRecipient } from "@/lib/email/email";
@@ -254,6 +256,18 @@ export async function listEmailRecipients(
     perPage: options.perPage,
     totalPages: Math.ceil(total / options.perPage),
   };
+}
+
+export async function deleteEmailMessage(id: string): Promise<void> {
+  const [row] = await db
+    .select({ id: emailMessages.id })
+    .from(emailMessages)
+    .where(eq(emailMessages.id, id))
+    .limit(1);
+  if (!row) {
+    throw new ApiError(404, "EMAIL_MESSAGE_NOT_FOUND", "Email message not found.");
+  }
+  await db.delete(emailMessages).where(eq(emailMessages.id, id));
 }
 
 export async function getEmailComposeDatasets(): Promise<EmailAdminDatasets> {

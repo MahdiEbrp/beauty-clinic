@@ -4155,9 +4155,26 @@
     }
   },
   "emailReports": {
+    "actions": {
+      "delete": "حذف",
+      "deleteConfirm": "این پیام حذف شود؟",
+      "deleteError": "حذف پیام انجام نشد.",
+      "deleteSuccess": "پیام حذف شد"
+    },
     "allProviders": "همه سرویس‌دهنده‌ها",
     "allStatuses": "همه وضعیت‌ها",
     "back": "بازگشت به پنل ایمیل",
+    "bulk": {
+      "confirmDescription": "این عمل روی همه پیام‌های انتخاب‌شده اعمال می‌شود.",
+      "confirmTitle": "پیام‌های انتخاب‌شده حذف شوند؟",
+      "delete": "حذف",
+      "resultDescription": "{count} پیام با موفقیت حذف شد",
+      "resultPartialDescription": "{count} حذف شد، {failed} ناموفق",
+      "resultPartialTitle": "انجام نسبی",
+      "resultTitle": "حذف گروهی تمام شد",
+      "selected": "{count} انتخاب شده",
+      "selectAll": "انتخاب همه {count} نتیجه"
+    },
     "description": "وضعیت هر ایمیل و پاسخ سرویس‌دهنده را بررسی کنید.",
     "empty": "ایمیلی مطابق فیلترها پیدا نشد.",
     "error": "گزارش‌ها بارگذاری نشدند.",
@@ -4733,9 +4750,26 @@
     }
   },
   "smsReports": {
+    "actions": {
+      "delete": "حذف",
+      "deleteConfirm": "این پیام حذف شود؟",
+      "deleteError": "حذف پیام انجام نشد.",
+      "deleteSuccess": "پیام حذف شد"
+    },
     "allProviders": "همه سرویس‌دهنده‌ها",
     "allStatuses": "همه وضعیت‌ها",
     "back": "بازگشت به پنل پیامکی",
+    "bulk": {
+      "confirmDescription": "این عمل روی همه پیام‌های انتخاب‌شده اعمال می‌شود.",
+      "confirmTitle": "پیام‌های انتخاب‌شده حذف شوند؟",
+      "delete": "حذف",
+      "resultDescription": "{count} پیام با موفقیت حذف شد",
+      "resultPartialDescription": "{count} حذف شد، {failed} ناموفق",
+      "resultPartialTitle": "انجام نسبی",
+      "resultTitle": "حذف گروهی تمام شد",
+      "selected": "{count} انتخاب شده",
+      "selectAll": "انتخاب همه {count} نتیجه"
+    },
     "description": "وضعیت هر پیام و پاسخ سرویس‌دهنده را بررسی کنید.",
     "empty": "پیامی مطابق فیلترها پیدا نشد.",
     "error": "گزارش‌ها بارگذاری نشدند.",

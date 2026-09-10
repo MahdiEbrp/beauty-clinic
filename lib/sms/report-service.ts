@@ -1,5 +1,7 @@
 import { and, count, desc, eq, ilike, isNull, or, sql, type SQL } from "drizzle-orm";
 
+import { ApiError } from "@/lib/api/errors";
+
 import { decryptSecret } from "@/lib/auth/encryption";
 import { SMS_LIMITS } from "@/lib/sms/constants";
 import { hashRecipient } from "@/lib/sms/phone";
@@ -255,6 +257,18 @@ export async function listSmsRecipients(
     perPage: options.perPage,
     totalPages: Math.ceil(total / options.perPage),
   };
+}
+
+export async function deleteSmsMessage(id: string): Promise<void> {
+  const [row] = await db
+    .select({ id: smsMessages.id })
+    .from(smsMessages)
+    .where(eq(smsMessages.id, id))
+    .limit(1);
+  if (!row) {
+    throw new ApiError(404, "SMS_MESSAGE_NOT_FOUND", "SMS message not found.");
+  }
+  await db.delete(smsMessages).where(eq(smsMessages.id, id));
 }
 
 export async function getSmsComposeDatasets(): Promise<SmsAdminDatasets> {
