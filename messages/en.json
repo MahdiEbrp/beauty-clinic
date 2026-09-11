@@ -5620,6 +5620,7 @@
     }
   },
   "paymentSend": {
+    "back": "Back to payment",
     "heading": "Create Payment",
     "description": "Send payment request",
     "steps": {
@@ -5635,6 +5636,12 @@
         "name": "Review",
         "description": "Confirm"
       }
+    },
+    "nav": {
+      "back": "Back",
+      "create": "Create",
+      "continue": "Continue",
+      "stepOf": "Step {current} of {total}"
     }
   },
   "paymentReports": {

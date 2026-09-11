@@ -5620,6 +5620,7 @@
     }
   },
   "paymentSend": {
+    "back": "بازگشت به پرداخت",
     "heading": "ایجاد پرداخت",
     "description": "ارسال درخواست پرداخت",
     "steps": {
@@ -5635,6 +5636,12 @@
         "name": "بازبینی",
         "description": "تأیید"
       }
+    },
+    "nav": {
+      "back": "بازگشت",
+      "create": "ایجاد",
+      "continue": "ادامه",
+      "stepOf": "مرحله {current} از {total}"
     }
   },
   "paymentReports": {
