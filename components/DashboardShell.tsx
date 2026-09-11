@@ -7,7 +7,7 @@ import {
   usePathname,
   useRouter,
 } from "@/src/i18n/navigation";
-import { CalendarClock, CalendarRange, Clock, Files, HeartPulse, LayoutDashboard, LayoutTemplate, Mail, MessageSquareText, Settings, Shield, Sparkles, Users } from "lucide-react";
+import { CalendarClock, CalendarRange, Clock, CreditCard, Files, HeartPulse, LayoutDashboard, LayoutTemplate, Mail, MessageSquareText, Settings, Shield, Sparkles, Users } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { SidebarNavItem } from "@/components/dashboard/SidebarSections";
@@ -37,15 +37,16 @@ export default function DashboardShell({
 
   const collapsed = sidebarMode === "collapsed";
 
-  const canViewUsers = user.permissions.includes("users.read");
-  const canViewFiles = user.permissions.includes("files.read");
-  const canViewServices = user.permissions.includes("services.read");
-  const canViewRules = user.permissions.includes("rules.read");
-  const canViewCare = user.permissions.includes("care-guides.read");
-  const canViewSettings = user.permissions.includes("settings.read");
-  const canViewSms = user.permissions.includes("sms.read");
-  const canViewEmail = user.permissions.includes("email.read");
-  const canViewBookings = user.permissions.includes("appointments.read");
+const canViewUsers = user.permissions.includes("users.read");
+   const canViewFiles = user.permissions.includes("files.read");
+   const canViewServices = user.permissions.includes("services.read");
+   const canViewRules = user.permissions.includes("rules.read");
+   const canViewCare = user.permissions.includes("care-guides.read");
+   const canViewSettings = user.permissions.includes("settings.read");
+   const canViewSms = user.permissions.includes("sms.read");
+   const canViewEmail = user.permissions.includes("email.read");
+   const canViewPayment = user.permissions.includes("payment.read");
+   const canViewBookings = user.permissions.includes("appointments.read");
 
   // Sidebar items ordered by estimated frequency of use (most-used first).
   const navItems: SidebarNavItem[] = [
@@ -59,14 +60,17 @@ export default function DashboardShell({
           { key: "workingHours", href: "/dashboard/working-hours", icon: Clock },
         ]
       : []),
-    // Client communication and contacts.
-    ...(canViewSms
-      ? [{ key: "sms", href: "/dashboard/sms", icon: MessageSquareText }]
-      : []),
-    ...(canViewEmail
-      ? [{ key: "email", href: "/dashboard/email", icon: Mail }]
-      : []),
-    ...(canViewUsers ? [{ key: "users", href: "/dashboard/users", icon: Users }] : []),
+// Client communication and contacts.
+     ...(canViewSms
+       ? [{ key: "sms", href: "/dashboard/sms", icon: MessageSquareText }]
+       : []),
+     ...(canViewEmail
+       ? [{ key: "email", href: "/dashboard/email", icon: Mail }]
+       : []),
+     ...(canViewPayment
+       ? [{ key: "payment", href: "/dashboard/payment", icon: CreditCard }]
+       : []),
+     ...(canViewUsers ? [{ key: "users", href: "/dashboard/users", icon: Users }] : []),
     // Catalog & content maintenance.
     ...(canViewServices
       ? [{ key: "services", href: "/dashboard/services", icon: Sparkles }]

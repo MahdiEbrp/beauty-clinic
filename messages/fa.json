@@ -1193,7 +1193,8 @@
       "viewSite": "مشاهده وب‌سایت",
       "workspace": "فضای کاری",
       "email": "ایمیل",
-      "workingHours": "ساعات کاری"
+      "workingHours": "ساعات کاری",
+      "payment": "پرداخت"
     },
     "topbar": {
       "access": "مدیریت دسترسی",
@@ -3537,47 +3538,63 @@
         "subtitle": "کلیدهایی که هنوز دسته‌بندی نشده‌اند."
       }
     },
-    "keys": {
-      "booking.timezone": "منطقه زمانی",
-      "booking.slot_auto": "زمان‌بندی خودکار",
-      "booking.slot_interval_min": "فاصله هر نوبت (دقیقه)",
-      "booking.slot_duration_min": "مدت هر نوبت (دقیقه)",
-      "booking.slot_default_capacity": "ظرفیت پیش‌فرض هر نوبت",
-      "booking.slot_window_days": "پنجره رزرو (روز)",
-      "booking.min_cancel_hours": "حداقل ساعت برای لغو",
-      "booking.price": "هزینه رزرو",
-      "booking.currency": "واحد پول",
-      "booking.select_service": "متن «انتخاب خدمت»",
-      "contact.phone": "شماره تلفن",
-      "contact.address_full": "آدرس کامل",
-      "contact.city": "شهر",
-      "contact.province": "استان",
-      "contact.country": "کشور",
-      "contact.map_neshan": "لینک نقشه نشان",
-      "contact.map_google": "لینک نقشه گوگل",
-      "contact.address_title": "عنوان بخش آدرس",
-      "contact.social_title": "عنوان بخش شبکه‌های اجتماعی",
-      "contact.booking_title": "عنوان بخش رزرو",
-      "contact.neshan_map": "متن «مشاهده روی نشان»",
-      "contact.neshan_desc": "متن مسیریابی نشان",
-      "contact.google_map": "متن «مشاهده روی گوگل»",
-      "contact.google_desc": "متن مسیریابی گوگل",
-      "pricing.page.title": "عنوان صفحه تعرفه",
-      "pricing.page.intro": "مقدمه صفحه تعرفه",
-      "pricing.page.seo_title": "عنوان سئو تعرفه",
-      "pricing.page.seo_description": "توضیحات سئو تعرفه",
-      "pricing.page.updated": "تاریخ به‌روزرسانی تعرفه",
-      "pricing.cta.title": "عنوان دعوت به اقدام",
-      "pricing.cta.description": "توضیح دعوت به اقدام",
-      "pricing.cta.primary_label": "برچسب دکمه اصلی",
-      "pricing.cta.primary_url": "آدرس دکمه اصلی",
-      "pricing.cta.secondary_label": "برچسب دکمه دوم",
-      "pricing.cta.secondary_url": "آدرس دکمه دوم",
-      "clinic.name": "نام کلینیک",
-      "common.opens_in_new_tab": "متن «باز شدن در تب جدید»",
-      "social.bale": "بله",
-      "social.instagram": "اینستاگرام",
-      "social.rubika": "روبیکا"
+"keys": {
+      "booking": {
+        "timezone": "منطقه زمانی",
+        "slot_auto": "زمان‌بندی خودکار",
+        "slot_interval_min": "فاصله هر نوبت (دقیقه)",
+        "slot_duration_min": "مدت هر نوبت (دقیقه)",
+        "slot_default_capacity": "ظرفیت پیش‌فرض هر نوبت",
+        "slot_window_days": "پنجره رزرو (روز)",
+        "min_cancel_hours": "حداقل ساعت برای لغو",
+        "price": "هزینه رزرو",
+        "currency": "واحد پول",
+        "select_service": "متن «انتخاب خدمت»"
+      },
+      "contact": {
+        "phone": "شماره تلفن",
+        "address_full": "آدرس کامل",
+        "city": "شهر",
+        "province": "استان",
+        "country": "کشور",
+        "map_neshan": "لینک نقشه نشان",
+        "map_google": "لینک نقشه گوگل",
+        "address_title": "عنوان بخش آدرس",
+        "social_title": "عنوان بخش شبکه‌های اجتماعی",
+        "booking_title": "عنوان بخش رزرو",
+        "neshan_map": "متن «مشاهده روی نشان»",
+        "neshan_desc": "متن مسیریابی نشان",
+        "google_map": "متن «مشاهده روی گوگل»",
+        "google_desc": "متن مسیریابی گوگل"
+      },
+      "pricing": {
+        "page": {
+          "title": "عنوان صفحه تعرفه",
+          "intro": "مقدمه صفحه تعرفه",
+          "seo_title": "عنوان سئو تعرفه",
+          "seo_description": "توضیحات سئو تعرفه",
+          "updated": "تاریخ به‌روزرسانی تعرفه"
+        },
+        "cta": {
+          "title": "عنوان دعوت به اقدام",
+          "description": "توضیح دعوت به اقدام",
+          "primary_label": "برچسب دکمه اصلی",
+          "primary_url": "آدرس دکمه اصلی",
+          "secondary_label": "برچسب دکمه دوم",
+          "secondary_url": "آدرس دکمه دوم"
+        }
+      },
+      "clinic": {
+        "name": "نام کلینیک"
+      },
+      "common": {
+        "opens_in_new_tab": "متن «باز شدن در تب جدید»"
+      },
+      "social": {
+        "bale": "بله",
+        "instagram": "اینستاگرام",
+        "rubika": "روبیکا"
+      }
     }
   },
   "site": {
@@ -5376,5 +5393,211 @@
       "deleteConfirm": "حذف این سفارش؟",
       "deleteConfirmDescription": "سفارش برای همیشه حذف می‌شود."
     }
+  },
+  "paymentAdmin": {
+    "heading": "پرداخت",
+    "description": "مدیریت درگاه‌ها و تراکنش‌ها.",
+    "meta": {
+      "title": "پرداخت | نفس",
+      "description": "Payment overview"
+    },
+    "performance": {
+      "title": "Overview",
+      "totalAssets": "Total",
+      "providers": "Providers",
+      "transactions": "Transactions",
+      "verified": "Verified"
+    },
+    "hub": {
+      "title": "Management Hub",
+      "providers": {
+        "name": "Providers",
+        "description": "Gateway providers",
+        "featureEncryption": "Encryption",
+        "featureHealth": "Health",
+        "featureDefault": "Default"
+      },
+      "checkout": {
+        "name": "Checkout",
+        "description": "Create payment",
+        "featureGateways": "Gateways",
+        "featureSandbox": "Sandbox",
+        "featureVerify": "Verify"
+      },
+      "transactions": {
+        "name": "Transactions",
+        "description": "History",
+        "featureStatus": "Status",
+        "featureFilter": "Filter",
+        "featureHistory": "History"
+      }
+    },
+    "counts": {
+      "active": "{count} Active",
+      "total": "{count} Total",
+      "amount": "{amount} Amount"
+    },
+    "manage": "Manage",
+    "addNew": "Add New",
+    "providerKinds": {
+      "zarinpal": "ZarinPal",
+      "zibal": "Zibal",
+      "idpay": "IDPay",
+      "nextpay": "NextPay",
+      "mellat": "Mellat",
+      "parsian": "Parsian",
+      "fake": "Fake (Test)"
+    },
+    "providerDescriptions": {
+      "zarinpal": "ZarinPal gateway",
+      "zibal": "Zibal",
+      "idpay": "IDPay",
+      "nextpay": "NextPay",
+      "mellat": "Mellat",
+      "parsian": "Parsian",
+      "fake": "Simulated gateway for testing"
+    },
+    "errors": {
+      "providerNotFound": "Provider not found"
+    },
+    "search": {
+      "placeholder": "جستجوی درگاه‌ها..."
+    },
+    "empty": "هیچ درگاه پرداختی یافت نشد.",
+    "fields": {
+      "name": "نام",
+      "nameHint": "نام نمایشی برای این درگاه",
+      "kind": "نوع درگاه",
+      "apiUrl": "آدرس API",
+      "apiUrlHint": "آدرس پایه برای API درگاه پرداخت",
+      "callbackUrl": "آدرس بازگشت",
+      "callbackUrlHint": "مکان بازگشتی درگاه پس از پرداخت",
+      "merchantId": "شناسه مرچنت",
+      "sandbox": "حالت تست"
+    },
+    "options": {
+      "enabled": "فعال",
+      "disabled": "غیرفعال"
+    },
+    "review": {
+      "title": "بازبینی درگاه",
+      "description": "جزئیات را پیش از ذخیره بررسی کنید.",
+      "connection": "اتصال",
+      "security": "امنیت",
+      "status": "وضعیت",
+      "notProvided": "وارد نشده",
+      "secretHidden": "به‌صورت امن ذخیره شده"
+    },
+    "status": {
+      "active": "فعال",
+      "default": "پیش‌فرض"
+    }
+  },
+  "paymentProviderForm": {
+    "heading": "افزودن درگاه",
+    "editHeading": "ویرایش درگاه",
+    "description": "پیکربندی درگاه.",
+    "sections": {
+      "identity": "Identity",
+      "identityHint": "Basic info",
+      "credentials": "Credentials",
+      "credentialsHint": "Merchant ID",
+      "status": "Status",
+      "statusHint": "Active/default",
+      "review": "Review"
+    },
+    "fields": {
+      "name": "Name",
+      "nameHint": "Provider name",
+      "kind": "Kind",
+      "apiUrl": "API URL",
+      "apiUrlHint": "Default {url}",
+      "callbackUrl": "Callback URL",
+      "callbackUrlHint": "Callback",
+      "merchantId": "Merchant ID",
+      "merchantIdHint": "ZarinPal MerchantID",
+      "merchantIdEditHint": "Leave empty to keep",
+      "sandbox": "Sandbox",
+      "sandboxHint": "Use sandbox",
+      "fakeHint": "Fake gateway needs no credentials – select fake kind for testing."
+    },
+    "status": {
+      "active": "Active",
+      "activeHint": "Enable",
+      "default": "Default",
+      "defaultHint": "Default gateway"
+    },
+    "review": {
+      "title": "Ready",
+      "description": "Review",
+      "connection": "Connection",
+      "security": "Security",
+      "status": "Status",
+      "notProvided": "-",
+      "secretHidden": "••••",
+      "secretReady": "Set"
+    },
+    "options": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "nav": {
+      "save": "Save",
+      "continue": "Continue"
+    },
+    "errors": {
+      "required": "Required",
+      "merchantRequired": "Merchant ID required",
+      "server": "Server error"
+    },
+    "toast": {
+      "creating": "Creating...",
+      "saving": "Saving...",
+      "created": "Created",
+      "updated": "Updated",
+      "error": "Error"
+    }
+  },
+  "paymentSend": {
+    "heading": "Create Payment",
+    "description": "Send payment request",
+    "steps": {
+      "recipients": {
+        "name": "Order",
+        "description": "Select order"
+      },
+      "content": {
+        "name": "Payment",
+        "description": "Amount & gateway"
+      },
+      "review": {
+        "name": "Review",
+        "description": "Confirm"
+      }
+    }
+  },
+  "paymentReports": {
+    "heading": "Transactions",
+    "description": "History",
+    "empty": "No transactions",
+    "error": "Load failed"
+  },
+  "providerKinds": {
+    "zarinpal": "ZarinPal",
+    "zibal": "Zibal",
+    "idpay": "IDPay",
+    "nextpay": "NextPay",
+    "mellat": "Mellat",
+    "parsian": "Parsian",
+    "fake": "Fake"
+  },
+  "providerDescriptions": {
+    "zarinpal": "Gateway",
+    "zibal": "Gateway",
+    "idpay": "Gateway",
+    "nextpay": "Gateway",
+    "mellat": "Gateway",
+    "parsian": "Gateway",
+    "fake": "Gateway"
   }
 }

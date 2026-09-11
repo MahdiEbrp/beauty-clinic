@@ -1193,7 +1193,8 @@
       "viewSite": "View Website",
       "workspace": "Workspace",
       "email": "Email",
-      "workingHours": "Working Hours"
+      "workingHours": "Working Hours",
+      "payment": "Payment"
     },
     "topbar": {
       "access": "Access management",
@@ -3538,46 +3539,62 @@
       }
     },
     "keys": {
-      "booking.timezone": "Timezone",
-      "booking.slot_auto": "Automatic scheduling",
-      "booking.slot_interval_min": "Slot interval (minutes)",
-      "booking.slot_duration_min": "Slot duration (minutes)",
-      "booking.slot_default_capacity": "Default slot capacity",
-      "booking.slot_window_days": "Booking window (days)",
-      "booking.min_cancel_hours": "Minimum cancel hours",
-      "booking.price": "Booking fee",
-      "booking.currency": "Currency",
-      "booking.select_service": "Select-service prompt",
-      "contact.phone": "Phone number",
-      "contact.address_full": "Full address",
-      "contact.city": "City",
-      "contact.province": "Province",
-      "contact.country": "Country",
-      "contact.map_neshan": "Neshan map link",
-      "contact.map_google": "Google Maps link",
-      "contact.address_title": "Address section title",
-      "contact.social_title": "Social media section title",
-      "contact.booking_title": "Booking section title",
-      "contact.neshan_map": "View-on-Neshan label",
-      "contact.neshan_desc": "Neshan navigation label",
-      "contact.google_map": "View-on-Google label",
-      "contact.google_desc": "Google navigation label",
-      "pricing.page.title": "Pricing page title",
-      "pricing.page.intro": "Pricing page intro",
-      "pricing.page.seo_title": "Pricing SEO title",
-      "pricing.page.seo_description": "Pricing SEO description",
-      "pricing.page.updated": "Pricing last-updated",
-      "pricing.cta.title": "CTA title",
-      "pricing.cta.description": "CTA description",
-      "pricing.cta.primary_label": "Primary button label",
-      "pricing.cta.primary_url": "Primary button URL",
-      "pricing.cta.secondary_label": "Secondary button label",
-      "pricing.cta.secondary_url": "Secondary button URL",
-      "clinic.name": "Clinic name",
-      "common.opens_in_new_tab": "Open-in-new-tab label",
-      "social.bale": "Bale",
-      "social.instagram": "Instagram",
-      "social.rubika": "Rubika"
+      "booking": {
+        "timezone": "Timezone",
+        "slot_auto": "Automatic scheduling",
+        "slot_interval_min": "Slot interval (minutes)",
+        "slot_duration_min": "Slot duration (minutes)",
+        "slot_default_capacity": "Default slot capacity",
+        "slot_window_days": "Booking window (days)",
+        "min_cancel_hours": "Minimum cancel hours",
+        "price": "Booking fee",
+        "currency": "Currency",
+        "select_service": "Select-service prompt"
+      },
+      "contact": {
+        "phone": "Phone number",
+        "address_full": "Full address",
+        "city": "City",
+        "province": "Province",
+        "country": "Country",
+        "map_neshan": "Neshan map link",
+        "map_google": "Google Maps link",
+        "address_title": "Address section title",
+        "social_title": "Social media section title",
+        "booking_title": "Booking section title",
+        "neshan_map": "View-on-Neshan label",
+        "neshan_desc": "Neshan navigation label",
+        "google_map": "View-on-Google label",
+        "google_desc": "Google navigation label"
+      },
+      "pricing": {
+        "page": {
+          "title": "Pricing page title",
+          "intro": "Pricing page intro",
+          "seo_title": "Pricing SEO title",
+          "seo_description": "Pricing SEO description",
+          "updated": "Pricing last-updated"
+        },
+        "cta": {
+          "title": "CTA title",
+          "description": "CTA description",
+          "primary_label": "Primary button label",
+          "primary_url": "Primary button URL",
+          "secondary_label": "Secondary button label",
+          "secondary_url": "Secondary button URL"
+        }
+      },
+      "clinic": {
+        "name": "Clinic name"
+      },
+      "common": {
+        "opens_in_new_tab": "Open-in-new-tab label"
+      },
+      "social": {
+        "bale": "Bale",
+        "instagram": "Instagram",
+        "rubika": "Rubika"
+      }
     }
   },
   "site": {
@@ -5376,5 +5393,211 @@
       "deleteConfirm": "Delete this order?",
       "deleteConfirmDescription": "The order will be permanently removed."
     }
+  },
+  "paymentAdmin": {
+    "heading": "Payment",
+    "description": "Manage payment gateways and transactions.",
+    "meta": {
+      "title": "Payment | Nafas",
+      "description": "Payment overview"
+    },
+    "performance": {
+      "title": "Overview",
+      "totalAssets": "Total",
+      "providers": "Providers",
+      "transactions": "Transactions",
+      "verified": "Verified"
+    },
+    "hub": {
+      "title": "Management Hub",
+      "providers": {
+        "name": "Providers",
+        "description": "Gateway providers",
+        "featureEncryption": "Encryption",
+        "featureHealth": "Health",
+        "featureDefault": "Default"
+      },
+      "checkout": {
+        "name": "Checkout",
+        "description": "Create payment",
+        "featureGateways": "Gateways",
+        "featureSandbox": "Sandbox",
+        "featureVerify": "Verify"
+      },
+      "transactions": {
+        "name": "Transactions",
+        "description": "History",
+        "featureStatus": "Status",
+        "featureFilter": "Filter",
+        "featureHistory": "History"
+      }
+    },
+    "counts": {
+      "active": "{count} Active",
+      "total": "{count} Total",
+      "amount": "{amount} Amount"
+    },
+    "manage": "Manage",
+    "addNew": "Add New",
+    "providerKinds": {
+      "zarinpal": "ZarinPal",
+      "zibal": "Zibal",
+      "idpay": "IDPay",
+      "nextpay": "NextPay",
+      "mellat": "Mellat",
+      "parsian": "Parsian",
+      "fake": "Fake (Test)"
+    },
+    "providerDescriptions": {
+      "zarinpal": "ZarinPal gateway",
+      "zibal": "Zibal",
+      "idpay": "IDPay",
+      "nextpay": "NextPay",
+      "mellat": "Mellat",
+      "parsian": "Parsian",
+      "fake": "Simulated gateway for testing"
+    },
+    "errors": {
+      "providerNotFound": "Provider not found"
+    },
+    "search": {
+      "placeholder": "Search providers..."
+    },
+    "empty": "No payment providers found.",
+    "fields": {
+      "name": "Name",
+      "nameHint": "Display name for this provider",
+      "kind": "Provider type",
+      "apiUrl": "API URL",
+      "apiUrlHint": "Base URL for the payment gateway API",
+      "callbackUrl": "Callback URL",
+      "callbackUrlHint": "Where the gateway redirects after payment",
+      "merchantId": "Merchant ID",
+      "sandbox": "Sandbox mode"
+    },
+    "options": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "review": {
+      "title": "Review Provider",
+      "description": "Check the details before saving.",
+      "connection": "Connection",
+      "security": "Security",
+      "status": "Status",
+      "notProvided": "Not provided",
+      "secretHidden": "Stored securely"
+    },
+    "status": {
+      "active": "Active",
+      "default": "Default"
+    }
+  },
+  "paymentProviderForm": {
+    "heading": "Add Payment Provider",
+    "editHeading": "Edit Provider",
+    "description": "Configure gateway.",
+    "sections": {
+      "identity": "Identity",
+      "identityHint": "Basic info",
+      "credentials": "Credentials",
+      "credentialsHint": "Merchant ID",
+      "status": "Status",
+      "statusHint": "Active/default",
+      "review": "Review"
+    },
+    "fields": {
+      "name": "Name",
+      "nameHint": "Provider name",
+      "kind": "Kind",
+      "apiUrl": "API URL",
+      "apiUrlHint": "Default {url}",
+      "callbackUrl": "Callback URL",
+      "callbackUrlHint": "Callback",
+      "merchantId": "Merchant ID",
+      "merchantIdHint": "ZarinPal MerchantID",
+      "merchantIdEditHint": "Leave empty to keep",
+      "sandbox": "Sandbox",
+      "sandboxHint": "Use sandbox",
+      "fakeHint": "Fake gateway needs no credentials – select fake kind for testing."
+    },
+    "status": {
+      "active": "Active",
+      "activeHint": "Enable",
+      "default": "Default",
+      "defaultHint": "Default gateway"
+    },
+    "review": {
+      "title": "Ready",
+      "description": "Review",
+      "connection": "Connection",
+      "security": "Security",
+      "status": "Status",
+      "notProvided": "-",
+      "secretHidden": "••••",
+      "secretReady": "Set"
+    },
+    "options": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "nav": {
+      "save": "Save",
+      "continue": "Continue"
+    },
+    "errors": {
+      "required": "Required",
+      "merchantRequired": "Merchant ID required",
+      "server": "Server error"
+    },
+    "toast": {
+      "creating": "Creating...",
+      "saving": "Saving...",
+      "created": "Created",
+      "updated": "Updated",
+      "error": "Error"
+    }
+  },
+  "paymentSend": {
+    "heading": "Create Payment",
+    "description": "Send payment request",
+    "steps": {
+      "recipients": {
+        "name": "Order",
+        "description": "Select order"
+      },
+      "content": {
+        "name": "Payment",
+        "description": "Amount & gateway"
+      },
+      "review": {
+        "name": "Review",
+        "description": "Confirm"
+      }
+    }
+  },
+  "paymentReports": {
+    "heading": "Transactions",
+    "description": "History",
+    "empty": "No transactions",
+    "error": "Load failed"
+  },
+  "providerKinds": {
+    "zarinpal": "ZarinPal",
+    "zibal": "Zibal",
+    "idpay": "IDPay",
+    "nextpay": "NextPay",
+    "mellat": "Mellat",
+    "parsian": "Parsian",
+    "fake": "Fake"
+  },
+  "providerDescriptions": {
+    "zarinpal": "Gateway",
+    "zibal": "Gateway",
+    "idpay": "Gateway",
+    "nextpay": "Gateway",
+    "mellat": "Gateway",
+    "parsian": "Gateway",
+    "fake": "Gateway"
   }
 }

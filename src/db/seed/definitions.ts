@@ -40,6 +40,10 @@ export const PERMISSION_DEFS = [
   { key: "email.write", name: "Write email", description: "Create and update email providers and templates" },
   { key: "email.manage", name: "Manage email", description: "Deactivate and delete email providers and templates" },
   { key: "email.send", name: "Send email", description: "Send messages and test email providers" },
+  { key: "payment.read", name: "Read payment", description: "View payment providers, templates, and reports" },
+  { key: "payment.write", name: "Write payment", description: "Create and update payment providers and templates" },
+  { key: "payment.manage", name: "Manage payment", description: "Deactivate and delete payment providers and templates" },
+  { key: "payment.send", name: "Send payment", description: "Send payment requests and test payment providers" },
 ] as const;
 
 export const ALL_PERMISSIONS = PERMISSION_DEFS.map((p) => p.key);
