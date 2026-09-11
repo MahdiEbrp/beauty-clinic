@@ -513,7 +513,8 @@
     "actions": {
       "delete": "حذف",
       "deleteConfirm": "حذف این رزرو؟",
-      "edit": "ویرایش"
+      "edit": "ویرایش",
+      "menu": "عملیات"
     },
     "add": "افزودن رزرو",
     "back": "بازگشت به رزروها",
@@ -5383,13 +5384,54 @@
     "errorTitle": "بارگذاری لغوها ناموفق بود",
     "errorDescription": "خطایی در بارگذاری لغوها رخ داد.",
     "retry": "تلاش مجدد",
+    "loading": "در حال بارگذاری",
+    "search": "جستجوی سفارش‌ها",
+    "searchPlaceholder": "جستجو بر اساس نام، تلفن یا خدمت...",
+    "status": "وضعیت",
+    "clearFilters": "پاک‌کردن فیلترها",
     "bulk": {
+      "apply": "اعمال",
+      "clear": "پاک‌کردن",
+      "confirmTitle": "{action} سفارش‌های انتخابی؟",
+      "confirmDescription": "این عملیات روی همه سفارش‌های انتخابی اعمال می‌شود.",
+      "delete": "حذف",
       "refund": "استرداد",
-      "delete": "حذف"
+      "pageSelected": "صفحه انتخاب شد",
+      "selected": "{count} انتخاب شده",
+      "selectedFiltered": "{count} انتخاب شده (فیلترشده)",
+      "selectFiltered": "انتخاب همه {count} فیلترشده",
+      "resultTitle": "عملیات گروهی انجام شد",
+      "resultPartialTitle": "به‌صورت جزئی انجام شد",
+      "resultDescription": "{count} سفارش با موفقیت به‌روزرسانی شد",
+      "resultPartialDescription": "{count} به‌روزرسانی شد، {failed} ناموفق"
+    },
+    "dialog": {
+      "cancel": "انصراف",
+      "confirm": "تأیید",
+      "done": "انجام شد"
+    },
+    "pagination": {
+      "next": "بعدی",
+      "previous": "قبلی",
+      "showing": "نمایش {from}–{to} از {total}",
+      "pageInfo": "صفحه {page} از {totalPages}"
+    },
+    "selectPage": "انتخاب همه سفارش‌های این صفحه",
+    "selectRow": "انتخاب این سفارش",
+    "statuses": {
+      "done": "انجام‌شده",
+      "refunded": "مسترد شده"
+    },
+    "toast": {
+      "syncing": "در حال همگام‌سازی...",
+      "success": "سفارش به‌روزرسانی شد",
+      "error": "خطایی رخ داد",
+      "deleted": "سفارش حذف شد"
     },
     "actions": {
       "edit": "ویرایش",
       "delete": "حذف",
+      "menu": "عملیات",
       "deleteConfirm": "حذف این سفارش؟",
       "deleteConfirmDescription": "سفارش برای همیشه حذف می‌شود."
     }
@@ -5399,46 +5441,46 @@
     "description": "مدیریت درگاه‌ها و تراکنش‌ها.",
     "meta": {
       "title": "پرداخت | نفس",
-      "description": "Payment overview"
+      "description": "نمای کلی پرداخت"
     },
     "performance": {
-      "title": "Overview",
-      "totalAssets": "Total",
-      "providers": "Providers",
-      "transactions": "Transactions",
-      "verified": "Verified"
+      "title": "نمای کلی",
+      "totalAssets": "کل",
+      "providers": "درگاه‌ها",
+      "transactions": "تراکنش‌ها",
+      "verified": "تأیید شده"
     },
     "hub": {
-      "title": "Management Hub",
+      "title": "مرکز مدیریت",
       "providers": {
-        "name": "Providers",
-        "description": "Gateway providers",
-        "featureEncryption": "Encryption",
-        "featureHealth": "Health",
-        "featureDefault": "Default"
+        "name": "درگاه‌ها",
+        "description": "درگاه‌های پرداخت",
+        "featureEncryption": "رمزنگاری",
+        "featureHealth": "سلامت",
+        "featureDefault": "پیش‌فرض"
       },
       "checkout": {
-        "name": "Checkout",
-        "description": "Create payment",
-        "featureGateways": "Gateways",
-        "featureSandbox": "Sandbox",
-        "featureVerify": "Verify"
+        "name": "تسویه",
+        "description": "ایجاد پرداخت",
+        "featureGateways": "درگاه‌ها",
+        "featureSandbox": "تست",
+        "featureVerify": "تأیید"
       },
       "transactions": {
-        "name": "Transactions",
-        "description": "History",
-        "featureStatus": "Status",
-        "featureFilter": "Filter",
-        "featureHistory": "History"
+        "name": "تراکنش‌ها",
+        "description": "تاریخچه",
+        "featureStatus": "وضعیت",
+        "featureFilter": "فیلتر",
+        "featureHistory": "تاریخچه"
       }
     },
     "counts": {
-      "active": "{count} Active",
-      "total": "{count} Total",
-      "amount": "{amount} Amount"
+      "active": "{count} فعال",
+      "total": "{count} کل",
+      "amount": "{amount} مبلغ"
     },
-    "manage": "Manage",
-    "addNew": "Add New",
+    "manage": "مدیریت",
+    "addNew": "افزودن",
     "providerKinds": {
       "zarinpal": "ZarinPal",
       "zibal": "Zibal",
@@ -5446,19 +5488,20 @@
       "nextpay": "NextPay",
       "mellat": "Mellat",
       "parsian": "Parsian",
-      "fake": "Fake (Test)"
+      "fake": "تستی"
     },
     "providerDescriptions": {
-      "zarinpal": "ZarinPal gateway",
+      "zarinpal": "درگاه ZarinPal",
       "zibal": "Zibal",
       "idpay": "IDPay",
       "nextpay": "NextPay",
       "mellat": "Mellat",
       "parsian": "Parsian",
-      "fake": "Simulated gateway for testing"
+      "fake": "درگاه شبیه‌سازی شده برای تست"
     },
     "errors": {
-      "providerNotFound": "Provider not found"
+      "loadFailed": "بارگذاری ارائه‌دهندگان ناموفق بود",
+      "providerNotFound": "ارائه‌دهنده یافت نشد"
     },
     "search": {
       "placeholder": "جستجوی درگاه‌ها..."
@@ -5494,93 +5537,111 @@
     }
   },
   "paymentProviderForm": {
-    "heading": "افزودن درگاه",
-    "editHeading": "ویرایش درگاه",
-    "description": "پیکربندی درگاه.",
+    "back": "بازگشت به درگاه‌ها",
+    "heading": "افزودن درگاه پرداخت",
+    "editHeading": "ویرایش درگاه پرداخت",
+    "description": "پیکربندی درگاه پرداخت.",
     "sections": {
-      "identity": "Identity",
-      "identityHint": "Basic info",
-      "credentials": "Credentials",
-      "credentialsHint": "Merchant ID",
-      "status": "Status",
-      "statusHint": "Active/default",
-      "review": "Review"
+      "identity": "هویت",
+      "identityHint": "اطلاعات پایه",
+      "credentials": "اعتبارنامه",
+      "credentialsHint": "شناسه مرچنت",
+      "status": "وضعیت",
+      "statusHint": "فعال / پیش‌فرض",
+      "review": "بازبینی"
     },
     "fields": {
-      "name": "Name",
-      "nameHint": "Provider name",
-      "kind": "Kind",
-      "apiUrl": "API URL",
-      "apiUrlHint": "Default {url}",
-      "callbackUrl": "Callback URL",
-      "callbackUrlHint": "Callback",
-      "merchantId": "Merchant ID",
-      "merchantIdHint": "ZarinPal MerchantID",
-      "merchantIdEditHint": "Leave empty to keep",
-      "sandbox": "Sandbox",
-      "sandboxHint": "Use sandbox",
-      "fakeHint": "Fake gateway needs no credentials – select fake kind for testing."
+      "name": "نام",
+      "nameHint": "نام نمایشی درگاه",
+      "kind": "نوع",
+      "apiUrl": "آدرس API",
+      "apiUrlHint": "پیش‌فرض: {url}",
+      "callbackUrl": "آدرس بازگشت",
+      "callbackUrlHint": "آدرس بازگشت پس از پرداخت",
+      "merchantId": "شناسه مرچنت",
+      "merchantIdHint": "شناسه مرچنت ZarinPal",
+      "merchantIdEditHint": "خالی بگذارید تا حفظ شود",
+      "sandbox": "حالت تست",
+      "sandboxHint": "استفاده از حالت تست",
+      "fakeHint": "درگاه تستی نیازی به اعتبارنامه ندارد – نوع fake را برای تست انتخاب کنید."
     },
     "status": {
-      "active": "Active",
-      "activeHint": "Enable",
-      "default": "Default",
-      "defaultHint": "Default gateway"
+      "active": "فعال",
+      "activeHint": "فعال‌سازی",
+      "default": "پیش‌فرض",
+      "defaultHint": "درگاه پیش‌فرض"
     },
     "review": {
-      "title": "Ready",
-      "description": "Review",
-      "connection": "Connection",
-      "security": "Security",
-      "status": "Status",
+      "title": "آماده ذخیره",
+      "description": "بازبینی نهایی",
+      "connection": "اتصال",
+      "security": "امنیت",
+      "status": "وضعیت",
       "notProvided": "-",
       "secretHidden": "••••",
-      "secretReady": "Set"
+      "secretReady": "تنظیم شده"
     },
     "options": {
-      "enabled": "Enabled",
-      "disabled": "Disabled"
+      "enabled": "فعال",
+      "disabled": "غیرفعال"
     },
     "nav": {
-      "save": "Save",
-      "continue": "Continue"
+      "back": "بازگشت",
+      "save": "ذخیره",
+      "create": "ایجاد",
+      "continue": "ادامه",
+      "stepOf": "مرحله {current} از {total}"
+    },
+    "steps": {
+      "identity": {
+        "name": "هویت"
+      },
+      "credentials": {
+        "name": "اعتبارنامه"
+      },
+      "status": {
+        "name": "وضعیت"
+      },
+      "review": {
+        "name": "بازبینی"
+      }
     },
     "errors": {
-      "required": "Required",
-      "merchantRequired": "Merchant ID required",
-      "server": "Server error"
+      "required": "الزامی",
+      "merchantRequired": "شناسه مرچنت الزامی است",
+      "server": "خطای سرور"
     },
     "toast": {
-      "creating": "Creating...",
-      "saving": "Saving...",
-      "created": "Created",
-      "updated": "Updated",
-      "error": "Error"
+      "creating": "در حال ایجاد...",
+      "saving": "در حال ذخیره...",
+      "created": "ایجاد شد",
+      "updated": "به‌روزرسانی شد",
+      "error": "خطا"
     }
   },
   "paymentSend": {
-    "heading": "Create Payment",
-    "description": "Send payment request",
+    "heading": "ایجاد پرداخت",
+    "description": "ارسال درخواست پرداخت",
     "steps": {
       "recipients": {
-        "name": "Order",
-        "description": "Select order"
+        "name": "سفارش",
+        "description": "انتخاب سفارش"
       },
       "content": {
-        "name": "Payment",
-        "description": "Amount & gateway"
+        "name": "پرداخت",
+        "description": "مبلغ و درگاه"
       },
       "review": {
-        "name": "Review",
-        "description": "Confirm"
+        "name": "بازبینی",
+        "description": "تأیید"
       }
     }
   },
   "paymentReports": {
-    "heading": "Transactions",
-    "description": "History",
-    "empty": "No transactions",
-    "error": "Load failed"
+    "heading": "تراکنش‌ها",
+    "description": "تاریخچه",
+    "empty": "تراکنشی وجود ندارد",
+    "error": "بارگذاری ناموفق بود"
   },
   "providerKinds": {
     "zarinpal": "ZarinPal",
@@ -5589,15 +5650,15 @@
     "nextpay": "NextPay",
     "mellat": "Mellat",
     "parsian": "Parsian",
-    "fake": "Fake"
+    "fake": "تستی"
   },
   "providerDescriptions": {
-    "zarinpal": "Gateway",
-    "zibal": "Gateway",
-    "idpay": "Gateway",
-    "nextpay": "Gateway",
-    "mellat": "Gateway",
-    "parsian": "Gateway",
-    "fake": "Gateway"
+    "zarinpal": "درگاه پرداخت",
+    "zibal": "درگاه پرداخت",
+    "idpay": "درگاه پرداخت",
+    "nextpay": "درگاه پرداخت",
+    "mellat": "درگاه پرداخت",
+    "parsian": "درگاه پرداخت",
+    "fake": "درگاه تستی"
   }
 }

@@ -52,44 +52,30 @@ const canViewUsers = user.permissions.includes("users.read");
   const navItems: SidebarNavItem[] = [
     // Home/dashboard — the page every user lands on, so it stays at the top.
     { key: "overview", href: "/dashboard", icon: LayoutDashboard },
-    // Appointments + availability are the daily operational core.
+    // Appointments are the daily operational core.
+    ...(canViewBookings ? [{ key: "bookings", href: "/dashboard/bookings", icon: CalendarClock }] : []),
+    // Payments & client management are the next most frequent daily tasks.
+    ...(canViewPayment ? [{ key: "payment", href: "/dashboard/payment", icon: CreditCard }] : []),
+    ...(canViewUsers ? [{ key: "users", href: "/dashboard/users", icon: Users }] : []),
+    // Client communication happens throughout the day.
+    ...(canViewSms ? [{ key: "sms", href: "/dashboard/sms", icon: MessageSquareText }] : []),
+    ...(canViewEmail ? [{ key: "email", href: "/dashboard/email", icon: Mail }] : []),
+    // Availability management — frequent but less than bookings.
     ...(canViewBookings
       ? [
-          { key: "bookings", href: "/dashboard/bookings", icon: CalendarClock },
           { key: "slots", href: "/dashboard/slots", icon: CalendarRange },
           { key: "workingHours", href: "/dashboard/working-hours", icon: Clock },
         ]
       : []),
-// Client communication and contacts.
-     ...(canViewSms
-       ? [{ key: "sms", href: "/dashboard/sms", icon: MessageSquareText }]
-       : []),
-     ...(canViewEmail
-       ? [{ key: "email", href: "/dashboard/email", icon: Mail }]
-       : []),
-     ...(canViewPayment
-       ? [{ key: "payment", href: "/dashboard/payment", icon: CreditCard }]
-       : []),
-     ...(canViewUsers ? [{ key: "users", href: "/dashboard/users", icon: Users }] : []),
-    // Catalog & content maintenance.
-    ...(canViewServices
-      ? [{ key: "services", href: "/dashboard/services", icon: Sparkles }]
-      : []),
-    ...(canViewCare
-      ? [{ key: "care", href: "/dashboard/care", icon: HeartPulse }]
-      : []),
+    // Catalog & content maintenance — occasional, needs to be kept current.
+    ...(canViewServices ? [{ key: "services", href: "/dashboard/services", icon: Sparkles }] : []),
+    ...(canViewCare ? [{ key: "care", href: "/dashboard/care", icon: HeartPulse }] : []),
     ...(canViewFiles ? [{ key: "files", href: "/dashboard/files", icon: Files }] : []),
-    // Configuration & rare maintenance tasks.
-    ...(canViewSettings
-      ? [{ key: "settings", href: "/dashboard/settings", icon: Settings }]
-      : []),
-    ...(canViewRules
-      ? [{ key: "rules", href: "/dashboard/rules", icon: Shield }]
-      : []),
     // Landing-page editing is grouped with services behind the same permission.
-    ...(canViewServices
-      ? [{ key: "landing", href: "/dashboard/landing", icon: LayoutTemplate }]
-      : []),
+    ...(canViewServices ? [{ key: "landing", href: "/dashboard/landing", icon: LayoutTemplate }] : []),
+    // Configuration & rare maintenance tasks.
+    ...(canViewSettings ? [{ key: "settings", href: "/dashboard/settings", icon: Settings }] : []),
+    ...(canViewRules ? [{ key: "rules", href: "/dashboard/rules", icon: Shield }] : []),
   ];
 
   useEffect(() => {

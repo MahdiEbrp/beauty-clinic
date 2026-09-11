@@ -513,7 +513,8 @@
     "actions": {
       "delete": "Delete",
       "deleteConfirm": "Delete this reservation?",
-      "edit": "Edit"
+      "edit": "Edit",
+      "menu": "Actions"
     },
     "add": "Add Reservation",
     "back": "Back to reservations",
@@ -5383,13 +5384,54 @@
     "errorTitle": "Could not load cancellations",
     "errorDescription": "Something went wrong while loading cancellations.",
     "retry": "Try again",
+    "loading": "Loading",
+    "search": "Search orders",
+    "searchPlaceholder": "Search by name, phone or service...",
+    "status": "Status",
+    "clearFilters": "Clear filters",
     "bulk": {
+      "apply": "Apply",
+      "clear": "Clear",
+      "confirmTitle": "{action} the selected orders?",
+      "confirmDescription": "This action applies to all selected orders.",
+      "delete": "Delete",
       "refund": "Refund",
-      "delete": "Delete"
+      "pageSelected": "Page selected",
+      "selected": "{count} selected",
+      "selectedFiltered": "{count} selected (filtered)",
+      "selectFiltered": "Select all {count} filtered",
+      "resultTitle": "Bulk action completed",
+      "resultPartialTitle": "Partly completed",
+      "resultDescription": "{count} orders updated successfully",
+      "resultPartialDescription": "{count} updated, {failed} failed"
+    },
+    "dialog": {
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "done": "Done"
+    },
+    "pagination": {
+      "next": "Next",
+      "previous": "Previous",
+      "showing": "Showing {from}–{to} of {total}",
+      "pageInfo": "Page {page} of {totalPages}"
+    },
+    "selectPage": "Select all orders on this page",
+    "selectRow": "Select this order",
+    "statuses": {
+      "done": "Done",
+      "refunded": "Refunded"
+    },
+    "toast": {
+      "syncing": "Syncing...",
+      "success": "Order updated",
+      "error": "Something went wrong",
+      "deleted": "Order deleted"
     },
     "actions": {
       "edit": "Edit",
       "delete": "Delete",
+      "menu": "Actions",
       "deleteConfirm": "Delete this order?",
       "deleteConfirmDescription": "The order will be permanently removed."
     }
@@ -5458,6 +5500,7 @@
       "fake": "Simulated gateway for testing"
     },
     "errors": {
+      "loadFailed": "Failed to load providers",
       "providerNotFound": "Provider not found"
     },
     "search": {
@@ -5494,6 +5537,7 @@
     }
   },
   "paymentProviderForm": {
+    "back": "Back to providers",
     "heading": "Add Payment Provider",
     "editHeading": "Edit Provider",
     "description": "Configure gateway.",
@@ -5542,8 +5586,25 @@
       "disabled": "Disabled"
     },
     "nav": {
+      "back": "Back",
       "save": "Save",
-      "continue": "Continue"
+      "create": "Create",
+      "continue": "Continue",
+      "stepOf": "Step {current} of {total}"
+    },
+    "steps": {
+      "identity": {
+        "name": "Identity"
+      },
+      "credentials": {
+        "name": "Credentials"
+      },
+      "status": {
+        "name": "Status"
+      },
+      "review": {
+        "name": "Review"
+      }
     },
     "errors": {
       "required": "Required",
