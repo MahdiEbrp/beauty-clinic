@@ -7,7 +7,7 @@ export const createPaymentTransactionSchema = z
     bookingGroupRef: z.string().trim().regex(/^NF-\d{5}$/, "Invalid group reference"),
     amount: z.coerce.number().int().min(PAYMENT_LIMITS.amountMin).max(PAYMENT_LIMITS.amountMax),
     description: z.string().trim().max(PAYMENT_LIMITS.descriptionMaxLength).optional(),
-    providerId: z.string().uuid().optional(),
+    providerId: z.uuid().optional(),
   })
   .strict();
 
@@ -25,5 +25,20 @@ export const verifyPaymentSchema = z
   })
   .strict();
 
+export const publicBookingCheckoutSchema = z
+  .object({
+    groupRef: z.string().trim().regex(/^NF-\d{5}$/, "Invalid group reference"),
+    idempotencyKey: z.string().trim().min(PAYMENT_LIMITS.checkoutIdempotencyKeyMinLength).max(PAYMENT_LIMITS.checkoutIdempotencyKeyMaxLength),
+    locale: z.enum(["fa", "en"]),
+  })
+  .strict();
+
+export const retryPaymentSchema = z
+  .object({
+    token: z.string().trim().min(20).max(512),
+  })
+  .strict();
+
 export type CreatePaymentTransactionInput = z.infer<typeof createPaymentTransactionSchema>;
 export type ListPaymentTransactionsQuery = z.infer<typeof listPaymentTransactionsQuerySchema>;
+export type PublicBookingCheckoutInput = z.infer<typeof publicBookingCheckoutSchema>;

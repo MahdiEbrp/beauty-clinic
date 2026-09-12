@@ -1,4 +1,5 @@
 import type { NextResponse } from "next/server";
+import { timingSafeEqual } from "node:crypto";
 import type { z } from "zod";
 
 import { hasPermission } from "@/lib/auth/rbac";
@@ -45,6 +46,8 @@ export type SecurityConfig<Body = unknown, Query = unknown> = {
     bodyLimit?: number;
   };
   audit?: boolean;
+  /** Machine-to-machine route protected by the server-only CRON_SECRET. */
+  cron?: boolean;
   notification?: NotificationConfig<Body, Query>;
 };
 
@@ -122,6 +125,10 @@ export function withSecurity<Body = unknown, Query = unknown>(
       // Dynamic route params (`[id]`, etc.) are always a Promise from Next; for
       // static routes Next resolves it to `{}`.
       ctx.params = await routeContext.params;
+
+      if (config.cron && !hasValidCronSecret(request.headers.get("authorization"))) {
+        return reply(jsonError("UNAUTHORIZED", "Scheduler authorization is required.", 401));
+      }
 
       if (config.auth === "required") {
         const session = await getSession();
@@ -228,4 +235,12 @@ export function withSecurity<Body = unknown, Query = unknown>(
       return reply(handleApiError(error, requestId));
     }
   };
+}
+
+function hasValidCronSecret(authorization: string | null): boolean {
+  const expected = process.env.CRON_SECRET;
+  if (!expected || !authorization?.startsWith("Bearer ")) return false;
+  const received = Buffer.from(authorization.slice("Bearer ".length));
+  const secret = Buffer.from(expected);
+  return received.length === secret.length && timingSafeEqual(received, secret);
 }

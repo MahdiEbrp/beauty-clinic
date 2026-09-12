@@ -2,8 +2,9 @@ import { z } from "zod";
 
 import { PAYMENT_PROVIDER_OPTIONS } from "@/data/payment-providers";
 import { PAYMENT_LIMITS } from "@/lib/payment/constants";
+import type { PaymentProviderKind } from "@/src/db/schema";
 
-const providerKinds = PAYMENT_PROVIDER_OPTIONS.map((o) => o.kind) as [string, ...string[]];
+const providerKinds = PAYMENT_PROVIDER_OPTIONS.map((o) => o.kind) as [PaymentProviderKind, ...PaymentProviderKind[]];
 
 const safeUrlSchema = z
   .string()

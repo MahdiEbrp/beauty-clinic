@@ -20,6 +20,9 @@ export const PAYMENT_LIMITS = {
   pageDefault: 1,
   searchDebounceMs: 400,
   requestBodyLimitBytes: 128 * 1024,
+  checkoutIdempotencyKeyMinLength: 16,
+  checkoutIdempotencyKeyMaxLength: 128,
+  checkoutExpiryMinutes: 15,
   testRateLimit: 10,
   sendRateLimit: 10,
   rateLimitWindowMs: 60_000,
@@ -100,6 +103,7 @@ export const PAYMENT_ERROR_CODES = {
   transactionNotFound: "PAYMENT_TRANSACTION_NOT_FOUND",
   invalidAmount: "INVALID_PAYMENT_AMOUNT",
   verifyFailed: "PAYMENT_VERIFY_FAILED",
+  // eslint-disable-next-line no-secrets/no-secrets -- error code constant, not a credential
   providerCheckFailed: "PAYMENT_PROVIDER_CHECK_FAILED",
   unsafeProviderUrl: "UNSAFE_PROVIDER_URL",
   providerHttpError: "PROVIDER_HTTP_ERROR",

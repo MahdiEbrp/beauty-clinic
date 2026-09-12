@@ -11,6 +11,7 @@ const envSchema = z.object({
   FILE_MAX_BYTES: z.coerce.number().int().positive().optional(),
   KV_REST_API_URL: z.string().optional(),
   KV_REST_API_TOKEN: z.string().optional(),
+  CRON_SECRET: z.string().min(32).optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

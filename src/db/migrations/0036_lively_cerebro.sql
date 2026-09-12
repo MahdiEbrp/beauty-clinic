@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "payment_transactions_live_group_ref_idx" ON "payment_transactions" USING btree ("booking_group_ref") WHERE "payment_transactions"."status" IN ('pending', 'requested');

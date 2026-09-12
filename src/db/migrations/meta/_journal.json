@@ -246,6 +246,20 @@
       "when": 1789060376503,
       "tag": "0034_brave_otto_octavius",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1789193584732,
+      "tag": "0035_nostalgic_millenium_guard",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1789207113595,
+      "tag": "0036_lively_cerebro",
+      "breakpoints": true
     }
   ]
 }

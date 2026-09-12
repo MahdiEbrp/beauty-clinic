@@ -63,6 +63,7 @@ export const paymentProviders = pgTable(
   (table) => [
     index("payment_providers_active_idx").on(table.isActive, table.deletedAt),
     index("payment_providers_health_idx").on(table.healthStatus, table.lastHealthCheckedAt),
+    // eslint-disable-next-line no-secrets/no-secrets -- database index name, not a credential
     uniqueIndex("payment_providers_default_idx")
       .on(table.isDefault)
       .where(sql`${table.isDefault} = true AND ${table.deletedAt} IS NULL`),
@@ -78,11 +79,19 @@ export const paymentTransactions = pgTable(
     amount: numeric("amount", { precision: 12, scale: 2 }).notNull(),
     currency: text("currency").notNull().default("تومان"),
     description: text("description"),
+    /** Stable browser checkout key; prevents duplicate payment requests. */
+    idempotencyKey: text("idempotency_key").unique(),
+    /** Locale captured at checkout; never trust callback query parameters. */
+    locale: text("locale").notNull().default("fa"),
+    /** Browser redirect URL returned by the payment provider. */
+    paymentUrl: text("payment_url"),
     authority: text("authority").unique(),
     refId: text("ref_id"),
     cardPan: text("card_pan"),
     status: paymentTransactionStatusEnum("status").notNull().default("pending"),
     callbackUrl: text("callback_url"),
+    /** The unpaid reservation hold ends at this server-controlled instant. */
+    expiresAt: timestamp("expires_at", { withTimezone: true }),
     errorCode: text("error_code"),
     errorMessage: text("error_message"),
     verifiedAt: timestamp("verified_at", { withTimezone: true }),
@@ -94,8 +103,14 @@ export const paymentTransactions = pgTable(
   (table) => [
     index("payment_transactions_group_ref_idx").on(table.bookingGroupRef),
     index("payment_transactions_authority_idx").on(table.authority),
+    index("payment_transactions_idempotency_idx").on(table.idempotencyKey),
     index("payment_transactions_provider_created_idx").on(table.providerId, table.createdAt),
     index("payment_transactions_status_created_idx").on(table.status, table.createdAt),
+    index("payment_transactions_expiry_idx").on(table.status, table.expiresAt),
+    // eslint-disable-next-line no-secrets/no-secrets -- database index name, not a credential
+    uniqueIndex("payment_transactions_live_group_ref_idx")
+      .on(table.bookingGroupRef)
+      .where(sql`${table.status} IN ('pending', 'requested')`),
   ],
 );
 

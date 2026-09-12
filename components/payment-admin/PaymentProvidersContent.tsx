@@ -8,12 +8,14 @@ import { PAYMENT_API_ROUTES, PAYMENT_LIMITS } from "@/lib/payment/constants";
 import { PaymentSelect } from "./PaymentSelect";
 
 type Provider = { id: string; name: string; kind: string; merchantLast4: string; isActive: boolean; isDefault: boolean; healthStatus: string };
+type ProviderStatusFilter = "all" | "active" | "inactive";
+type ProvidersResponse = { data?: { items?: Provider[]; totalPages?: number } };
 
 export function PaymentProvidersContent() {
   const t = useTranslations("paymentAdmin");
   const [items, setItems] = useState<Provider[]>([]);
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState<"all" | "active" | "inactive">("all");
+  const [status, setStatus] = useState<ProviderStatusFilter>("all");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -22,7 +24,7 @@ export function PaymentProvidersContent() {
     setLoading(true);
     const params = new URLSearchParams({ page: String(page), perPage: String(PAYMENT_LIMITS.providerListPerPageDefault), search, status });
     const res = await fetch(`${PAYMENT_API_ROUTES.providers}?${params}`, { credentials: "include" });
-    const json = await res.json().catch(() => null);
+    const json = (await res.json().catch(() => null)) as ProvidersResponse | null;
     if (res.ok && json?.data) {
       setItems(json.data.items ?? []);
       setTotalPages(json.data.totalPages ?? 1);
@@ -33,6 +35,7 @@ export function PaymentProvidersContent() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- re-fetch on page/status change; mount loading handled by initial state
     void load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, status]);
@@ -49,7 +52,7 @@ export function PaymentProvidersContent() {
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t("search.placeholder" as never)} className="h-11 rounded-control border border-form-input-border bg-surface-secondary px-3 text-dash-body-sm focus-visible:outline-accent" />
           <button onClick={onSearch} className="h-11 rounded-pill bg-accent px-4 text-on-primary text-dash-body-sm font-semibold">Search</button>
         </div>
-        <PaymentSelect value={status} onValueChange={(v) => setStatus(v as any)} options={[{ value: "all", label: "All" }, { value: "active", label: "Active" }, { value: "inactive", label: "Inactive" }]} placeholder="Status" ariaLabel="Status" />
+        <PaymentSelect value={status} onValueChange={(v) => setStatus(v as ProviderStatusFilter)} options={[{ value: "all", label: "All" }, { value: "active", label: "Active" }, { value: "inactive", label: "Inactive" }]} placeholder="Status" ariaLabel="Status" />
       </div>
 
       {loading ? (
@@ -72,12 +75,14 @@ export function PaymentProvidersContent() {
                 <div className="flex gap-2">
                   <Link href={`/dashboard/payment/providers/${p.id}/edit`} className="h-9 rounded-pill border border-surface-variant/50 px-4 text-dash-body-sm font-medium">Edit</Link>
                   <button
-                    onClick={async () => {
-                      const r = await fetch(`${PAYMENT_API_ROUTES.providers}/${p.id}/test`, { method: "POST", credentials: "include" });
-                      const j = await r.json().catch(() => null);
-                      if (r.ok) toast.success("Health check done");
-                      else toast.error(j?.error?.message ?? "Check failed");
-                      void load();
+                    onClick={() => {
+                      void (async () => {
+                        const r = await fetch(`${PAYMENT_API_ROUTES.providers}/${p.id}/test`, { method: "POST", credentials: "include" });
+                        const j = (await r.json().catch(() => null)) as { error?: { message?: string } } | null;
+                        if (r.ok) toast.success("Health check done");
+                        else toast.error(j?.error?.message ?? "Check failed");
+                        void load();
+                      })();
                     }}
                     className="h-9 rounded-pill bg-accent/10 px-4 text-dash-body-sm font-semibold text-accent"
                   >

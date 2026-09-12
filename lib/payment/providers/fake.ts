@@ -5,12 +5,12 @@ import type { PaymentProviderAdapter, PaymentProviderConfig, PaymentRequestInput
 
 export function createFakeAdapter(config: PaymentProviderConfig): PaymentProviderAdapter {
   return {
-    request: (input) => fakeRequest(config, input),
-    verify: (input) => fakeVerify(config, input),
+    request: (input) => Promise.resolve(fakeRequest(config, input)),
+    verify: (input) => Promise.resolve(fakeVerify(config, input)),
   };
 }
 
-async function fakeRequest(config: PaymentProviderConfig, input: PaymentRequestInput): Promise<PaymentRequestResult> {
+function fakeRequest(config: PaymentProviderConfig, input: PaymentRequestInput): PaymentRequestResult {
   const authority = `FAKE-${randomBytes(6).toString("hex").toUpperCase()}`;
   logInfo("payment.fake.request", {
     providerKind: config.kind,
@@ -26,7 +26,7 @@ async function fakeRequest(config: PaymentProviderConfig, input: PaymentRequestI
   };
 }
 
-async function fakeVerify(config: PaymentProviderConfig, input: PaymentVerifyInput): Promise<PaymentVerifyResult> {
+function fakeVerify(config: PaymentProviderConfig, input: PaymentVerifyInput): PaymentVerifyResult {
   logInfo("payment.fake.verify", {
     providerKind: config.kind,
     authority: input.authority,

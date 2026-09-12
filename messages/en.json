@@ -5667,5 +5667,58 @@
     "mellat": "Gateway",
     "parsian": "Gateway",
     "fake": "Gateway"
+  },
+  "paymentResult": {
+    "unknownValue": "Not available",
+    "labels": {
+      "bookingReference": "Booking reference",
+      "paymentReference": "Payment reference",
+      "deposit": "Paid deposit",
+      "hold": "Reservation hold"
+    },
+    "success": {
+      "metaTitle": "Payment confirmed | Nafas",
+      "metaDescription": "Your booking deposit has been confirmed.",
+      "eyebrow": "Payment confirmed",
+      "title": "Your appointment is confirmed",
+      "description": "Your deposit has been verified and your appointment is reserved.",
+      "unavailableTitle": "Payment status unavailable",
+      "unavailableDescription": "We could not confirm this payment result. Please contact the clinic if you were charged.",
+      "notice": "Bring your booking reference to the clinic. Your online deposit is deducted from the final invoice.",
+      "print": "Print receipt",
+      "home": "Return home"
+    },
+    "failure": {
+      "metaTitle": "Payment not completed | Nafas",
+      "metaDescription": "Continue or retry your booking deposit payment.",
+      "eyebrow": "Payment not completed",
+      "title": "Your payment was not completed",
+      "description": "Your reservation is still held for a short time. You can retry payment before the hold expires.",
+      "latePayment": "We received a payment after the reservation hold ended. Please contact the clinic so our team can help.",
+      "minutes": "{count} minutes remaining",
+      "expired": "Hold expired",
+      "retryNotice": "Retrying will take you back to the secure payment gateway.",
+      "expiredNotice": "This reservation hold has ended. Please create a new booking to choose an available time.",
+      "retry": "Retry payment",
+      "retrying": "Connecting to gateway…",
+      "retryError": "We could not start another payment attempt. Please try again shortly.",
+      "booking": "Return to booking"
+    }
+  },
+  "fakeGateway": {
+    "metaTitle": "Test payment | Nafas",
+    "metaDescription": "Simulated payment gateway used to try the booking payment flow.",
+    "testBadge": "Test gateway",
+    "title": "Test payment gateway",
+    "description": "This is a demo payment page — no real charge is made. Choose how you want the payment to end.",
+    "labels": {
+      "authority": "Payment reference",
+      "order": "Booking reference"
+    },
+    "pay": "Pay deposit",
+    "cancel": "Cancel payment",
+    "invalidTitle": "Invalid payment link",
+    "invalidDescription": "This payment link is missing its payment reference and cannot be used.",
+    "booking": "Return to booking"
   }
 }

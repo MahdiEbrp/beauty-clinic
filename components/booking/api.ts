@@ -63,15 +63,17 @@ export function createBookingGroup(payload: {
   );
 }
 
-/** Mock-pays the deposit for the whole group (returns the paid row). */
-export function payBookingGroup(
-  bookingId: string,
-): Promise<{ id: string; status: string; paymentReference: string | null }> {
+/** Starts an idempotent checkout for a saved booking group. */
+export function checkoutBookingGroup(payload: {
+  groupRef: string;
+  idempotencyKey: string;
+  locale: "fa" | "en";
+}): Promise<{ paymentUrl: string; transactionId: string; expiresAt: string }> {
   return handle(
-    fetch("/api/public/bookings/batch/pay", {
+    fetch("/api/public/bookings/checkout", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ bookingId }),
+      body: JSON.stringify(payload),
     }),
   );
 }

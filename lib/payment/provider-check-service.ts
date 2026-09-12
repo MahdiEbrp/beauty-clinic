@@ -13,7 +13,7 @@ export async function testPaymentProvider(providerId: string, checkedBy: string 
   if (!row) throw new ApiError(404, PAYMENT_ERROR_CODES.providerNotFound, PAYMENT_ERROR_MESSAGES.providerNotFound);
   const { decryptPaymentProviderSecret } = await import("@/lib/payment/crypto");
   const config = decryptPaymentProviderSecret(row);
-  const adapter = createPaymentProviderAdapter({ kind: config.kind as any, merchantId: config.merchantId, apiUrl: config.apiUrl, callbackUrl: config.callbackUrl, credentials: config.credentials });
+  const adapter = createPaymentProviderAdapter({ kind: config.kind, merchantId: config.merchantId, apiUrl: config.apiUrl, callbackUrl: config.callbackUrl, credentials: config.credentials });
   const started = Date.now();
   try {
     // fake verify will succeed instantly; real zarinpal request with 1000 Rial
@@ -24,7 +24,6 @@ export async function testPaymentProvider(providerId: string, checkedBy: string 
   } catch (error) {
     const ms = Date.now() - started;
     const msg = error instanceof Error ? error.message : String(error);
-    const code = error instanceof Error && "code" in error ? String((error as any).code) : "CHECK_FAILED";
     await recordCheck(providerId, checkedBy, false, ms, 500, msg);
     return { isSuccessful: false, responseTimeMs: ms, error: msg };
   }

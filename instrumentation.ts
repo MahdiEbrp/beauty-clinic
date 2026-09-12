@@ -9,7 +9,9 @@
  *    schedule.
  * 2. Bookings auto-complete — flips paid/waiting bookings to done once their
  *    appointment window has passed (every 15 minutes).
- * 3. Weekly disk cleanup — cleans unreserved past slots and expired logs
+ * 3. Payment holds auto-expiry — cancels unpaid payment holds and releases
+ *    their pending bookings (every 15 minutes).
+ * 4. Weekly disk cleanup — cleans unreserved past slots and expired logs
  *    (Fridays at 6:00 UTC).
  *
  * Enable/disable via the SLOTS_CRON_ENABLED env var (default: enabled outside
@@ -76,6 +78,29 @@ export async function register(): Promise<void> {
 
   logInfo("bookings.complete_scheduled", {
     nextRun: completeJob.nextRun()?.toISOString() ?? null,
+  });
+
+  // 15 minutes — cancels unpaid payment holds and releases their pending bookings.
+  const { expireBookingCheckouts } = await import("@/lib/payment/booking-checkout");
+  const expiryJob = new Cron(
+    "*/15 * * * *",
+    { timezone: "UTC", protect: true, name: "payment-expiry" },
+    async () => {
+      try {
+        const result = await expireBookingCheckouts();
+        if (result.expired > 0) {
+          logInfo("payments.expiry_tick", result);
+        }
+      } catch (error) {
+        logError("payments.expiry_tick_failed", {
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    },
+  );
+
+  logInfo("payments.expiry_scheduled", {
+    nextRun: expiryJob.nextRun()?.toISOString() ?? null,
   });
 
   // Weekly cleanup: Fridays at 6:00 UTC

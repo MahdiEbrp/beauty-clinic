@@ -6,6 +6,7 @@ import { PAYMENT_API_ROUTES, PAYMENT_LIMITS } from "@/lib/payment/constants";
 import { PaymentSelect } from "./PaymentSelect";
 
 type Tx = { id: string; bookingGroupRef: string; amount: string; authority: string | null; refId: string | null; status: string; createdAt: string };
+type TransactionsResponse = { data?: { items?: Tx[]; totalPages?: number } };
 
 export function PaymentReportsContent() {
   const t = useTranslations("paymentReports");
@@ -19,7 +20,7 @@ export function PaymentReportsContent() {
     setLoading(true);
     const params = new URLSearchParams({ page: String(page), perPage: String(PAYMENT_LIMITS.transactionListPerPageDefault), status });
     const res = await fetch(`${PAYMENT_API_ROUTES.transactions}?${params}`, { credentials: "include" });
-    const json = await res.json().catch(() => null);
+    const json = (await res.json().catch(() => null)) as TransactionsResponse | null;
     if (res.ok && json?.data) {
       setItems(json.data.items ?? []);
       setTotalPages(json.data.totalPages ?? 1);
@@ -28,6 +29,7 @@ export function PaymentReportsContent() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- re-fetch on page/status change; mount loading handled by initial state
     void load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, status]);

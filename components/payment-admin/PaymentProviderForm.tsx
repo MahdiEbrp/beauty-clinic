@@ -29,12 +29,12 @@ const PROVIDER_STEPS = [
 export function PaymentProviderForm({ provider }: { provider?: AdminPaymentProvider }) {
   const t = useTranslations("paymentProviderForm");
   const router = useRouter();
-  const initialKind = (provider?.kind as PaymentProviderFormState["kind"]) ?? "zarinpal";
+  const initialKind = provider?.kind ?? "zarinpal";
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<PaymentProviderFormState>({
     name: provider?.name ?? "",
     kind: initialKind,
-    apiUrl: provider?.apiUrl ?? getPaymentProviderOption(initialKind as any).defaultApiUrl,
+    apiUrl: provider?.apiUrl ?? getPaymentProviderOption(initialKind).defaultApiUrl,
     merchantId: "",
     callbackUrl: provider?.callbackUrl ?? "",
     sandbox: false,
@@ -128,7 +128,7 @@ export function PaymentProviderForm({ provider }: { provider?: AdminPaymentProvi
               <h2 className="text-dash-heading font-bold text-content-primary">{t("sections.identity")}</h2>
               <p className="mt-1 text-dash-body-sm text-content-secondary">{t("sections.identityHint")}</p>
             </div>
-            <PaymentProviderIdentityFields form={form} provider={provider} setValue={setValue} setKind={(k) => setForm((c) => updateProviderKind(c, k as any))} />
+            <PaymentProviderIdentityFields form={form} provider={provider} setValue={setValue} setKind={(k) => setForm((c) => updateProviderKind(c, k))} />
           </Panel>
         )}
         {step === 2 && (

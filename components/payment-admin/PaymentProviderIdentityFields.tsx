@@ -21,7 +21,7 @@ export function PaymentProviderIdentityFields({
 }) {
   const t = useTranslations("paymentProviderForm");
   const adminT = useTranslations("paymentAdmin");
-  const option = getPaymentProviderOption(form.kind as PaymentProviderKind);
+  const option = getPaymentProviderOption(form.kind);
   const providerOptions: PaymentSelectOption[] = PAYMENT_PROVIDER_OPTIONS.map((item) => ({
     value: item.kind,
     label: adminT(item.labelKey as never),
@@ -46,7 +46,7 @@ export function PaymentProviderIdentityFields({
 }
 
 export function updateProviderKind(current: PaymentProviderFormState, kind: PaymentProviderKind): PaymentProviderFormState {
-  const currentDefault = getPaymentProviderOption(current.kind as PaymentProviderKind).defaultApiUrl;
+  const currentDefault = getPaymentProviderOption(current.kind).defaultApiUrl;
   const nextDefault = getPaymentProviderOption(kind).defaultApiUrl;
-  return { ...current, kind: kind as any, apiUrl: current.apiUrl === currentDefault ? nextDefault : current.apiUrl };
+  return { ...current, kind, apiUrl: current.apiUrl === currentDefault ? nextDefault : current.apiUrl };
 }

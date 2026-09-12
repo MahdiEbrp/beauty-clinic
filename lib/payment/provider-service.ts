@@ -2,15 +2,15 @@ import { and, count, desc, eq, ilike, isNull, or, sql, type SQL } from "drizzle-
 
 import { ApiError } from "@/lib/api/errors";
 import { decryptPaymentProviderSecret, encryptPaymentProviderSecret, type DecryptedPaymentProvider } from "@/lib/payment/crypto";
-import { PAYMENT_ERROR_CODES, PAYMENT_ERROR_MESSAGES } from "@/lib/payment/constants";
+import { PAYMENT_ERROR_CODES, PAYMENT_ERROR_MESSAGES, PAYMENT_LIMITS } from "@/lib/payment/constants";
 import type { CreatePaymentProviderInput, ListPaymentProvidersQuery, UpdatePaymentProviderInput } from "@/lib/validation/payment-providers";
 import { db } from "@/src/db";
-import { paymentProviders } from "@/src/db/schema";
+import { paymentProviders, type PaymentProviderKind } from "@/src/db/schema";
 
 export type AdminPaymentProvider = {
   id: string;
   name: string;
-  kind: string;
+  kind: PaymentProviderKind;
   apiUrl: string;
   merchantLast4: string;
   merchantConfigured: boolean;
@@ -35,10 +35,12 @@ export type ListPaymentProvidersResult = {
 export async function listPaymentProviders(options: ListPaymentProvidersQuery): Promise<ListPaymentProvidersResult> {
   const conditions = providerConditions(options);
   const where = and(...conditions);
+  const page = options.page ?? PAYMENT_LIMITS.pageDefault;
+  const perPage = options.perPage ?? PAYMENT_LIMITS.providerListPerPageDefault;
   const [countRow] = await db.select({ value: count() }).from(paymentProviders).where(where);
   const total = countRow?.value ?? 0;
-  const rows = await db.select().from(paymentProviders).where(where).orderBy(desc(paymentProviders.isDefault), desc(paymentProviders.updatedAt)).limit(options.perPage!).offset((options.page! - 1) * options.perPage!);
-  return { items: rows.map(toAdmin), total, page: options.page!, perPage: options.perPage!, totalPages: Math.ceil(total / options.perPage!) };
+  const rows = await db.select().from(paymentProviders).where(where).orderBy(desc(paymentProviders.isDefault), desc(paymentProviders.updatedAt)).limit(perPage).offset((page - 1) * perPage);
+  return { items: rows.map(toAdmin), total, page, perPage, totalPages: Math.ceil(total / perPage) };
 }
 
 export async function getPaymentProviderById(id: string): Promise<AdminPaymentProvider | null> {
@@ -52,7 +54,7 @@ export async function createPaymentProvider(input: CreatePaymentProviderInput, c
     if (input.isDefault) {
       await tx.update(paymentProviders).set({ isDefault: false, updatedAt: new Date() }).where(and(eq(paymentProviders.isDefault, true), isNull(paymentProviders.deletedAt)));
     }
-    const [row] = await tx.insert(paymentProviders).values({ name: input.name, kind: input.kind as any, ...secrets, callbackUrl: input.callbackUrl ?? null, isActive: input.isActive ?? true, isDefault: input.isDefault ?? false, createdBy }).returning({ id: paymentProviders.id });
+    const [row] = await tx.insert(paymentProviders).values({ name: input.name, kind: input.kind, ...secrets, callbackUrl: input.callbackUrl ?? null, isActive: input.isActive ?? true, isDefault: input.isDefault ?? false, createdBy }).returning({ id: paymentProviders.id });
     if (!row) throw new ApiError(500, PAYMENT_ERROR_CODES.providerNotFound, PAYMENT_ERROR_MESSAGES.providerCreateFailed);
     return row;
   });
@@ -76,7 +78,7 @@ export async function updatePaymentProvider(id: string, input: UpdatePaymentProv
     }
     const patch: Partial<typeof paymentProviders.$inferInsert> = {
       ...(input.name !== undefined ? { name: input.name } : {}),
-      ...(input.kind !== undefined ? { kind: input.kind as any } : {}),
+      ...(input.kind !== undefined ? { kind: input.kind } : {}),
       ...(input.callbackUrl !== undefined ? { callbackUrl: input.callbackUrl ?? null } : {}),
       ...(input.isActive !== undefined ? { isActive: input.isActive } : {}),
       ...(input.isDefault !== undefined ? { isDefault: input.isDefault } : {}),
@@ -93,7 +95,16 @@ export async function softDeletePaymentProvider(id: string): Promise<void> {
 }
 
 export async function getPaymentProviderForUse(id?: string): Promise<DecryptedPaymentProvider> {
-  const row = id ? await getPaymentProviderRow(id) : await db.query.paymentProviders.findFirst({ where: and(eq(paymentProviders.isActive, true), isNull(paymentProviders.deletedAt)), orderBy: [desc(paymentProviders.isDefault), desc(paymentProviders.updatedAt)] });
+  const row = id
+    ? await getPaymentProviderRow(id)
+    : await db.query.paymentProviders.findFirst({
+      where: and(
+        eq(paymentProviders.isActive, true),
+        eq(paymentProviders.isDefault, true),
+        isNull(paymentProviders.deletedAt),
+      ),
+      orderBy: [desc(paymentProviders.updatedAt)],
+    });
   if (!row) throw new ApiError(400, PAYMENT_ERROR_CODES.providerNotFound, PAYMENT_ERROR_MESSAGES.providerNotConfigured);
   if (!row.isActive || row.deletedAt) throw new ApiError(400, PAYMENT_ERROR_CODES.providerNotFound, PAYMENT_ERROR_MESSAGES.providerNotFound);
   return decryptPaymentProviderSecret(row);

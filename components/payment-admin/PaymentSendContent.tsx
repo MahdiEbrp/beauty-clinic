@@ -47,7 +47,7 @@ export function PaymentSendContent({ providerItems }: { providerItems: { id: str
     if (validate()) setStep((s) => Math.min(3, s + 1));
   };
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validate()) return;
     setSubmitting(true);
@@ -58,10 +58,10 @@ export function PaymentSendContent({ providerItems }: { providerItems: { id: str
         credentials: "include",
         body: JSON.stringify({ bookingGroupRef: groupRef.trim(), amount: Number(amount), description, providerId }),
       });
-      const json = await res.json().catch(() => null);
+      const json = (await res.json().catch(() => null)) as { error?: { message?: string }; data?: { paymentUrl?: string } } | null;
       if (!res.ok) throw new Error(json?.error?.message ?? "Failed");
       toast.success("Payment request created");
-      const paymentUrl: string | undefined = json.data?.paymentUrl;
+      const paymentUrl = json?.data?.paymentUrl ?? undefined;
       if (paymentUrl) window.location.href = paymentUrl;
       else router.push("/dashboard/payment/transactions");
     } catch (err) {
@@ -84,7 +84,7 @@ export function PaymentSendContent({ providerItems }: { providerItems: { id: str
     <div className="space-y-6 sm:space-y-8">
       <WizardHeader step={step} currentStepKey={SEND_STEPS[step - 1].key} total={SEND_STEPS.length} lang="en" langAware={false} heading={t("heading")} subtitle={t("description")} onLangChange={() => undefined} onGoTo={(n) => { if (n <= step || validate()) setStep(n); }} ns="paymentSend" steps={SEND_STEPS} backHref="/dashboard/payment" />
 
-      <form ref={formRef} onSubmit={onSubmit} className="space-y-6">
+      <form ref={formRef} onSubmit={(e) => void onSubmit(e)} className="space-y-6">
         {step === 1 && (
           <Panel>
             <Field id="payment-group-ref" label="Booking Group Ref" hint="NF-XXXXX" required>

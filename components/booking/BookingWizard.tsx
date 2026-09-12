@@ -1,12 +1,12 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { findCartConflicts } from "@/lib/booking/scheduling";
 import type { PublicServiceTree } from "@/lib/services/types";
 import type { PublicRule } from "@/lib/services/rules-types";
-import { createBookingGroup, payBookingGroup } from "./api";
+import { checkoutBookingGroup, createBookingGroup } from "./api";
 import { invalidateSlots } from "./slots-cache";
 import Stepper from "./Stepper";
 import BottomBar from "./BottomBar";
@@ -67,9 +67,10 @@ function VerifiedWizard(props: BookingWizardProps) {
   const [health, setHealth] = useState<HealthFlags>({ pregnant: false, illness: false });
   const [contact, setContact] = useState<ContactInfo | null>(null);
   const [group, setGroup] = useState<Awaited<ReturnType<typeof createBookingGroup>> | null>(null);
-  const [paymentReference, setPaymentReference] = useState<string | null>(null);
+  const [paymentReference] = useState<string | null>(null);
   const [showMyBookings, setShowMyBookings] = useState(false);
   const [invoice, setInvoice] = useState<InvoiceData | null>(null);
+  const checkoutKey = useRef<string | null>(null);
 
   // One-time hydration + ?service= preselect.
   useEffect(() => {
@@ -143,7 +144,7 @@ function VerifiedWizard(props: BookingWizardProps) {
   const submitBooking = useCallback(
     async (data: ContactInfo): Promise<void> => {
       setContact(data);
-      const created = await createBookingGroup({
+      const created = group ?? await createBookingGroup({
         fullName: data.fullName,
         phone: data.phone,
         locale,
@@ -157,20 +158,23 @@ function VerifiedWizard(props: BookingWizardProps) {
           quantity: line.quantity,
         })),
       });
-      let reference: string | null = null;
-      try {
-        const payment = await payBookingGroup(created.groupRef);
-        reference = payment.paymentReference ?? null;
-      } catch {
-        reference = null;
-      }
       setGroup(created);
-      setPaymentReference(reference);
-      setStep(3);
-      invalidateSlots();
-      window.localStorage.removeItem(CART_STORAGE_KEY);
+      checkoutKey.current ??= crypto.randomUUID();
+      try {
+        const checkout = await checkoutBookingGroup({
+          groupRef: created.groupRef,
+          idempotencyKey: checkoutKey.current,
+          locale,
+        });
+        invalidateSlots();
+        window.localStorage.removeItem(CART_STORAGE_KEY);
+        window.location.assign(checkout.paymentUrl);
+      } catch (error) {
+        checkoutKey.current = null;
+        throw error;
+      }
     },
-    [cart, locale],
+    [cart, group, locale],
   );
 
   const canStepTo = useCallback(
