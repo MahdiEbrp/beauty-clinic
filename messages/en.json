@@ -3553,7 +3553,11 @@
         "min_cancel_hours": "Minimum cancel hours",
         "price": "Booking fee",
         "currency": "Currency",
-        "select_service": "Select-service prompt"
+        "select_service": "Select-service prompt",
+        "notify_sms": "SMS on new reservation",
+        "notify_email": "Email on new reservation",
+        "notify_admin_sms": "Admin SMS copy on new reservation",
+        "notify_admin_email": "Admin email copy on new reservation"
       },
       "contact": {
         "phone": "Phone number",
@@ -3569,7 +3573,9 @@
         "neshan_map": "View-on-Neshan label",
         "neshan_desc": "Neshan navigation label",
         "google_map": "View-on-Google label",
-        "google_desc": "Google navigation label"
+        "google_desc": "Google navigation label",
+        "admin_phone": "Admin phone(s) for reservation copies (comma-separated)",
+        "admin_email": "Admin email(s) for reservation copies (comma-separated)"
       },
       "pricing": {
         "page": {
