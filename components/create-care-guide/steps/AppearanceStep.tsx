@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { MessageNamespace } from "@/src/i18n/message-key";
 import { ImageIcon } from "lucide-react";
 
 import GroupGlyph from "../../create-group/GroupGlyph";
@@ -14,7 +13,7 @@ export default function AppearanceStep({
 }: {
   iconKey: string;
   onOpenIconPicker: () => void;
-  ns?: MessageNamespace;
+  ns?: "guideWizard";
 }) {
   const t = useTranslations(ns);
 

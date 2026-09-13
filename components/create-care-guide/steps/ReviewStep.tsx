@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { MessageNamespace } from "@/src/i18n/message-key";
 import { Check } from "lucide-react";
 
 import GroupGlyph from "../../create-group/GroupGlyph";
@@ -20,7 +19,7 @@ export default function ReviewStep({
   slug: string;
   isActive: boolean;
   iconKey: string;
-  ns?: MessageNamespace;
+  ns?: "guideWizard";
 }) {
   const t = useTranslations(ns);
 

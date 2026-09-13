@@ -1,12 +1,11 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { MessageNamespace } from "@/src/i18n/message-key";
 import { Check, Image as ImageIcon } from "lucide-react";
 
 import { LOCALES } from "../helpers";
 import GroupGlyph from "../GroupGlyph";
-import type { LangContent, LangSeo } from "../types";
+import type { GroupWizardNamespace, LangContent, LangSeo } from "../types";
 import { Panel, ReviewCard, ReviewLabel } from "../ui";
 
 export default function ReviewStep({
@@ -25,7 +24,7 @@ export default function ReviewStep({
   isActive: boolean;
   iconKey: string;
   imageUrl: string;
-  ns?: MessageNamespace;
+  ns?: GroupWizardNamespace;
   extraSummary?: { label: string; value: string };
 }) {
   const t = useTranslations(ns ?? "groupWizard");

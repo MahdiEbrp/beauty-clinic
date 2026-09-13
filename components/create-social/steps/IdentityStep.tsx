@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { MessageNamespace } from "@/src/i18n/message-key";
 import { Field, Panel, inputClass } from "../../create-group/ui";
 import { LangBadge } from "../../landing-admin/forms/fields";
 import type { Locale } from "../types";
@@ -30,7 +29,7 @@ export default function IdentityStep({
   imageUrl: string;
   onImageUrlChange: (value: string) => void;
   errors: FieldErrors;
-  ns?: MessageNamespace;
+  ns?: "socialWizard";
 }) {
   const t = useTranslations(ns ?? "socialWizard");
 

@@ -1,9 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { MessageNamespace } from "@/src/i18n/message-key";
 import { Image as ImageIcon, RefreshCw } from "lucide-react";
 
+import type { GroupWizardNamespace } from "../types";
 import GroupGlyph from "../GroupGlyph";
 import { Field, Panel, inputClass } from "../ui";
 
@@ -18,7 +18,7 @@ export default function AppearanceStep({
   onOpenIconPicker: () => void;
   imageUrl: string;
   onImageUrlChange: (value: string) => void;
-  ns?: MessageNamespace;
+  ns?: GroupWizardNamespace;
 }) {
   const t = useTranslations(ns ?? "groupWizard");
 

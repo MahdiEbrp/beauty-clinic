@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { MessageNamespace } from "@/src/i18n/message-key";
 import { Field, Panel, inputClass } from "../../create-group/ui";
 import type { FieldErrors } from "../types";
 
@@ -18,7 +17,7 @@ export default function SettingsStep({
   isActive: boolean;
   onToggleActive: () => void;
   errors: FieldErrors;
-  ns?: MessageNamespace;
+  ns?: "settingWizard";
 }) {
   const t = useTranslations(ns ?? "settingWizard");
   return (

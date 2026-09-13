@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { MessageNamespace } from "@/src/i18n/message-key";
 import { Lock, Pencil, RefreshCw, Sparkles, Unlock } from "lucide-react";
 
 import type { FieldErrors, Locale } from "../types";
@@ -38,7 +37,7 @@ export default function IdentityStep({
   displayOrder: string;
   onDisplayOrderChange: (value: string) => void;
   errors: FieldErrors;
-  ns?: MessageNamespace;
+  ns?: "rulesWizard";
 }) {
   const t = useTranslations(ns ?? "rulesWizard");
   const langLabel = t(`language.${lang}`);

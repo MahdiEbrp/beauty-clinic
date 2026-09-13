@@ -9,7 +9,7 @@ export const MAX_JSON_BODY_BYTES = 1024 * 1024;
 /** User-visible files live directly under the served `public/` tree. */
 export const DEFAULT_STORAGE_ROOT = "./public";
 /** Internal metadata (trash, staged uploads) is kept outside the served tree. */
-export const DEFAULT_META_ROOT = path.resolve(process.cwd(), ".file-manager");
+export const DEFAULT_META_ROOT = path.join(process.cwd(), ".file-manager");
 
 export interface StorageConfig {
   root: string;

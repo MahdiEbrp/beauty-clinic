@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { MessageNamespace } from "@/src/i18n/message-key";
 import { Check } from "lucide-react";
 import { Field, Panel, inputClass } from "../../create-group/ui";
 import { SETTING_TYPES } from "../helpers";
@@ -31,7 +30,7 @@ export default function IdentityStep({
   onTypeChange: (value: SettingType) => void;
   errors: FieldErrors;
   editableKey: boolean;
-  ns?: MessageNamespace;
+  ns?: "settingWizard";
 }) {
   const t = useTranslations(ns ?? "settingWizard");
 

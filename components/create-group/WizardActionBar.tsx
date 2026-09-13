@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import type { MessageNamespace } from "@/src/i18n/message-key";
+import { asTranslate } from "@/src/i18n/message-key";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
 export default function WizardActionBar({
@@ -21,7 +22,7 @@ export default function WizardActionBar({
   onPrimary: () => void;
   ns?: MessageNamespace;
 }) {
-  const t = useTranslations(ns);
+  const t = asTranslate(useTranslations(ns));
   const isLastStep = step === total;
 
   return (

@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { MessageNamespace } from "@/src/i18n/message-key";
 
 import { Field, Panel, inputClass } from "@/components/create-group/ui";
 import type { FieldErrors, Locale } from "../types";
@@ -25,7 +24,7 @@ export default function LocalizationStep({
   onShortDescChange: (value: string) => void;
   onFullDescChange: (value: string) => void;
   errors: FieldErrors;
-  ns?: MessageNamespace;
+  ns?: "serviceWizard";
 }) {
   const t = useTranslations(ns ?? "serviceWizard");
   const langLabel = t(`language.${lang}`);

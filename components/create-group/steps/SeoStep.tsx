@@ -1,13 +1,15 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { MessageNamespace } from "@/src/i18n/message-key";
 import { AlertTriangle } from "lucide-react";
 
 import { siteUrl } from "@/lib/site";
 
 import type { Locale } from "../types";
 import { Panel, inputClass } from "../ui";
+
+/** The namespaces that render the shared SEO step. */
+type SeoStepNamespace = "groupWizard" | "categoryWizard" | "serviceWizard";
 
 export default function SeoStep({
   lang,
@@ -26,7 +28,7 @@ export default function SeoStep({
   onDescriptionChange: (value: string) => void;
   slug: string;
   faIncomplete: boolean;
-  ns?: MessageNamespace;
+  ns?: SeoStepNamespace;
 }) {
   const t = useTranslations(ns ?? "groupWizard");
 

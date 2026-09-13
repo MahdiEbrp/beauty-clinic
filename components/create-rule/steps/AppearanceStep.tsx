@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { MessageNamespace } from "@/src/i18n/message-key";
 import { Check, Image as ImageIcon, RefreshCw } from "lucide-react";
 
 import GroupGlyph from "@/components/create-group/GroupGlyph";
@@ -28,7 +27,7 @@ export default function AppearanceStep({
   onColorChange: (value: string) => void;
   imageUrl: string;
   onImageUrlChange: (value: string) => void;
-  ns?: MessageNamespace;
+  ns?: "rulesWizard";
 }) {
   const t = useTranslations(ns ?? "rulesWizard");
 

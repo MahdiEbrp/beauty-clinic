@@ -37,8 +37,8 @@ export default function WizardHeader({
   steps?: ReadonlyArray<{ id: number; key: string }>;
   backHref?: string;
 }) {
-  const t = useTranslations(ns);
-  const stepName = asTranslate(t);
+  const t = asTranslate(useTranslations(ns));
+  const stepName = t;
   const progress = Math.round((step / total) * 100);
 
   return (
