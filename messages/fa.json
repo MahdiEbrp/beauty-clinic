@@ -418,6 +418,7 @@
       "errors": {
         "name": "لطفاً نام و نام خانوادگی را وارد کنید.",
         "phone": "شماره تماس معتبر وارد کنید.",
+        "email": "ایمیل معتبر وارد کنید.",
         "terms": "پذیرش قوانین الزامی است."
       },
       "fullName": "نام و نام خانوادگی",
@@ -426,6 +427,8 @@
       "goBackAndEdit": "بازگشت و ویرایش",
       "guarantee": "نوبت شما تحت ضمانت کلینیک نفس محافظت می‌شود",
       "hideDetails": "پنهان کردن جزئیات",
+      "email": "ایمیل (اختیاری — دریافت تأییدیه)",
+      "emailPlaceholder": "you@example.com",
       "notes": "توضیحات تکمیلی (اختیاری)",
       "notesPlaceholder": "هرگونه درخواست یا وضعیت خاص",
       "phone": "شماره تماس",
@@ -5720,5 +5723,10 @@
     "invalidTitle": "لینک پرداخت نامعتبر است",
     "invalidDescription": "این لینک پرداخت فاقد کد پیگیری است و قابل استفاده نیست.",
     "booking": "بازگشت به رزرو نوبت"
+  },
+  "bookingNotify": {
+    "sms": "نوبت {groupRef} شما تأیید شد. {services}. بیعانه پرداختی: {deposit} {currency}. {clinicName} | {clinicPhone}",
+    "emailSubject": "تأیید نوبت {groupRef} | {clinicName}",
+    "emailBody": "سلام {name}،<br/><br/>نوبت <b>{groupRef}</b> شما با موفقیت تأیید شد.<br/><br/><b>خدمات:</b> {services}<br/><b>بیعانه پرداختی:</b> {deposit} {currency}<br/><b>کد پیگیری پرداخت:</b> {paymentReference}<br/><br/>لطفاً حداقل ۱۵ دقیقه پیش از موعد نوبت در کلینیک حاضر باشید.<br/><br/>{clinicName}<br/>{clinicPhone}"
   }
 }

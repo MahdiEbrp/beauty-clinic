@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 
+import { notifyNewReservation } from "@/lib/notifications/booking-notifier";
 import { markPaymentFailed } from "@/lib/payment/booking-checkout";
 import { verifyPaymentTransaction } from "@/lib/payment/transaction-service";
 import { localizedHref } from "@/lib/site";
@@ -19,6 +20,14 @@ export async function GET(request: Request) {
   }
   try {
     const res = await verifyPaymentTransaction(authority);
+    if (res.verified && !res.late && res.newlyVerified) {
+      // Runs after the redirect response has been sent — serverless-safe
+      // background work. The notifier swallows provider errors, so delivery
+      // problems never change the payment result the user is redirected to.
+      after(async () => {
+        await notifyNewReservation({ groupRef: res.bookingGroupRef, locale: res.locale });
+      });
+    }
     const path = localizedHref(res.locale, res.verified && !res.late ? "/payment/success" : "/payment/failed");
     return NextResponse.redirect(new URL(`${path}?authority=${encodeURIComponent(authority)}`, request.url));
   } catch {

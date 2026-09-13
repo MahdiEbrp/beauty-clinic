@@ -23,17 +23,24 @@ function resolve(messages: Messages, dotPath: string): string | undefined {
 
 /**
  * Minimal translation helper for API routes that run outside the next-intl
- * middleware context (proxy.ts bypasses i18n for /api). Reads the locale from
- * the URL pathname and loads messages directly from the JSON files.
+ * middleware context (proxy.ts bypasses i18n for /api).
+ *
+ * Accepts either a URL pathname (locale read from its prefix) or a bare locale
+ * code — the latter is used by server-side senders (notifications) that know
+ * the target locale without a request in flight.
  */
 export async function getApiTranslations(
-  pathname: string,
+  localeOrPathname: string,
 ): Promise<(key: string, vars?: Record<string, string | number>) => string> {
-  const parts = pathname.split("/");
+  const locales = routing.locales as readonly string[];
+  const firstSegment = localeOrPathname.split("/")[1] ?? "";
+  const fromPath = localeOrPathname.startsWith("/") && locales.includes(firstSegment);
   const locale =
-    parts.length > 1 && (routing.locales as readonly string[]).includes(parts[1])
-      ? parts[1]
-      : routing.defaultLocale;
+    fromPath
+      ? firstSegment
+      : locales.includes(localeOrPathname)
+        ? localeOrPathname
+        : routing.defaultLocale;
 
   const messages = await loadMessages(locale);
 

@@ -147,6 +147,7 @@ function VerifiedWizard(props: BookingWizardProps) {
       const created = group ?? await createBookingGroup({
         fullName: data.fullName,
         phone: data.phone,
+        email: data.email ?? null,
         locale,
         notes: data.notes || null,
         hasAllergies: false,

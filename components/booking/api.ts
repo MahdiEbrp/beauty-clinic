@@ -46,6 +46,7 @@ export function fetchAvailableSlots(date: string, serviceId?: string): Promise<S
 export function createBookingGroup(payload: {
   fullName: string;
   phone: string;
+  email?: string | null;
   locale: "fa" | "en";
   notes?: string | null;
   hasAllergies: boolean;

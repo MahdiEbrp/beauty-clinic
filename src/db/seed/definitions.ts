@@ -111,6 +111,42 @@ export const SYSTEM_SETTINGS: SettingInput[] = [
     translations: { fa: "تومان", en: "Toman" },
   },
   {
+    key: "booking.notify_sms",
+    value: true,
+    type: "boolean",
+    translations: { fa: "ارسال پیامک نوبت جدید به مشتری", en: "SMS to customer on new reservation" },
+  },
+  {
+    key: "booking.notify_email",
+    value: true,
+    type: "boolean",
+    translations: { fa: "ارسال ایمیل نوبت جدید به مشتری", en: "Email to customer on new reservation" },
+  },
+  {
+    key: "booking.notify_admin_sms",
+    value: true,
+    type: "boolean",
+    translations: { fa: "ارسال نسخه پیامکی نوبت جدید به ادمین", en: "Admin SMS copy on new reservation" },
+  },
+  {
+    key: "booking.notify_admin_email",
+    value: true,
+    type: "boolean",
+    translations: { fa: "ارسال نسخه ایمیلی نوبت جدید به ادمین", en: "Admin email copy on new reservation" },
+  },
+  {
+    key: "contact.admin_phone",
+    value: "",
+    type: "string",
+    translations: { fa: "تلفن ادمین برای نسخه نوبت‌ها (با ویرگول جدا)", en: "Admin phone(s) for reservation copies (comma-separated)" },
+  },
+  {
+    key: "contact.admin_email",
+    value: "",
+    type: "string",
+    translations: { fa: "ایمیل ادمین برای نسخه نوبت‌ها (با ویرگول جدا)", en: "Admin email(s) for reservation copies (comma-separated)" },
+  },
+  {
     key: "clinic.name",
     value: "کلینیک زیبایی نفس",
     type: "localized",

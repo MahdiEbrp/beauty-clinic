@@ -43,23 +43,24 @@ export async function createPaymentTransaction(input: CreatePaymentTransactionIn
   return { id: row.id, authority: row.authority, paymentUrl: result.paymentUrl };
 }
 
-export async function verifyPaymentTransaction(authority: string, amount?: number): Promise<{ verified: boolean; refId?: string; transactionId: string; locale: "fa" | "en"; bookingGroupRef: string; late: boolean }> {
+export async function verifyPaymentTransaction(authority: string, amount?: number): Promise<{ verified: boolean; refId?: string; transactionId: string; locale: "fa" | "en"; bookingGroupRef: string; late: boolean; newlyVerified: boolean }> {
   const [tx] = await db.select().from(paymentTransactions).where(eq(paymentTransactions.authority, authority));
   if (!tx) throw new ApiError(404, "PAYMENT_TRANSACTION_NOT_FOUND", "Transaction not found");
   const locale = tx.locale === "en" ? "en" : "fa";
   const late = tx.status === "cancelled" || Boolean(tx.expiresAt && tx.expiresAt.getTime() <= Date.now());
-  if (tx.status === "verified") return { verified: true, refId: tx.refId ?? undefined, transactionId: tx.id, locale, bookingGroupRef: tx.bookingGroupRef, late };
+  if (tx.status === "verified") return { verified: true, refId: tx.refId ?? undefined, transactionId: tx.id, locale, bookingGroupRef: tx.bookingGroupRef, late, newlyVerified: false };
   const provider = tx.providerId ? await getPaymentProviderForUse(tx.providerId) : await getPaymentProviderForUse();
   const adapter = createPaymentProviderAdapter({ kind: provider.kind, merchantId: provider.merchantId, apiUrl: provider.apiUrl, callbackUrl: provider.callbackUrl, credentials: provider.credentials });
   const amountRial = amount !== undefined ? Math.round(amount * 10) : Math.round(Number(tx.amount) * 10);
   const v = await adapter.verify({ authority, amount: amountRial });
   const newStatus = v.verified ? "verified" : "failed";
+  const newlyVerified = v.verified && !late;
   await db.update(paymentTransactions).set({ status: newStatus, refId: v.refId ?? null, cardPan: v.cardPan ?? null, errorMessage: v.verified ? null : v.providerStatus ?? null, verifiedAt: v.verified ? new Date() : null, updatedAt: new Date(), completedAt: new Date() }).where(eq(paymentTransactions.id, tx.id));
   // also update bookings to paid if verified
   if (v.verified && !late) {
     await db.execute(sql`UPDATE bookings SET status='paid', payment_reference=${v.refId ?? authority}, updated_at=NOW() WHERE group_ref=${tx.bookingGroupRef} AND status IN ('pending','waiting')`);
   }
-  return { verified: v.verified, refId: v.refId, transactionId: tx.id, locale, bookingGroupRef: tx.bookingGroupRef, late };
+  return { verified: v.verified, refId: v.refId, transactionId: tx.id, locale, bookingGroupRef: tx.bookingGroupRef, late, newlyVerified };
 }
 
 export async function getPaymentTransactionById(id: string) {

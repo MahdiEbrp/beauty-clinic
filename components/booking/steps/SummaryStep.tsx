@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { AlertCircle, CreditCard, FileText, Phone, ShieldCheck, User } from "lucide-react";
+import { AlertCircle, AtSign, CreditCard, FileText, Phone, ShieldCheck, User } from "lucide-react";
 import { formatNumber } from "@/lib/services/format";
 import { bookingErrorKey } from "@/lib/bookings/errors";
 import { asTranslate } from "@/src/i18n/message-key";
@@ -22,9 +22,10 @@ type SummaryStepProps = {
   onSubmit: (contact: ContactInfo) => Promise<unknown>;
 };
 
-type FieldErrors = { fullName?: string; phone?: string; terms?: string };
+type FieldErrors = { fullName?: string; phone?: string; email?: string; terms?: string };
 
 const PHONE_RE = /^0?9\d{9}$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /** Step 3 — customer details, terms & deposit payment (Template parity). */
 export default function SummaryStep({ cart, currency, totals, rules, onSubmit }: SummaryStepProps) {
@@ -33,6 +34,7 @@ export default function SummaryStep({ cart, currency, totals, rules, onSubmit }:
 
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [notes, setNotes] = useState("");
   const [terms, setTerms] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -60,6 +62,7 @@ export default function SummaryStep({ cart, currency, totals, rules, onSubmit }:
     const next: FieldErrors = {};
     if (fullName.trim().length < 3) next.fullName = t("summary.errors.name");
     if (!PHONE_RE.test(cleanPhone())) next.phone = t("summary.errors.phone");
+    if (email.trim() && !EMAIL_RE.test(email.trim())) next.email = t("summary.errors.email");
     if (!terms) {
       next.terms = t("summary.errors.terms");
       setShowRules(true);
@@ -81,6 +84,7 @@ export default function SummaryStep({ cart, currency, totals, rules, onSubmit }:
       await onSubmit({
         fullName: fullName.trim(),
         phone: cleanPhone(),
+        email: email.trim() || undefined,
         notes: notes.trim(),
         agreeToTerms: true,
       });
@@ -163,6 +167,35 @@ export default function SummaryStep({ cart, currency, totals, rules, onSubmit }:
               </p>
             ) : null}
           </div>
+        </div>
+
+        <div className="space-y-1">
+          <label htmlFor="summary-email" className="block text-caption font-bold text-content-secondary">
+            {t("summary.email")}
+          </label>
+          <div className="relative">
+            <AtSign className="pointer-events-none absolute inset-y-0 inset-s-3 my-auto size-4 text-content-tertiary" aria-hidden="true" />
+            <input
+              id="summary-email"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              dir="ltr"
+              value={email}
+              onChange={(event) => {
+                setEmail(event.target.value);
+                if (event.target.value.trim()) setErrors((prev) => ({ ...prev, email: undefined }));
+              }}
+              placeholder={t("summary.emailPlaceholder")}
+              className="h-12 w-full rounded-control border border-form-input-border bg-form-input-bg ps-9 pe-3 text-body-sm text-content-primary outline-none transition-colors placeholder:text-content-tertiary hover:border-copper focus:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            />
+          </div>
+          {errors.email ? (
+            <p className="flex items-center gap-1 text-caption font-bold text-error">
+              <AlertCircle className="size-3" aria-hidden="true" />
+              {errors.email}
+            </p>
+          ) : null}
         </div>
 
         <div className="space-y-1">

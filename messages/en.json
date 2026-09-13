@@ -418,6 +418,7 @@
       "errors": {
         "name": "Please enter your full name.",
         "phone": "Enter a valid phone number.",
+        "email": "Enter a valid email address.",
         "terms": "You must agree to the terms."
       },
       "fullName": "Full name",
@@ -426,6 +427,8 @@
       "goBackAndEdit": "Go back and edit",
       "guarantee": "Your appointment is protected by Nafas Clinic Guarantee",
       "hideDetails": "Hide details",
+      "email": "Email (optional — receive your confirmation)",
+      "emailPlaceholder": "you@example.com",
       "notes": "Additional notes (optional)",
       "notesPlaceholder": "Any special requests or conditions",
       "phone": "Phone number",
@@ -5720,5 +5723,10 @@
     "invalidTitle": "Invalid payment link",
     "invalidDescription": "This payment link is missing its payment reference and cannot be used.",
     "booking": "Return to booking"
+  },
+  "bookingNotify": {
+    "sms": "Your appointment {groupRef} is confirmed. {services}. Deposit paid: {deposit} {currency}. {clinicName} | {clinicPhone}",
+    "emailSubject": "Appointment confirmed {groupRef} | {clinicName}",
+    "emailBody": "Hello {name},<br/><br/>Your appointment <b>{groupRef}</b> is confirmed.<br/><br/><b>Services:</b> {services}<br/><b>Deposit paid:</b> {deposit} {currency}<br/><b>Payment reference:</b> {paymentReference}<br/><br/>Please arrive at least 15 minutes before your appointment time.<br/><br/>{clinicName}<br/>{clinicPhone}"
   }
 }

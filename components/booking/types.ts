@@ -31,6 +31,7 @@ export type CartItem = {
 export type ContactInfo = {
   fullName: string;
   phone: string;
+  email?: string;
   notes: string;
   agreeToTerms: boolean;
 };
