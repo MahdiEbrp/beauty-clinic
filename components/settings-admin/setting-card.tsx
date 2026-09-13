@@ -7,11 +7,15 @@ import type { MessageKey } from "@/src/i18n/message-key";
 import { previewValue } from "./helpers";
 import { RowActions, StatusBadge, TypeBadge } from "./primitives";
 
-/** Translated label for a setting key, falling back to the raw key. */
+/** Translated label for a setting key, falling back to the setting's own
+ * translations and then the raw key. */
 export function SettingKeyLabel({ setting }: { setting: AdminSetting }) {
   const t = useTranslations();
+  const locale = useLocale() === "fa" ? "fa" : "en";
   const key = `settingsAdmin.keys.${setting.key}` as MessageKey;
-  return t.has(key) ? t(key) : setting.key;
+  if (t.has(key)) return t(key);
+  const own = setting.translations?.[locale];
+  return typeof own === "string" && own.trim() !== "" ? own : setting.key;
 }
 
 export function SettingCard({ setting }: { setting: AdminSetting }) {

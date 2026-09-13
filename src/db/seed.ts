@@ -20,6 +20,7 @@ import { seedFakeProviders } from "./seed/fake-providers";
 import { seedGmailProviderFromEnv } from "./seed/gmail-provider";
 import { seedRules } from "./seed/rules";
 import { seedWorkingHours } from "./seed/working-hours";
+import { withRetry } from "./seed/retry";
 import {
   ROLE_DEFS,
   PERMISSION_DEFS,
@@ -137,10 +138,20 @@ async function seed(): Promise<void> {
   console.log("Seed complete.");
 }
 
-seed()
-  .then(() => process.exit(0))
-  .catch((error: unknown) => {
+/**
+ * Every seed write is an idempotent upsert, so a transient connection drop can
+ * safely restart the whole seed. Retry only connection-level failures (the
+ * DrizzleQueryError wrapping an ECONNRESET / CONNECT_TIMEOUT); real errors
+ * still rethrow immediately.
+ */
+withRetry(() => seed())
+  .then(async () => {
+    await db.$client.end();
+    process.exit(0);
+  })
+  .catch(async (error: unknown) => {
     console.error("Seed failed:", error);
+    await db.$client.end().catch(() => undefined);
     process.exit(1);
   });
 
