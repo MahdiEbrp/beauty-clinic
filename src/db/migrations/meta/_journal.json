@@ -260,6 +260,20 @@
       "when": 1789207113595,
       "tag": "0036_lively_cerebro",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1789323514576,
+      "tag": "0037_group_based_booking",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1789367482556,
+      "tag": "0038_slimy_stingray",
+      "breakpoints": true
     }
   ]
 }

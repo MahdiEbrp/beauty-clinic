@@ -2,7 +2,7 @@ import type {
   BookingGroup,
   ContactInfo,
   CreatedBookingGroup,
-  SelectedService,
+  SelectedGroup,
   SlotOption,
 } from "@/components/booking/types";
 
@@ -36,13 +36,13 @@ async function handle<T>(fetchPromise: Promise<Response>): Promise<T> {
   return body.data;
 }
 
-export function fetchAvailableSlots(date: string, serviceId?: string): Promise<SlotOption[]> {
+export function fetchAvailableSlots(date: string, groupId?: string): Promise<SlotOption[]> {
   const params = new URLSearchParams({ date });
-  if (serviceId) params.set("serviceId", serviceId);
+  if (groupId) params.set("groupId", groupId);
   return handle<SlotOption[]>(fetch(`/api/public/slots?${params.toString()}`));
 }
 
-/** Creates a multi-service booking group (one row per cart line). */
+/** Creates a multi-group booking order (one row per cart line). */
 export function createBookingGroup(payload: {
   fullName: string;
   phone: string;
@@ -53,7 +53,7 @@ export function createBookingGroup(payload: {
   isPregnant: boolean;
   /** Acceptance of the clinic booking rules. */
   termsAccepted: boolean;
-  items: { serviceId: string; slotId: string; quantity: number }[];
+  items: { groupId: string; slotId: string; quantity: number }[];
 }): Promise<CreatedBookingGroup> {
   return handle<CreatedBookingGroup>(
     fetch("/api/public/bookings", {
@@ -96,4 +96,4 @@ export function cancelBookingGroup(groupRef: string, phone: string): Promise<{ c
   );
 }
 
-export type { ContactInfo, SelectedService };
+export type { ContactInfo, SelectedGroup };

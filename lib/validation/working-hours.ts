@@ -18,6 +18,8 @@ export const slotPatternSchema = z
   .object({
     startTime: z.string().trim().regex(TIME_PATTERN, "Time must be HH:MM"),
     capacity: z.number().int().min(1).max(500),
+    /** Linked service groups; empty/omitted = the slot accepts all groups. */
+    groupIds: z.array(z.uuid()).max(50).optional(),
   })
   .strict();
 

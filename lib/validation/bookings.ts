@@ -20,12 +20,12 @@ export const slotDateSchema = z
   .regex(DATE_PATTERN, "Date must be YYYY-MM-DD");
 
 /**
- * `serviceIds` links a slot to specific services (one slot → many services).
- * An empty array or omitted field means the slot is bookable for ALL services.
+ * `groupIds` links a slot to specific service groups (one slot → many groups).
+ * An empty array or omitted field means the slot is bookable for ALL groups.
  */
 export const createSlotSchema = z
   .object({
-    serviceIds: z.array(z.uuid()).max(50).optional(),
+    groupIds: z.array(z.uuid()).max(50).optional(),
     slotDate: slotDateSchema,
     startTime: z.string().trim().regex(TIME_PATTERN, "Time must be HH:MM"),
     endTime: z.string().trim().regex(TIME_PATTERN, "Time must be HH:MM"),
@@ -50,7 +50,7 @@ export const createSlotsSchema = z
 
 export const updateSlotSchema = z
   .object({
-    serviceIds: z.array(z.uuid()).max(50).optional(),
+    groupIds: z.array(z.uuid()).max(50).optional(),
     slotDate: slotDateSchema.optional(),
     startTime: z.string().trim().regex(TIME_PATTERN, "Time must be HH:MM").optional(),
     endTime: z.string().trim().regex(TIME_PATTERN, "Time must be HH:MM").optional(),
@@ -63,14 +63,14 @@ export const listSlotsQuerySchema = z
   .object({
     from: slotDateSchema.optional(),
     to: slotDateSchema.optional(),
-    serviceId: z.uuid().optional(),
+    groupId: z.uuid().optional(),
   })
   .strict();
 
 export const availableSlotsQuerySchema = z
   .object({
     date: slotDateSchema,
-    serviceId: z.uuid().optional(),
+    groupId: z.uuid().optional(),
   })
   .strict();
 
@@ -83,25 +83,25 @@ export const createBookingSchema = z
       .regex(/^[0-9+][0-9\s()-]{6,19}$/, "Enter a valid phone number")
       .max(24),
     email: z.email().trim().max(254).optional().nullable(),
-    serviceId: z.uuid(),
+    groupId: z.uuid(),
     slotId: z.uuid(),
     locale: z.enum(["fa", "en"]).default("fa"),
     notes: z.string().trim().max(1000).optional().nullable(),
   })
   .strict();
 
-/** One cart line: a service + slot pair with seat count. */
+/** One order line: a service group + slot pair with seat count. */
 export const bookingItemSchema = z
   .object({
-    serviceId: z.uuid(),
+    groupId: z.uuid(),
     slotId: z.uuid(),
     quantity: z.number().int().min(1).max(10).default(1),
   })
   .strict();
 
 /**
- * Multi-service order: one row per item, all sharing the generated group ref.
- * Duplicate (serviceId, slotId) lines are allowed — quantities are merged.
+ * Multi-group order: one row per item, all sharing the generated group ref.
+ * Duplicate (groupId, slotId) lines are allowed — quantities are merged.
  */
 export const createBookingGroupSchema = z
   .object({
@@ -182,7 +182,7 @@ export const listSlotsAdminQuerySchema = z
     perPage: z.coerce.number().int().min(1).max(100).default(20),
     search: z.string().trim().max(100).optional(),
     status: z.enum(["all", "active", "inactive", "expired"]).default("all"),
-    serviceId: z.uuid().optional(),
+    groupId: z.uuid().optional(),
   })
   .strict();
 

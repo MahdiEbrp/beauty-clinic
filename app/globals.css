@@ -541,7 +541,27 @@ body {
 }
 
 .hero-bg {
-  background-image: url("/images/hero-bg.webp");
+  /* Token-only fallback backdrop. The DB-driven hero image (`landing.hero.image`)
+     is layered on top when present; this keeps the section on-brand with no
+     missing-asset request. */
+  background-color: var(--surface-secondary);
+  background-image:
+    radial-gradient(
+      circle at 15% 20%,
+      color-mix(in srgb, var(--gold) 22%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 85% 75%,
+      color-mix(in srgb, var(--copper) 18%, transparent),
+      transparent 55%
+    ),
+    linear-gradient(
+      135deg,
+      var(--surface-secondary) 0%,
+      var(--surface-primary) 55%,
+      var(--surface-tertiary) 100%
+    );
   background-size: cover;
   background-position: center;
 }

@@ -56,7 +56,7 @@ export function RecentReservationsCard({
                   {row.fullName}
                 </p>
                 <p className="truncate text-dash-body-sm text-content-secondary">
-                  {row.serviceTitle}
+                  {row.groupTitle}
                 </p>
               </div>
               <div className="flex flex-wrap items-center justify-between gap-3 sm:justify-end">

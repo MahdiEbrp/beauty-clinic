@@ -4,11 +4,11 @@ import { ApiError } from "@/lib/api/errors";
 import { loadSystemSettingsMap } from "@/lib/settings/loader";
 import { loadWorkingHours } from "@/lib/bookings/working-hours";
 import { db } from "@/src/db";
-import { bookings, bookingSlotServices, bookingSlots } from "@/src/db/schema";
+import { bookings, bookingSlotGroups, bookingSlots } from "@/src/db/schema";
 import type { Locale } from "@/lib/services/types";
 import { isOpenAt } from "./availability";
 import { toMoney } from "./money";
-import { snapshotServices } from "./snapshot";
+import { snapshotGroups } from "./snapshot";
 import { MAX_ADVANCE_DAYS } from "./errors";
 import { computeSlotStatus } from "./slot-status";
 import { ensureCustomerUser } from "@/lib/users/customers";
@@ -22,19 +22,19 @@ export function toLocalTimestamp(date: string, time: string): Date {
 
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
-/** Linked service ids for a slot ("empty = every service"). */
-async function slotServiceIds(tx: Tx, slotId: string): Promise<string[]> {
+/** Linked group ids for a slot ("empty = every group"). */
+async function slotGroupIds(tx: Tx, slotId: string): Promise<string[]> {
   const rows = await tx
-    .select({ serviceId: bookingSlotServices.serviceId })
-    .from(bookingSlotServices)
-    .where(eq(bookingSlotServices.slotId, slotId));
-  return rows.map((r) => r.serviceId);
+    .select({ groupId: bookingSlotGroups.groupId })
+    .from(bookingSlotGroups)
+    .where(eq(bookingSlotGroups.slotId, slotId));
+  return rows.map((r) => r.groupId);
 }
 
 export type BookingSummary = typeof bookings.$inferSelect;
 
 export type BookingItemInput = {
-  serviceId: string;
+  groupId: string;
   slotId: string;
   quantity: number;
 };
@@ -65,7 +65,7 @@ function overlap(aStart: Date, aEnd: Date, bStart: Date, bEnd: Date): boolean {
 }
 
 /**
- * Creates a multi-service booking group atomically.
+ * Creates a multi-group booking order atomically.
  *
  * Concurrency rule (never oversell): every slot referenced by the order is
  * locked with `SELECT … FOR UPDATE` in a deterministic (sorted) order inside
@@ -73,6 +73,9 @@ function overlap(aStart: Date, aEnd: Date, bStart: Date, bEnd: Date): boolean {
  * `existing + requested > capacity` the whole order rolls back with 409.
  * Two customers racing on the same slot are serialized by the row lock —
  * exactly one wins. Different slots never block each other.
+ *
+ * Only the single fixed deposit (`booking.price`) is charged for the whole
+ * order; service prices are never read or stored.
  */
 export async function createBookingGroup(input: BookingGroupInput): Promise<{
   groupRef: string;
@@ -81,26 +84,27 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
 }> {
   const settings = await loadSystemSettingsMap();
   const deposit = toMoney(settings.get("booking.price"));
+  const currency = (settings.get("booking.currency") as string) ?? "تومان";
   const openingHours = await loadWorkingHours();
   const now = Date.now();
   const groupRef = generateGroupRef();
 
-  // Aggregate requested seats per slot; several services may share one slot.
+  // Aggregate requested seats per slot; several groups may share one slot.
   const perSlot = new Map<string, number>();
   for (const item of input.items) {
     perSlot.set(item.slotId, (perSlot.get(item.slotId) ?? 0) + item.quantity);
   }
   const slotIds = [...perSlot.keys()].sort(); // deterministic lock order (no deadlock)
 
-  const snapshots = await snapshotServices(
-    input.items.map((i) => i.serviceId),
+  const snapshots = await snapshotGroups(
+    input.items.map((i) => i.groupId),
     input.locale,
   );
 
   return db.transaction(async (tx) => {
     const slotRows = new Map<
       string,
-      { date: string; start: string; end: string; capacity: number; serviceIds: string[] }
+      { date: string; start: string; end: string; capacity: number; groupIds: string[] }
     >();
 
     // Phase 1 — lock every slot, then validate it under the lock.
@@ -127,20 +131,20 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
       if (!isOpenAt(slotStart, slotEnd, openingHours)) {
         throw new ApiError(409, "BUSINESS_CLOSED", "The clinic is closed at the selected time.");
       }
-      const serviceIds = await slotServiceIds(tx, slotId);
+      const groupIds = await slotGroupIds(tx, slotId);
       slotRows.set(slotId, {
         date: row.slotDate,
         start: row.startTime,
         end: row.endTime,
         capacity: row.capacity,
-        serviceIds,
+        groupIds,
       });
     }
 
     // Phase 2 — seat counting + customer-overlap checks under the locks.
-    const allocated = new Map<string, number>(); // seats this group adds per slot
+    const allocated = new Map<string, number>(); // seats this order adds per slot
     const planned: {
-      serviceId: string;
+      groupId: string;
       slotId: string;
       quantity: number;
       start: Date;
@@ -162,8 +166,8 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
         throw new ApiError(409, "SLOT_FULL", "This time slot has just been taken.");
       }
 
-      if (slot.serviceIds.length > 0 && !slot.serviceIds.includes(item.serviceId)) {
-        throw new ApiError(409, "SERVICE_UNAVAILABLE", "This slot does not offer the selected service.");
+      if (slot.groupIds.length > 0 && !slot.groupIds.includes(item.groupId)) {
+        throw new ApiError(409, "GROUP_UNAVAILABLE", "This slot does not offer the selected group.");
       }
 
       // Same customer, overlapping time, outside this new group → conflict.
@@ -187,7 +191,7 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
       // Overlap against other lines of THIS group on different slots.
       for (const other of planned) {
         if (other.slotId !== item.slotId && overlap(start, end, other.start, other.end)) {
-          throw new ApiError(409, "CUSTOMER_CONFLICT", "Selected services overlap in time.");
+          throw new ApiError(409, "CUSTOMER_CONFLICT", "Selected groups overlap in time.");
         }
       }
 
@@ -203,10 +207,13 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
       email: input.email,
     });
 
+    // The fixed deposit is stored once per order (first line); the rest are 0
+    // so `SUM(total_amount)` over a groupRef is always exactly one deposit.
     const inserted: BookingSummary[] = [];
+    let firstLine = true;
     for (const line of planned) {
-      const service = snapshots.get(line.serviceId);
-      if (!service) throw new ApiError(404, "BOOKING_NOT_FOUND", "Service not found.");
+      const group = snapshots.get(line.groupId);
+      if (!group) throw new ApiError(404, "GROUP_NOT_FOUND", "Group not found.");
       const [row] = await tx
         .insert(bookings)
         .values({
@@ -215,17 +222,14 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
           fullName: input.fullName,
           phone: input.phone,
           email: input.email ?? null,
-          serviceId: line.serviceId,
-          serviceTitle: service.title,
-          servicePrice: String(service.price),
-          currency: service.currency,
-          durationMin: service.durationMin,
-          sessionsCount: service.sessionsCount,
+          groupId: line.groupId,
+          groupTitle: group.title,
+          currency,
           quantity: line.quantity,
           slotId: line.slotId,
           slotStart: line.start,
           slotEnd: line.end,
-          totalAmount: String(service.price * line.quantity),
+          totalAmount: firstLine ? String(deposit) : "0",
           status: "pending",
           notes: input.notes ?? null,
           consultationRequired: input.consultationRequired ?? false,
@@ -234,6 +238,7 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
           termsAcceptedAt: input.termsAccepted ? new Date() : null,
         })
         .returning();
+      firstLine = false;
       inserted.push(row);
     }
 
@@ -242,21 +247,21 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
 }
 
 /**
- * Backwards-compatible single-service creation (admin API) — a one-item group
+ * Backwards-compatible single-group creation (admin API) — a one-item order
  * that enjoys the same FOR UPDATE oversell protection.
  */
 export async function createBooking(input: {
   fullName: string;
   phone: string;
   email?: string | null;
-  serviceId: string;
+  groupId: string;
   slotId: string;
   notes?: string | null;
   locale: Locale;
 }): Promise<BookingSummary> {
   const group = await createBookingGroup({
     ...input,
-    items: [{ serviceId: input.serviceId, slotId: input.slotId, quantity: 1 }],
+    items: [{ groupId: input.groupId, slotId: input.slotId, quantity: 1 }],
   });
   return group.items[0];
 }

@@ -94,7 +94,7 @@ const booking: Row = {
   fullName: "Jane Doe",
   phone: "09121234567",
   email: "jane@example.com",
-  serviceTitle: "Botox Injection",
+  groupTitle: "Botox Injection",
   quantity: 1,
   slotStart: undefined,
 };

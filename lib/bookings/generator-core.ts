@@ -3,7 +3,7 @@ import "server-only";
 import { inArray } from "drizzle-orm";
 
 import type { db } from "@/src/db";
-import { bookings, bookingSlots } from "@/src/db/schema";
+import { bookingSlots } from "@/src/db/schema";
 import type { WorkingHour } from "./working-hours";
 import type { SlotPattern } from "./slot-patterns";
 import {
@@ -14,6 +14,12 @@ import {
   zonedDateKey,
   type GeneratorConfig,
 } from "./generator-utils";
+import {
+  insertSlotGroupLinks,
+  loadBookedSlotIds,
+  reconcileSlotGroups,
+  type ExistingSlot,
+} from "./generator-groups";
 
 export type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
@@ -31,6 +37,29 @@ type ExistingRow = {
   isActive: boolean;
 };
 
+/** Desired group set for a *new* start (pattern row groups, else the fallback). */
+function groupsOfStart(plan: DayPlan, start: string, fallback: string[]): string[] {
+  if (!plan.pattern) return fallback;
+  return plan.pattern.find((entry) => entry.startTime === start)?.groupIds ?? [];
+}
+
+/**
+ * Desired group set for an already-existing slot. Returns `null` when the slot
+ * is out of pattern (it is being deactivated) so its links are left untouched.
+ */
+function desiredGroupsForExisting(
+  plans: Map<string, DayPlan>,
+  config: GeneratorConfig,
+): (slot: ExistingSlot) => string[] | null {
+  return (slot) => {
+    const plan = plans.get(slot.slotDate);
+    if (!plan) return null;
+    if (!plan.pattern) return config.groupIds;
+    const entry = plan.pattern.find((item) => item.startTime === slot.startTime);
+    return entry ? entry.groupIds : null;
+  };
+}
+
 /**
  * Reconciles a pattern day's unbooked slots to its pattern rows:
  *   - booked slots are never touched (kept even if no longer in the pattern),
@@ -38,20 +67,12 @@ type ExistingRow = {
  *   - unbooked slots whose capacity changed are updated in place.
  * Batched into UPDATE statements over the whole window (grouped by value).
  */
-async function syncPatternDates(
+async function syncPatternCapacities(
   tx: Tx,
   patternDates: Map<string, DayPlan>,
   existingByDate: Map<string, ExistingRow[]>,
+  bookedIds: Set<string>,
 ): Promise<void> {
-  const allExisting = [...existingByDate.values()].flat();
-  if (allExisting.length === 0) return;
-
-  const idRows = await tx
-    .select({ slotId: bookings.slotId })
-    .from(bookings)
-    .where(inArray(bookings.slotId, allExisting.map((row) => row.id)));
-  const bookedIds = new Set(idRows.map((row) => row.slotId));
-
   const deactivateIds: string[] = [];
   const capacityByTarget = new Map<number, string[]>();
 
@@ -90,9 +111,10 @@ async function syncPatternDates(
  * Core idempotent generator run inside the caller's transaction.
  *
  * Queries existing rows for the WHOLE window in one batched select, inserts
- * every missing slot in one bulk insert, then reconciles unbooked slots on
- * pattern days. Days in pattern mode use their exact time→capacity rows;
- * other days keep the interval-based grid with a single day capacity.
+ * every missing slot plus its group links in two bulk inserts, then reconciles
+ * unbooked slots (group links on every day, capacity on pattern days). Days in
+ * pattern mode use their exact time→capacity→groups rows; other days keep the
+ * interval-based grid with a single day capacity and the default group set.
  */
 export async function ensureAutoSlotsCore(
   tx: Tx,
@@ -135,7 +157,12 @@ export async function ensureAutoSlotsCore(
     else existingByDate.set(row.slotDate, [row]);
   }
 
-  const missing: (typeof bookingSlots.$inferInsert)[] = [];
+  const bookedIds = await loadBookedSlotIds(
+    tx,
+    existingRows.map((row) => row.id),
+  );
+
+  const missing: (typeof bookingSlots.$inferInsert & { groupIds: string[] })[] = [];
   for (const [dateKey, plan] of dayPlansByDate) {
     const { window } = plan;
     const starts = plan.pattern
@@ -156,17 +183,44 @@ export async function ensureAutoSlotsCore(
         endTime: hhmm(minutesOf(start) + config.durationMin),
         capacity: capacityOf(start),
         isActive: true,
+        groupIds: groupsOfStart(plan, start, config.groupIds),
       });
     }
   }
+
   let created = 0;
   if (missing.length > 0) {
     const rows = await tx
       .insert(bookingSlots)
-      .values(missing)
+      .values(
+        missing.map((item) => ({
+          slotDate: item.slotDate,
+          startTime: item.startTime,
+          endTime: item.endTime,
+          capacity: item.capacity,
+          isActive: item.isActive,
+        })),
+      )
       .onConflictDoNothing({ target: [bookingSlots.slotDate, bookingSlots.startTime] })
-      .returning({ id: bookingSlots.id });
+      .returning({
+        id: bookingSlots.id,
+        slotDate: bookingSlots.slotDate,
+        startTime: bookingSlots.startTime,
+      });
     created = rows.length;
+
+    const groupsByKey = new Map(
+      missing.map((item) => [`${item.slotDate}|${item.startTime}`, item.groupIds]),
+    );
+    await insertSlotGroupLinks(
+      tx,
+      rows.flatMap((row) =>
+        (groupsByKey.get(`${row.slotDate}|${row.startTime}`) ?? []).map((groupId) => ({
+          slotId: row.id,
+          groupId,
+        })),
+      ),
+    );
   }
 
   const patternDates = new Map<string, DayPlan>();
@@ -174,7 +228,19 @@ export async function ensureAutoSlotsCore(
     if (plan.pattern) patternDates.set(dateKey, plan);
   }
   if (patternDates.size > 0) {
-    await syncPatternDates(tx, patternDates, existingByDate);
+    await syncPatternCapacities(tx, patternDates, existingByDate, bookedIds);
   }
+
+  await reconcileSlotGroups(
+    tx,
+    existingRows.map((row) => ({
+      id: row.id,
+      slotDate: row.slotDate,
+      startTime: row.startTime,
+    })),
+    desiredGroupsForExisting(dayPlansByDate, config),
+    bookedIds,
+  );
+
   return created;
 }

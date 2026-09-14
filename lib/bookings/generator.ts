@@ -30,6 +30,14 @@ function num(value: unknown, fallback: number): number {
   return Number.isFinite(n) && n > 0 ? n : fallback;
 }
 
+/** A JSON-array setting decoded to a clean string list (invalid entries dropped). */
+function uuidList(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter(
+    (item): item is string => typeof item === "string" && item.trim().length > 0,
+  );
+}
+
 /** Resolves the generator configuration from system settings with safe defaults. */
 export async function readGeneratorConfig(): Promise<GeneratorConfig> {
   const settings = await loadSystemSettingsMap();
@@ -53,6 +61,7 @@ export async function readGeneratorConfig(): Promise<GeneratorConfig> {
       typeof settings.get("booking.timezone") === "string"
         ? (settings.get("booking.timezone") as string)
         : DEFAULT_CLINIC_TIMEZONE,
+    groupIds: uuidList(settings.get(SLOT_GENERATOR_KEYS.groups)),
   };
 }
 
@@ -62,8 +71,9 @@ export async function readGeneratorConfig(): Promise<GeneratorConfig> {
  * server instances/restarts never double-insert. Idempotent — existing
  * (date, start_time) rows are never overwritten or deleted, so "slots
  * auto-append unless an admin limited or changed hours" holds by
- * construction. Pattern days additionally converge their *unbooked* slots to
- * the pattern (capacity updates + removed starts deactivated).
+ * construction. Unbooked slots additionally converge to the schedule: capacity
+ * updates + removed starts deactivated on pattern days, and group links
+ * rewritten on every day (booked slots are always preserved).
  */
 export async function ensureAutoSlots(force = false): Promise<{ created: number }> {
   const config = await readGeneratorConfig();

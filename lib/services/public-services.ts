@@ -188,6 +188,7 @@ async function loadServiceTree(locale: Locale): Promise<PublicServiceTree> {
     if (groupCategories.length === 0) continue;
     const content = pick(groupTranslations.get(row.id), locale, emptyGroupContent(), groupIsPresent);
     groups.push({
+      id: row.id,
       slug: row.slug,
       icon: row.icon,
       image: row.image,

@@ -31,9 +31,9 @@ export function reservationColumns(): Column<ReservationAdmin>[] {
       ),
     },
     {
-      key: "service",
-      labelKey: "bookingReservations.table.service",
-      render: (row) => <span className="text-accent">{row.serviceTitle || "—"}</span>,
+      key: "group",
+      labelKey: "bookingReservations.table.group",
+      render: (row) => <span className="text-accent">{row.groupTitle || "—"}</span>,
     },
     {
       key: "date",
@@ -78,7 +78,7 @@ export function ReservationMobileCard({ row }: { row: ReservationAdmin }) {
         <BookingStatusMenu row={row} />
       </div>
       <p className="text-dash-caption text-content-secondary">
-        {row.serviceTitle} · {row.phone}
+        {row.groupTitle} · {row.phone}
       </p>
       <p className="text-dash-caption text-content-tertiary">
         {formatSlotDate(row.slotStart)} · {formatPrice(row.totalAmount, row.currency)}

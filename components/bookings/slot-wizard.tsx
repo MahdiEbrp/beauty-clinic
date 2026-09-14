@@ -12,9 +12,9 @@ import { formatDate, slotToDate } from "@/lib/bookings/dates";
 import { WizardShell, type WizardStep } from "./wizard-shell";
 import { DetailGrid, DetailRow, Field, inputClass } from "./wizard-fields";
 import {
-  ServiceMultiSelect,
-  type ServiceOption,
-} from "./service-multi-select";
+  GroupMultiSelect,
+  type GroupOption,
+} from "./group-multi-select";
 
 const STEPS: WizardStep[] = [
   { key: "details", labelKey: "slotWizard.steps.details.name" },
@@ -28,7 +28,7 @@ export type SlotEditData = {
   endTime: string;
   capacity: number;
   isActive: boolean;
-  serviceIds: string[];
+  groupIds: string[];
 };
 
 export function SlotWizard({
@@ -47,9 +47,9 @@ export function SlotWizard({
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
 
-  const [serviceIds, setServiceIds] = useState<string[]>(slot?.serviceIds ?? []);
-  const [services, setServices] = useState<ServiceOption[]>([]);
-  const [servicesLoading, setServicesLoading] = useState(true);
+  const [groupIds, setGroupIds] = useState<string[]>(slot?.groupIds ?? []);
+  const [groups, setGroups] = useState<GroupOption[]>([]);
+  const [groupsLoading, setGroupsLoading] = useState(true);
   const [slotDate, setSlotDate] = useState(slot?.slotDate ?? "");
   const [startTime, setStartTime] = useState(slot?.startTime ?? "");
   const [endTime, setEndTime] = useState(slot?.endTime ?? "");
@@ -67,16 +67,20 @@ export function SlotWizard({
     let active = true;
     void (async () => {
       try {
-        const res = await fetch("/api/v1/services?perPage=100&status=active", {
+        const res = await fetch("/api/v1/service-groups?perPage=100&status=active", {
           credentials: "include",
         });
         if (!res.ok) return;
-        const payload = (await res.json()) as { data: { items: ServiceOption[] } };
-        if (active) setServices(payload.data.items);
+        const payload = (await res.json()) as {
+          data: { items: Array<{ id: string; name: string }> };
+        };
+        if (active) {
+          setGroups(payload.data.items.map((item) => ({ id: item.id, title: item.name })));
+        }
       } catch {
-        // service list is optional for slot creation
+        // group list is optional for slot creation
       } finally {
-        if (active) setServicesLoading(false);
+        if (active) setGroupsLoading(false);
       }
     })();
     return () => {
@@ -103,7 +107,7 @@ export function SlotWizard({
     setSubmitting(true);
     try {
       const body = JSON.stringify({
-        serviceIds,
+        groupIds,
         slotDate,
         startTime,
         endTime,
@@ -116,7 +120,7 @@ export function SlotWizard({
               headers: { "Content-Type": "application/json" },
               credentials: "include",
               body: JSON.stringify({
-                slots: [{ serviceIds, slotDate, startTime, endTime, capacity: Number(capacity) }],
+                slots: [{ groupIds, slotDate, startTime, endTime, capacity: Number(capacity) }],
               }),
             })
           : await fetch(`/api/v1/bookings/slots/${slot?.id}`, {
@@ -140,8 +144,8 @@ export function SlotWizard({
   const reviewDate = slotDate
     ? formatDate(slotToDate(slotDate, "12:00:00"), kind)
     : "—";
-  const selectedTitles = serviceIds
-    .map((id) => services.find((option) => option.id === id)?.title)
+  const selectedTitles = groupIds
+    .map((id) => groups.find((option) => option.id === id)?.title)
     .filter(Boolean)
     .join("، ");
 
@@ -161,12 +165,12 @@ export function SlotWizard({
       {step === 0 ? (
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
-            <Field label={t("fields.services.label")}>
-              <ServiceMultiSelect
-                options={services}
-                selected={serviceIds}
-                onChange={setServiceIds}
-                loading={servicesLoading}
+            <Field label={t("fields.groups.label")}>
+              <GroupMultiSelect
+                options={groups}
+                selected={groupIds}
+                onChange={setGroupIds}
+                loading={groupsLoading}
               />
             </Field>
           </div>
@@ -255,8 +259,8 @@ export function SlotWizard({
           />
           <DetailRow label={t("fields.capacity.label")} value={capacity} />
           <DetailRow
-            label={t("fields.services.label")}
-            value={selectedTitles || t("reviewData.servicesAll")}
+            label={t("fields.groups.label")}
+            value={selectedTitles || t("reviewData.groupsAll")}
           />
           {mode === "edit" && (
             <DetailRow

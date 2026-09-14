@@ -230,10 +230,27 @@ describe("slot patterns", () => {
     ]);
     const detail = await getWorkingHour(row.id);
     expect(detail?.patterns).toEqual([
-      { startTime: "13:15", capacity: 2 },
-      { startTime: "13:30", capacity: 1 },
-      { startTime: "17:30", capacity: 2 },
+      { startTime: "13:15", capacity: 2, groupIds: [] },
+      { startTime: "13:30", capacity: 1, groupIds: [] },
+      { startTime: "17:30", capacity: 2, groupIds: [] },
     ]);
+  });
+
+  it("persists pattern group links and returns them", async () => {
+    const row = await createWorkingHour({
+      ...base,
+      day: "Saturday",
+      patterns: [
+        { startTime: "13:15", capacity: 2, groupIds: ["g1", "g2"] },
+        { startTime: "13:30", capacity: 1, groupIds: [] },
+      ],
+    });
+    const detail = await getWorkingHour(row.id);
+    expect(detail?.patterns).toEqual([
+      { startTime: "13:15", capacity: 2, groupIds: ["g1", "g2"] },
+      { startTime: "13:30", capacity: 1, groupIds: [] },
+    ]);
+    expect(mockDb.data.slot_pattern_groups).toHaveLength(2);
   });
 
   it("update with empty patterns clears the day's pattern", async () => {

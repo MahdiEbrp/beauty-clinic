@@ -116,7 +116,7 @@ export function ReviewBlock({
   status,
   mode,
   slotDate,
-  serviceTitle,
+  groupTitle,
   slotLabel,
 }: {
   fullName: string;
@@ -126,7 +126,7 @@ export function ReviewBlock({
   status: BookingStatus;
   mode: "create" | "edit";
   slotDate: string;
-  serviceTitle: string;
+  groupTitle: string;
   slotLabel: string;
 }) {
   const t = useTranslations("reservationWizard");
@@ -141,7 +141,7 @@ export function ReviewBlock({
       <Row label={t("reviewData.customer")} value={fullName} />
       <Row label={t("reviewData.phone")} value={phone} />
       <Row label={t("reviewData.email")} value={email || "—"} />
-      <Row label={t("reviewData.service")} value={serviceTitle} />
+      <Row label={t("reviewData.group")} value={groupTitle} />
       {mode === "create" ? (
         <>
           <Row label={t("reviewData.date")} value={reviewDate} />

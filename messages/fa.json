@@ -100,6 +100,17 @@
       "tooFarAhead": "این تاریخ خیلی جلوتر از موعد است."
     },
     "fullName": "نام و نام خانوادگی",
+    "groups": {
+      "title": "انتخاب گروه‌های درمانی",
+      "count": "{n} گروه",
+      "selectedCount": "{n} گروه انتخاب شد",
+      "searchPlaceholder": "جستجوی فیلر صورت، فیلر بدن…",
+      "clearSearch": "پاک کردن جستجو",
+      "removeGroup": "حذف گروه",
+      "noResultsTitle": "گروهی پیدا نشد",
+      "noResultsDesc": "عبارت دیگری را امتحان کنید.",
+      "showAll": "همه ({n})"
+    },
     "invoiceModal": {
       "addressLabel": "نشانی",
       "banner": "صورت‌حساب رسمی پذیرش و رزرو نوبت خدمات زیبایی",
@@ -116,7 +127,7 @@
       "colAmount": "تعرفه کل (تومان)",
       "colDuration": "مدت زمان",
       "colIndex": "ردیف",
-      "colService": "شرح خدمت تخصصی زیبایی",
+      "colService": "گروه",
       "colWhen": "تاریخ و ساعت نوبت",
       "deposit": "بیعانه پرداختی آنلاین (درگاه شاپرک):",
       "depositHint": "مبلغ ثابت بیعانه برای کل نوبت‌های سفارش",
@@ -221,6 +232,7 @@
     "schedule": {
       "available": "آماده رزرو",
       "allScheduled": "همه زمان‌بندی شد",
+      "backToGroups": "بازگشت به گروه‌ها",
       "backToServices": "بازگشت به خدمات",
       "calendarGregorian": "تقویم میلادی",
       "calendarJalali": "تقویم شمسی",
@@ -233,6 +245,7 @@
       "close": "بستن",
       "closed": "تعطیل",
       "colDuration": "مدت",
+      "colGroup": "گروه",
       "colIndex": "#",
       "colPrice": "تعرفه",
       "colService": "خدمت",
@@ -256,6 +269,8 @@
       "month": "ماه",
       "nextMonth": "ماه بعد",
       "nextSlot": "پیشنهاد پیوسته",
+      "noGroupsDesc": "ابتدا به مرحله قبل برگردید و حداقل یک گروه انتخاب کنید.",
+      "noGroupsTitle": "هنوز گروهی انتخاب نشده",
       "noServicesDesc": "ابتدا به مرحله قبل برگردید و حداقل یک خدمت انتخاب کنید.",
       "noServicesTitle": "هنوز خدمتی انتخاب نشده",
       "noSlots": "در این روز زمانی آزاد نیست؛ روز دیگری را انتخاب کنید.",
@@ -384,7 +399,7 @@
       "label": "مراحل رزرو",
       "review": "پرداخت بیعانه و تأیید",
       "schedule": "انتخاب روز و ساعت",
-      "service": "انتخاب خدمات و ژل",
+      "service": "انتخاب گروه",
       "stepOf": "مرحله {n} از {total}"
     },
     "submit": "ثبت درخواست نوبت",
@@ -458,6 +473,7 @@
         "title": "قوانین و منشور رزرو"
       },
       "rulesTitle": "قوانین کلینیک",
+      "selectedGroups": "گروه‌های انتخاب‌شده",
       "selectedServices": "خدمات انتخاب‌شده",
       "showDetails": "نمایش جزئیات",
       "summaryNote": "با فرم بالا ثبت کنید",
@@ -589,6 +605,7 @@
       "amount": "مبلغ",
       "customer": "مشتری",
       "date": "تاریخ",
+      "group": "گروه",
       "service": "خدمت",
       "status": "وضعیت"
     },
@@ -610,6 +627,7 @@
       "generate": "ساخت همه نوبت‌ها"
     },
     "add": "افزودن نوبت",
+    "allGroups": "همه گروه‌ها",
     "allServices": "همه خدمات",
     "bulk": {
       "activate": "فعال",
@@ -668,6 +686,7 @@
       "booked": "رزرو شده",
       "capacity": "ظرفیت",
       "date": "تاریخ",
+      "groups": "گروه‌ها",
       "services": "خدمات",
       "status": "وضعیت",
       "time": "ساعت"
@@ -2449,9 +2468,16 @@
       "customer": "مشتری",
       "date": "تاریخ",
       "email": "ایمیل",
+      "group": "گروه",
       "phone": "تلفن",
       "service": "خدمت",
       "time": "ساعت"
+    },
+    "groupStep": {
+      "createGroup": "ایجاد گروه",
+      "emptyDescription": "ابتدا یک گروه خدمت ایجاد کنید.",
+      "emptyTitle": "گروهی موجود نیست",
+      "searchPlaceholder": "جستجوی گروه‌ها…"
     },
     "serviceStep": {
       "createService": "ایجاد خدمت",
@@ -3550,6 +3576,7 @@
         "slot_duration_min": "مدت هر نوبت (دقیقه)",
         "slot_default_capacity": "ظرفیت پیش‌فرض هر نوبت",
         "slot_window_days": "پنجره رزرو (روز)",
+        "slot_groups": "گروه‌های پیش‌فرض نوبت‌های خودکار",
         "min_cancel_hours": "حداقل ساعت برای لغو",
         "price": "هزینه رزرو",
         "currency": "واحد پول",
@@ -3638,6 +3665,14 @@
         "hintOn": "مشتریان می‌توانند این نوبت را ببینند و رزرو کنند.",
         "label": "باز برای رزرو"
       },
+      "groups": {
+        "allHint": "چیزی انتخاب نشده — این نوبت برای همه گروه‌ها قابل رزرو است.",
+        "count": "{count} مورد انتخاب شد — فقط این گروه‌ها می‌توانند این نوبت را رزرو کنند.",
+        "empty": "هنوز گروه فعالی وجود ندارد.",
+        "label": "گروه‌ها",
+        "noResults": "گروهی با این جستجو پیدا نشد.",
+        "searchPlaceholder": "جستجوی گروه‌ها..."
+      },
       "services": {
         "allHint": "چیزی انتخاب نشده — این نوبت برای همه خدمات قابل رزرو است.",
         "count": "{count} مورد انتخاب شد — فقط این خدمات می‌توانند این نوبت را رزرو کنند.",
@@ -3661,6 +3696,7 @@
       "imagePreview": "پیش‌نمایش"
     },
     "reviewData": {
+      "groupsAll": "همه گروه‌ها",
       "servicesAll": "همه خدمات",
       "statusLabel": "وضعیت"
     },
@@ -3839,7 +3875,10 @@
       "fillAction": "ساخت نوبت‌ها",
       "noRows": "هنوز نوبتی برای این روز وارد نشده است.",
       "replaceConfirm": "این کار فهرست فعلی را با بازه‌ی جدید جایگزین می‌کند.",
-      "capacityToggle": "کاهش/افزایش ظرفیت"
+      "capacityToggle": "کاهش/افزایش ظرفیت",
+      "groupsLabel": "گروه‌ها",
+      "groupsAll": "همه گروه‌ها",
+      "groupsCount": "{count} گروه"
     }
   },
   "emailAdmin": {
@@ -5731,8 +5770,8 @@
     "booking": "بازگشت به رزرو نوبت"
   },
   "bookingNotify": {
-    "sms": "نوبت {groupRef} شما تأیید شد. {services}. بیعانه پرداختی: {deposit} {currency}. {clinicName} | {clinicPhone}",
+    "sms": "نوبت {groupRef} شما تأیید شد. {groups}. بیعانه پرداختی: {deposit} {currency}. {clinicName} | {clinicPhone}",
     "emailSubject": "تأیید نوبت {groupRef} | {clinicName}",
-    "emailBody": "سلام {name}،<br/><br/>نوبت <b>{groupRef}</b> شما با موفقیت تأیید شد.<br/><br/><b>خدمات:</b> {services}<br/><b>بیعانه پرداختی:</b> {deposit} {currency}<br/><b>کد پیگیری پرداخت:</b> {paymentReference}<br/><br/>لطفاً حداقل ۱۵ دقیقه پیش از موعد نوبت در کلینیک حاضر باشید.<br/><br/>{clinicName}<br/>{clinicPhone}"
+    "emailBody": "سلام {name}،<br/><br/>نوبت <b>{groupRef}</b> شما با موفقیت تأیید شد.<br/><br/><b>گروه‌ها:</b> {groups}<br/><b>بیعانه پرداختی:</b> {deposit} {currency}<br/><b>کد پیگیری پرداخت:</b> {paymentReference}<br/><br/>لطفاً حداقل ۱۵ دقیقه پیش از موعد نوبت در کلینیک حاضر باشید.<br/><br/>{clinicName}<br/>{clinicPhone}"
   }
 }

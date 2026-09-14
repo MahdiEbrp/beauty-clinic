@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { CalendarDays, Power, TriangleAlert } from "lucide-react";
@@ -10,6 +10,7 @@ import { useRouter } from "@/src/i18n/navigation";
 import { msgKey } from "@/src/i18n/message-key";
 import { WizardShell, type WizardStep } from "../bookings/wizard-shell";
 import { Field, inputClass } from "../bookings/wizard-fields";
+import type { GroupOption } from "../bookings/group-multi-select";
 import { DaySelect, type DayOption } from "./day-select";
 import {
   SlotPatternEditor,
@@ -74,6 +75,33 @@ export function WorkingHoursForm({
     record?.patterns && record.patterns.length > 0 ? "pattern" : "uniform",
   );
   const [rows, setRows] = useState<SlotPatternRow[]>(record?.patterns ?? []);
+  const [groups, setGroups] = useState<GroupOption[]>([]);
+  const [groupsLoading, setGroupsLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    void (async () => {
+      try {
+        const res = await fetch("/api/v1/service-groups?perPage=100&status=active", {
+          credentials: "include",
+        });
+        if (!res.ok) return;
+        const payload = (await res.json()) as {
+          data: { items: Array<{ id: string; name: string }> };
+        };
+        if (active) {
+          setGroups(payload.data.items.map((item) => ({ id: item.id, title: item.name })));
+        }
+      } catch {
+        // The group list is optional; patterns still save without it.
+      } finally {
+        if (active) setGroupsLoading(false);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const dayOptions: DayOption[] = WEEKDAYS.map((value) => ({
     value,
@@ -111,6 +139,7 @@ export function WorkingHoursForm({
             ? rows.map((row) => ({
                 startTime: row.startTime,
                 capacity: row.capacity,
+                groupIds: row.groupIds,
               }))
             : [],
       };
@@ -223,7 +252,13 @@ export function WorkingHoursForm({
 
       {scheduleMode === "pattern" && (
         <div className="mt-4 space-y-3">
-          <SlotPatternEditor rows={rows} onChange={setRows} disabled={submitting} />
+          <SlotPatternEditor
+            rows={rows}
+            onChange={setRows}
+            groups={groups}
+            groupsLoading={groupsLoading}
+            disabled={submitting}
+          />
           {!patternValid && (
             <p role="alert" className="flex items-center gap-2 text-dash-caption font-bold text-error">
               <TriangleAlert className="size-4 shrink-0" aria-hidden="true" />

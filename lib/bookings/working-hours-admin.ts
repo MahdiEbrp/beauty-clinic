@@ -13,7 +13,7 @@ import {
   type SlotPatternSeed,
 } from "./slot-patterns-admin";
 import { db } from "@/src/db";
-import { slotPatterns, workingHours } from "@/src/db/schema";
+import { slotPatternGroups, slotPatterns, workingHours } from "@/src/db/schema";
 import { bustWorkingHoursCache } from "./working-hours";
 
 export type WorkingHoursFilters = {
@@ -154,17 +154,43 @@ export async function getWorkingHour(
   if (!row) return null;
   const patternRows = await db
     .select({
+      id: slotPatterns.id,
       startTime: slotPatterns.startTime,
       capacity: slotPatterns.capacity,
     })
     .from(slotPatterns)
     .where(eq(slotPatterns.day, row.day))
     .orderBy(asc(slotPatterns.startTime));
+
+  // One batched link query for the whole day (no per-row lookups).
+  const links =
+    patternRows.length === 0
+      ? []
+      : await db
+          .select({
+            patternId: slotPatternGroups.patternId,
+            groupId: slotPatternGroups.groupId,
+          })
+          .from(slotPatternGroups)
+          .where(
+            inArray(
+              slotPatternGroups.patternId,
+              patternRows.map((pattern) => pattern.id),
+            ),
+          );
+  const byPattern = new Map<string, string[]>();
+  for (const link of links) {
+    const list = byPattern.get(link.patternId);
+    if (list) list.push(link.groupId);
+    else byPattern.set(link.patternId, [link.groupId]);
+  }
+
   return {
     ...toRow(row),
     patterns: patternRows.map((pattern) => ({
       startTime: pattern.startTime.slice(0, 5),
       capacity: pattern.capacity,
+      groupIds: byPattern.get(pattern.id) ?? [],
     })),
   };
 }

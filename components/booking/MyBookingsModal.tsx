@@ -137,7 +137,7 @@ export default function MyBookingsModal({ minCancelHours, onClose }: MyBookingsM
                 {group.items.map((item) => (
                   <li key={item.id} className="flex items-center justify-between gap-3 text-body-sm">
                     <span className="min-w-0 truncate text-accent">
-                      {item.serviceTitle} × {item.quantity}
+                      {item.groupTitle} × {item.quantity}
                     </span>
                     <span dir="ltr" className="shrink-0 text-caption text-content-tertiary">
                       {item.slotDate} · {item.startTime?.slice(0, 5)}

@@ -69,6 +69,9 @@ function baseTx(existing: SlotRow[], booked: string[]) {
         from: vi.fn().mockReturnValue({
           where: vi.fn().mockReturnValue(booked.map((slotId) => ({ slotId }))),
         }),
+      })
+      .mockReturnValue({
+        from: vi.fn().mockReturnValue({ where: vi.fn().mockReturnValue([]) }),
       }),
     insert: vi.fn().mockReturnValue({
       values: vi.fn().mockReturnValue({
@@ -101,9 +104,9 @@ describe("ensureAutoSlotsWithConfig with slot patterns", () => {
         [
           "Saturday",
           [
-            { day: "Saturday", startTime: "13:15", capacity: 2 },
-            { day: "Saturday", startTime: "13:30", capacity: 1 },
-            { day: "Saturday", startTime: "17:30", capacity: 2 },
+            { day: "Saturday", startTime: "13:15", capacity: 2, groupIds: [] },
+            { day: "Saturday", startTime: "13:30", capacity: 1, groupIds: [] },
+            { day: "Saturday", startTime: "17:30", capacity: 2, groupIds: [] },
           ],
         ],
       ]),
@@ -157,8 +160,8 @@ describe("ensureAutoSlotsWithConfig with slot patterns", () => {
         [
           "Saturday",
           [
-            { day: "Saturday", startTime: "13:15", capacity: 5 },
-            { day: "Saturday", startTime: "17:30", capacity: 2 },
+            { day: "Saturday", startTime: "13:15", capacity: 5, groupIds: [] },
+            { day: "Saturday", startTime: "17:30", capacity: 2, groupIds: [] },
           ],
         ],
       ]),
@@ -188,8 +191,8 @@ describe("ensureAutoSlotsWithConfig with slot patterns", () => {
         [
           "Saturday",
           [
-            { day: "Saturday", startTime: "13:15", capacity: 2 },
-            { day: "Saturday", startTime: "17:30", capacity: 2 },
+            { day: "Saturday", startTime: "13:15", capacity: 2, groupIds: [] },
+            { day: "Saturday", startTime: "17:30", capacity: 2, groupIds: [] },
           ],
         ],
       ]),

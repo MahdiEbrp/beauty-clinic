@@ -4,12 +4,14 @@ import { eq, inArray } from "drizzle-orm";
 
 import { ApiError } from "@/lib/api/errors";
 import { db } from "@/src/db";
-import { slotPatterns } from "@/src/db/schema";
+import { slotPatternGroups, slotPatterns } from "@/src/db/schema";
 
-/** A persisted slot-pattern entry (start time + seat capacity). */
+/** A persisted slot-pattern entry (start time + seat capacity + groups). */
 export type SlotPatternSeed = {
   startTime: string;
   capacity: number;
+  /** Linked service groups; empty/omitted = the generated slot accepts all. */
+  groupIds?: string[];
 };
 
 export type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
@@ -22,7 +24,8 @@ export async function replaceDayPatterns(
 ): Promise<void> {
   await tx.delete(slotPatterns).where(eq(slotPatterns.day, day));
   if (patterns.length === 0) return;
-  await tx
+
+  const rows = await tx
     .insert(slotPatterns)
     .values(
       patterns.map((pattern) => ({
@@ -31,7 +34,19 @@ export async function replaceDayPatterns(
         capacity: pattern.capacity,
       })),
     )
-    .onConflictDoNothing({ target: [slotPatterns.day, slotPatterns.startTime] });
+    .onConflictDoNothing({ target: [slotPatterns.day, slotPatterns.startTime] })
+    .returning({ id: slotPatterns.id, startTime: slotPatterns.startTime });
+
+  // Returned times are "HH:MM:SS"; normalize to match the "HH:MM" seeds.
+  const idByStart = new Map(rows.map((row) => [row.startTime.slice(0, 5), row.id]));
+  const links = patterns.flatMap((pattern) => {
+    const patternId = idByStart.get(pattern.startTime);
+    if (!patternId) return [];
+    return (pattern.groupIds ?? []).map((groupId) => ({ patternId, groupId }));
+  });
+  if (links.length > 0) {
+    await tx.insert(slotPatternGroups).values(links).onConflictDoNothing();
+  }
 }
 
 /** Removes every pattern row of the given weekdays (standalone query). */

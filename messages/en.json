@@ -100,6 +100,17 @@
       "tooFarAhead": "That date is too far in advance to book."
     },
     "fullName": "Full Name",
+    "groups": {
+      "title": "Select Treatment Groups",
+      "count": "{n} Groups",
+      "selectedCount": "{n} groups selected",
+      "searchPlaceholder": "Search face filler, body filler…",
+      "clearSearch": "Clear search",
+      "removeGroup": "Remove group",
+      "noResultsTitle": "No groups found",
+      "noResultsDesc": "Try a different keyword.",
+      "showAll": "All ({n})"
+    },
     "invoiceModal": {
       "addressLabel": "Address",
       "banner": "Official reception & booking settlement for aesthetic services",
@@ -116,7 +127,7 @@
       "colAmount": "Amount (Toman)",
       "colDuration": "Duration",
       "colIndex": "#",
-      "colService": "Service",
+      "colService": "Group",
       "colWhen": "Date & time",
       "deposit": "Online deposit (Shaparak):",
       "depositHint": "Flat deposit for the whole order",
@@ -221,6 +232,7 @@
     "schedule": {
       "available": "Available",
       "allScheduled": "All scheduled",
+      "backToGroups": "Back to Groups",
       "backToServices": "Back to Services",
       "calendarGregorian": "Gregorian calendar",
       "calendarJalali": "Solar Hijri calendar",
@@ -233,6 +245,7 @@
       "close": "Close",
       "closed": "Closed",
       "colDuration": "Duration",
+      "colGroup": "Group",
       "colIndex": "#",
       "colPrice": "Price",
       "colService": "Service",
@@ -256,6 +269,8 @@
       "month": "Month",
       "nextMonth": "Next month",
       "nextSlot": "Suggested Next",
+      "noGroupsDesc": "Go back and pick at least one group first.",
+      "noGroupsTitle": "No groups selected",
       "noServicesDesc": "Go back and pick at least one service first.",
       "noServicesTitle": "No services selected",
       "noSlots": "No free times on this day — pick another day.",
@@ -384,7 +399,7 @@
       "label": "Booking steps",
       "review": "Review & Pay",
       "schedule": "Date & Time",
-      "service": "Select Service",
+      "service": "Select Group",
       "stepOf": "Step {n} of {total}"
     },
     "submit": "Submit Request",
@@ -458,6 +473,7 @@
         "title": "Booking rules & charter"
       },
       "rulesTitle": "Clinic rules",
+      "selectedGroups": "Selected groups",
       "selectedServices": "Selected services",
       "showDetails": "Show details",
       "summaryNote": "Submit via the form above",
@@ -589,6 +605,7 @@
       "amount": "Amount",
       "customer": "Customer",
       "date": "Date",
+      "group": "Group",
       "service": "Service",
       "status": "Status"
     },
@@ -610,6 +627,7 @@
       "generate": "Generate all slots"
     },
     "add": "Add Slot",
+    "allGroups": "All groups",
     "allServices": "All services",
     "bulk": {
       "activate": "Activate",
@@ -668,6 +686,7 @@
       "booked": "Booked",
       "capacity": "Capacity",
       "date": "Date",
+      "groups": "Groups",
       "services": "Services",
       "status": "Status",
       "time": "Time"
@@ -2449,9 +2468,16 @@
       "customer": "Customer",
       "date": "Date",
       "email": "Email",
+      "group": "Group",
       "phone": "Phone",
       "service": "Service",
       "time": "Time"
+    },
+    "groupStep": {
+      "createGroup": "Create Group",
+      "emptyDescription": "Create a service group first before adding a reservation.",
+      "emptyTitle": "No groups available",
+      "searchPlaceholder": "Search groups…"
     },
     "serviceStep": {
       "createService": "Create Service",
@@ -3550,6 +3576,7 @@
         "slot_duration_min": "Slot duration (minutes)",
         "slot_default_capacity": "Default slot capacity",
         "slot_window_days": "Booking window (days)",
+        "slot_groups": "Default groups for auto slots",
         "min_cancel_hours": "Minimum cancel hours",
         "price": "Booking fee",
         "currency": "Currency",
@@ -3638,6 +3665,14 @@
         "hintOn": "Customers can see and reserve this slot.",
         "label": "Open for booking"
       },
+      "groups": {
+        "allHint": "Nothing selected — this slot is bookable for every group.",
+        "count": "{count} selected — only these groups can book this slot.",
+        "empty": "No active groups yet.",
+        "label": "Groups",
+        "noResults": "No groups match your search.",
+        "searchPlaceholder": "Search groups…"
+      },
       "services": {
         "allHint": "Nothing selected — this slot is bookable for every service.",
         "count": "{count} selected — only these services can book this slot.",
@@ -3661,6 +3696,7 @@
       "imagePreview": "Preview"
     },
     "reviewData": {
+      "groupsAll": "All groups",
       "servicesAll": "All services",
       "statusLabel": "Status"
     },
@@ -3839,7 +3875,10 @@
       "fillAction": "Generate slots",
       "noRows": "No slots entered for this day yet.",
       "replaceConfirm": "This replaces the current list with the new range.",
-      "capacityToggle": "Decrease/increase capacity"
+      "capacityToggle": "Decrease/increase capacity",
+      "groupsLabel": "Groups",
+      "groupsAll": "All groups",
+      "groupsCount": "{count} groups"
     }
   },
   "emailAdmin": {
@@ -5731,8 +5770,8 @@
     "booking": "Return to booking"
   },
   "bookingNotify": {
-    "sms": "Your appointment {groupRef} is confirmed. {services}. Deposit paid: {deposit} {currency}. {clinicName} | {clinicPhone}",
+    "sms": "Your appointment {groupRef} is confirmed. {groups}. Deposit paid: {deposit} {currency}. {clinicName} | {clinicPhone}",
     "emailSubject": "Appointment confirmed {groupRef} | {clinicName}",
-    "emailBody": "Hello {name},<br/><br/>Your appointment <b>{groupRef}</b> is confirmed.<br/><br/><b>Services:</b> {services}<br/><b>Deposit paid:</b> {deposit} {currency}<br/><b>Payment reference:</b> {paymentReference}<br/><br/>Please arrive at least 15 minutes before your appointment time.<br/><br/>{clinicName}<br/>{clinicPhone}"
+    "emailBody": "Hello {name},<br/><br/>Your appointment <b>{groupRef}</b> is confirmed.<br/><br/><b>Groups:</b> {groups}<br/><b>Deposit paid:</b> {deposit} {currency}<br/><b>Payment reference:</b> {paymentReference}<br/><br/>Please arrive at least 15 minutes before your appointment time.<br/><br/>{clinicName}<br/>{clinicPhone}"
   }
 }

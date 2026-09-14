@@ -8,8 +8,8 @@ export interface ReservationAdmin {
   fullName: string;
   phone: string;
   email: string | null;
-  serviceId: string | null;
-  serviceTitle: string;
+  groupId: string | null;
+  groupTitle: string;
   totalAmount: number;
   currency: string;
   slotStart: string | null;
@@ -26,8 +26,8 @@ export function toReservationAdmin(row: Booking): ReservationAdmin {
     fullName: row.fullName,
     phone: row.phone,
     email: row.email ?? null,
-    serviceId: row.serviceId ?? null,
-    serviceTitle: row.serviceTitle,
+    groupId: row.groupId ?? null,
+    groupTitle: row.groupTitle,
     totalAmount: Number(row.totalAmount ?? 0),
     currency: row.currency,
     slotStart: row.slotStart ? new Date(row.slotStart).toISOString() : null,

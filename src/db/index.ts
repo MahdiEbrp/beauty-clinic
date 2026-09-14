@@ -1,7 +1,15 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+import dns from "node:dns";
 import * as schema from "./schema";
 import { env } from "@/lib/env";
+
+/**
+ * Supabase's pooler host is dual-stack; Node resolves AAAA first and the IPv6
+ * route to `*.pooler.supabase.com` often hangs until `connect_timeout` fires
+ * (surfacing as `CONNECT_TIMEOUT` and multi-second page loads). Prefer IPv4.
+ */
+dns.setDefaultResultOrder("ipv4first");
 
 const globalForDb = globalThis as unknown as { db?: ReturnType<typeof createDb> };
 
@@ -13,8 +21,15 @@ function createDb() {
     // via Promise.all). Keep a small pool so concurrent queries can proceed.
     max: 5,
     prepare: false,
-    idle_timeout: 20,
-    connect_timeout: 10,
+    // The Supabase pooler closes idle client sockets (surfacing as
+    // CONNECTION_CLOSED on the next query). Keep connections alive with TCP
+    // keepalive and never proactively expire idle sockets; `max_lifetime`
+    // still recycles them eventually.
+    idle_timeout: 0,
+    keep_alive: 30,
+    connect_timeout: 20,
+    max_lifetime: 60 * 30,
+    onnotice: () => {},
   });
   return drizzle(client, { schema });
 }

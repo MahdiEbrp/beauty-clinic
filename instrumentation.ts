@@ -20,15 +20,52 @@
 export async function register(): Promise<void> {
   if (process.env.NEXT_RUNTIME !== "nodejs") return;
 
+  const [{ Cron }, { logError, logInfo }] = await Promise.all([
+    import("croner"),
+    import("@/lib/log"),
+  ]);
+
+  // Keep-warm (read-only): the managed Postgres (Supabase free tier) suspends
+  // when idle. The first connection after a pause can be dropped by the pooler
+  // (CONNECT_TIMEOUT / CONNECTION_CLOSED), so warm with a short retry at boot
+  // and keep a warm connection with a trivial query every few minutes. Runs in
+  // dev too; a single query per tick.
+  const { db } = await import("@/src/db");
+  const { sql } = await import("drizzle-orm");
+
+  const warmDatabase = async (attempts = 3): Promise<void> => {
+    for (let attempt = 1; attempt <= attempts; attempt += 1) {
+      try {
+        await db.execute(sql`select 1`);
+        return;
+      } catch (error) {
+        if (attempt === attempts) {
+          logError("db.keep_warm_failed", {
+            attempt,
+            error: error instanceof Error ? error.message : String(error),
+          });
+          return;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
+      }
+    }
+  };
+
+  void warmDatabase();
+  const keepWarmJob = new Cron(
+    "*/2 * * * *",
+    { timezone: "UTC", protect: true, name: "db-keep-warm" },
+    () => warmDatabase(),
+  );
+  logInfo("db.keep_warm_scheduled", {
+    nextRun: keepWarmJob.nextRun()?.toISOString() ?? null,
+  });
+
   const enabled = process.env.SLOTS_CRON_ENABLED
     ? process.env.SLOTS_CRON_ENABLED !== "false"
     : process.env.NODE_ENV !== "development";
   if (!enabled) return;
 
-  const [{ Cron }, { logError, logInfo }] = await Promise.all([
-    import("croner"),
-    import("@/lib/log"),
-  ]);
   const { ensureAutoSlots } = await import("@/lib/bookings/generator");
   const { readGeneratorConfig } = await import("@/lib/bookings/generator");
 

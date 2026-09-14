@@ -17,7 +17,7 @@ import PreGatewayModal from "./PreGatewayModal";
 type SummaryStepProps = {
   cart: CartItem[];
   currency: string;
-  totals: { total: number; deposit: number; remaining: number };
+  deposit: number;
   rules: PublicRule[];
   onSubmit: (contact: ContactInfo) => Promise<unknown>;
 };
@@ -27,8 +27,8 @@ type FieldErrors = { fullName?: string; phone?: string; email?: string; terms?: 
 const PHONE_RE = /^0?9\d{9}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/** Step 3 — customer details, terms & deposit payment (Template parity). */
-export default function SummaryStep({ cart, currency, totals, rules, onSubmit }: SummaryStepProps) {
+/** Step 3 — customer details, terms & deposit payment. */
+export default function SummaryStep({ cart, currency, deposit, rules, onSubmit }: SummaryStepProps) {
   const t = useTranslations("booking");
   const looseT = asTranslate(t);
 
@@ -108,7 +108,7 @@ export default function SummaryStep({ cart, currency, totals, rules, onSubmit }:
       }}
     >
       {/* Collapsible booking summary */}
-      <BookingSummary cart={cart} currency={currency} deposit={totals.deposit} open={accordionOpen} onToggle={() => setAccordionOpen((open) => !open)} />
+      <BookingSummary cart={cart} currency={currency} deposit={deposit} open={accordionOpen} onToggle={() => setAccordionOpen((open) => !open)} />
 
       {/* Contact form */}
       <div className="space-y-4 rounded-panel border border-border-primary bg-surface-secondary p-4 shadow-elevation-1 sm:p-6">
@@ -240,7 +240,7 @@ export default function SummaryStep({ cart, currency, totals, rules, onSubmit }:
             className="inline-flex min-h-13 w-full cursor-pointer items-center justify-center gap-2 rounded-control bg-accent px-4 text-body font-black text-content-contrast shadow-elevation-1 transition-all hover:bg-accent-hover active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent select-none"
           >
             <CreditCard className="size-4 text-copper-light" aria-hidden="true" />
-            {t("summary.payDeposit", { amount: `${formatNumber(totals.deposit)} ${currency}` })}
+            {t("summary.payDeposit", { amount: `${formatNumber(deposit)} ${currency}` })}
           </button>
 
           <p className="flex items-center justify-center gap-1.5 text-caption text-content-tertiary">
@@ -267,7 +267,7 @@ export default function SummaryStep({ cart, currency, totals, rules, onSubmit }:
           fullName={fullName.trim()}
           phone={cleanPhone()}
           cart={cart}
-          deposit={totals.deposit}
+          deposit={deposit}
           currency={currency}
           rules={rules}
           processing={processing}

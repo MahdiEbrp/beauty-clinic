@@ -72,7 +72,7 @@ export async function notifyNewReservation(
     const vars = {
       name: first.fullName,
       groupRef: input.groupRef,
-      services: formatServices(source, input.locale),
+      groups: formatGroups(source, input.locale),
       deposit: formatNumber(deposit),
       currency,
       paymentReference,
@@ -113,13 +113,13 @@ export async function notifyNewReservation(
   }
 }
 
-function formatServices(
+function formatGroups(
   rows: (typeof bookings.$inferSelect)[],
   locale: Locale,
 ): string {
   const parts = rows.map((row) => {
     const time = row.slotStart ? formatSlot(row.slotStart, locale) : "";
-    const label = time ? `${row.serviceTitle} (${time})` : row.serviceTitle;
+    const label = time ? `${row.groupTitle} (${time})` : row.groupTitle;
     return row.quantity > 1 ? `${label} ×${formatNumber(row.quantity)}` : label;
   });
   return parts.join(locale === "fa" ? "، " : ", ");

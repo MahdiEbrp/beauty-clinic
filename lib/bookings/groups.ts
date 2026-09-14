@@ -19,12 +19,11 @@ export type BookingGroupSummary = {
   canCancelUntil: string | null;
   items: {
     id: string;
-    serviceTitle: string;
+    groupTitle: string;
     quantity: number;
     slotDate: string | null;
     startTime: string | null;
     endTime: string | null;
-    durationMin: number | null;
     totalAmount: string;
   }[];
 };
@@ -36,12 +35,11 @@ function hhmm(date: Date): string {
 function groupItem(row: BookingSummary) {
   return {
     id: row.id,
-    serviceTitle: row.serviceTitle,
+    groupTitle: row.groupTitle,
     quantity: row.quantity,
     slotDate: row.slotStart ? row.slotStart.toISOString().slice(0, 10) : null,
     startTime: row.slotStart ? hhmm(row.slotStart) : null,
     endTime: row.slotEnd ? hhmm(row.slotEnd) : null,
-    durationMin: row.durationMin,
     totalAmount: row.totalAmount,
   };
 }

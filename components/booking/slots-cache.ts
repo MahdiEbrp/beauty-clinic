@@ -20,18 +20,18 @@ type CacheEntry = {
 const TTL_MS = 45 * 1000;
 const cache = new Map<string, CacheEntry>();
 
-function key(date: string, serviceId?: string): string {
-  return serviceId ? `${date}::${serviceId}` : date;
+function key(date: string, groupId?: string): string {
+  return groupId ? `${date}::${groupId}` : date;
 }
 
-function load(date: string, serviceId: string | undefined): Promise<SlotOption[]> {
-  const entry = cache.get(key(date, serviceId)) ?? {
+function load(date: string, groupId: string | undefined): Promise<SlotOption[]> {
+  const entry = cache.get(key(date, groupId)) ?? {
     data: null,
     fetchedAt: 0,
     inflight: null,
   };
   if (!entry.inflight) {
-    entry.inflight = fetchAvailableSlots(date, serviceId)
+    entry.inflight = fetchAvailableSlots(date, groupId)
       .then((data) => {
         entry.data = data;
         entry.fetchedAt = Date.now();
@@ -39,9 +39,9 @@ function load(date: string, serviceId: string | undefined): Promise<SlotOption[]
       })
       .finally(() => {
         entry.inflight = null;
-        cache.set(key(date, serviceId), entry);
+        cache.set(key(date, groupId), entry);
       });
-    cache.set(key(date, serviceId), entry);
+    cache.set(key(date, groupId), entry);
   }
   return entry.inflight;
 }
@@ -56,25 +56,25 @@ export type SlotsResult = {
 };
 
 /** Read-through cache: returns the instant snapshot plus the fresh promise. */
-export function getSlots(date: string, serviceId?: string): SlotsResult {
-  const entry = cache.get(key(date, serviceId));
+export function getSlots(date: string, groupId?: string): SlotsResult {
+  const entry = cache.get(key(date, groupId));
   if (entry?.data && Date.now() - entry.fetchedAt < TTL_MS) {
     return { data: entry.data, fresh: Promise.resolve(entry.data), hit: true };
   }
   if (entry?.data) {
     // stale-while-revalidate: render now, refresh in the background
-    void load(date, serviceId);
-    return { data: entry.data, fresh: load(date, serviceId), hit: false };
+    void load(date, groupId);
+    return { data: entry.data, fresh: load(date, groupId), hit: false };
   }
-  return { data: null, fresh: load(date, serviceId), hit: false };
+  return { data: null, fresh: load(date, groupId), hit: false };
 }
 
 /** Warm the cache for upcoming days (called from the day strip). */
-export function prefetchDays(dates: string[], serviceId?: string): void {
+export function prefetchDays(dates: string[], groupId?: string): void {
   for (const date of dates) {
-    const entry = cache.get(key(date, serviceId));
+    const entry = cache.get(key(date, groupId));
     if (!entry?.data || Date.now() - entry.fetchedAt > TTL_MS) {
-      void load(date, serviceId);
+      void load(date, groupId);
     }
   }
 }

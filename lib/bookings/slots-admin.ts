@@ -3,7 +3,7 @@ import "server-only";
 import { and, desc, eq, ilike, inArray, notInArray, or, sql, type SQL } from "drizzle-orm";
 
 import { db } from "@/src/db";
-import { bookings, bookingSlots, bookingSlotServices, servicesI18n } from "@/src/db/schema";
+import { bookings, bookingSlots, bookingSlotGroups, serviceGroupsI18n } from "@/src/db/schema";
 import {
   computeSlotStatus,
   slotStatusCondition,
@@ -13,7 +13,7 @@ import {
 export type SlotFilters = {
   search?: string;
   status?: "all" | SlotStatus;
-  serviceId?: string;
+  groupId?: string;
 };
 
 function slotConditions(opts: SlotFilters): (SQL | undefined)[] {
@@ -22,13 +22,13 @@ function slotConditions(opts: SlotFilters): (SQL | undefined)[] {
     // Derived-status match (active/inactive/expired) as a raw SQL condition.
     conditions.push(sql.raw(slotStatusCondition(opts.status)));
   }
-  if (opts.serviceId) {
+  if (opts.groupId) {
     const noLinks = sql`NOT EXISTS (
-      SELECT 1 FROM ${bookingSlotServices} bss WHERE bss.slot_id = ${bookingSlots.id}
+      SELECT 1 FROM ${bookingSlotGroups} bsg WHERE bsg.slot_id = ${bookingSlots.id}
     )`;
     const hasLink = sql`EXISTS (
-      SELECT 1 FROM ${bookingSlotServices} bss
-      WHERE bss.slot_id = ${bookingSlots.id} AND bss.service_id = ${opts.serviceId}
+      SELECT 1 FROM ${bookingSlotGroups} bsg
+      WHERE bsg.slot_id = ${bookingSlots.id} AND bsg.group_id = ${opts.groupId}
     )`;
     conditions.push(or(hasLink, noLinks));
   }
@@ -111,35 +111,35 @@ async function bookedCounts(slotIds: string[]): Promise<Map<string, number>> {
 }
 
 /**
- * Linked service titles per slot (admin display), batch-loaded with one
+ * Linked group titles per slot (admin display), batch-loaded with one
  * `inArray` join across both locales. Slots without links return an empty
- * list (= all services).
+ * list (= all groups).
  */
-async function slotServicesMap(
+async function slotGroupsMap(
   slotIds: string[],
-): Promise<Map<string, SlotAdminRow["services"]>> {
-  const map = new Map<string, SlotAdminRow["services"]>();
+): Promise<Map<string, SlotAdminRow["groups"]>> {
+  const map = new Map<string, SlotAdminRow["groups"]>();
   if (slotIds.length === 0) return map;
 
   const rows = await db
     .select({
-      slotId: bookingSlotServices.slotId,
-      serviceId: bookingSlotServices.serviceId,
-      locale: servicesI18n.locale,
-      title: servicesI18n.title,
+      slotId: bookingSlotGroups.slotId,
+      groupId: bookingSlotGroups.groupId,
+      locale: serviceGroupsI18n.locale,
+      title: serviceGroupsI18n.name,
     })
-    .from(bookingSlotServices)
-    .innerJoin(servicesI18n, eq(servicesI18n.serviceId, bookingSlotServices.serviceId));
+    .from(bookingSlotGroups)
+    .innerJoin(serviceGroupsI18n, eq(serviceGroupsI18n.groupId, bookingSlotGroups.groupId));
 
   const byKey = new Map<
     string,
     { slotId: string; id: string; titleFa: string; titleEn: string | null }
   >();
   for (const row of rows) {
-    const key = `${row.slotId}:${row.serviceId}`;
+    const key = `${row.slotId}:${row.groupId}`;
     const entry = byKey.get(key) ?? {
       slotId: row.slotId,
-      id: row.serviceId,
+      id: row.groupId,
       titleFa: "",
       titleEn: null,
     };
@@ -160,10 +160,10 @@ async function slotServicesMap(
 
 export type SlotAdminRow = {
   id: string;
-  serviceIds: string[];
-  /** Localized linked-service titles; empty when the slot allows all services. */
-  services: Array<{ id: string; title: string }>;
-  allServices: boolean;
+  groupIds: string[];
+  /** Localized linked-group titles; empty when the slot allows all groups. */
+  groups: Array<{ id: string; title: string }>;
+  allGroups: boolean;
   slotDate: string;
   startTime: string;
   endTime: string;
@@ -191,7 +191,7 @@ export async function listSlotsAdmin(query: {
   perPage: number;
   search?: string;
   status?: "all" | SlotStatus;
-  serviceId?: string;
+  groupId?: string;
 }): Promise<SlotsListResult> {
   const offset = (query.page - 1) * query.perPage;
   const where = and(...slotConditions(query));
@@ -211,18 +211,18 @@ export async function listSlotsAdmin(query: {
     .offset(offset);
 
   const ids = rows.map((row) => row.id);
-  const [counts, serviceMap] = await Promise.all([
+  const [counts, groupMap] = await Promise.all([
     bookedCounts(ids),
-    slotServicesMap(ids),
+    slotGroupsMap(ids),
   ]);
 
   const items: SlotAdminRow[] = rows.map((row) => {
-    const services = serviceMap.get(row.id) ?? [];
+    const groups = groupMap.get(row.id) ?? [];
     return {
       id: row.id,
-      serviceIds: services.map((s) => s.id),
-      services,
-      allServices: services.length === 0,
+      groupIds: groups.map((g) => g.id),
+      groups,
+      allGroups: groups.length === 0,
       slotDate: row.slotDate,
       startTime: row.startTime,
       endTime: row.endTime,

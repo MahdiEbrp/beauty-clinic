@@ -12,7 +12,7 @@ import {
 function slot(id: string, date: string, start: string, end: string): SlotOption {
   return {
     id,
-    serviceId: null,
+    groupIds: [],
     slotDate: date,
     startTime: start,
     endTime: end,
@@ -25,20 +25,16 @@ function slot(id: string, date: string, start: string, end: string): SlotOption 
 
 function line(id: string, s: SlotOption | null, quantity = 1): CartItem {
   return {
-    service: {
+    group: {
       id,
       slug: id,
       title: id,
-      shortDesc: null,
-      price: 1000,
-      priceType: "fixed",
-      durationMin: 45,
-      sessionsCount: 1,
-      groupSlug: "g",
-      groupTitle: "G",
-      categorySlug: "c",
-      categoryTitle: "C",
-    } as unknown as CartItem["service"],
+      description: null,
+      icon: null,
+      image: null,
+      categories: [],
+      groupIndex: 0,
+    },
     quantity,
     slot: s,
   };

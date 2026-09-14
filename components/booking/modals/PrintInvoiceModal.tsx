@@ -8,8 +8,6 @@ export type InvoiceItem = {
   title: string;
   slotDate: string;
   startTime: string;
-  durationMin: number;
-  amount: number;
 };
 
 export type InvoiceData = {
@@ -19,9 +17,7 @@ export type InvoiceData = {
   phone: string;
   paymentReference: string | null;
   items: InvoiceItem[];
-  total: number;
   deposit: number;
-  remaining: number;
   currency: string;
 };
 
@@ -150,14 +146,13 @@ export default function PrintInvoiceModal({ data, onClose, address, phoneDisplay
             </div>
           </div>
 
-          {/* Services table */}
+          {/* Groups table */}
           <table className="w-full border-collapse overflow-hidden rounded-control border border-slate-300 text-xs">
             <thead>
               <tr className="bg-slate-800 font-black text-white">
                 <th className="w-12 p-2.5 text-center">{t("invoiceModal.colIndex")}</th>
                 <th className="p-2.5 text-right">{t("invoiceModal.colService")}</th>
                 <th className="p-2.5 text-center">{t("invoiceModal.colWhen")}</th>
-                <th className="p-2.5 text-center">{t("invoiceModal.colDuration")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -169,7 +164,6 @@ export default function PrintInvoiceModal({ data, onClose, address, phoneDisplay
                     <div>{item.slotDate}</div>
                     <div className="text-[11px] text-copper-deep">{t("invoiceModal.time", { time: item.startTime.slice(0, 5) })}</div>
                   </td>
-                  <td className="p-3 text-center font-medium text-slate-600">{item.durationMin} min</td>
                 </tr>
               ))}
             </tbody>

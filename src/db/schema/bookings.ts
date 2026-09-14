@@ -16,7 +16,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { users } from "./auth";
-import { services } from "./service-catalog";
+import { serviceGroups } from "./service-catalog";
 
 export const bookingStatusEnum = pgEnum("booking_status", [
   "pending",
@@ -28,8 +28,8 @@ export const bookingStatusEnum = pgEnum("booking_status", [
 
 /**
  * A staff-managed block of availability (the supply side of booking).
- * A slot with no linked services is bookable for every service; linked ones
- * restrict it to exactly those services (see `bookingSlotServices`).
+ * A slot with no linked groups is bookable for every group; linked ones
+ * restrict it to exactly those groups (see `bookingSlotGroups`).
  */
 export const bookingSlots = pgTable(
   "booking_slots",
@@ -58,26 +58,31 @@ export const bookingSlots = pgTable(
 );
 
 /**
- * Slot ↔ service availability (one slot → many services). An empty set means
- * the slot accepts every service; any rows restrict it to those services.
+ * Slot ↔ service-group availability (one slot → many groups). An empty set
+ * means the slot accepts every group; any rows restrict it to those groups.
  */
-export const bookingSlotServices = pgTable(
-  "booking_slot_services",
+export const bookingSlotGroups = pgTable(
+  "booking_slot_groups",
   {
     slotId: uuid("slot_id")
       .notNull()
       .references(() => bookingSlots.id, { onDelete: "cascade" }),
-    serviceId: uuid("service_id")
+    groupId: uuid("group_id")
       .notNull()
-      .references(() => services.id, { onDelete: "cascade" }),
+      .references(() => serviceGroups.id, { onDelete: "cascade" }),
   },
   (table) => [
-    primaryKey({ columns: [table.slotId, table.serviceId] }),
-    index("booking_slot_services_service_idx").on(table.serviceId),
+    primaryKey({ columns: [table.slotId, table.groupId] }),
+    index("booking_slot_groups_group_idx").on(table.groupId),
   ],
 );
 
-/** A public reservation tied to a slot. */
+/**
+ * A public reservation tied to a slot and a service group (face filler, body
+ * filler, …). Multiple group lines share one `groupRef` (see
+ * `lib/bookings/service.ts`). Service prices are never stored or shown — only
+ * the single fixed deposit from settings is charged (see `booking-checkout`).
+ */
 export const bookings = pgTable(
   "bookings",
   {
@@ -85,20 +90,15 @@ export const bookings = pgTable(
     fullName: text("full_name").notNull(),
     phone: text("phone").notNull(),
     email: text("email"),
-    serviceId: uuid("service_id").references(() => services.id, {
+    groupId: uuid("group_id").references(() => serviceGroups.id, {
       onDelete: "set null",
     }),
-    serviceTitle: text("service_title").notNull(),
-    servicePrice: numeric("service_price", { precision: 12, scale: 2 }),
-    /**
-     * Multi-service orders share one `groupRef`; each row is one service +
-     * slot line inside the group (see `lib/bookings/service.ts`).
-     */
+    /** Snapshot of the group name at booking time (never a price). */
+    groupTitle: text("group_title").notNull().default(""),
+    /** Multi-group orders share one `groupRef`; each row is one group+slot line. */
     groupRef: text("group_ref").notNull(),
     quantity: integer("quantity").notNull().default(1),
     currency: text("currency").notNull().default("تومان"),
-    durationMin: integer("duration_min"),
-    sessionsCount: integer("sessions_count").notNull().default(1),
     slotId: uuid("slot_id").references(() => bookingSlots.id, {
       onDelete: "set null",
     }),
@@ -108,6 +108,7 @@ export const bookings = pgTable(
     customerId: uuid("customer_id").references(() => users.id, {
       onDelete: "set null",
     }),
+    /** The one fixed deposit for the whole order (never a per-service sum). */
     totalAmount: numeric("total_amount", { precision: 12, scale: 2 }).notNull().default("0"),
     status: bookingStatusEnum("status").notNull().default("pending"),
     paymentReference: text("payment_reference"),
@@ -127,7 +128,7 @@ export const bookings = pgTable(
     index("bookings_slot_id_idx").on(table.slotId),
     index("bookings_customer_id_idx").on(table.customerId),
     index("bookings_status_idx").on(table.status),
-    index("bookings_service_id_idx").on(table.serviceId),
+    index("bookings_group_id_idx").on(table.groupId),
     index("bookings_created_at_idx").on(table.createdAt),
     index("bookings_group_ref_idx").on(table.groupRef),
   ],
@@ -135,25 +136,25 @@ export const bookings = pgTable(
 
 export const bookingSlotsRelations = relations(bookingSlots, ({ one, many }) => ({
   creator: one(users, { fields: [bookingSlots.createdBy], references: [users.id] }),
-  services: many(bookingSlotServices),
+  groups: many(bookingSlotGroups),
   bookings: many(bookings),
 }));
 
-export const bookingSlotServicesRelations = relations(bookingSlotServices, ({ one }) => ({
+export const bookingSlotGroupsRelations = relations(bookingSlotGroups, ({ one }) => ({
   slot: one(bookingSlots, {
-    fields: [bookingSlotServices.slotId],
+    fields: [bookingSlotGroups.slotId],
     references: [bookingSlots.id],
   }),
-  service: one(services, {
-    fields: [bookingSlotServices.serviceId],
-    references: [services.id],
+  group: one(serviceGroups, {
+    fields: [bookingSlotGroups.groupId],
+    references: [serviceGroups.id],
   }),
 }));
 
 export const bookingsRelations = relations(bookings, ({ one }) => ({
-  service: one(services, {
-    fields: [bookings.serviceId],
-    references: [services.id],
+  group: one(serviceGroups, {
+    fields: [bookings.groupId],
+    references: [serviceGroups.id],
   }),
   slot: one(bookingSlots, {
     fields: [bookings.slotId],
@@ -165,6 +166,7 @@ export const bookingsRelations = relations(bookings, ({ one }) => ({
 export type BookingStatus = (typeof bookingStatusEnum.enumValues)[number];
 export type BookingSlot = typeof bookingSlots.$inferSelect;
 export type NewBookingSlot = typeof bookingSlots.$inferInsert;
-export type BookingSlotService = typeof bookingSlotServices.$inferSelect;
+export type BookingSlotGroup = typeof bookingSlotGroups.$inferSelect;
+export type NewBookingSlotGroup = typeof bookingSlotGroups.$inferInsert;
 export type Booking = typeof bookings.$inferSelect;
 export type NewBooking = typeof bookings.$inferInsert;

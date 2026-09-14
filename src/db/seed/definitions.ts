@@ -102,6 +102,8 @@ export const SYSTEM_SETTINGS: SettingInput[] = [
   { key: "booking.slot_duration_min", value: 30, type: "number" },
   { key: "booking.slot_default_capacity", value: 1, type: "number" },
   { key: "booking.slot_window_days", value: 30, type: "number" },
+  // Default service groups for interval-generated slots; empty = all groups.
+  { key: "booking.slot_groups", value: [], type: "array" },
   { key: "booking.min_cancel_hours", value: 24, type: "number" },
   { key: "booking.price", value: 100000, type: "number" },
   {

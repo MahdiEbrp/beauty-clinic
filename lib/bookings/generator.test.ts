@@ -35,20 +35,31 @@ vi.mock("@/src/db", () => ({
   },
 }));
 
-function mockTx(existing: Array<{ slotDate: string; startTime: string }> = []) {
+function mockTx(existing: Array<{ id?: string; slotDate: string; startTime: string }> = []) {
   return {
     execute: vi.fn().mockResolvedValue([]),
-    select: vi.fn().mockReturnValue({
-      from: vi.fn().mockReturnValue({
-        where: vi.fn().mockReturnValue(existing),
+    select: vi.fn()
+      .mockReturnValueOnce({
+        from: vi.fn().mockReturnValue({ where: vi.fn().mockReturnValue(existing) }),
+      })
+      .mockReturnValueOnce({
+        from: vi.fn().mockReturnValue({ where: vi.fn().mockReturnValue([]) }),
+      })
+      .mockReturnValue({
+        from: vi.fn().mockReturnValue({ where: vi.fn().mockReturnValue([]) }),
       }),
-    }),
     insert: vi.fn().mockReturnValue({
       values: vi.fn().mockReturnValue({
         onConflictDoNothing: vi.fn().mockReturnValue({
           returning: vi.fn().mockResolvedValue([{ id: "slot-1" }]),
         }),
       }),
+    }),
+    update: vi.fn().mockReturnValue({
+      set: vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue(undefined) }),
+    }),
+    delete: vi.fn().mockReturnValue({
+      where: vi.fn().mockResolvedValue(undefined),
     }),
   };
 }
@@ -181,13 +192,13 @@ describe("ensureAutoSlotsWithConfig", () => {
     return keys;
   }
 
-  function seededRows(): Array<{ slotDate: string; startTime: string }> {
-    const rows: Array<{ slotDate: string; startTime: string }> = [];
+  function seededRows(): Array<{ id: string; slotDate: string; startTime: string }> {
+    const rows: Array<{ id: string; slotDate: string; startTime: string }> = [];
     for (const date of windowKeys(7, "UTC")) {
       if (weekdayOf(date) === "Saturday") {
-        for (const start of ["09:00", "09:30", "10:00"]) rows.push({ slotDate: date, startTime: start });
+        for (const start of ["09:00", "09:30", "10:00"]) rows.push({ id: `${date}-${start}`, slotDate: date, startTime: start });
       } else {
-        for (const start of ["10:00", "10:30", "11:00", "11:30"]) rows.push({ slotDate: date, startTime: start });
+        for (const start of ["10:00", "10:30", "11:00", "11:30"]) rows.push({ id: `${date}-${start}`, slotDate: date, startTime: start });
       }
     }
     return rows;

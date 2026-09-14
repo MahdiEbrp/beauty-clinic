@@ -7,20 +7,20 @@ import { LayoutList, Search, X } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 
-export type ServiceOption = { id: string; title: string };
+export type GroupOption = { id: string; title: string };
 
 /**
- * Searchable multi-select for linking services to a slot (one slot → many
- * services). An empty selection intentionally means "available for every
- * service" — the hint below the field makes that explicit.
+ * Searchable multi-select for linking service groups to a slot (one slot →
+ * many groups). An empty selection intentionally means "available for every
+ * group" — the hint below the field makes that explicit.
  */
-export function ServiceMultiSelect({
+export function GroupMultiSelect({
   options,
   selected,
   onChange,
   loading,
 }: {
-  options: ServiceOption[];
+  options: GroupOption[];
   selected: string[];
   onChange: (next: string[]) => void;
   loading?: boolean;
@@ -54,7 +54,7 @@ export function ServiceMultiSelect({
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder={t("fields.services.searchPlaceholder")}
+          placeholder={t("fields.groups.searchPlaceholder")}
           className="h-full w-full bg-transparent text-dash-body-sm text-accent outline-none placeholder:text-content-tertiary"
         />
       </div>
@@ -77,7 +77,7 @@ export function ServiceMultiSelect({
 
       <div
         role="group"
-        aria-label={t("fields.services.label")}
+        aria-label={t("fields.groups.label")}
         className="max-h-56 overflow-y-auto rounded-control border border-border-primary bg-surface-primary"
       >
         {loading ? (
@@ -88,7 +88,7 @@ export function ServiceMultiSelect({
           </div>
         ) : filtered.length === 0 ? (
           <p className="p-3 text-dash-caption text-content-tertiary">
-            {query.trim() ? t("fields.services.noResults") : t("fields.services.empty")}
+            {query.trim() ? t("fields.groups.noResults") : t("fields.groups.empty")}
           </p>
         ) : (
           <ul className="divide-y divide-border-primary">
@@ -120,8 +120,8 @@ export function ServiceMultiSelect({
       <p className="flex items-center gap-1.5 text-dash-caption text-content-tertiary">
         <LayoutList className="size-3.5 shrink-0" aria-hidden="true" />
         {selected.length === 0
-          ? t("fields.services.allHint")
-          : t("fields.services.count", { count: selected.length })}
+          ? t("fields.groups.allHint")
+          : t("fields.groups.count", { count: selected.length })}
       </p>
     </div>
   );

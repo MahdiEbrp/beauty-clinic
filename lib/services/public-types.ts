@@ -92,6 +92,7 @@ export type PublicTreeCategory = {
 
 /** A localized group with its active categories. */
 export type PublicTreeGroup = {
+  id: string;
   slug: string;
   icon: string | null;
   image: string | null;

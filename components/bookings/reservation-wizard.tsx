@@ -10,9 +10,9 @@ import { DatePickerField } from "@/components/date-time-picker/date-picker-field
 import { WizardShell, type WizardStep } from "./wizard-shell";
 import { Field, ReviewBlock, SelectField, inputClass } from "./wizard-fields";
 import {
-  ServiceSelectStep,
-  type ServiceOption,
-} from "./service-select-step";
+  GroupSelectStep,
+  type GroupOption,
+} from "./group-select-step";
 
 const STEPS: WizardStep[] = [
   { key: "service", labelKey: "reservationWizard.steps.service.name" },
@@ -23,12 +23,11 @@ export function ReservationWizard({
   mode,
   reservation,
   backHref,
-  currency,
 }: {
   mode: "create" | "edit";
   reservation?: ReservationAdmin | null;
   backHref: string;
-  currency: string;
+  currency?: string;
 }) {
   const t = useTranslations("reservationWizard");
   const locale = useLocale();
@@ -42,9 +41,9 @@ export function ReservationWizard({
   const [notes, setNotes] = useState(reservation?.notes ?? "");
   const [status, setStatus] = useState<BookingStatus>(reservation?.status ?? "pending");
 
-  const [serviceId, setServiceId] = useState(reservation?.serviceId ?? "");
-  const [services, setServices] = useState<ServiceOption[]>([]);
-  const [servicesLoading, setServicesLoading] = useState(true);
+  const [groupId, setGroupId] = useState(reservation?.groupId ?? "");
+  const [groups, setGroups] = useState<GroupOption[]>([]);
+  const [groupsLoading, setGroupsLoading] = useState(true);
   const [slotDate, setSlotDate] = useState("");
   const [slots, setSlots] = useState<Array<{ id: string; label: string }>>([]);
   const [slotId, setSlotId] = useState("");
@@ -53,29 +52,22 @@ export function ReservationWizard({
     let active = true;
     void (async () => {
       try {
-        const res = await fetch("/api/v1/services?perPage=100&status=active", {
+        const res = await fetch("/api/v1/service-groups?perPage=100&status=active", {
           credentials: "include",
         });
         if (!res.ok) return;
         const payload = (await res.json()) as {
           data: {
-            items: Array<{
-              id: string;
-              title: string;
-              price: number | null;
-              priceType: "fixed" | "from" | "on_request";
-              durationMin: number | null;
-              sessionsCount: number;
-              categoryName: string;
-              groupName: string;
-            }>;
+            items: Array<{ id: string; name: string }>;
           };
         };
-        if (active) setServices(payload.data.items);
+        if (active) {
+          setGroups(payload.data.items.map((item) => ({ id: item.id, name: item.name })));
+        }
       } catch {
         // optional
       } finally {
-        if (active) setServicesLoading(false);
+        if (active) setGroupsLoading(false);
       }
     })();
     return () => {
@@ -89,7 +81,7 @@ export function ReservationWizard({
     void (async () => {
       try {
         const params = new URLSearchParams({ date: slotDate });
-        if (serviceId) params.set("serviceId", serviceId);
+        if (groupId) params.set("groupId", groupId);
         const res = await fetch(`/api/public/slots?${params.toString()}`);
         if (!res.ok) return;
         const payload = (await res.json()) as {
@@ -110,12 +102,12 @@ export function ReservationWizard({
     return () => {
       active = false;
     };
-  }, [slotDate, serviceId]);
+  }, [slotDate, groupId]);
 
   const customerValid =
     fullName.trim().length >= 2 && /^[0-9+][0-9\s()-]{6,19}$/.test(phone.trim());
   const canContinue =
-    step === 0 ? Boolean(serviceId) : step === 1 ? customerValid : true;
+    step === 0 ? Boolean(groupId) : step === 1 ? customerValid : true;
 
   const submit = async () => {
     setSubmitting(true);
@@ -129,7 +121,7 @@ export function ReservationWizard({
             fullName: fullName.trim(),
             phone: phone.trim(),
             email: email.trim() || null,
-            serviceId,
+            groupId,
             slotId,
             locale: "fa",
             notes: notes.trim() || null,
@@ -165,8 +157,8 @@ export function ReservationWizard({
     }
   };
 
-  const selectedService =
-    services.find((item) => item.id === serviceId)?.title ?? reservation?.serviceTitle;
+  const selectedGroup =
+    groups.find((item) => item.id === groupId)?.name ?? reservation?.groupTitle;
 
   return (
     <WizardShell
@@ -182,12 +174,11 @@ export function ReservationWizard({
       onSubmit={submit}
     >
       {step === 0 ? (
-        <ServiceSelectStep
-          services={services}
-          selectedId={serviceId}
-          onSelect={setServiceId}
-          loading={servicesLoading}
-          currency={currency}
+        <GroupSelectStep
+          groups={groups}
+          selectedId={groupId}
+          onSelect={setGroupId}
+          loading={groupsLoading}
         />
       ) : step === 1 ? (
         <div className="grid gap-4 sm:grid-cols-2">
@@ -286,7 +277,7 @@ export function ReservationWizard({
           status={status}
           mode={mode}
           slotDate={slotDate}
-          serviceTitle={selectedService ?? "—"}
+          groupTitle={selectedGroup ?? "—"}
           slotLabel={slots.find((item) => item.id === slotId)?.label ?? "—"}
         />
       )}

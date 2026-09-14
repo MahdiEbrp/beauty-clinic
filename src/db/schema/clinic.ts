@@ -12,7 +12,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-import { localeEnum } from "./service-catalog";
+import { localeEnum, serviceGroups } from "./service-catalog";
 
 /**
  * Weekly working hours — one row per open weekday (English names, the same
@@ -60,6 +60,27 @@ export const slotPatterns = pgTable(
   ],
 );
 
+/**
+ * Slot pattern ↔ service-group availability (one pattern row → many groups).
+ * An empty set means the generated slot accepts every group; any rows restrict
+ * it to exactly those groups (mirrors `bookingSlotGroups`).
+ */
+export const slotPatternGroups = pgTable(
+  "slot_pattern_groups",
+  {
+    patternId: uuid("pattern_id")
+      .notNull()
+      .references(() => slotPatterns.id, { onDelete: "cascade" }),
+    groupId: uuid("group_id")
+      .notNull()
+      .references(() => serviceGroups.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    primaryKey({ columns: [table.patternId, table.groupId] }),
+    index("slot_pattern_groups_group_idx").on(table.groupId),
+  ],
+);
+
 /** Social network links shown in the contact/footer sections. */
 export const socialLinks = pgTable(
   "social_links",
@@ -99,7 +120,24 @@ export const socialLinksI18nRelations = relations(socialLinksI18n, ({ one }) => 
   }),
 }));
 
+export const slotPatternsRelations = relations(slotPatterns, ({ many }) => ({
+  groups: many(slotPatternGroups),
+}));
+
+export const slotPatternGroupsRelations = relations(slotPatternGroups, ({ one }) => ({
+  pattern: one(slotPatterns, {
+    fields: [slotPatternGroups.patternId],
+    references: [slotPatterns.id],
+  }),
+  group: one(serviceGroups, {
+    fields: [slotPatternGroups.groupId],
+    references: [serviceGroups.id],
+  }),
+}));
+
 export type WorkingHoursRow = typeof workingHours.$inferSelect;
 export type NewWorkingHours = typeof workingHours.$inferInsert;
 export type SlotPatternRow = typeof slotPatterns.$inferSelect;
 export type NewSlotPattern = typeof slotPatterns.$inferInsert;
+export type SlotPatternGroup = typeof slotPatternGroups.$inferSelect;
+export type NewSlotPatternGroup = typeof slotPatternGroups.$inferInsert;

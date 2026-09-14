@@ -21,7 +21,7 @@ export const GET = withSecurity(
   },
   async (_request, ctx) => {
     const query = ctx.query ?? (() => { throw new Error("Query params are missing"); })();
-    const slots = await availableSlots(query.date, query.serviceId);
+    const slots = await availableSlots(query.date, query.groupId);
     return jsonOk(slots);
   },
 );

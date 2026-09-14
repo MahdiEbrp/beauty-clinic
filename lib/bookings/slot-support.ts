@@ -4,7 +4,7 @@ import { eq, inArray } from "drizzle-orm";
 
 import { ApiError } from "@/lib/api/errors";
 import { db } from "@/src/db";
-import { bookingSlotServices, bookingSlots } from "@/src/db/schema";
+import { bookingSlotGroups, bookingSlots } from "@/src/db/schema";
 
 export type SlotRow = typeof bookingSlots.$inferSelect;
 
@@ -36,19 +36,19 @@ export async function requireSlot(id: string): Promise<SlotRow> {
 }
 
 /**
- * Replaces the slot ↔ service links wholesale (delete + insert). Runs inside a
+ * Replaces the slot ↔ group links wholesale (delete + insert). Runs inside a
  * single transaction so a concurrent booking can never read a slot with its
- * services half-deleted.
+ * groups half-deleted.
  */
-export async function replaceSlotServices(
+export async function replaceSlotGroups(
   slotId: string,
-  serviceIds: string[],
+  groupIds: string[],
 ) {
   await db.transaction(async (tx) => {
-    await tx.delete(bookingSlotServices).where(eq(bookingSlotServices.slotId, slotId));
-    if (serviceIds.length > 0) {
-      await tx.insert(bookingSlotServices).values(
-        serviceIds.map((serviceId) => ({ slotId, serviceId })),
+    await tx.delete(bookingSlotGroups).where(eq(bookingSlotGroups.slotId, slotId));
+    if (groupIds.length > 0) {
+      await tx.insert(bookingSlotGroups).values(
+        groupIds.map((groupId) => ({ slotId, groupId })),
       );
     }
   });

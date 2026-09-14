@@ -2,13 +2,13 @@ import { and, eq, gte, inArray, lte, ne, notInArray, or, sql } from "drizzle-orm
 
 import { ApiError } from "@/lib/api/errors";
 import { db } from "@/src/db";
-import { bookingSlotServices, bookings, bookingSlots } from "@/src/db/schema";
-import { existingSlotKeys, requireSlot, replaceSlotServices } from "./slot-support";
+import { bookingSlotGroups, bookings, bookingSlots } from "@/src/db/schema";
+import { existingSlotKeys, requireSlot, replaceSlotGroups } from "./slot-support";
 import { computeSlotStatus, type SlotStatus } from "./slot-status";
 
 export type SlotSummary = {
   id: string;
-  serviceIds: string[];
+  groupIds: string[];
   slotDate: string;
   startTime: string;
   endTime: string;
@@ -22,11 +22,11 @@ export type SlotSummary = {
 
 type SlotRow = typeof bookingSlots.$inferSelect;
 
-function toSummary(row: SlotRow, bookedCount: number, serviceIds: string[]): SlotSummary {
+function toSummary(row: SlotRow, bookedCount: number, groupIds: string[]): SlotSummary {
   const status = computeSlotStatus(row.isActive, row.slotDate, row.endTime);
   return {
     id: row.id,
-    serviceIds,
+    groupIds,
     slotDate: row.slotDate,
     startTime: row.startTime,
     endTime: row.endTime,
@@ -64,38 +64,38 @@ async function bookedCounts(slotIds: string[]): Promise<Map<string, number>> {
   return map;
 }
 
-/** Linked service ids per slot, batch-loaded (empty array = all services). */
-async function slotServicesMap(slotIds: string[]): Promise<Map<string, string[]>> {
+/** Linked group ids per slot, batch-loaded (empty array = all groups). */
+async function slotGroupsMap(slotIds: string[]): Promise<Map<string, string[]>> {
   const map = new Map<string, string[]>();
   if (slotIds.length === 0) return map;
 
   const rows = await db
     .select({
-      slotId: bookingSlotServices.slotId,
-      serviceId: bookingSlotServices.serviceId,
+      slotId: bookingSlotGroups.slotId,
+      groupId: bookingSlotGroups.groupId,
     })
-    .from(bookingSlotServices)
-    .where(inArray(bookingSlotServices.slotId, slotIds));
+    .from(bookingSlotGroups)
+    .where(inArray(bookingSlotGroups.slotId, slotIds));
 
   for (const row of rows) {
     const list = map.get(row.slotId);
-    if (list) list.push(row.serviceId);
-    else map.set(row.slotId, [row.serviceId]);
+    if (list) list.push(row.groupId);
+    else map.set(row.slotId, [row.groupId]);
   }
   return map;
 }
 
 /**
- * True when a slot accepts every service (`NOT EXISTS` link rows); otherwise
- * it must have an explicit link to the requested service.
+ * True when a slot accepts every group (`NOT EXISTS` link rows); otherwise
+ * it must have an explicit link to the requested group.
  */
-function serviceCompatibility(serviceId: string) {
+function groupCompatibility(groupId: string) {
   const noLinks = sql`NOT EXISTS (
-    SELECT 1 FROM ${bookingSlotServices} bss WHERE bss.slot_id = ${bookingSlots.id}
+    SELECT 1 FROM ${bookingSlotGroups} bsg WHERE bsg.slot_id = ${bookingSlots.id}
   )`;
   const hasLink = sql`EXISTS (
-    SELECT 1 FROM ${bookingSlotServices} bss
-    WHERE bss.slot_id = ${bookingSlots.id} AND bss.service_id = ${serviceId}
+    SELECT 1 FROM ${bookingSlotGroups} bsg
+    WHERE bsg.slot_id = ${bookingSlots.id} AND bsg.group_id = ${groupId}
   )`;
   return or(hasLink, noLinks);
 }
@@ -103,12 +103,12 @@ function serviceCompatibility(serviceId: string) {
 export async function listSlots(opts: {
   from?: string;
   to?: string;
-  serviceId?: string;
+  groupId?: string;
 }): Promise<SlotSummary[]> {
   const conditions = [];
   if (opts.from) conditions.push(gte(bookingSlots.slotDate, opts.from));
   if (opts.to) conditions.push(lte(bookingSlots.slotDate, opts.to));
-  if (opts.serviceId) conditions.push(serviceCompatibility(opts.serviceId));
+  if (opts.groupId) conditions.push(groupCompatibility(opts.groupId));
 
   const rows = await db
     .select()
@@ -118,7 +118,7 @@ export async function listSlots(opts: {
 
   const [counts, links] = await Promise.all([
     bookedCounts(rows.map((r) => r.id)),
-    slotServicesMap(rows.map((r) => r.id)),
+    slotGroupsMap(rows.map((r) => r.id)),
   ]);
   return rows.map((row) =>
     toSummary(row, counts.get(row.id) ?? 0, links.get(row.id) ?? []),
@@ -127,23 +127,23 @@ export async function listSlots(opts: {
 
 export async function listSlotsByDate(
   slotDate: string,
-  serviceId?: string,
+  groupId?: string,
 ): Promise<SlotSummary[]> {
-  return listSlots({ from: slotDate, to: slotDate, serviceId });
+  return listSlots({ from: slotDate, to: slotDate, groupId });
 }
 
 /** Only slots that can still accept a booking today. */
 export async function availableSlots(
   slotDate: string,
-  serviceId?: string,
+  groupId?: string,
 ): Promise<SlotSummary[]> {
-  const rows = await listSlots({ from: slotDate, to: slotDate, serviceId });
+  const rows = await listSlots({ from: slotDate, to: slotDate, groupId });
   return rows.filter((s) => s.available);
 }
 
 export async function createSlots(
   input: {
-    serviceIds?: string[];
+    groupIds?: string[];
     slotDate: string;
     startTime: string;
     endTime: string;
@@ -185,42 +185,42 @@ export async function createSlots(
 
   // One bulk insert per unique link set keeps queries low even for batches.
   const links = toCreate.flatMap((item, index) =>
-    (item.serviceIds ?? []).map((serviceId) => ({
+    (item.groupIds ?? []).map((groupId) => ({
       slotId: rows[index]?.id,
-      serviceId,
+      groupId,
     })),
   );
-  const validLinks = links.filter((l): l is { slotId: string; serviceId: string } => Boolean(l.slotId));
-  if (validLinks.length > 0) await db.insert(bookingSlotServices).values(validLinks);
+  const validLinks = links.filter((l): l is { slotId: string; groupId: string } => Boolean(l.slotId));
+  if (validLinks.length > 0) await db.insert(bookingSlotGroups).values(validLinks);
 
   const ids = rows.map((r) => r.id);
-  const [counts, serviceMap] = await Promise.all([
+  const [counts, groupMap] = await Promise.all([
     bookedCounts(ids),
-    slotServicesMap(ids),
+    slotGroupsMap(ids),
   ]);
   return rows.map((row, index) =>
     toSummary(
       row,
       counts.get(row.id) ?? 0,
-      serviceMap.get(row.id) ?? toCreate[index]?.serviceIds ?? [],
+      groupMap.get(row.id) ?? toCreate[index]?.groupIds ?? [],
     ),
   );
 }
 
 export async function getSlot(id: string): Promise<SlotSummary> {
   const row = await requireSlot(id);
-  const [counts, serviceMap] = await Promise.all([
+  const [counts, groupMap] = await Promise.all([
     bookedCounts([row.id]),
-    slotServicesMap([row.id]),
+    slotGroupsMap([row.id]),
   ]);
-  return toSummary(row, counts.get(row.id) ?? 0, serviceMap.get(row.id) ?? []);
+  return toSummary(row, counts.get(row.id) ?? 0, groupMap.get(row.id) ?? []);
 }
 
-/** Replaces the slot ↔ service links wholesale (delete + insert). */
+/** Replaces the slot ↔ group links wholesale (delete + insert). */
 export async function updateSlot(
   id: string,
   patch: {
-    serviceIds?: string[];
+    groupIds?: string[];
     slotDate?: string;
     startTime?: string;
     endTime?: string;
@@ -260,20 +260,20 @@ export async function updateSlot(
     }
   }
 
-  const { serviceIds, ...rest } = patch;
+  const { groupIds, ...rest } = patch;
   const [row] = await db
     .update(bookingSlots)
     .set({ ...rest, updatedAt: new Date() })
     .where(eq(bookingSlots.id, id))
     .returning();
 
-  if (serviceIds) await replaceSlotServices(id, serviceIds);
+  if (groupIds) await replaceSlotGroups(id, groupIds);
 
-  const [counts, serviceMap] = await Promise.all([
+  const [counts, groupMap] = await Promise.all([
     bookedCounts([id]),
-    slotServicesMap([id]),
+    slotGroupsMap([id]),
   ]);
-  return toSummary(row, counts.get(id) ?? 0, serviceMap.get(id) ?? []);
+  return toSummary(row, counts.get(id) ?? 0, groupMap.get(id) ?? []);
 }
 
 export async function deleteSlot(id: string): Promise<void> {

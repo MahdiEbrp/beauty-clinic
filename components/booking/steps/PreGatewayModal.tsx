@@ -75,8 +75,8 @@ export default function PreGatewayModal({
             </div>
             <div className="flex justify-between gap-1.5 rounded-control bg-surface-primary p-2 text-caption">
               {cart.map((line) => (
-                <span key={line.service.id} className="inline-flex min-w-0 flex-1 items-center justify-center gap-1 rounded-control border border-border-primary bg-surface-secondary px-1.5 py-1">
-                  <span className="truncate font-black text-content-primary">{line.service.title}</span>
+                <span key={line.group.id} className="inline-flex min-w-0 flex-1 items-center justify-center gap-1 rounded-control border border-border-primary bg-surface-secondary px-1.5 py-1">
+                  <span className="truncate font-black text-content-primary">{line.group.title}</span>
                   <span className="shrink-0 text-caption text-content-tertiary"><SlotLabel line={line} /></span>
                 </span>
               ))}

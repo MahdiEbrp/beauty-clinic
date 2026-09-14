@@ -11,13 +11,13 @@ import { invalidateSlots } from "./slots-cache";
 import Stepper from "./Stepper";
 import BottomBar from "./BottomBar";
 import BookingModals from "./BookingModals";
-import ServicesStep from "./steps/ServicesStep";
+import GroupsStep from "./steps/GroupsStep";
 import ScheduleStep from "./steps/ScheduleStep";
 import SummaryStep from "./steps/SummaryStep";
 import ConfirmationStep from "./steps/ConfirmationStep";
 import { buildInvoice } from "./invoice";
 import type { InvoiceData } from "./modals/PrintInvoiceModal";
-import type { CartItem, ContactInfo, HealthFlags, WizardStep } from "./types";
+import type { CartItem, ContactInfo, HealthFlags, SelectedGroup, WizardStep } from "./types";
 
 export type ClinicBookingInfo = {
   clinicName: string;
@@ -45,14 +45,45 @@ export type BookingWizardProps = {
 
 const CART_STORAGE_KEY = "nafas_booking_cart";
 
+/**
+ * Guards the persisted cart against schema drift (e.g. carts saved before the
+ * service→group switch held `{ service }`). Only entries that carry a valid
+ * `group` survive; anything else is dropped instead of crashing the wizard.
+ */
+function isCartItem(value: unknown): value is CartItem {
+  if (!value || typeof value !== "object") return false;
+  const group = (value as { group?: unknown }).group;
+  if (!group || typeof group !== "object") return false;
+  const candidate = group as { id?: unknown; title?: unknown };
+  return typeof candidate.id === "string" && typeof candidate.title === "string";
+}
+
 function loadCart(): CartItem[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = window.localStorage.getItem(CART_STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as CartItem[]) : [];
+    if (!raw) return [];
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(isCartItem);
   } catch {
     return [];
   }
+}
+
+/** Finds a group by slug, or the group that owns a service slug (legacy `?service=`). */
+function findGroupBySlug(tree: PublicServiceTree, slug: string): SelectedGroup | null {
+  for (let index = 0; index < tree.groups.length; index += 1) {
+    const group = tree.groups[index];
+    if (!group) continue;
+    if (group.slug === slug) return { ...group, groupIndex: index };
+    for (const category of group.categories) {
+      if (category.services.some((service) => service.slug === slug)) {
+        return { ...group, groupIndex: index };
+      }
+    }
+  }
+  return null;
 }
 
 function VerifiedWizard(props: BookingWizardProps) {
@@ -72,29 +103,14 @@ function VerifiedWizard(props: BookingWizardProps) {
   const [invoice, setInvoice] = useState<InvoiceData | null>(null);
   const checkoutKey = useRef<string | null>(null);
 
-  // One-time hydration + ?service= preselect.
+  // One-time hydration + ?group= / ?service= preselect.
   useEffect(() => {
     const stored = loadCart();
-    const slug = searchParams.get("service");
-    if (slug && !stored.some((item) => item.service.slug === slug)) {
-      outer: for (const groupNode of tree.groups) {
-        for (const category of groupNode.categories) {
-          const service = category.services.find((s) => s.slug === slug);
-          if (service) {
-            stored.push({
-              service: {
-                ...service,
-                groupSlug: groupNode.slug,
-                groupTitle: groupNode.title,
-                categorySlug: category.slug,
-                categoryTitle: category.title,
-              },
-              quantity: 1,
-              slot: null,
-            });
-            break outer;
-          }
-        }
+    const slug = searchParams.get("group") ?? searchParams.get("service");
+    if (slug && !stored.some((item) => item.group.slug === slug)) {
+      const match = findGroupBySlug(tree, slug);
+      if (match && !stored.some((item) => item.group.id === match.id)) {
+        stored.push({ group: match, quantity: 1, slot: null });
       }
     }
     /* eslint-disable react-hooks/set-state-in-effect -- one-time localStorage hydration */
@@ -110,11 +126,7 @@ function VerifiedWizard(props: BookingWizardProps) {
     window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
   }, [cart, hydrated]);
 
-  const totals = useMemo(() => {
-    const total = cart.reduce((sum, item) => sum + Number(item.service.price) * item.quantity, 0);
-    const deposit = cart.length > 0 ? defaultDeposit : 0;
-    return { total, deposit, remaining: Math.max(total - deposit, 0) };
-  }, [cart, defaultDeposit]);
+  const deposit = cart.length > 0 ? defaultDeposit : 0;
 
   const allScheduled = cart.length > 0 && cart.every((line) => line.slot);
   const conflicts = useMemo(() => findCartConflicts(cart), [cart]);
@@ -125,20 +137,20 @@ function VerifiedWizard(props: BookingWizardProps) {
     setHealth((prev) => ({ ...prev, [kind]: value }));
   }, []);
 
-  const toggleService = useCallback((item: CartItem) => {
+  const toggleGroup = useCallback((groupItem: SelectedGroup) => {
     setCart((prev) =>
-      prev.some((line) => line.service.id === item.service.id)
-        ? prev.filter((line) => line.service.id !== item.service.id)
-        : [...prev, { ...item, quantity: 1, slot: null }],
+      prev.some((line) => line.group.id === groupItem.id)
+        ? prev.filter((line) => line.group.id !== groupItem.id)
+        : [...prev, { group: groupItem, quantity: 1, slot: null }],
     );
   }, []);
 
-  const removeLine = useCallback((serviceId: string) => {
-    setCart((prev) => (prev.length === 1 ? [] : prev.filter((line) => line.service.id !== serviceId)));
+  const removeLine = useCallback((groupId: string) => {
+    setCart((prev) => (prev.length === 1 ? [] : prev.filter((line) => line.group.id !== groupId)));
   }, []);
 
-  const assignSlot = useCallback((serviceId: string, slot: CartItem["slot"]) => {
-    setCart((prev) => prev.map((line) => (line.service.id === serviceId ? { ...line, slot } : line)));
+  const assignSlot = useCallback((groupId: string, slot: CartItem["slot"]) => {
+    setCart((prev) => prev.map((line) => (line.group.id === groupId ? { ...line, slot } : line)));
   }, []);
 
   const submitBooking = useCallback(
@@ -154,7 +166,7 @@ function VerifiedWizard(props: BookingWizardProps) {
         isPregnant: false,
         termsAccepted: data.agreeToTerms,
         items: cart.map((line) => ({
-          serviceId: line.service.id,
+          groupId: line.group.id,
           slotId: line.slot?.id ?? "",
           quantity: line.quantity,
         })),
@@ -196,7 +208,7 @@ function VerifiedWizard(props: BookingWizardProps) {
 
   const openInvoice = useCallback(() => {
     if (!group) return;
-    setInvoice(buildInvoice(group, cart, contact, currency, totals, paymentReference));
+    setInvoice(buildInvoice(group, cart, contact, currency, deposit, paymentReference));
     // eslint-disable-next-line react-hooks/exhaustive-deps -- group only
   }, [group]);
 
@@ -214,11 +226,11 @@ function VerifiedWizard(props: BookingWizardProps) {
 
       <main className="mx-auto w-full max-w-4xl flex-1 px-2 pb-40 pt-4 sm:px-5 sm:py-6">
         {effectiveStep === 0 ? (
-          <ServicesStep tree={tree} cart={cart} health={health} phone={clinic.phoneDisplay} onHealthChange={setHealthFlag} onToggle={toggleService} onRemove={removeLine} />
+          <GroupsStep tree={tree} cart={cart} health={health} phone={clinic.phoneDisplay} onHealthChange={setHealthFlag} onToggle={toggleGroup} onRemove={removeLine} />
         ) : null}
         {effectiveStep === 1 ? <ScheduleStep cart={cart} onAssignSlot={assignSlot} onBack={() => setStep(0)} /> : null}
         {effectiveStep === 2 ? (
-          <SummaryStep cart={cart} currency={currency} totals={totals} rules={rules} onSubmit={submitBooking} />
+          <SummaryStep cart={cart} currency={currency} deposit={deposit} rules={rules} onSubmit={submitBooking} />
         ) : null}
         {effectiveStep === 3 && group ? (
           <ConfirmationStep

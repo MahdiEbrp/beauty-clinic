@@ -40,7 +40,7 @@ export async function listBookings(query: {
       or(
         sql`${bookings.fullName} ILIKE ${term}`,
         sql`${bookings.phone} ILIKE ${term}`,
-        sql`${bookings.serviceTitle} ILIKE ${term}`,
+        sql`${bookings.groupTitle} ILIKE ${term}`,
         sql`${bookings.email} ILIKE ${term}`,
       ) as SQL,
     );

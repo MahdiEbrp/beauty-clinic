@@ -7,6 +7,8 @@ export type GeneratorConfig = {
   capacity: number;
   windowDays: number;
   timeZone: string;
+  /** Default service groups for interval-generated slots (empty = all groups). */
+  groupIds: string[];
 };
 
 export const SLOT_GENERATOR_KEYS = {
@@ -15,6 +17,7 @@ export const SLOT_GENERATOR_KEYS = {
   duration: "booking.slot_duration_min",
   capacity: "booking.slot_default_capacity",
   window: "booking.slot_window_days",
+  groups: "booking.slot_groups",
 } as const;
 
 export const DEFAULTS: GeneratorConfig = {
@@ -24,6 +27,7 @@ export const DEFAULTS: GeneratorConfig = {
   capacity: 1,
   windowDays: 30,
   timeZone: DEFAULT_CLINIC_TIMEZONE,
+  groupIds: [],
 };
 
 /** Minutes 0..1439 from an "HH:mm" (or "HH:mm:ss") time. */

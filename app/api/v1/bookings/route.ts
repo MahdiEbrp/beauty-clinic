@@ -25,7 +25,7 @@ export const POST = withSecurity(
     audit: true,
     notification: {
       entityType: "booking",
-      entityId: (ctx) => (ctx.body as { serviceId?: string } | undefined)?.serviceId,
+      entityId: (ctx) => (ctx.body as { groupId?: string } | undefined)?.groupId,
       action: "created",
     },
   },

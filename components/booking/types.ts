@@ -1,17 +1,15 @@
-import type { PublicTreeService } from "@/lib/services/types";
+import type { PublicTreeGroup } from "@/lib/services/types";
 
-/** A public service with its group/category context, ready for the picker. */
-export type SelectedService = PublicTreeService & {
-  groupSlug: string;
-  groupTitle: string;
-  categorySlug: string;
-  categoryTitle: string;
+/** A public service group (with its catalog context) ready for the picker. */
+export type SelectedGroup = PublicTreeGroup & {
+  /** Stable 0-based index in the tree, used to pick a visual theme. */
+  groupIndex: number;
 };
 
 /** Shape returned by `GET /api/public/slots`. */
 export type SlotOption = {
   id: string;
-  serviceId: string | null;
+  groupIds: string[];
   slotDate: string;
   startTime: string;
   endTime: string;
@@ -21,9 +19,9 @@ export type SlotOption = {
   available: boolean;
 };
 
-/** One cart line: service + quantity + its chosen slot. */
+/** One order line: a group + its chosen slot. */
 export type CartItem = {
-  service: SelectedService;
+  group: SelectedGroup;
   quantity: number;
   slot: SlotOption | null;
 };
@@ -39,12 +37,11 @@ export type ContactInfo = {
 /** Group row returned by the public booking endpoints. */
 export type CreatedBookingItem = {
   id: string;
-  serviceTitle: string;
+  groupTitle: string;
   quantity: number;
   slotDate: string | null;
   startTime: string | null;
   endTime: string | null;
-  durationMin: number | null;
   totalAmount: string;
 };
 

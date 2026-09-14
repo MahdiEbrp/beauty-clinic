@@ -14,8 +14,8 @@ import 'dotenv/config';
  *  - survivor = most non-cancelled bookings, then most total bookings, then
  *    newest created_at, then lowest id (deterministic)
  *  - re-points `bookings.slot_id` from each duplicate to the survivor
- *  - merges the duplicate's service links into the survivor
- *    (booking_slot_services survives, so booked services stay bookable)
+ *  - merges the duplicate's group links into the survivor
+ *    (booking_slot_groups survives, so booked groups stay bookable)
  *  - deletes the duplicate slot rows
  */
 async function main() {
@@ -85,14 +85,14 @@ async function main() {
       repointed += repoint.length;
 
       const links = await tx`
-        SELECT DISTINCT service_id FROM booking_slot_services
+        SELECT DISTINCT group_id FROM booking_slot_groups
         WHERE slot_id IN ${tx(losers.map((s) => s.id))}
       `;
       if (links.length > 0) {
         const inserted = await tx`
-          INSERT INTO booking_slot_services (slot_id, service_id)
-          SELECT ${survivor.id}, unnest(${links.map((l) => l.service_id)}::uuid[])
-          ON CONFLICT (slot_id, service_id) DO NOTHING
+          INSERT INTO booking_slot_groups (slot_id, group_id)
+          SELECT ${survivor.id}, unnest(${links.map((l) => l.group_id)}::uuid[])
+          ON CONFLICT (slot_id, group_id) DO NOTHING
           RETURNING slot_id
         `;
         merged += inserted.length;
@@ -108,7 +108,7 @@ async function main() {
   console.log(`Duplicate groups found: ${dupGroups.length}`);
   console.log(`Slots removed: ${removed}`);
   console.log(`Bookings re-pointed: ${repointed}`);
-  console.log(`Service links merged: ${merged}`);
+  console.log(`Group links merged: ${merged}`);
   console.log('Done. You can now run `pnpm db:migrate` to apply the unique index.');
 }
 

@@ -2,27 +2,26 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { AlertCircle, ArrowRight, CalendarDays, Check, Clock } from "lucide-react";
-import { formatNumber } from "@/lib/services/format";
+import { AlertCircle, ArrowRight, CalendarDays, Check } from "lucide-react";
 import { findCartConflicts } from "@/lib/booking/scheduling";
 import { cn } from "@/lib/utils";
 import { SlotLabel } from "../SlotLabel";
 import DateModal from "./DateModal";
-import type { CartItem, SelectedService, SlotOption } from "../types";
+import type { CartItem, SelectedGroup, SlotOption } from "../types";
 
 type ScheduleStepProps = {
   cart: CartItem[];
-  onAssignSlot: (serviceId: string, slot: SlotOption | null) => void;
+  onAssignSlot: (groupId: string, slot: SlotOption | null) => void;
   onBack: () => void;
 };
 
 /**
- * Step 2 — per-service date & time (Template parity). Each cart line opens its
+ * Step 2 — per-group date & time. Each cart line (a treatment group) opens its
  * own themed DateModal fed by REAL slot availability.
  */
 export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleStepProps) {
   const t = useTranslations("booking");
-  const [activeService, setActiveService] = useState<SelectedService | null>(null);
+  const [activeGroup, setActiveGroup] = useState<SelectedGroup | null>(null);
 
   const scheduledCount = cart.filter((line) => line.slot).length;
   const allScheduled = cart.length > 0 && scheduledCount === cart.length;
@@ -33,15 +32,15 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
       <div className="w-full space-y-4">
         <div className="rounded-panel border border-dashed border-border-primary bg-surface-secondary p-10 text-center">
           <AlertCircle className="mx-auto mb-3 size-10 text-copper" aria-hidden="true" />
-          <h3 className="text-body font-black text-content-primary">{t("schedule.noServicesTitle")}</h3>
-          <p className="mx-auto mt-1 max-w-sm text-caption text-content-secondary">{t("schedule.noServicesDesc")}</p>
+          <h3 className="text-body font-black text-content-primary">{t("schedule.noGroupsTitle")}</h3>
+          <p className="mx-auto mt-1 max-w-sm text-caption text-content-secondary">{t("schedule.noGroupsDesc")}</p>
           <button
             type="button"
             onClick={onBack}
             className="mt-4 inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-pill bg-accent px-5 text-body-sm font-black text-content-contrast transition-colors hover:bg-copper-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             <ArrowRight className="rtl-mirror size-4" aria-hidden="true" />
-            {t("schedule.backToServices")}
+            {t("schedule.backToGroups")}
           </button>
         </div>
       </div>
@@ -88,10 +87,9 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
       {/* Table */}
       <div className="overflow-hidden rounded-panel border border-border-primary bg-surface-primary shadow-xs">
         {/* Desktop header */}
-        <div className="hidden grid-cols-[3.5rem_minmax(0,1fr)_6rem_16rem] items-center gap-3 border-b border-border-primary/80 bg-surface-secondary/90 px-4 py-3 text-caption font-black text-accent md:grid">
+        <div className="hidden grid-cols-[3.5rem_minmax(0,1fr)_16rem] items-center gap-3 border-b border-border-primary/80 bg-surface-secondary/90 px-4 py-3 text-caption font-black text-accent md:grid">
           <div className="text-center">{t("schedule.colIndex")}</div>
-          <div>{t("schedule.colService")}</div>
-          <div className="text-center">{t("schedule.colDuration")}</div>
+          <div>{t("schedule.colGroup")}</div>
           <div className="text-center">{t("schedule.colSlot")}</div>
         </div>
 
@@ -99,9 +97,9 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
           {cart.map((line, index) => {
             const assigned = line.slot;
             return (
-              <div key={line.service.id} className="w-full bg-surface-primary even:bg-surface-secondary/15 hover:bg-surface-secondary/50">
+              <div key={line.group.id} className="w-full bg-surface-primary even:bg-surface-secondary/15 hover:bg-surface-secondary/50">
                 {/* Desktop row */}
-                <div className="hidden grid-cols-[3.5rem_minmax(0,1fr)_6rem_16rem] items-center gap-3 px-4 py-3 md:grid">
+                <div className="hidden grid-cols-[3.5rem_minmax(0,1fr)_16rem] items-center gap-3 px-4 py-3 md:grid">
                   <div className="flex items-center justify-center">
                     <span className="flex size-6 shrink-0 items-center justify-center rounded-lg border border-border-interactive/70 bg-surface-secondary text-caption font-black text-content-secondary">
                       {index + 1}
@@ -109,26 +107,16 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
                   </div>
 
                   <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="text-body-sm font-black leading-snug text-content-primary">{line.service.title}</span>
-                      <span className="rounded-pill border border-border-primary bg-surface-secondary px-2 py-0.5 text-caption font-bold text-content-secondary">
-                        {line.service.categoryTitle}
-                      </span>
-                    </div>
-                    {line.service.shortDesc ? (
-                      <p className="mt-0.5 max-w-lg truncate text-caption leading-tight text-content-tertiary">{line.service.shortDesc}</p>
+                    <span className="text-body-sm font-black leading-snug text-content-primary">{line.group.title}</span>
+                    {line.group.description ? (
+                      <p className="mt-0.5 max-w-lg truncate text-caption leading-tight text-content-tertiary">{line.group.description}</p>
                     ) : null}
-                  </div>
-
-                  <div className="flex items-center justify-center gap-1 text-body-sm font-bold text-content-secondary">
-                    <Clock className="size-3.5 shrink-0 text-copper" aria-hidden="true" />
-                    {formatNumber(line.service.durationMin)} {t("appointment.minutes")}
                   </div>
 
                   <div className="flex items-center justify-center">
                     <button
                       type="button"
-                      onClick={() => setActiveService(line.service)}
+                      onClick={() => setActiveGroup(line.group)}
                       className={cn(
                         "inline-flex min-h-11 w-full max-w-64 cursor-pointer select-none items-center justify-between gap-1.5 rounded-pill border px-3 text-caption font-bold transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
                         assigned
@@ -156,21 +144,17 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
                       <span className="flex size-5 shrink-0 items-center justify-center rounded-md border border-border-interactive bg-surface-secondary text-caption font-black text-content-secondary">
                         {index + 1}
                       </span>
-                      <span className="min-w-0 truncate text-body-sm font-black text-content-primary">{line.service.title}</span>
+                      <span className="min-w-0 truncate text-body-sm font-black text-content-primary">{line.group.title}</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between border-t border-border-primary/40 pt-2 text-caption text-content-tertiary">
-                    <span className="inline-flex items-center gap-1">
-                      <Clock className="size-3 shrink-0 text-copper" aria-hidden="true" />
-                      {t("schedule.durationShort", { n: formatNumber(line.service.durationMin) })}
-                    </span>
-                    <span className="font-bold text-content-secondary">{line.service.categoryTitle}</span>
-                  </div>
+                  {line.group.description ? (
+                    <p className="truncate border-t border-border-primary/40 pt-2 text-caption text-content-tertiary">{line.group.description}</p>
+                  ) : null}
 
                   <button
                     type="button"
-                    onClick={() => setActiveService(line.service)}
+                    onClick={() => setActiveGroup(line.group)}
                     className={cn(
                       "inline-flex min-h-11 w-full cursor-pointer select-none items-center justify-between gap-2 rounded-control border px-3 py-2 text-caption font-bold transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
                       assigned ? "border-copper bg-copper/10 text-copper-deep" : "border-border-interactive bg-surface-secondary text-content-secondary hover:border-copper",
@@ -193,14 +177,14 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
         </div>
       </div>
 
-      {/* Per-service date/time modal */}
-      {activeService ? (
+      {/* Per-group date/time modal */}
+      {activeGroup ? (
         <DateModal
-          service={activeService}
-          current={cart.find((line) => line.service.id === activeService.id)?.slot ?? null}
+          group={activeGroup}
+          current={cart.find((line) => line.group.id === activeGroup.id)?.slot ?? null}
           cart={cart}
           onAssign={onAssignSlot}
-          onClose={() => setActiveService(null)}
+          onClose={() => setActiveGroup(null)}
         />
       ) : null}
 

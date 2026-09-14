@@ -15,7 +15,7 @@ type BookingSummaryProps = {
   onToggle: () => void;
 };
 
-/** Collapsible step-3 recap of chosen services + the online deposit. */
+/** Collapsible step-3 recap of chosen groups + the online deposit. */
 export function BookingSummary({ cart, currency, deposit, open, onToggle }: BookingSummaryProps) {
   const t = useTranslations("booking");
 
@@ -47,14 +47,14 @@ export function BookingSummary({ cart, currency, deposit, open, onToggle }: Book
         <div className="space-y-3 border-t border-border-primary/60 bg-surface-secondary p-3.5 pt-3 animate-fade-in sm:p-4">
           <div>
             <div className="mb-1.5 flex items-center justify-between text-caption font-bold text-content-tertiary">
-              <span>{t("summary.selectedServices")}</span>
+              <span>{t("summary.selectedGroups")}</span>
               <span>{formatNumber(cart.length)}</span>
             </div>
             <div className="max-h-60 space-y-2 overflow-y-auto">
               {cart.map((line) => (
-                <div key={line.service.id} className="flex items-center justify-between gap-2.5 rounded-control border border-border-primary/80 bg-surface-primary px-3 py-2.5 text-body-sm">
+                <div key={line.group.id} className="flex items-center justify-between gap-2.5 rounded-control border border-border-primary/80 bg-surface-primary px-3 py-2.5 text-body-sm">
                   <div className="min-w-0 flex-1">
-                    <div className="truncate font-bold text-content-primary">{line.service.title}</div>
+                    <div className="truncate font-bold text-content-primary">{line.group.title}</div>
                     {line.slot ? (
                       <div className="mt-1 flex flex-wrap items-center gap-1.5 text-caption text-content-tertiary">
                         <span className="inline-flex items-center gap-1 font-bold text-content-secondary">

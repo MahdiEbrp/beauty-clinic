@@ -55,8 +55,8 @@ export function slotColumns(): Column<SlotAdminRow>[] {
       ),
     },
     {
-      key: "services",
-      labelKey: "bookingSlots.table.services",
+      key: "groups",
+      labelKey: "bookingSlots.table.groups",
       responsive: "desktop",
       render: (row) => <ServicesCell row={row} />,
     },
@@ -76,18 +76,18 @@ export function slotColumns(): Column<SlotAdminRow>[] {
 
 export function ServicesCell({ row }: { row: SlotAdminRow }) {
   const t = useTranslations();
-  if (row.allServices) {
+  if (row.allGroups) {
     return (
       <span className="inline-flex items-center gap-1.5 text-content-secondary">
         <LayoutList className="size-3.5 shrink-0 text-copper-strong" aria-hidden="true" />
-        {t("bookingSlots.allServices")}
+        {t("bookingSlots.allGroups")}
       </span>
     );
   }
-  const shown = row.services.slice(0, 2).map((s) => s.title);
-  const rest = row.services.length - shown.length;
+  const shown = row.groups.slice(0, 2).map((g) => g.title);
+  const rest = row.groups.length - shown.length;
   return (
-    <span className="block truncate text-content-secondary" title={row.services.map((s) => s.title).join("، ")}>
+    <span className="block truncate text-content-secondary" title={row.groups.map((g) => g.title).join("، ")}>
       {shown.join("، ")}
       {rest > 0 ? ` +${rest}` : ""}
     </span>
@@ -130,9 +130,9 @@ export function SlotMobileCard({ row }: { row: SlotAdminRow }) {
       <p className="text-dash-caption text-content-secondary">
         {t("bookingSlots.table.time")}: {formatTime(row.startTime)} – {formatTime(row.endTime)}
       </p>
-      {!row.allServices && (
+      {!row.allGroups && (
         <p className="truncate text-dash-caption text-content-secondary">
-          {t("bookingSlots.table.services")}:{" "}
+          {t("bookingSlots.table.groups")}:{" "}
           <ServicesInline row={row} />
         </p>
       )}
@@ -144,10 +144,10 @@ export function SlotMobileCard({ row }: { row: SlotAdminRow }) {
 }
 
 function ServicesInline({ row }: { row: SlotAdminRow }) {
-  if (row.allServices) return null;
+  if (row.allGroups) return null;
   return (
     <span className="text-accent">
-      {row.services.map((s) => s.title).join("، ")}
+      {row.groups.map((g) => g.title).join("، ")}
     </span>
   );
 }

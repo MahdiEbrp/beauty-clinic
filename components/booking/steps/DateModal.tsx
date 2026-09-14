@@ -3,28 +3,27 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Check, X, CalendarDays, LoaderCircle } from "lucide-react";
-import { formatNumber } from "@/lib/services/format";
 import { doSlotsOverlap, slotDuration } from "@/lib/booking/scheduling";
 import { cn } from "@/lib/utils";
 import { getSlots, prefetchDays, type SlotsResult } from "../slots-cache";
-import type { CartItem, SelectedService, SlotOption } from "../types";
+import type { CartItem, SelectedGroup, SlotOption } from "../types";
 import { DateSelects, gregorianKey, toParts } from "./date-selects";
 import { TimeSlotGrid } from "./TimeSlotGrid";
 import { formatPrettyDate } from "./pretty-date";
 
 type DateModalProps = {
-  service: SelectedService;
-  /** Slot already assigned to this service, if any (used to pre-open the picker). */
+  group: SelectedGroup;
+  /** Slot already assigned to this group, if any (used to pre-open the picker). */
   current: SlotOption | null;
   cart: CartItem[];
-  onAssign: (serviceId: string, slot: SlotOption) => void;
+  onAssign: (groupId: string, slot: SlotOption) => void;
   onClose: () => void;
 };
 
 const WINDOW_DAYS = 30;
 
-/** Themed per-service date & time picker (Template parity) bound to real slots. */
-export default function DateModal({ service, current, cart, onAssign, onClose }: DateModalProps) {
+/** Themed per-group date & time picker bound to real slots. */
+export default function DateModal({ group, current, cart, onAssign, onClose }: DateModalProps) {
   const t = useTranslations("booking");
   const locale = useLocale() as "fa" | "en";
   const jalali = locale === "fa";
@@ -64,18 +63,18 @@ export default function DateModal({ service, current, cart, onAssign, onClose }:
 
   // Warm the cache for the next days while the customer browses.
   useEffect(() => {
-    prefetchDays(windowDates.slice(1, 6).map(gregorianKey), service.id);
-  }, [service.id, windowDates]);
+    prefetchDays(windowDates.slice(1, 6).map(gregorianKey), group.id);
+  }, [group.id, windowDates]);
 
   // Load the chosen day's real slots (stale-while-revalidate via cache).
   useEffect(() => {
     if (!pickerDateKey) return;
-    const result = getSlots(pickerDateKey, service.id);
+    const result = getSlots(pickerDateKey, group.id);
     /* eslint-disable react-hooks/set-state-in-effect -- sync snapshot + async revalidate from the cache */
     setSlots(result);
-    void result.fresh.then(() => setSlots(getSlots(pickerDateKey, service.id)));
+    void result.fresh.then(() => setSlots(getSlots(pickerDateKey, group.id)));
     /* eslint-enable react-hooks/set-state-in-effect */
-  }, [pickerDateKey, service.id]);
+  }, [pickerDateKey, group.id]);
 
   const clearDay = () => {
     setPickerDay(null);
@@ -86,8 +85,8 @@ export default function DateModal({ service, current, cart, onAssign, onClose }:
   // Same-time locking: another cart line already owns this slot or an
   // overlapping one on the same date → this candidate is unavailable.
   const lockedBy = (slot: SlotOption): string | null => {
-    const other = cart.find((line) => line.service.id !== service.id && line.slot && line.slot.slotDate === slot.slotDate && (line.slot.id === slot.id || doSlotsOverlap(slot.startTime, slotDuration(slot, service.durationMin ?? 45), line.slot.startTime, slotDuration(line.slot, line.service.durationMin ?? 45))));
-    return other ? other.service.title : null;
+    const other = cart.find((line) => line.group.id !== group.id && line.slot && line.slot.slotDate === slot.slotDate && (line.slot.id === slot.id || doSlotsOverlap(slot.startTime, slotDuration(slot), line.slot.startTime, slotDuration(line.slot))));
+    return other ? other.group.title : null;
   };
 
   const disabledTitles = new Map<string, string>();
@@ -122,7 +121,7 @@ export default function DateModal({ service, current, cart, onAssign, onClose }:
             <div className="min-w-0">
               <h3 className="text-body font-black text-accent">{t("schedule.dateModalTitle")}</h3>
               <p className="truncate text-caption text-content-secondary">
-                {service.title} · {formatNumber(service.durationMin)} {t("appointment.minutes")}
+                {group.title}
               </p>
             </div>
           </div>
@@ -214,7 +213,7 @@ export default function DateModal({ service, current, cart, onAssign, onClose }:
             disabled={!canConfirm}
             onClick={() => {
               if (!pickerSlot) return;
-              onAssign(service.id, pickerSlot);
+              onAssign(group.id, pickerSlot);
               onClose();
             }}
             className={cn(

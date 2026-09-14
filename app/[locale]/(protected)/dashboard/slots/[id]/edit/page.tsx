@@ -47,7 +47,7 @@ export default async function EditSlotPage({
     endTime: String(slot.endTime).slice(0, 5),
     capacity: slot.capacity,
     isActive: slot.isActive,
-    serviceIds: slot.serviceIds,
+    groupIds: slot.groupIds,
   };
   return <SlotWizard mode="edit" slot={editData} backHref={ROUTE} />;
 }
