@@ -35,7 +35,6 @@ export default function GroupsStep({
   phone,
   onHealthChange,
   onToggle,
-  onRemove,
 }: GroupsStepProps) {
   const t = useTranslations("booking");
   const [query, setQuery] = useState("");
@@ -148,33 +147,7 @@ export default function GroupsStep({
         </div>
       </div>
 
-      {/* Selected banner */}
-      {cart.length > 0 ? (
-        <div className="flex flex-col justify-between gap-3 rounded-panel border-2 border-copper bg-surface-secondary p-3.5 shadow-elevation-1 sm:flex-row sm:items-center sm:p-4">
-          <span className="rounded-full bg-accent px-3 py-1 text-caption font-black text-content-contrast">
-            {t("groups.selectedCount", { n: cart.length })}
-          </span>
-          <div className="flex flex-wrap items-center gap-1.5">
-            {cart.map((line) => (
-              <span
-                key={line.group.id}
-                className="inline-flex items-center gap-1.5 rounded-control border border-border-interactive bg-surface-primary px-2.5 py-1 text-caption font-bold text-content-primary"
-              >
-                <span className="max-w-36 truncate sm:max-w-52">{line.group.title}</span>
-                <button
-                  type="button"
-                  onClick={() => onRemove(line.group.id)}
-                  aria-label={t("groups.removeGroup")}
-                  className="flex size-6 cursor-pointer items-center justify-center rounded p-0.5 text-content-tertiary hover:text-error focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                >
-                  <X className="size-3.5" aria-hidden="true" />
-                </button>
-              </span>
-            ))}
-          </div>
-        </div>
-      ) : null}
-
+   
       {/* Result stats */}
       {filtered.length > 0 ? (
         <div className="flex justify-end px-1 text-caption">
