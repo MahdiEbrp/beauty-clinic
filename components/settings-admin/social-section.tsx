@@ -192,7 +192,7 @@ export function SocialSection({
                     dir="ltr"
                     className="mt-0.5 inline-flex items-center gap-1 truncate text-start text-dash-caption text-content-secondary transition-colors hover:text-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                   >
-                    <ExternalLink className="size-3 shrink-0" aria-hidden="true" />
+                    <ExternalLink className="size-3 shrink-0 rtl-mirror" aria-hidden="true" />
                     <span className="truncate">{link.url}</span>
                   </a>
                 </div>

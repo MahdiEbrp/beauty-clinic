@@ -79,7 +79,7 @@ function GuideSection({
             className="hidden size-9 shrink-0 items-center justify-center rounded-pill border border-gold/30 text-gold transition-colors hover:border-gold hover:bg-primary-deep sm:flex"
             aria-label={guide.name}
           >
-            <ArrowUpRight className="size-4" strokeWidth={2} aria-hidden="true" />
+            <ArrowUpRight className="size-4 rtl-mirror" strokeWidth={2} aria-hidden="true" />
           </a>
         </div>
       </header>

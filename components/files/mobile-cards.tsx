@@ -59,7 +59,7 @@ function MobileCard({ entry }: { entry: EntryMeta }) {
             {entry.isDir ? (
               <FolderOpen className="size-5" aria-hidden="true" />
             ) : (
-              <ExternalLink className="size-5" aria-hidden="true" />
+              <ExternalLink className="size-5 rtl-mirror" aria-hidden="true" />
             )}
           </button>
           <EntryActions entry={entry} />

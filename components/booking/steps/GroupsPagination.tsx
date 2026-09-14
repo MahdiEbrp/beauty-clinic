@@ -63,7 +63,7 @@ export function GroupsPagination({
           aria-label={t("groups.pageFirst")}
           className={navClass(page === 1)}
         >
-          <ChevronsRight className="rtl-mirror size-4" aria-hidden="true" />
+          <ChevronsRight className="size-4" aria-hidden="true" />
         </button>
         <button
           type="button"
@@ -72,7 +72,7 @@ export function GroupsPagination({
           aria-label={t("groups.pagePrev")}
           className={navClass(page === 1)}
         >
-          <ChevronRight className="rtl-mirror size-4" aria-hidden="true" />
+          <ChevronRight className="size-4" aria-hidden="true" />
         </button>
 
         {pageNumbers.map((pageNum, index) =>
@@ -108,7 +108,7 @@ export function GroupsPagination({
           aria-label={t("groups.pageNext")}
           className={navClass(page === totalPages)}
         >
-          <ChevronLeft className="rtl-mirror size-4" aria-hidden="true" />
+          <ChevronLeft className="size-4" aria-hidden="true" />
         </button>
         <button
           type="button"
@@ -117,7 +117,7 @@ export function GroupsPagination({
           aria-label={t("groups.pageLast")}
           className={navClass(page === totalPages)}
         >
-          <ChevronsLeft className="rtl-mirror size-4" aria-hidden="true" />
+          <ChevronsLeft className="size-4" aria-hidden="true" />
         </button>
       </div>
     </div>

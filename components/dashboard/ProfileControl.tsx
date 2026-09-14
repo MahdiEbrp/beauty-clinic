@@ -73,7 +73,7 @@ export function ProfileControl({
                 aria-hidden="true"
               />
             ) : (
-              <LogOut className="size-4" aria-hidden="true" />
+              <LogOut className="size-4 rtl-mirror" aria-hidden="true" />
             )}
             <span>
               {loggingOut
