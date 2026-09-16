@@ -3620,6 +3620,8 @@
         "country": "Country",
         "map_neshan": "Neshan map link",
         "map_google": "Google Maps link",
+        "map_lat": "Clinic latitude",
+        "map_lng": "Clinic longitude",
         "address_title": "Address section title",
         "social_title": "Social media section title",
         "booking_title": "Booking section title",

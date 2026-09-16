@@ -53,6 +53,8 @@ const nextConfig: NextConfig = {
               "base-uri 'self'",
               "form-action 'self'",
               "frame-ancestors 'none'",
+              // Keyless Google Maps embed (coordinate-based map thumbnail on the landing page).
+              "frame-src 'self' https://maps.google.com https://www.google.com",
             ].join("; "),
           },
         ],

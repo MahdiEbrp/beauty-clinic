@@ -41,6 +41,7 @@ export type ClinicData = {
   maps: {
     neshan: string;
     google: string;
+    coords: { lat: number; lng: number };
   };
   currency: string;
   minCancelHours: number;
@@ -89,6 +90,7 @@ const DEFAULT_CLINIC: Omit<ClinicData, "content"> = {
     neshan: "https://nshn.ir/rbvg0k2xLMq4",
     // eslint-disable-next-line no-secrets/no-secrets -- public Google Maps search URL, not a secret
     google: "https://www.google.com/maps/search/?api=1&query=Andisheh+Phase+2",
+    coords: { lat: 35.696215, lng: 51.0030191 },
   },
   currency: "تومان",
   minCancelHours: 24,
@@ -153,6 +155,10 @@ export async function getClinicData(locale: Locale): Promise<ClinicData> {
     maps: {
       neshan: s("contact.map_neshan", DEFAULT_CLINIC.maps.neshan),
       google: s("contact.map_google", DEFAULT_CLINIC.maps.google),
+      coords: {
+        lat: numberSetting(byKey.get("contact.map_lat")?.value, DEFAULT_CLINIC.maps.coords.lat),
+        lng: numberSetting(byKey.get("contact.map_lng")?.value, DEFAULT_CLINIC.maps.coords.lng),
+      },
     },
     currency: s("booking.currency", DEFAULT_CLINIC.currency),
     minCancelHours: numberSetting(byKey.get("booking.min_cancel_hours")?.value, 24),

@@ -96,6 +96,9 @@ export const SYSTEM_SETTINGS: SettingInput[] = [
   { key: "contact.map_neshan", value: "https://nshn.ir/rbvg0k2xLMq4", type: "string" },
   // eslint-disable-next-line no-secrets/no-secrets -- public Google Maps search URL, not a secret
   { key: "contact.map_google", value: "https://www.google.com/maps/search/?api=1&query=Andisheh+Phase+2", type: "string" },
+  // Clinic coordinates used for the free coordinate-based map thumbnail + navigation links.
+  { key: "contact.map_lat", value: 35.696215, type: "number" },
+  { key: "contact.map_lng", value: 51.0030191, type: "number" },
   { key: "booking.timezone", value: "Asia/Tehran", type: "string" },
   { key: "booking.slot_auto", value: false, type: "boolean" },
   { key: "booking.slot_interval_min", value: 30, type: "number" },
