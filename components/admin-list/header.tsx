@@ -56,7 +56,7 @@ export function AdminListHeader<T extends { id: string }>() {
               <span>{t(`${config.namespace}.add`)}</span>
             </Link>
           )}
-          {canManage && (
+          {canManage && config.bulkActions.length > 0 && (
             <button
               type="button"
               onClick={toggleSelectionMode}

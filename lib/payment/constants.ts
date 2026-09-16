@@ -60,7 +60,7 @@ export const PAYMENT_DASHBOARD_ROUTES = {
   providers: "/dashboard/payment/providers",
   addProvider: "/dashboard/payment/providers/add",
   transactions: "/dashboard/payment/transactions",
-  checkout: "/dashboard/payment/checkout",
+  addTransaction: "/dashboard/payment/transactions/add",
 } as const;
 
 export const PAYMENT_PERMISSIONS = {

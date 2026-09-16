@@ -5535,19 +5535,12 @@
         "featureHealth": "Health",
         "featureDefault": "Default"
       },
-      "checkout": {
-        "name": "Checkout",
-        "description": "Create payment",
-        "featureGateways": "Gateways",
-        "featureSandbox": "Sandbox",
-        "featureVerify": "Verify"
-      },
       "transactions": {
         "name": "Transactions",
-        "description": "History",
+        "description": "Payment history & requests",
+        "featureCreate": "Create payment",
         "featureStatus": "Status",
-        "featureFilter": "Filter",
-        "featureHistory": "History"
+        "featureFilter": "Filter"
       }
     },
     "counts": {
@@ -5774,36 +5767,115 @@
       "error": "Error"
     }
   },
-  "paymentSend": {
-    "back": "Back to payment",
-    "heading": "Create Payment",
-    "description": "Send payment request",
-    "steps": {
-      "recipients": {
-        "name": "Order",
-        "description": "Select order"
-      },
-      "content": {
-        "name": "Payment",
-        "description": "Amount & gateway"
-      },
-      "review": {
-        "name": "Review",
-        "description": "Confirm"
-      }
+  "paymentTransactions": {
+    "heading": "Transactions",
+    "description": "Payment history and requests",
+    "resultsLabel": "{count} Transactions",
+    "add": "Add Payment",
+    "empty": "No transactions found.",
+    "emptySearch": "No transactions match your search.",
+    "errorTitle": "Something went wrong",
+    "errorDescription": "We couldn't load the transactions. Please try again.",
+    "search": "Search transactions",
+    "searchPlaceholder": "Search by group ref or authority...",
+    "statusAll": "All",
+    "status": "Status",
+    "statuses": {
+      "pending": "Pending",
+      "requested": "Requested",
+      "verified": "Verified",
+      "failed": "Failed",
+      "refunded": "Refunded",
+      "cancelled": "Cancelled"
     },
-    "nav": {
-      "back": "Back",
-      "create": "Create",
-      "continue": "Continue",
-      "stepOf": "Step {current} of {total}"
+    "providerNone": "No provider",
+    "confirmDescription": "Action \"{action}\" is not supported for transactions.",
+    "table": {
+      "groupRef": "Group",
+      "amount": "Amount",
+      "status": "Status",
+      "date": "Date"
+    },
+    "actions": {
+      "menu": "Actions"
+    },
+    "loading": "Loading",
+    "clearFilters": "Clear filters",
+    "retry": "Try again",
+    "selectPage": "Select all transactions on this page",
+    "selectRow": "Select this transaction",
+    "bulk": {
+      "selected": "{count} selected",
+      "selectedFiltered": "{count} selected (filtered)",
+      "apply": "Apply",
+      "clear": "Clear",
+      "pageSelected": "Page selected",
+      "selectFiltered": "Select all {count} filtered",
+      "confirmTitle": "{action} the selected transactions?",
+      "confirmDescription": "This action applies to all selected transactions."
+    },
+    "pagination": {
+      "next": "Next",
+      "pageInfo": "Page {page} of {totalPages}",
+      "previous": "Previous",
+      "showing": "Showing {from}–{to} of {total}"
+    },
+    "toast": {
+      "syncing": "Syncing...",
+      "success": "Done",
+      "error": "Something went wrong",
+      "deleted": "Deleted"
     }
   },
-  "paymentReports": {
-    "heading": "Transactions",
-    "description": "History",
-    "empty": "No transactions",
-    "error": "Load failed"
+  "paymentTransactionForm": {
+    "back": "Back to transactions",
+    "addHeading": "Add Payment",
+    "editHeading": "Edit Transaction",
+    "addDescription": "Create a real payment request through a gateway.",
+    "editDescription": "Update the transaction description or status.",
+    "noProviders": "No active payment providers. Add a provider first.",
+    "providerNone": "No provider",
+    "fields": {
+      "groupRef": "Booking Group Ref",
+      "amount": "Amount (Toman)",
+      "provider": "Gateway",
+      "description": "Description",
+      "status": "Status",
+      "authority": "Authority",
+      "refId": "Reference ID",
+      "creatingDate": "Created at"
+    },
+    "hints": {
+      "groupRef": "NF-XXXXX",
+      "amount": "Converted to Rial (×10) for the gateway",
+      "description": "Max 500 chars",
+      "status": "Manual override — not sent to the gateway."
+    },
+    "placeholders": {
+      "groupRef": "NF-12345",
+      "description": "Payment for booking NF-12345"
+    },
+    "sections": {
+      "details": "Details"
+    },
+    "nav": {
+      "cancel": "Cancel",
+      "save": "Save",
+      "create": "Create Payment"
+    },
+    "errors": {
+      "invalidGroupRef": "Enter a valid group ref e.g. NF-12345",
+      "providerRequired": "Select a gateway",
+      "amountRequired": "Enter a valid amount (min 1,000 Toman)",
+      "server": "Server error"
+    },
+    "toast": {
+      "creating": "Creating payment...",
+      "saving": "Saving...",
+      "created": "Payment request created. Redirecting to the gateway...",
+      "updated": "Transaction updated",
+      "error": "Error"
+    }
   },
   "providerKinds": {
     "zarinpal": "ZarinPal",

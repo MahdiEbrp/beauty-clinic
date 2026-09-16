@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import { BarChart3, CreditCard, Network, Plus, Send, Settings2 } from "lucide-react";
+import { BarChart3, CreditCard, Network, Plus, Settings2 } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
 
 import type { AuthUser } from "@/lib/auth/dal";
@@ -40,34 +40,19 @@ export function PaymentHub({ user, overview }: { user: AuthUser; overview: Payme
       showAdd: canWrite,
     },
     {
-      key: "checkout" as const,
-      title: t("hub.checkout.name"),
-      description: t("hub.checkout.description"),
-      href: "/dashboard/payment/checkout" as const,
-      addHref: "/dashboard/payment/checkout" as const,
-      icon: CreditCard,
-      badge: t("counts.amount", { amount: format.number(overview.totalVolume) }),
-      features: [
-        { icon: CreditCard, label: t("hub.checkout.featureGateways") },
-        { icon: Settings2, label: t("hub.checkout.featureSandbox") },
-        { icon: Send, label: t("hub.checkout.featureVerify") },
-      ],
-      showAdd: canSend,
-    },
-    {
       key: "transactions" as const,
       title: t("hub.transactions.name"),
       description: t("hub.transactions.description"),
       href: "/dashboard/payment/transactions" as const,
-      addHref: "/dashboard/payment/transactions" as const,
-      icon: BarChart3,
-      badge: t("counts.total", { count: format.number(overview.totalTransactions) }),
+      addHref: "/dashboard/payment/transactions/add" as const,
+      icon: CreditCard,
+      badge: t("counts.amount", { amount: format.number(overview.totalVolume) }),
       features: [
-        { icon: BarChart3, label: t("hub.transactions.featureStatus") },
-        { icon: Settings2, label: t("hub.transactions.featureFilter") },
-        { icon: CreditCard, label: t("hub.transactions.featureHistory") },
+        { icon: CreditCard, label: t("hub.transactions.featureCreate") },
+        { icon: Settings2, label: t("hub.transactions.featureStatus") },
+        { icon: BarChart3, label: t("hub.transactions.featureFilter") },
       ],
-      showAdd: true,
+      showAdd: canSend,
     },
   ];
 

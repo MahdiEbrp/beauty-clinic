@@ -3,17 +3,37 @@ import { and, count, desc, eq, ilike, or, sql, type SQL } from "drizzle-orm";
 import { ApiError } from "@/lib/api/errors";
 import { createPaymentProviderAdapter } from "@/lib/payment/providers";
 import { db } from "@/src/db";
-import { paymentTransactions } from "@/src/db/schema";
-import type { CreatePaymentTransactionInput, ListPaymentTransactionsQuery } from "@/lib/validation/payment-transactions";
+import { paymentProviders, paymentTransactions, type PaymentTransactionStatus } from "@/src/db/schema";
+import type { CreatePaymentTransactionInput, ListPaymentTransactionsQuery, UpdatePaymentTransactionInput } from "@/lib/validation/payment-transactions";
 import { PAYMENT_LIMITS } from "./constants";
 import { getPaymentProviderForUse } from "./provider-service";
 
 export type ListPaymentTransactionsResult = {
-  items: (typeof paymentTransactions.$inferSelect)[];
+  items: PaymentTransactionListRow[];
   total: number;
   page: number;
   perPage: number;
   totalPages: number;
+};
+
+type PaymentTransactionListRow = {
+  id: string;
+  bookingGroupRef: string;
+  amount: string;
+  currency: string;
+  description: string | null;
+  status: PaymentTransactionStatus;
+  providerId: string | null;
+  providerName: string | null;
+  authority: string | null;
+  refId: string | null;
+  paymentUrl: string | null;
+  cardPan: string | null;
+  errorMessage: string | null;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  verifiedAt: Date | string | null;
+  expiresAt: Date | string | null;
 };
 
 export async function listPaymentTransactions(opts: ListPaymentTransactionsQuery): Promise<ListPaymentTransactionsResult> {
@@ -28,7 +48,32 @@ export async function listPaymentTransactions(opts: ListPaymentTransactionsQuery
   const total = c?.value ?? 0;
   const page = opts.page ?? PAYMENT_LIMITS.pageDefault;
   const perPage = opts.perPage ?? PAYMENT_LIMITS.transactionListPerPageDefault;
-  const rows = await db.select().from(paymentTransactions).where(where).orderBy(desc(paymentTransactions.createdAt)).limit(perPage).offset((page - 1) * perPage);
+  const rows = await db
+    .select({
+      id: paymentTransactions.id,
+      bookingGroupRef: paymentTransactions.bookingGroupRef,
+      amount: paymentTransactions.amount,
+      currency: paymentTransactions.currency,
+      description: paymentTransactions.description,
+      status: paymentTransactions.status,
+      providerId: paymentTransactions.providerId,
+      providerName: paymentProviders.name,
+      authority: paymentTransactions.authority,
+      refId: paymentTransactions.refId,
+      paymentUrl: paymentTransactions.paymentUrl,
+      cardPan: paymentTransactions.cardPan,
+      errorMessage: paymentTransactions.errorMessage,
+      createdAt: paymentTransactions.createdAt,
+      updatedAt: paymentTransactions.updatedAt,
+      verifiedAt: paymentTransactions.verifiedAt,
+      expiresAt: paymentTransactions.expiresAt,
+    })
+    .from(paymentTransactions)
+    .leftJoin(paymentProviders, eq(paymentTransactions.providerId, paymentProviders.id))
+    .where(where)
+    .orderBy(desc(paymentTransactions.createdAt))
+    .limit(perPage)
+    .offset((page - 1) * perPage);
   return { items: rows, total, page, perPage, totalPages: Math.ceil(total / perPage) };
 }
 
@@ -67,3 +112,47 @@ export async function getPaymentTransactionById(id: string) {
   const [row] = await db.select().from(paymentTransactions).where(eq(paymentTransactions.id, id));
   return row ?? null;
 }
+
+export async function getPaymentTransactionByIdWithProvider(id: string) {
+  const [row] = await db
+    .select({
+      id: paymentTransactions.id,
+      bookingGroupRef: paymentTransactions.bookingGroupRef,
+      amount: paymentTransactions.amount,
+      currency: paymentTransactions.currency,
+      description: paymentTransactions.description,
+      status: paymentTransactions.status,
+      providerId: paymentTransactions.providerId,
+      providerName: paymentProviders.name,
+      authority: paymentTransactions.authority,
+      refId: paymentTransactions.refId,
+      paymentUrl: paymentTransactions.paymentUrl,
+      cardPan: paymentTransactions.cardPan,
+      errorMessage: paymentTransactions.errorMessage,
+      createdAt: paymentTransactions.createdAt,
+      updatedAt: paymentTransactions.updatedAt,
+      verifiedAt: paymentTransactions.verifiedAt,
+      expiresAt: paymentTransactions.expiresAt,
+    })
+    .from(paymentTransactions)
+    .leftJoin(paymentProviders, eq(paymentTransactions.providerId, paymentProviders.id))
+    .where(eq(paymentTransactions.id, id));
+  return row ?? null;
+}
+
+export async function updatePaymentTransaction(id: string, input: UpdatePaymentTransactionInput) {
+  const [existing] = await db.select({ id: paymentTransactions.id }).from(paymentTransactions).where(eq(paymentTransactions.id, id));
+  if (!existing) throw new ApiError(404, "PAYMENT_TRANSACTION_NOT_FOUND", "Transaction not found");
+  const patch: Partial<PaymentTransactionUpdate> = { updatedAt: new Date() };
+  if (input.description !== undefined) patch.description = input.description;
+  if (input.status !== undefined) patch.status = input.status;
+  await db.update(paymentTransactions).set(patch).where(eq(paymentTransactions.id, id));
+  const [row] = await db.select().from(paymentTransactions).where(eq(paymentTransactions.id, id));
+  return row;
+}
+
+type PaymentTransactionUpdate = {
+  description: string | null;
+  status: PaymentTransactionStatus;
+  updatedAt: Date;
+};

@@ -39,6 +39,17 @@ export const retryPaymentSchema = z
   })
   .strict();
 
+export const updatePaymentTransactionSchema = z
+  .object({
+    description: z.string().trim().max(PAYMENT_LIMITS.descriptionMaxLength).optional(),
+    status: z.enum(["pending", "requested", "verified", "failed", "refunded", "cancelled"]).optional(),
+  })
+  .strict()
+  .refine((value) => value.description !== undefined || value.status !== undefined, {
+    message: "Provide at least one field to update",
+  });
+
 export type CreatePaymentTransactionInput = z.infer<typeof createPaymentTransactionSchema>;
 export type ListPaymentTransactionsQuery = z.infer<typeof listPaymentTransactionsQuerySchema>;
 export type PublicBookingCheckoutInput = z.infer<typeof publicBookingCheckoutSchema>;
+export type UpdatePaymentTransactionInput = z.infer<typeof updatePaymentTransactionSchema>;

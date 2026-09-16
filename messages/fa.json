@@ -5535,19 +5535,12 @@
         "featureHealth": "سلامت",
         "featureDefault": "پیش‌فرض"
       },
-      "checkout": {
-        "name": "تسویه",
-        "description": "ایجاد پرداخت",
-        "featureGateways": "درگاه‌ها",
-        "featureSandbox": "تست",
-        "featureVerify": "تأیید"
-      },
       "transactions": {
         "name": "تراکنش‌ها",
-        "description": "تاریخچه",
+        "description": "تاریخچه و درخواست‌های پرداخت",
+        "featureCreate": "ایجاد پرداخت",
         "featureStatus": "وضعیت",
-        "featureFilter": "فیلتر",
-        "featureHistory": "تاریخچه"
+        "featureFilter": "فیلتر"
       }
     },
     "counts": {
@@ -5774,36 +5767,115 @@
       "error": "خطا"
     }
   },
-  "paymentSend": {
-    "back": "بازگشت به پرداخت",
-    "heading": "ایجاد پرداخت",
-    "description": "ارسال درخواست پرداخت",
-    "steps": {
-      "recipients": {
-        "name": "سفارش",
-        "description": "انتخاب سفارش"
-      },
-      "content": {
-        "name": "پرداخت",
-        "description": "مبلغ و درگاه"
-      },
-      "review": {
-        "name": "بازبینی",
-        "description": "تأیید"
-      }
+  "paymentTransactions": {
+    "heading": "تراکنش‌ها",
+    "description": "تاریخچه و درخواست‌های پرداخت",
+    "resultsLabel": "{count} تراکنش",
+    "add": "ایجاد پرداخت",
+    "empty": "تراکنشی یافت نشد.",
+    "emptySearch": "هیچ تراکنشی با جستجوی شما مطابقت ندارد.",
+    "errorTitle": "خطایی رخ داد",
+    "errorDescription": "امکان بارگذاری تراکنش‌ها وجود ندارد. لطفاً دوباره تلاش کنید.",
+    "search": "جستجوی تراکنش‌ها",
+    "searchPlaceholder": "جستجو بر اساس کد گروه یا کد رهگیری...",
+    "statusAll": "همه",
+    "status": "وضعیت",
+    "statuses": {
+      "pending": "در انتظار",
+      "requested": "درخواست شده",
+      "verified": "تأیید شده",
+      "failed": "ناموفق",
+      "refunded": "بازگشت داده شده",
+      "cancelled": "لغو شده"
     },
-    "nav": {
-      "back": "بازگشت",
-      "create": "ایجاد",
-      "continue": "ادامه",
-      "stepOf": "مرحله {current} از {total}"
+    "providerNone": "بدون درگاه",
+    "confirmDescription": "عملیات «{action}» برای تراکنش‌ها پشتیبانی نمی‌شود.",
+    "table": {
+      "groupRef": "گروه",
+      "amount": "مبلغ",
+      "status": "وضعیت",
+      "date": "تاریخ"
+    },
+    "actions": {
+      "menu": "عملیات"
+    },
+    "loading": "در حال بارگذاری",
+    "clearFilters": "پاک کردن فیلترها",
+    "retry": "تلاش مجدد",
+    "selectPage": "انتخاب همه تراکنش‌های این صفحه",
+    "selectRow": "انتخاب این تراکنش",
+    "bulk": {
+      "selected": "{count} انتخاب شد",
+      "selectedFiltered": "{count} انتخاب شد (فیلترشده)",
+      "apply": "اعمال",
+      "clear": "پاک کردن",
+      "pageSelected": "صفحه انتخاب شد",
+      "selectFiltered": "انتخاب همه {count} مورد فیلترشده",
+      "confirmTitle": "{action} تراکنش‌های انتخاب‌شده؟",
+      "confirmDescription": "این عملیات روی همه تراکنش‌های انتخاب‌شده اعمال می‌شود."
+    },
+    "pagination": {
+      "next": "بعدی",
+      "pageInfo": "صفحه {page} از {totalPages}",
+      "previous": "قبلی",
+      "showing": "نمایش {from}–{to} از {total}"
+    },
+    "toast": {
+      "syncing": "در حال همگام‌سازی...",
+      "success": "انجام شد",
+      "error": "خطایی رخ داد",
+      "deleted": "حذف شد"
     }
   },
-  "paymentReports": {
-    "heading": "تراکنش‌ها",
-    "description": "تاریخچه",
-    "empty": "تراکنشی وجود ندارد",
-    "error": "بارگذاری ناموفق بود"
+  "paymentTransactionForm": {
+    "back": "بازگشت به تراکنش‌ها",
+    "addHeading": "ایجاد پرداخت",
+    "editHeading": "ویرایش تراکنش",
+    "addDescription": "ایجاد یک درخواست پرداخت واقعی از طریق درگاه.",
+    "editDescription": "ویرایش توضیحات یا وضعیت تراکنش.",
+    "noProviders": "درگاه پرداخت فعالی وجود ندارد. ابتدا یک درگاه اضافه کنید.",
+    "providerNone": "بدون درگاه",
+    "fields": {
+      "groupRef": "کد گروه رزرو",
+      "amount": "مبلغ (تومان)",
+      "provider": "درگاه",
+      "description": "توضیحات",
+      "status": "وضعیت",
+      "authority": "کد رهگیری",
+      "refId": "کد مرجع",
+      "creatingDate": "تاریخ ایجاد"
+    },
+    "hints": {
+      "groupRef": "NF-XXXXX",
+      "amount": "برای درگاه به ریال (×۱۰) تبدیل می‌شود",
+      "description": "حداکثر ۵۰۰ کاراکتر",
+      "status": "تغییر دستی — به درگاه ارسال نمی‌شود."
+    },
+    "placeholders": {
+      "groupRef": "NF-12345",
+      "description": "پرداخت برای رزرو NF-12345"
+    },
+    "sections": {
+      "details": "جزئیات"
+    },
+    "nav": {
+      "cancel": "انصراف",
+      "save": "ذخیره",
+      "create": "ایجاد پرداخت"
+    },
+    "errors": {
+      "invalidGroupRef": "کد گروه رزرو معتبر وارد کنید (NF-12345)",
+      "providerRequired": "درگاه را انتخاب کنید",
+      "amountRequired": "مبلغ معتبر وارد کنید (حداقل ۱٬۰۰۰ تومان)",
+      "server": "خطای سرور"
+    },
+    "toast": {
+      "creating": "در حال ایجاد پرداخت...",
+      "saving": "در حال ذخیره...",
+      "created": "درخواست پرداخت ایجاد شد. در حال انتقال به درگاه...",
+      "updated": "تراکنش به‌روزرسانی شد",
+      "error": "خطا"
+    }
   },
   "providerKinds": {
     "zarinpal": "ZarinPal",
