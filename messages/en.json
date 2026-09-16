@@ -5579,10 +5579,89 @@
       "loadFailed": "Failed to load providers",
       "providerNotFound": "Provider not found"
     },
-    "search": {
-      "placeholder": "Search providers..."
-    },
+    "add": "Add Provider",
     "empty": "No payment providers found.",
+    "emptySearch": "No providers match your search.",
+    "errorTitle": "Something went wrong",
+    "errorDescription": "We couldn't load the providers. Please try again.",
+    "actions": {
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete",
+      "deleteConfirm": "Delete this provider?",
+      "edit": "Edit",
+      "menu": "Actions",
+      "test": "Test connection"
+    },
+    "health": {
+      "healthy": "Healthy",
+      "unhealthy": "Unhealthy",
+      "unknown": "Unknown"
+    },
+    "bulk": {
+      "activate": "Activate",
+      "apply": "Apply",
+      "clear": "Clear",
+      "confirmDescription": "This action applies to all selected providers.",
+      "confirmTitle": "{action} the selected providers?",
+      "deactivate": "Deactivate",
+      "delete": "Delete",
+      "pageSelected": "Page selected",
+      "resultDescription": "{count} providers updated successfully",
+      "resultPartialDescription": "{count} updated, {failed} failed",
+      "resultPartialTitle": "Partly completed",
+      "resultTitle": "Bulk action completed",
+      "selectFiltered": "Select all {count} filtered",
+      "selected": "{count} selected",
+      "selectedFiltered": "{count} selected (filtered)"
+    },
+    "clearFilters": "Clear filters",
+    "dialog": {
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "done": "Done"
+    },
+    "loading": "Loading",
+    "pagination": {
+      "next": "Next",
+      "pageInfo": "Page {page} of {totalPages}",
+      "previous": "Previous",
+      "showing": "Showing {from}–{to} of {total}"
+    },
+    "resultsLabel": "{count} Providers",
+    "retry": "Try again",
+    "search": "Search providers",
+    "searchPlaceholder": "Search by name or provider type...",
+    "select": "Select",
+    "selectPage": "Select all providers on this page",
+    "selectRow": "Select this provider",
+    "status": "Status",
+    "statusAll": "All",
+    "statusConfirm": {
+      "title": "Move to {status}?",
+      "description": "This changes the provider from {from} to {to}."
+    },
+    "statusMenu": {
+      "current": "Current status",
+      "label": "Change provider status"
+    },
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "table": {
+      "health": "Health",
+      "provider": "Provider",
+      "status": "Status"
+    },
+    "toast": {
+      "deleted": "Provider deleted",
+      "error": "Something went wrong",
+      "healthCheckFailed": "Health check failed",
+      "healthChecked": "Health check passed",
+      "success": "Provider updated",
+      "syncing": "Syncing..."
+    },
     "fields": {
       "name": "Name",
       "nameHint": "Display name for this provider",

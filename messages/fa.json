@@ -5579,10 +5579,89 @@
       "loadFailed": "بارگذاری ارائه‌دهندگان ناموفق بود",
       "providerNotFound": "ارائه‌دهنده یافت نشد"
     },
-    "search": {
-      "placeholder": "جستجوی درگاه‌ها..."
-    },
+    "add": "افزودن درگاه",
     "empty": "هیچ درگاه پرداختی یافت نشد.",
+    "emptySearch": "هیچ درگاهی با جستجوی شما مطابقت ندارد.",
+    "errorTitle": "خطایی رخ داد",
+    "errorDescription": "امکان بارگذاری درگاه‌ها وجود ندارد. لطفاً دوباره تلاش کنید.",
+    "actions": {
+      "activate": "فعال‌سازی",
+      "deactivate": "غیرفعال‌سازی",
+      "delete": "حذف",
+      "deleteConfirm": "این درگاه حذف شود؟",
+      "edit": "ویرایش",
+      "menu": "عملیات",
+      "test": "تست اتصال"
+    },
+    "health": {
+      "healthy": "سالم",
+      "unhealthy": "ناسالم",
+      "unknown": "نامشخص"
+    },
+    "bulk": {
+      "activate": "فعال‌سازی",
+      "apply": "اعمال",
+      "clear": "پاک کردن",
+      "confirmDescription": "این عملیات روی همه درگاه‌های انتخاب‌شده اعمال می‌شود.",
+      "confirmTitle": "{action} درگاه‌های انتخاب‌شده؟",
+      "deactivate": "غیرفعال‌سازی",
+      "delete": "حذف",
+      "pageSelected": "صفحه انتخاب شد",
+      "resultDescription": "{count} درگاه با موفقیت به‌روزرسانی شد",
+      "resultPartialDescription": "{count} به‌روزرسانی شد، {failed} ناموفق",
+      "resultPartialTitle": "با موفقیت جزئی انجام شد",
+      "resultTitle": "عملیات گروهی انجام شد",
+      "selectFiltered": "انتخاب همه {count} مورد فیلترشده",
+      "selected": "{count} انتخاب شد",
+      "selectedFiltered": "{count} انتخاب شد (فیلترشده)"
+    },
+    "clearFilters": "پاک کردن فیلترها",
+    "dialog": {
+      "cancel": "انصراف",
+      "confirm": "تأیید",
+      "done": "تمام"
+    },
+    "loading": "در حال بارگذاری",
+    "pagination": {
+      "next": "بعدی",
+      "pageInfo": "صفحه {page} از {totalPages}",
+      "previous": "قبلی",
+      "showing": "نمایش {from}–{to} از {total}"
+    },
+    "resultsLabel": "{count} درگاه",
+    "retry": "تلاش مجدد",
+    "search": "جستجوی درگاه‌ها",
+    "searchPlaceholder": "جستجو بر اساس نام یا نوع درگاه...",
+    "select": "انتخاب",
+    "selectPage": "انتخاب همه درگاه‌های این صفحه",
+    "selectRow": "انتخاب این درگاه",
+    "status": "وضعیت",
+    "statusAll": "همه",
+    "statusConfirm": {
+      "title": "انتقال به {status}؟",
+      "description": "وضعیت این درگاه از {from} به {to} تغییر می‌کند."
+    },
+    "statusMenu": {
+      "current": "وضعیت فعلی",
+      "label": "تغییر وضعیت درگاه"
+    },
+    "statuses": {
+      "active": "فعال",
+      "inactive": "غیرفعال"
+    },
+    "table": {
+      "health": "سلامت",
+      "provider": "درگاه",
+      "status": "وضعیت"
+    },
+    "toast": {
+      "deleted": "درگاه حذف شد",
+      "error": "خطایی رخ داد",
+      "healthCheckFailed": "تست اتصال ناموفق بود",
+      "healthChecked": "تست اتصال با موفقیت انجام شد",
+      "success": "درگاه به‌روزرسانی شد",
+      "syncing": "در حال همگام‌سازی..."
+    },
     "fields": {
       "name": "نام",
       "nameHint": "نام نمایشی برای این درگاه",

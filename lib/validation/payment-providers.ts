@@ -56,6 +56,31 @@ export const listPaymentProvidersQuerySchema = z.object({
 
 export const testPaymentProviderSchema = z.object({}).strict();
 
+/**
+ * Bulk actions for the payment providers admin list.
+ */
+export const bulkPaymentProvidersSchema = z
+  .object({
+    action: z.enum(["activate", "deactivate", "delete"]),
+    scope: z.enum(["page", "filtered"]),
+    ids: z.array(z.uuid()).max(100).optional(),
+    filters: listPaymentProvidersQuerySchema
+      .pick({ search: true, status: true })
+      .optional(),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    if (value.scope === "page" && (!value.ids || value.ids.length === 0)) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["ids"],
+        message: "Select at least one provider.",
+      });
+    }
+  });
+
+export type BulkPaymentProvidersInput = z.infer<typeof bulkPaymentProvidersSchema>;
+
 export type CreatePaymentProviderInput = z.infer<typeof createPaymentProviderSchema>;
 export type UpdatePaymentProviderInput = z.infer<typeof updatePaymentProviderSchema>;
 export type ListPaymentProvidersQuery = z.infer<typeof listPaymentProvidersQuerySchema>;
