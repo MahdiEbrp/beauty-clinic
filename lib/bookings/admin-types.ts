@@ -19,6 +19,19 @@ export interface ReservationAdmin {
   notes: string | null;
 }
 
+/**
+ * A booking row as its own customer sees it: the admin shape plus the order it
+ * belongs to and whether it can still be cancelled.
+ */
+export interface MyReservationAdmin extends ReservationAdmin {
+  /** The order this line belongs to (multi-line orders share one ref). */
+  groupRef: string;
+  /** False once the line is finished or its cancellation window has passed. */
+  canCancel: boolean;
+  /** Last moment this line can be cancelled (null = no fixed deadline). */
+  cancelUntil: string | null;
+}
+
 /** Normalize a raw booking row for JSON-safe transport (client fetch + RSC props). */
 export function toReservationAdmin(row: Booking): ReservationAdmin {
   return {

@@ -1243,7 +1243,8 @@
       "workspace": "Workspace",
       "email": "Email",
       "workingHours": "Working Hours",
-      "payment": "Payment"
+      "payment": "Payment",
+      "myReservations": "My Reservations"
     },
     "topbar": {
       "access": "Access management",
@@ -5947,6 +5948,71 @@
     "invalidTitle": "Invalid payment link",
     "invalidDescription": "This payment link is missing its payment reference and cannot be used.",
     "booking": "Return to booking"
+  },
+  "myReservations": {
+    "actions": {
+      "cancel": "Cancel this service",
+      "menu": "Actions"
+    },
+    "add": "Book an appointment",
+    "back": "Back to Dashboard",
+    "bulk": {
+      "apply": "Apply",
+      "clear": "Clear",
+      "confirmDescription": "This action applies to all selected reservations.",
+      "confirmTitle": "{action} the selected reservations?",
+      "pageSelected": "Page selected",
+      "selectFiltered": "Select all {count} filtered",
+      "selected": "{count} selected",
+      "selectedFiltered": "{count} selected (filtered)"
+    },
+    "cancelConfirm": {
+      "description": "{group} will be cancelled from order {groupRef}. The rest of your order stays booked, and a paid deposit is refunded back to you.",
+      "title": "Cancel this service?"
+    },
+    "cancelUntil": "Cancel by {date}",
+    "clearFilters": "Clear filters",
+    "dialog": {
+      "cancel": "Keep it",
+      "confirm": "Cancel service"
+    },
+    "empty": "You have no reservations yet.",
+    "emptySearch": "No reservations match your search.",
+    "errorDescription": "We couldn't load your reservations. Please try again.",
+    "errorTitle": "Something went wrong",
+    "heading": "My Reservations",
+    "loading": "Loading",
+    "meta": {
+      "description": "Your reservations at Nafas Beauty Clinic.",
+      "title": "My Reservations | Nafas Beauty Clinic"
+    },
+    "pagination": {
+      "next": "Next",
+      "pageInfo": "Page {page} of {totalPages}",
+      "previous": "Previous",
+      "showing": "Showing {from}–{to} of {total}"
+    },
+    "resultsLabel": "{count} Reservations",
+    "retry": "Try again",
+    "search": "Search your reservations",
+    "searchPlaceholder": "Search by service or order reference...",
+    "selectPage": "Select all reservations on this page",
+    "selectRow": "Select this reservation",
+    "status": "Status",
+    "statusAll": "All",
+    "statuses": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "waiting": "Waiting",
+      "done": "Done",
+      "refunded": "Refunded"
+    },
+    "toast": {
+      "deleted": "Reservation cancelled",
+      "error": "We couldn't cancel the reservation. Please try again.",
+      "success": "Reservation cancelled",
+      "syncing": "Cancelling..."
+    }
   },
   "bookingNotify": {
     "sms": "Your appointment {groupRef} is confirmed. {groups}. Deposit paid: {deposit} {currency}. {clinicName} | {clinicPhone}",

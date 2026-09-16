@@ -174,6 +174,19 @@ export const listBookingsQuerySchema = z
 export type ListBookingsQuery = z.infer<typeof listBookingsQuerySchema>;
 
 /**
+ * Query params for the signed-in customer's own reservations list: the admin
+ * list filters without the staff-only `slotId` scope.
+ */
+export const myReservationsQuerySchema = listBookingsQuerySchema.pick({
+  page: true,
+  perPage: true,
+  search: true,
+  status: true,
+});
+
+export type MyReservationsQuery = z.infer<typeof myReservationsQuerySchema>;
+
+/**
  * Paginated admin slot list (separate from the date-range calendar fetch).
  */
 export const listSlotsAdminQuerySchema = z

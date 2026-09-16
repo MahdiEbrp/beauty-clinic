@@ -80,7 +80,7 @@ function renderItem(
   return (
     <DropdownMenuItem
       key={button.key}
-      disabled={disabled}
+      disabled={disabled || button.disabled}
       onSelect={button.onClick}
       className={button.danger ? "text-error focus:bg-error/10 focus:text-error" : "text-accent"}
     >

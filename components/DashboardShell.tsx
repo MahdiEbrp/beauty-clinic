@@ -7,7 +7,7 @@ import {
   usePathname,
   useRouter,
 } from "@/src/i18n/navigation";
-import { CalendarClock, CalendarRange, Clock, CreditCard, Files, HeartPulse, LayoutDashboard, LayoutTemplate, Mail, MessageSquareText, Settings, Shield, Sparkles, Users } from "lucide-react";
+import { CalendarCheck, CalendarClock, CalendarRange, Clock, CreditCard, Files, HeartPulse, LayoutDashboard, LayoutTemplate, Mail, MessageSquareText, Settings, Shield, Sparkles, Users } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import type { AuthUser } from "@/lib/auth/dal";
 import type { SidebarNavItem } from "@/components/dashboard/SidebarSections";
@@ -54,6 +54,8 @@ const canViewUsers = user.permissions.includes("users.read");
     { key: "overview", href: "/dashboard", icon: LayoutDashboard },
     // Appointments are the daily operational core.
     ...(canViewBookings ? [{ key: "bookings", href: "/dashboard/bookings", icon: CalendarClock }] : []),
+    // Everyone's own reservations — the customer panel, scoped to the caller.
+    { key: "myReservations", href: "/dashboard/my-reservations", icon: CalendarCheck },
     // Payments & client management are the next most frequent daily tasks.
     ...(canViewPayment ? [{ key: "payment", href: "/dashboard/payment", icon: CreditCard }] : []),
     ...(canViewUsers ? [{ key: "users", href: "/dashboard/users", icon: Users }] : []),

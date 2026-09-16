@@ -49,6 +49,24 @@ function cancelDeadline(createdAt: Date, minCancelHours: number): string | null 
   return new Date(createdAt.getTime() + minCancelHours * 60 * 60 * 1000).toISOString();
 }
 
+/** The clinic's cancellation window in hours (0 = cancellation always allowed). */
+export async function loadMinCancelHours(): Promise<number> {
+  const settings = await loadSystemSettingsMap();
+  return toMoney(settings.get("booking.min_cancel_hours"));
+}
+
+const isTerminal = (row: BookingSummary) =>
+  row.status === "done" || row.status === "refunded";
+
+/** Earliest slot start across a group's rows, or null when none has a slot. */
+export function earliestSlotStart(rows: readonly { slotStart: Date | null }[]): Date | null {
+  const first = rows
+    .map((row) => row.slotStart?.getTime())
+    .filter((t): t is number => typeof t === "number")
+    .sort((a, b) => a - b)[0];
+  return typeof first === "number" ? new Date(first) : null;
+}
+
 /**
  * Public "my bookings" feed: all groups for a phone number, newest first.
  * One query, grouped in memory (no N+1).
@@ -60,8 +78,7 @@ export async function listBookingGroupsByPhone(phone: string): Promise<BookingGr
     .where(eq(bookings.phone, phone))
     .orderBy(desc(bookings.createdAt));
 
-  const settings = await loadSystemSettingsMap();
-  const minCancelHours = toMoney(settings.get("booking.min_cancel_hours"));
+  const minCancelHours = await loadMinCancelHours();
 
   const groups = new Map<string, BookingGroupSummary>();
   for (const row of rows) {
@@ -101,20 +118,25 @@ export async function cancelBookingGroup(
     .from(bookings)
     .where(and(eq(bookings.groupRef, groupRef), eq(bookings.phone, phone)));
 
+  return cancelBookingRows(rows);
+}
+
+/**
+ * Cancels the given (already ownership-checked) rows of one group, applying
+ * the same policy as `cancelBookingGroup`. Shared by the public phone-based
+ * lookup and the signed-in customer panel.
+ */
+export async function cancelBookingRows(
+  rows: BookingSummary[],
+): Promise<{ cancelled: number }> {
   if (rows.length === 0) throw new ApiError(404, "BOOKING_NOT_FOUND", "Booking not found.");
-  const isTerminal = (row: BookingSummary) =>
-    row.status === "done" || row.status === "refunded";
   if (rows.every(isTerminal)) return { cancelled: 0 };
 
-  const settings = await loadSystemSettingsMap();
-  const minCancelHours = toMoney(settings.get("booking.min_cancel_hours"));
-  const firstStart = rows
-    .map((row) => row.slotStart?.getTime())
-    .filter((t): t is number => typeof t === "number")
-    .sort((a, b) => a - b)[0];
+  const minCancelHours = await loadMinCancelHours();
+  const firstStart = earliestSlotStart(rows);
 
-  if (typeof firstStart === "number" && minCancelHours > 0) {
-    const hoursLeft = (firstStart - Date.now()) / (60 * 60 * 1000);
+  if (firstStart && minCancelHours > 0) {
+    const hoursLeft = (firstStart.getTime() - Date.now()) / (60 * 60 * 1000);
     if (hoursLeft < minCancelHours) {
       throw new ApiError(
         409,

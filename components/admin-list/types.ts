@@ -38,6 +38,8 @@ export interface RowActionItem {
   onClick: () => void;
   icon: RowActionIcon;
   danger?: boolean;
+  /** Rendered greyed-out and inert (e.g. a policy window has passed). */
+  disabled?: boolean;
 }
 
 export type DestructiveConfirm<T> =
@@ -59,6 +61,8 @@ export interface AdminListConfig<T extends { id: string }> {
     namespace: MessageNamespace;
   routeBase: string;
   backHref: string;
+  /** Label for the header's back link (defaults to the bookings admin copy). */
+  backLabelKey?: MessageKey;
   addHref: string;
   listUrl: string;
   permissions: { read: string; write: string; manage: string };

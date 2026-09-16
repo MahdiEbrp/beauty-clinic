@@ -1243,7 +1243,8 @@
       "workspace": "فضای کاری",
       "email": "ایمیل",
       "workingHours": "ساعات کاری",
-      "payment": "پرداخت"
+      "payment": "پرداخت",
+      "myReservations": "رزروهای من"
     },
     "topbar": {
       "access": "مدیریت دسترسی",
@@ -5947,6 +5948,71 @@
     "invalidTitle": "لینک پرداخت نامعتبر است",
     "invalidDescription": "این لینک پرداخت فاقد کد پیگیری است و قابل استفاده نیست.",
     "booking": "بازگشت به رزرو نوبت"
+  },
+  "myReservations": {
+    "actions": {
+      "cancel": "لغو این خدمت",
+      "menu": "عملیات"
+    },
+    "add": "رزرو نوبت",
+    "back": "بازگشت به داشبورد",
+    "bulk": {
+      "apply": "اعمال",
+      "clear": "پاک‌کردن",
+      "confirmDescription": "این عملیات روی همه رزروهای انتخاب‌شده اعمال می‌شود.",
+      "confirmTitle": "{action} رزروهای انتخاب‌شده؟",
+      "pageSelected": "صفحه انتخاب شد",
+      "selectFiltered": "انتخاب همه {count} فیلترشده",
+      "selected": "{count} انتخاب شده",
+      "selectedFiltered": "{count} انتخاب شده (فیلترشده)"
+    },
+    "cancelConfirm": {
+      "description": "خدمت {group} از سفارش {groupRef} لغو می‌شود. بقیه سفارش شما سر جایش می‌ماند و بیعانه پرداخت‌شده به شما بازگردانده می‌شود.",
+      "title": "این خدمت لغو شود؟"
+    },
+    "cancelUntil": "لغو تا {date}",
+    "clearFilters": "پاک‌کردن فیلترها",
+    "dialog": {
+      "cancel": "انصراف",
+      "confirm": "لغو خدمت"
+    },
+    "empty": "هنوز رزروی ثبت نکرده‌اید.",
+    "emptySearch": "هیچ رزروی با جستجوی شما مطابقت ندارد.",
+    "errorDescription": "بارگذاری رزروهای شما ناموفق بود. دوباره تلاش کنید.",
+    "errorTitle": "خطایی رخ داد",
+    "heading": "رزروهای من",
+    "loading": "در حال بارگذاری",
+    "meta": {
+      "description": "رزروهای شما در کلینیک زیبایی نفس.",
+      "title": "رزروهای من | کلینیک زیبایی نفس"
+    },
+    "pagination": {
+      "next": "بعدی",
+      "pageInfo": "صفحه {page} از {totalPages}",
+      "previous": "قبلی",
+      "showing": "نمایش {from}–{to} از {total}"
+    },
+    "resultsLabel": "{count} رزرو",
+    "retry": "تلاش مجدد",
+    "search": "جستجوی رزروها",
+    "searchPlaceholder": "جستجو بر اساس خدمت یا کد سفارش...",
+    "selectPage": "انتخاب همه رزروهای این صفحه",
+    "selectRow": "انتخاب این رزرو",
+    "status": "وضعیت",
+    "statusAll": "همه",
+    "statuses": {
+      "pending": "در انتظار",
+      "paid": "پرداخت‌شده",
+      "waiting": "در نوبت",
+      "done": "انجام‌شده",
+      "refunded": "مسترد شده"
+    },
+    "toast": {
+      "deleted": "رزرو لغو شد",
+      "error": "لغو رزرو ممکن نشد. دوباره تلاش کنید.",
+      "success": "رزرو لغو شد",
+      "syncing": "در حال لغو..."
+    }
   },
   "bookingNotify": {
     "sms": "نوبت {groupRef} شما تأیید شد. {groups}. بیعانه پرداختی: {deposit} {currency}. {clinicName} | {clinicPhone}",

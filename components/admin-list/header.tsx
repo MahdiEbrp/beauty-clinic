@@ -18,7 +18,7 @@ export function AdminListHeader<T extends { id: string }>() {
         className="inline-flex min-h-11 items-center gap-2 self-start rounded-pill border border-border-interactive bg-surface-secondary px-4 text-dash-body-sm font-bold text-accent transition-colors hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         <ArrowLeft className="size-4 rtl-mirror" aria-hidden="true" />
-        <span>{t("bookingAdmin.back")}</span>
+        <span>{t(config.backLabelKey ?? "bookingAdmin.back")}</span>
       </Link>
       <header className="flex items-center justify-between gap-3 rounded-panel border border-border-primary bg-surface-secondary px-4 py-3 shadow-elevation-2 sm:px-6 sm:py-4">
         <div className="flex min-w-0 items-baseline gap-2.5">
