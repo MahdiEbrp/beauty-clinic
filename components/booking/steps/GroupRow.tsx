@@ -14,6 +14,8 @@ type GroupRowProps = {
   theme: GroupTheme;
   onToggle: () => void;
   onInfo: () => void;
+  /** When false, the "more info" button is hidden entirely. */
+  showInfo: boolean;
 };
 
 /**
@@ -21,7 +23,7 @@ type GroupRowProps = {
  * grid row; mobile renders a compact two-tier card, both fluid so the table
  * never overflows horizontally.
  */
-export function GroupRow({ group, rowNumber, selected, theme, onToggle, onInfo }: GroupRowProps) {
+export function GroupRow({ group, rowNumber, selected, theme, onToggle, onInfo, showInfo }: GroupRowProps) {
   const t = useTranslations("booking");
   const GroupIcon = theme.icon;
 
@@ -164,7 +166,7 @@ export function GroupRow({ group, rowNumber, selected, theme, onToggle, onInfo }
 
         <div className="flex flex-col items-center justify-center gap-1 py-1">
           {selectPill}
-          {infoButton}
+          {showInfo ? infoButton : null}
         </div>
       </div>
 
@@ -210,7 +212,7 @@ export function GroupRow({ group, rowNumber, selected, theme, onToggle, onInfo }
 
           <div className="flex items-center justify-end gap-1.5">
             {selectPill}
-            {infoButton}
+            {showInfo ? infoButton : null}
           </div>
         </div>
       </div>

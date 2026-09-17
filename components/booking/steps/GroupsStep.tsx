@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { AlertCircle, X } from "lucide-react";
 import type { PublicServiceTree } from "@/lib/services/types";
 import { getGroupTheme } from "../group-theme";
-import type { SelectedGroup, CartItem, HealthFlags } from "../types";
+import { SHOW_GROUP_INFO, type SelectedGroup, type CartItem, type HealthFlags } from "../types";
 import { HealthNotice } from "./HealthNotice";
 import { GroupRow } from "./GroupRow";
 import { GroupDetailModal } from "./GroupDetailModal";
@@ -198,6 +198,7 @@ export default function GroupsStep({
                 theme={getGroupTheme(group.groupIndex)}
                 onToggle={() => onToggle(group)}
                 onInfo={() => setActiveDetail(group)}
+                showInfo={SHOW_GROUP_INFO}
               />
             ))}
           </div>
@@ -219,7 +220,7 @@ export default function GroupsStep({
       )}
 
       {/* Detail modal */}
-      {activeDetail ? (
+      {SHOW_GROUP_INFO && activeDetail ? (
         <GroupDetailModal
           group={activeDetail}
           theme={getGroupTheme(activeDetail.groupIndex)}

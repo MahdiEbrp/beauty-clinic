@@ -1,5 +1,11 @@
 import type { PublicTreeGroup } from "@/lib/services/types";
 
+/**
+ * Feature flag: per-group "more info" button + detail modal in booking step 1.
+ * Default off — flip to true to enable.
+ */
+export const SHOW_GROUP_INFO = false;
+
 /** A public service group (with its catalog context) ready for the picker. */
 export type SelectedGroup = PublicTreeGroup & {
   /** Stable 0-based index in the tree, used to pick a visual theme. */
