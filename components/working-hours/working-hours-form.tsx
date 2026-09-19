@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { CalendarDays, Power, TriangleAlert } from "lucide-react";
@@ -10,7 +10,6 @@ import { useRouter } from "@/src/i18n/navigation";
 import { msgKey } from "@/src/i18n/message-key";
 import { WizardShell, type WizardStep } from "../bookings/wizard-shell";
 import { Field, inputClass } from "../bookings/wizard-fields";
-import type { GroupOption } from "../bookings/group-multi-select";
 import { DaySelect, type DayOption } from "./day-select";
 import {
   SlotPatternEditor,
@@ -22,6 +21,7 @@ import {
   WorkingHoursSummary,
   type ScheduleMode,
 } from "./working-hours-form-ui";
+import { useSlotGroups } from "./use-slot-groups";
 
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 
@@ -75,33 +75,7 @@ export function WorkingHoursForm({
     record?.patterns && record.patterns.length > 0 ? "pattern" : "uniform",
   );
   const [rows, setRows] = useState<SlotPatternRow[]>(record?.patterns ?? []);
-  const [groups, setGroups] = useState<GroupOption[]>([]);
-  const [groupsLoading, setGroupsLoading] = useState(true);
-
-  useEffect(() => {
-    let active = true;
-    void (async () => {
-      try {
-        const res = await fetch("/api/v1/service-groups?perPage=100&status=active", {
-          credentials: "include",
-        });
-        if (!res.ok) return;
-        const payload = (await res.json()) as {
-          data: { items: Array<{ id: string; name: string }> };
-        };
-        if (active) {
-          setGroups(payload.data.items.map((item) => ({ id: item.id, title: item.name })));
-        }
-      } catch {
-        // The group list is optional; patterns still save without it.
-      } finally {
-        if (active) setGroupsLoading(false);
-      }
-    })();
-    return () => {
-      active = false;
-    };
-  }, []);
+  const { groups, groupsLoading } = useSlotGroups();
 
   const dayOptions: DayOption[] = WEEKDAYS.map((value) => ({
     value,

@@ -1,10 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { CalendarDays, Clock, Users } from "lucide-react";
+import { CalendarClock, CalendarDays, Clock, Users } from "lucide-react";
 
 import type { Column } from "@/components/admin-list/types";
-import type { WorkingHoursAdminRow } from "@/lib/bookings/working-hours-admin";
+import type { WorkingHoursListRow } from "@/lib/bookings/working-hours-admin";
 import { msgKey } from "@/src/i18n/message-key";
 import { StatusPill } from "../bookings/status-pill";
 
@@ -29,7 +29,19 @@ function HoursCell({ opens, closes }: { opens: string; closes: string }) {
   );
 }
 
-export function workingHoursColumns(): Column<WorkingHoursAdminRow>[] {
+function SlotsCell({ count }: { count: number }) {
+  const t = useTranslations("workingHours");
+  return (
+    <div className="flex min-w-0 items-center gap-1.5">
+      <CalendarClock className="size-3.5 shrink-0 text-content-tertiary" aria-hidden="true" />
+      <span className="truncate text-content-secondary">
+        {count === 0 ? t("slots.auto") : t("slots.count", { count })}
+      </span>
+    </div>
+  );
+}
+
+export function workingHoursColumns(): Column<WorkingHoursListRow>[] {
   return [
     {
       key: "day",
@@ -40,6 +52,11 @@ export function workingHoursColumns(): Column<WorkingHoursAdminRow>[] {
       key: "hours",
       labelKey: "workingHours.table.hours",
       render: (row) => <HoursCell opens={row.opens} closes={row.closes} />,
+    },
+    {
+      key: "slots",
+      labelKey: "workingHours.table.slots",
+      render: (row) => <SlotsCell count={row.slotCount} />,
     },
     {
       key: "capacity",
@@ -65,7 +82,7 @@ export function workingHoursColumns(): Column<WorkingHoursAdminRow>[] {
   ];
 }
 
-export function WorkingHoursMobileCard({ row }: { row: WorkingHoursAdminRow }) {
+export function WorkingHoursMobileCard({ row }: { row: WorkingHoursListRow }) {
   const t = useTranslations();
   const tNs = useTranslations("workingHours");
   return (
@@ -79,6 +96,9 @@ export function WorkingHoursMobileCard({ row }: { row: WorkingHoursAdminRow }) {
       </div>
       <p className="text-dash-caption text-content-secondary">
         {tNs("table.hours")}: {row.opens} – {row.closes}
+      </p>
+      <p className="text-dash-caption text-content-secondary">
+        {tNs("table.slots")}: {row.slotCount === 0 ? tNs("slots.auto") : tNs("slots.count", { count: row.slotCount })}
       </p>
       <p className="text-dash-caption text-content-tertiary">
         {tNs("table.capacity")}: {row.capacity}

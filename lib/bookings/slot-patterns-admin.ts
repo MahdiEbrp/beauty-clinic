@@ -55,6 +55,22 @@ export async function deletePatternsForDays(days: string[]): Promise<void> {
   await db.delete(slotPatterns).where(inArray(slotPatterns.day, days));
 }
 
+/** Batched slot-pattern row counts per weekday (one query, no N+1). */
+export async function countPatternsByDays(
+  days: string[],
+): Promise<Map<string, number>> {
+  if (days.length === 0) return new Map();
+  const rows = await db
+    .select({ day: slotPatterns.day })
+    .from(slotPatterns)
+    .where(inArray(slotPatterns.day, days));
+  const counts = new Map<string, number>();
+  for (const row of rows) {
+    counts.set(row.day, (counts.get(row.day) ?? 0) + 1);
+  }
+  return counts;
+}
+
 export function sortPatterns(patterns: SlotPatternSeed[]): SlotPatternSeed[] {
   return [...patterns].sort((a, b) =>
     a.startTime < b.startTime ? -1 : a.startTime > b.startTime ? 1 : 0,

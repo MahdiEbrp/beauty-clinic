@@ -60,26 +60,41 @@ function desiredGroupsForExisting(
   };
 }
 
+/** Desired start→capacity grid for a day (pattern rows, else the uniform window). */
+function desiredByStart(plan: DayPlan, config: GeneratorConfig): Map<string, number> {
+  if (plan.pattern) {
+    return new Map(plan.pattern.map((entry) => [entry.startTime, entry.capacity]));
+  }
+  const capacity =
+    plan.window.capacity > 0 ? plan.window.capacity : config.capacity;
+  return new Map(
+    planWindowSlots(plan.window, config.intervalMin, config.durationMin).map(
+      (start) => [start, capacity],
+    ),
+  );
+}
+
 /**
- * Reconciles a pattern day's unbooked slots to its pattern rows:
- *   - booked slots are never touched (kept even if no longer in the pattern),
- *   - unbooked slots whose start left the pattern are deactivated,
+ * Reconciles a day's unbooked slots to its desired start grid (pattern rows or
+ * the uniform window):
+ *   - booked slots are never touched (kept even if no longer in the grid),
+ *   - unbooked slots whose start left the grid are deactivated (this is what
+ *     removes custom slots when a day switches from pattern back to uniform),
  *   - unbooked slots whose capacity changed are updated in place.
  * Batched into UPDATE statements over the whole window (grouped by value).
  */
-async function syncPatternCapacities(
+async function syncActiveSlots(
   tx: Tx,
-  patternDates: Map<string, DayPlan>,
+  dayPlansByDate: Map<string, DayPlan>,
   existingByDate: Map<string, ExistingRow[]>,
   bookedIds: Set<string>,
+  config: GeneratorConfig,
 ): Promise<void> {
   const deactivateIds: string[] = [];
   const capacityByTarget = new Map<number, string[]>();
 
-  for (const [dateKey, plan] of patternDates) {
-    const desired = new Map(
-      (plan.pattern ?? []).map((entry) => [entry.startTime, entry.capacity]),
-    );
+  for (const [dateKey, plan] of dayPlansByDate) {
+    const desired = desiredByStart(plan, config);
     for (const row of existingByDate.get(dateKey) ?? []) {
       if (bookedIds.has(row.id)) continue;
       const targetCapacity = desired.get(row.startTime);
@@ -223,13 +238,7 @@ export async function ensureAutoSlotsCore(
     );
   }
 
-  const patternDates = new Map<string, DayPlan>();
-  for (const [dateKey, plan] of dayPlansByDate) {
-    if (plan.pattern) patternDates.set(dateKey, plan);
-  }
-  if (patternDates.size > 0) {
-    await syncPatternCapacities(tx, patternDates, existingByDate, bookedIds);
-  }
+  await syncActiveSlots(tx, dayPlansByDate, existingByDate, bookedIds, config);
 
   await reconcileSlotGroups(
     tx,

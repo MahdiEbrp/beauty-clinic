@@ -207,4 +207,26 @@ describe("ensureAutoSlotsWithConfig with slot patterns", () => {
     expect(harness.updateSets).toHaveLength(1);
     expect(harness.updateSets[0]).toMatchObject({ capacity: 2 });
   });
+
+  it("deactivates stale unbooked slots when a day switches from pattern to uniform", async () => {
+    const keys = saturdayKeys();
+    const existing: SlotRow[] = keys.flatMap((dateKey) => [
+      { id: `stale-${dateKey}`, slotDate: dateKey, startTime: "13:20", capacity: 1, isActive: true },
+      { id: `booked-${dateKey}`, slotDate: dateKey, startTime: "10:07", capacity: 1, isActive: true },
+    ]);
+    const booked = keys.map((dateKey) => `booked-${dateKey}`);
+
+    // No pattern rows → the day falls back to the uniform window grid, so the
+    // custom off-grid starts must be removed (booked ones preserved).
+    vi.mocked(loadSlotPatternMap).mockResolvedValue(new Map());
+
+    const harness = baseTx(existing, booked);
+    runWithTx(harness.tx);
+
+    const result = await ensureAutoSlotsWithConfig(config);
+
+    expect(result.created).toBe(0);
+    expect(harness.updateSets).toHaveLength(1);
+    expect(harness.updateSets[0]).toMatchObject({ isActive: false });
+  });
 });

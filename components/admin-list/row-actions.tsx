@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { asTranslate, type TranslateFn } from "@/src/i18n/message-key";
-import { Power, PowerOff, Trash2, Pencil, CheckCircle, XCircle, MoreVertical } from "lucide-react";
+import { Power, PowerOff, Trash2, Pencil, CheckCircle, XCircle, MoreVertical, CalendarClock } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +16,7 @@ import type { RowActionItem } from "./types";
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string; strokeWidth?: number }>> = {
   edit: Pencil,
+  slots: CalendarClock,
   activate: Power,
   deactivate: PowerOff,
   confirm: CheckCircle,

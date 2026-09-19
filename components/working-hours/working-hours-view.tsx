@@ -9,7 +9,7 @@ import type {
   RowActionItem,
 } from "@/components/admin-list/types";
 import { AdminListView } from "@/components/admin-list/list-view";
-import type { WorkingHoursAdminRow } from "@/lib/bookings/working-hours-admin";
+import type { WorkingHoursListRow } from "@/lib/bookings/working-hours-admin";
 import {
   WorkingHoursMobileCard,
   workingHoursColumns,
@@ -20,12 +20,12 @@ export function WorkingHoursListView({
   initialData,
 }: {
   user: AuthUser;
-  initialData: ListResult<WorkingHoursAdminRow>;
+  initialData: ListResult<WorkingHoursListRow>;
 }) {
   const router = useRouter();
   const t = useTranslations();
 
-  const config: AdminListConfig<WorkingHoursAdminRow> = {
+  const config: AdminListConfig<WorkingHoursListRow> = {
     namespace: "workingHours",
     routeBase: "/dashboard/working-hours",
     backHref: "/dashboard/bookings",
@@ -49,6 +49,12 @@ export function WorkingHoursListView({
         labelKey: "workingHours.actions.edit",
         onClick: () => router.push(`/dashboard/working-hours/${row.id}/edit`),
         icon: "edit",
+      },
+      {
+        key: "slots",
+        labelKey: "workingHours.actions.slots",
+        onClick: () => router.push(`/dashboard/working-hours/${row.id}/slots`),
+        icon: "slots",
       },
       row.isActive
         ? {

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, eq, ilike, inArray, or, sql, type SQL } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 import { ApiError } from "@/lib/api/errors";
 import { bustSlotPatternCache } from "./slot-patterns";
@@ -15,104 +15,24 @@ import {
 import { db } from "@/src/db";
 import { slotPatternGroups, slotPatterns, workingHours } from "@/src/db/schema";
 import { bustWorkingHoursCache } from "./working-hours";
+import {
+  toRow,
+  type WorkingHoursAdminRow,
+  type WorkingHoursFilters,
+  type WorkingHoursListResult,
+  type WorkingHoursListRow,
+} from "./working-hours-list";
 
-export type WorkingHoursFilters = {
-  search?: string;
-  status?: "all" | "active" | "inactive";
+export type {
+  WorkingHoursAdminRow,
+  WorkingHoursFilters,
+  WorkingHoursListResult,
+  WorkingHoursListRow,
 };
+export { findWorkingHourIds, listWorkingHoursAdmin } from "./working-hours-list";
 
-function workingHoursConditions(opts: WorkingHoursFilters): (SQL | undefined)[] {
-  const conditions: (SQL | undefined)[] = [];
-  if (opts.status && opts.status !== "all") {
-    conditions.push(eq(workingHours.isActive, opts.status === "active"));
-  }
-  if (opts.search?.trim()) {
-    const term = `%${opts.search.trim()}%`;
-    conditions.push(
-      or(
-        ilike(workingHours.day, term),
-        ilike(workingHours.opens, term),
-        ilike(workingHours.closes, term),
-      ),
-    );
-  }
-  return conditions;
-}
-
-export type WorkingHoursAdminRow = {
-  id: string;
-  day: string;
-  opens: string;
-  closes: string;
-  capacity: number;
-  displayOrder: number;
-  isActive: boolean;
-};
-
-function toRow(row: typeof workingHours.$inferSelect): WorkingHoursAdminRow {
-  return {
-    id: row.id,
-    day: row.day,
-    opens: row.opens.slice(0, 5),
-    closes: row.closes.slice(0, 5),
-    capacity: row.capacity,
-    displayOrder: row.displayOrder,
-    isActive: row.isActive,
-  };
-}
-
-export type WorkingHoursListResult = {
-  items: WorkingHoursAdminRow[];
-  total: number;
-  page: number;
-  perPage: number;
-  totalPages: number;
-};
-
-/** Paginated, filterable working-hours list for the admin dashboard. */
-export async function listWorkingHoursAdmin(query: {
-  page: number;
-  perPage: number;
-  search?: string;
-  status?: WorkingHoursFilters["status"];
-}): Promise<WorkingHoursListResult> {
-  const offset = (query.page - 1) * query.perPage;
-  const where = and(...workingHoursConditions(query));
-
-  const [countRow] = await db
-    .select({ count: sql<number>`count(*)::int` })
-    .from(workingHours)
-    .where(where);
-  const total = Number(countRow?.count ?? 0);
-
-  const rows = await db
-    .select()
-    .from(workingHours)
-    .where(where)
-    .orderBy(asc(workingHours.displayOrder), asc(workingHours.day))
-    .limit(query.perPage)
-    .offset(offset);
-
-  return {
-    items: rows.map(toRow),
-    total,
-    page: query.page,
-    perPage: query.perPage,
-    totalPages: Math.ceil(total / query.perPage),
-  };
-}
-
-/** Returns the working-hours ids matching the given filters (bulk actions). */
-export async function findWorkingHourIds(
-  opts: WorkingHoursFilters,
-): Promise<string[]> {
-  const where = and(...workingHoursConditions(opts));
-  const rows = await db
-    .select({ id: workingHours.id })
-    .from(workingHours)
-    .where(where);
-  return rows.map((row) => row.id);
-}
+/** A persisted slot-pattern entry (start time + seat capacity). */
+export type { SlotPatternSeed } from "./slot-patterns-admin";
 
 /** Sets active/inactive on a set of working-hours rows in one query. */
 export async function setWorkingHoursActive(
@@ -160,7 +80,7 @@ export async function getWorkingHour(
     })
     .from(slotPatterns)
     .where(eq(slotPatterns.day, row.day))
-    .orderBy(asc(slotPatterns.startTime));
+    .orderBy(slotPatterns.startTime);
 
   // One batched link query for the whole day (no per-row lookups).
   const links =
@@ -195,15 +115,13 @@ export async function getWorkingHour(
   };
 }
 
-/** A persisted slot-pattern entry (start time + seat capacity). */
-export type { SlotPatternSeed } from "./slot-patterns-admin";
-
 /**
  * Creates one working-hours row. Day is unique — a second entry for the same
  * weekday is rejected with a clean 409 instead of a unique-violation 500.
  * A non-empty `patterns` array activates that day's pattern mode and a
  * best-effort re-materialization of the slot window runs right after commit.
- */export async function createWorkingHour(input: {
+ */
+export async function createWorkingHour(input: {
   day: string;
   opens: string;
   closes: string;
@@ -273,7 +191,9 @@ export async function updateWorkingHour(
   });
   await bustWorkingHoursCache();
   await bustSlotPatternCache();
-  if (patterns !== undefined && patterns.length > 0) await refreshPatternSlots();
+  // Re-materialize even when patterns were cleared, so a pattern→uniform
+  // switch removes the slots that no longer belong to the day's grid.
+  if (patterns !== undefined) await refreshPatternSlots();
   return toRow(row);
 }
 

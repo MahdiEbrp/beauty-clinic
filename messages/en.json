@@ -733,7 +733,8 @@
       "delete": "Delete",
       "deleteConfirm": "Delete these working hours?",
       "edit": "Edit",
-      "menu": "Actions"
+      "menu": "Actions",
+      "slots": "Manage slots"
     },
     "add": "Add Working Hours",
     "bulk": {
@@ -791,6 +792,10 @@
     "select": "Select",
     "selectPage": "Select all working hours on this page",
     "selectRow": "Select this working-hours row",
+    "slots": {
+      "auto": "Auto",
+      "count": "{count} slots"
+    },
     "status": "Status",
     "statusAll": "All",
     "statuses": {
@@ -801,6 +806,7 @@
       "capacity": "Capacity",
       "day": "Day",
       "hours": "Hours",
+      "slots": "Slots",
       "status": "Status"
     },
     "toast": {
@@ -3867,6 +3873,9 @@
     "steps": {
       "details": {
         "name": "Details"
+      },
+      "slots": {
+        "name": "Slots"
       }
     },
     "submit": {
@@ -3875,7 +3884,17 @@
     },
     "title": {
       "add": "Add Working Hours",
-      "edit": "Edit Working Hours"
+      "edit": "Edit Working Hours",
+      "slots": "Slots for {day}"
+    },
+    "slots": {
+      "subtitle": "Edit each time slot for this weekday — add or remove slots, set per-slot capacity and the service groups each slot accepts."
+    },
+    "meta": {
+      "slots": {
+        "title": "Day Slots",
+        "description": "Manage the individual time slots for a working day."
+      }
     },
     "toast": {
       "created": "Working hours added.",

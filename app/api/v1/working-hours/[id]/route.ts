@@ -42,12 +42,9 @@ export const PATCH = withSecurity(
     const id = ctx.params?.id;
     if (!id || !z.uuid().safeParse(id).success) return invalidId();
     const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
-    try {
-      const row = await updateWorkingHour(id, body);
-      return jsonOk(row);
-    } catch {
-      return notFound();
-    }
+    // Let ApiError (404 not-found, 400 pattern-too-late) reach handleApiError.
+    const row = await updateWorkingHour(id, body);
+    return jsonOk(row);
   },
 );
 
@@ -56,11 +53,7 @@ export const DELETE = withSecurity(
   async (_request, ctx) => {
     const id = ctx.params?.id;
     if (!id || !z.uuid().safeParse(id).success) return invalidId();
-    try {
-      await deleteWorkingHour(id);
-      return jsonOk({ ok: true });
-    } catch {
-      return notFound();
-    }
+    await deleteWorkingHour(id);
+    return jsonOk({ ok: true });
   },
 );

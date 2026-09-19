@@ -25,6 +25,7 @@ export interface Column<T> {
 
 export type RowActionIcon =
   | "edit"
+  | "slots"
   | "activate"
   | "deactivate"
   | "delete"

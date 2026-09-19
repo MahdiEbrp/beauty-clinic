@@ -5,7 +5,7 @@ import { WorkingHoursListView } from "@/components/working-hours/working-hours-v
 import { requirePermission } from "@/lib/auth/dal";
 import { listWorkingHoursAdmin } from "@/lib/bookings/working-hours-admin";
 import type { ListResult } from "@/components/admin-list/types";
-import type { WorkingHoursAdminRow } from "@/lib/bookings/working-hours-admin";
+import type { WorkingHoursListRow } from "@/lib/bookings/working-hours-admin";
 import { pageUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/working-hours/manage";
@@ -35,7 +35,7 @@ export async function generateMetadata({
 export default async function ManageWorkingHoursPage() {
   const session = await requirePermission("appointments.read");
   const result = await listWorkingHoursAdmin({ page: 1, perPage: 10 });
-  const initialData: ListResult<WorkingHoursAdminRow> = {
+  const initialData: ListResult<WorkingHoursListRow> = {
     items: result.items,
     total: result.total,
     perPage: result.perPage,
