@@ -5,20 +5,20 @@ export const TATTOO_REMOVAL_GROUP: SeedGroup = {
   slug: "tattoo-removal-skin-brightening",
   icon: "wand-sparkles",
   image: IMG.pigmentation,
-  displayOrder: 7,
+  displayOrder: 11,
   i18n: [
     {
       locale: "fa",
-      name: "لیزر پاک‌کننده تتو و روشن‌کننده پوست",
+      name: "لیزر کیوسویچ (پاک‌کننده تتو و سفیدکننده)",
       description:
         "با لیزر کیوسوییچ، به کاهش رنگ تتو و بهبود ظاهر برخی لک‌ها و تیرگی‌های پوستی کمک کنید و پوستی یکدست‌تر داشته باشید.",
-      seoTitle: "لیزر کیوسوییچ | پاک کردن تتو و روشن‌کننده پوست",
+      seoTitle: "لیزر کیوسویچ | پاک کردن تتو و روشن‌کننده پوست",
       seoDescription:
         "لیزر کیوسوییچ برای کاهش رنگ تتو و بهبود ظاهر لک و تیرگی‌های پوستی؛ روشی دقیق برای داشتن پوستی شفاف‌تر و یکدست‌تر.",
     },
     {
       locale: "en",
-      name: "Tattoo Removal & Skin Brightening",
+      name: "Q-Switch Laser (Tattoo Removal & Brightening)",
       description:
         "Reveal clearer, more even-looking skin with targeted Q-switched laser services for tattoo fading and pigmentation concerns.",
       seoTitle: "Q-Switched Laser | Tattoo Removal & Skin Brightening",

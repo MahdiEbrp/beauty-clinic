@@ -1,6 +1,5 @@
 import type { SeedGroup } from "./types";
 import { FILLER_10CC_CATEGORY } from "./face-filler-10cc";
-import { FILLER_LIP_CHIN_CATEGORY } from "./face-filler-lip-chin-cheek";
 import { FILLER_UNDEREYE_CATEGORY } from "./face-filler-undereye";
 import { IMG } from "../images";
 
@@ -8,7 +7,7 @@ export const FACE_FILLER_GROUP: SeedGroup = {
   slug: "face-filler",
   icon: "Syringe",
   image: IMG.filler,
-  displayOrder: 0,
+  displayOrder: 1,
   i18n: [
     {
       locale: "fa",
@@ -30,7 +29,6 @@ export const FACE_FILLER_GROUP: SeedGroup = {
     },
   ],
   categories: [
-    FILLER_LIP_CHIN_CATEGORY,
     FILLER_UNDEREYE_CATEGORY,
     FILLER_10CC_CATEGORY,
   ],

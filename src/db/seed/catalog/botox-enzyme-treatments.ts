@@ -1,4 +1,4 @@
-import type { SeedGroup } from "./types";
+import type { SeedCategory, SeedGroup } from "./types";
 import { svc, withSeo } from "./types";
 import { IMG } from "../images";
 
@@ -164,3 +164,6 @@ export const BOTOX_ENZYME_GROUP: SeedGroup = {
     },
   ],
 };
+
+/** The "آنزیم" category, re-used by the standalone `enzyme` group. */
+export const ENZYME_CATEGORY: SeedCategory = BOTOX_ENZYME_GROUP.categories[1];

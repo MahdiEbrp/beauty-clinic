@@ -6,20 +6,20 @@ export const MESOTHERAPY_GROUP: SeedGroup = {
   slug: "mesotherapy-skin-rejuvenation",
   icon: "leaf",
   image: IMG.mesotherapy,
-  displayOrder: 5,
+  displayOrder: 6,
   i18n: [
     {
       locale: "fa",
-      name: "مزو و جوانسازی",
+      name: "مزوژل و جوانساز",
       description:
         "با خدماتی تخصصی مزوتراپی و جوانسازی، به بهبود آبرسانی، کیفیت، شادابی و انعطاف‌پذیری پوست کمک کنید و ظاهری تازه‌تر و درخشان‌تر داشته باشید.",
-      seoTitle: "مزو و جوانسازی | مزوتراپی و خدماتی پیشرفته پوست",
+      seoTitle: "مزوژل و جوانساز | مزوتراپی و خدماتی پیشرفته پوست",
       seoDescription:
         "خدمات مزوتراپی، مزوژل، نیدلینگ، پی‌آر‌پی، جالپرو و پروفایلو برای بهبود آبرسانی، کیفیت، شادابی و جوان‌تر شدن ظاهر پوست.",
     },
     {
       locale: "en",
-      name: "Mesotherapy & Skin Rejuvenation",
+      name: "Mesogel & Rejuvenation",
       description:
         "Refresh, hydrate, and revitalize your skin with personalized rejuvenation services designed to improve skin quality, elasticity, radiance, and overall vitality.",
       seoTitle: "Mesotherapy & Skin Rejuvenation | Advanced Aesthetic Treatme",

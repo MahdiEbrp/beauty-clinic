@@ -6,11 +6,11 @@ export const BODY_FILLER_GROUP: SeedGroup = {
   slug: "body-filler",
   icon: "hand-coins",
   image: IMG.bodyFiller,
-  displayOrder: 1,
+  displayOrder: 4,
   i18n: [
     {
       locale: "fa",
-      name: "فیلر بادی",
+      name: "فیلر بدن (ناخن - بیکینی)",
       description:
         "فرم طبیعی بدن خود را با روشی ظریف و متناسب با ویژگی‌های شما زیباتر کنید.\nبا هدف بهبود حجم، تناسب و فرم در نواحی منتخب، برای ایجاد ظاهری متعادل‌تر، هماهنگ‌تر و جذاب‌تر.",
       seoTitle: "فیلر بدن و فرم‌دهی | کانتورینگ طبیعی",
@@ -19,7 +19,7 @@ export const BODY_FILLER_GROUP: SeedGroup = {
     },
     {
       locale: "en",
-      name: "Body Filler",
+      name: "Body Filler (Nails & Bikini)",
       description:
         "Enhance your body’s natural contours with a refined, personalized approach.\nDesigned to improve volume, balance and definition in selected areas for a more harmonious and confident silhouette.",
       seoTitle: "Body Filler & Contouring | Natural-Looking Results",

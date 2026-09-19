@@ -7,6 +7,7 @@ import {
   services,
   servicesI18n,
 } from "../schema";
+import { inArray } from "drizzle-orm";
 import {
   CATALOG_SEED,
   type SeedCategory,
@@ -22,13 +23,41 @@ import {
  * (id, locale) primary key. Existing rows are never deleted, so admin-created
  * entries and content survive re-runs; running the seed simply guarantees the
  * seed-defined tree exists and is up to date.
+ *
+ * Groups that are not part of CATALOG_SEED are deactivated (never deleted) so
+ * the live catalog exposes exactly the canonical top-level groups.
  */
 export async function seedServiceCatalog(): Promise<void> {
   for (const group of CATALOG_SEED) {
     await upsertGroup(group);
   }
+  const { deactivated } = await syncCatalogGroups();
+  if (deactivated.length > 0) {
+    console.log(`Deactivated legacy groups: ${deactivated.join(", ")}`);
+  }
   console.log("Service catalog seeded.");
 }
+
+/**
+ * Deactivates active service groups whose slug is not part of CATALOG_SEED.
+ * Non-destructive: rows and their categories/services are kept, only hidden.
+ */
+export async function syncCatalogGroups(): Promise<{ deactivated: string[] }> {
+  const keep = new Set(CATALOG_SEED.map((group) => group.slug));
+  const rows = await db
+    .select({ id: serviceGroups.id, slug: serviceGroups.slug, isActive: serviceGroups.isActive })
+    .from(serviceGroups);
+  const extra = rows.filter((row) => !keep.has(row.slug));
+  const toDeactivate = extra.filter((row) => row.isActive).map((row) => row.id);
+  if (toDeactivate.length > 0) {
+    await db
+      .update(serviceGroups)
+      .set({ isActive: false, updatedAt: new Date() })
+      .where(inArray(serviceGroups.id, toDeactivate));
+  }
+  return { deactivated: extra.map((row) => row.slug) };
+}
+
 
 async function upsertGroup(group: SeedGroup): Promise<void> {
   const [row] = await db

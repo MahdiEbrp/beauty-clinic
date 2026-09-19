@@ -9,7 +9,7 @@ export const LASER_HAIR_REMOVAL_GROUP: SeedGroup = {
   slug: "laser-hair-removal",
   icon: "spotlight",
   image: IMG.laserHairRemoval,
-  displayOrder: 6,
+  displayOrder: 10,
   i18n: [
     {
       locale: "fa",
