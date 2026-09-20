@@ -1,3 +1,5 @@
+"use client";
+
 import { ArrowRight, PackageOpen } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/src/i18n/navigation";

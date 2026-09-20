@@ -1,3 +1,5 @@
+"use client";
+
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/src/i18n/navigation";
 import PricingRow from "@/components/pricing/article/PricingRow";
