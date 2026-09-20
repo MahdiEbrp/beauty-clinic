@@ -1,5 +1,5 @@
 import React from "react";
-import { Clock, Repeat, ShieldCheck } from "lucide-react";
+import { CalendarPlus, Clock, Repeat, ShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import PriceTag from "@/components/pricing/PriceTag";
 import { formatNumber } from "@/lib/services/format";
@@ -12,6 +12,8 @@ export type PricingRowProps = {
   onBook?: (service: PricingService) => void;
   /** Owning group slug — when set, the row is anchored at `#pricing-<groupSlug>-<serviceSlug>`. */
   groupSlug?: string;
+  /** Larger, more prominent reserve button (used on SEO category pages). */
+  bookVariant?: "default" | "xl";
 };
 
 /** A single responsive pricing row: name + optional desc/price (right, RTL-aware). */
@@ -20,10 +22,12 @@ export default function PricingRow({
   currency = "",
   onBook,
   groupSlug,
+  bookVariant = "default",
 }: PricingRowProps) {
   const t = useTranslations();
   const minutesLabel = t("pricing.article.minutes");
   const sessionsLabel = t("pricing.article.sessions", { count: service.sessionsCount });
+  const isXl = bookVariant === "xl";
 
   return (
     <li
@@ -76,8 +80,15 @@ export default function PricingRow({
           <button
             type="button"
             onClick={() => onBook(service)}
-            className="inline-flex items-center gap-1.5 rounded-pill bg-accent px-3.5 py-1.5 text-xs font-bold text-on-primary hover:bg-accent-hover transition-colors shadow-sm"
+            className={
+              isXl
+                ? "inline-flex min-h-12 items-center gap-2 rounded-pill bg-accent px-6 py-2.5 text-sm font-bold text-on-primary shadow-elevation-2 transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-95"
+                : "inline-flex items-center gap-1.5 rounded-pill bg-accent px-3.5 py-1.5 text-xs font-bold text-on-primary hover:bg-accent-hover transition-colors shadow-sm"
+            }
           >
+            {isXl ? (
+              <CalendarPlus className="size-4" aria-hidden="true" />
+            ) : null}
             {t("pricing.article.book")}
           </button>
         )}

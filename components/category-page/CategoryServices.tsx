@@ -67,6 +67,7 @@ export default function CategoryServices({
             currency={currency}
             onBook={() => handleBook(service)}
             groupSlug={groupSlug}
+            bookVariant="xl"
           />
         ))}
       </ul>

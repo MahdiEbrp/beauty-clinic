@@ -5,6 +5,7 @@ import CategoryServices from "./CategoryServices";
 import CategorySiblings from "./CategorySiblings";
 import CategoryFaq, { type CategoryFaqItem } from "./CategoryFaq";
 import CategoryJsonLd, { type BreadcrumbItem } from "./CategoryJsonLd";
+import CategoryBookingCta from "./CategoryBookingCta";
 import FloatingBookingButton from "@/components/FloatingBookingButton";
 import type { CategoryPageData } from "@/lib/services/category-page";
 
@@ -77,6 +78,8 @@ export default async function CategoryPage({
           groupSlug={data.group.slug}
           currency={data.currency}
         />
+
+        <CategoryBookingCta locale={locale} />
 
         <CategorySiblings group={data.group} siblings={data.siblings} />
 

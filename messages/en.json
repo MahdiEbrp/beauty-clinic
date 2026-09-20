@@ -3355,6 +3355,11 @@
     "breadcrumb": {
       "home": "Home",
       "services": "Services"
+    },
+    "cta": {
+      "heading": "Ready to book your treatment?",
+      "description": "Pick a service, choose a time that works for you, and confirm online in a few taps — our team will send you a personalized quote.",
+      "book": "Book an appointment"
     }
   },
   "categoryPage": {
@@ -3367,6 +3372,11 @@
     },
     "faq": {
       "heading": "Frequently asked questions"
+    },
+    "cta": {
+      "heading": "Reserve your appointment",
+      "description": "Choose a service above and book online in minutes. Need guidance? Our consultants will confirm availability and a personalized quote.",
+      "book": "Book an appointment"
     }
   },
   "groupPage": {

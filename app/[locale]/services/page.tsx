@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { pageUrl } from "@/lib/site";
-import ServicesContent from "@/components/ServicesContent";
+import type { Locale } from "@/lib/services/types";
+import { getServicesIndex } from "@/lib/services/services-index";
+import ServicesIndex from "@/components/services-index/ServicesIndex";
 
 export async function generateMetadata({
   params,
@@ -29,6 +31,12 @@ export async function generateMetadata({
   };
 }
 
-export default function ServicesPage() {
-  return <ServicesContent />;
+export default async function ServicesPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const data = await getServicesIndex(locale as Locale);
+  return <ServicesIndex data={data} locale={locale} />;
 }

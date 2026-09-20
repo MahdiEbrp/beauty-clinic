@@ -54,6 +54,7 @@ export default function GroupFeatured({
               currency={currency}
               onBook={() => handleBook(service)}
               groupSlug={groupSlug}
+              bookVariant="xl"
             />
           ))}
         </ul>
