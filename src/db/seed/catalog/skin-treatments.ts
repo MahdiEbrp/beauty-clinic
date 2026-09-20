@@ -1,8 +1,11 @@
 import type { SeedGroup } from "./types";
+import { SKIN_TREATMENT_SERVICES_CATEGORY } from "./skin-treatment-services";
+import { IMG } from "../images";
 
 export const SKIN_TREATMENTS_GROUP: SeedGroup = {
   slug: "skin-treatments",
   icon: "sparkles",
+  image: IMG.care,
   displayOrder: 8,
   i18n: [
     {
@@ -24,5 +27,5 @@ export const SKIN_TREATMENTS_GROUP: SeedGroup = {
         "Specialized skin treatments to improve texture, reduce pigmentation and acne and boost radiance, tailored to your skin type.",
     },
   ],
-  categories: [],
+  categories: [SKIN_TREATMENT_SERVICES_CATEGORY],
 };

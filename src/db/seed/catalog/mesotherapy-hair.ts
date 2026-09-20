@@ -1,8 +1,11 @@
 import type { SeedGroup } from "./types";
+import { HAIR_MESOTHERAPY_CATEGORY } from "./mesotherapy-hair-services";
+import { IMG } from "../images";
 
 export const MESOTHERAPY_HAIR_GROUP: SeedGroup = {
   slug: "mesotherapy-hair",
   icon: "droplet",
+  image: IMG.mesotherapy,
   displayOrder: 7,
   i18n: [
     {
@@ -24,5 +27,5 @@ export const MESOTHERAPY_HAIR_GROUP: SeedGroup = {
         "Mesotherapy and hair strengthening to reduce hair loss, support the roots and improve hair quality and density.",
     },
   ],
-  categories: [],
+  categories: [HAIR_MESOTHERAPY_CATEGORY],
 };

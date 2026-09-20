@@ -1,4 +1,5 @@
 import type { SeedGroup } from "./types";
+import { FULL_FACE_PACKAGES_CATEGORY } from "./full-face-packages";
 import { IMG } from "../images";
 
 export const FULL_FACE_FILLER_GROUP: SeedGroup = {
@@ -26,5 +27,5 @@ export const FULL_FACE_FILLER_GROUP: SeedGroup = {
         "Enhance facial harmony with personalized full face filler. Refine contours, restore volume, and create a balanced, naturally refreshed appearance.",
     },
   ],
-  categories: [],
+  categories: [FULL_FACE_PACKAGES_CATEGORY],
 };

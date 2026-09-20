@@ -1,6 +1,7 @@
 import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 
 import { hashPassword } from "@/lib/auth/password";
+import { bumpContentVersion } from "@/lib/services/content-version-core";
 import { db } from "./index";
 import {
   permissions,
@@ -134,6 +135,10 @@ async function seed(): Promise<void> {
   await seedWorkingHours();
   await seedFakeProviders();
   await seedGmailProviderFromEnv();
+
+  // Invalidate every versioned public cache (catalog tree, rules, landing) so
+  // freshly-seeded content is served instead of stale entries up to their TTL.
+  await bumpContentVersion();
 
   console.log("Seed complete.");
 }

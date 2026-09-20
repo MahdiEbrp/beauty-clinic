@@ -1,8 +1,12 @@
 import type { SeedGroup } from "./types";
+import { MESO_FATBURN_CATEGORY } from "./meso-fatburn-services";
+import { MESO_ANTISPOT_CATEGORY } from "./meso-antispot-services";
+import { IMG } from "../images";
 
 export const MESO_FATBURN_ANTISPOT_GROUP: SeedGroup = {
   slug: "meso-fatburn-antispot",
   icon: "droplet",
+  image: IMG.bodyFiller,
   displayOrder: 9,
   i18n: [
     {
@@ -24,5 +28,5 @@ export const MESO_FATBURN_ANTISPOT_GROUP: SeedGroup = {
         "Meso fat-burning for targeted fat reduction and anti-spot services for brighter, more even-looking skin.",
     },
   ],
-  categories: [],
+  categories: [MESO_FATBURN_CATEGORY, MESO_ANTISPOT_CATEGORY],
 };

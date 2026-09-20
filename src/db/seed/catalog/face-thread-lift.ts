@@ -1,8 +1,11 @@
 import type { SeedGroup } from "./types";
+import { THREAD_LIFT_SERVICES_CATEGORY } from "./thread-lift-services";
+import { IMG } from "../images";
 
 export const FACE_THREAD_LIFT_GROUP: SeedGroup = {
   slug: "face-thread-lift",
   icon: "Sparkles",
+  image: IMG.skinRejuvenation,
   displayOrder: 5,
   i18n: [
     {
@@ -24,5 +27,5 @@ export const FACE_THREAD_LIFT_GROUP: SeedGroup = {
         "Face thread lift to improve mild skin laxity and refine facial contours naturally, without surgery.",
     },
   ],
-  categories: [],
+  categories: [THREAD_LIFT_SERVICES_CATEGORY],
 };
