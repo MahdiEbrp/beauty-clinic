@@ -134,15 +134,19 @@ export default function MobileDrawerContent({
                     key={group.slug}
                     className="mb-4 last:mb-0 border-s-2 border-border-primary ps-3"
                   >
-                    <div className="mb-1.5 flex min-h-9 items-center gap-2 text-caption font-bold uppercase tracking-wide text-accent">
-                      <span
-                        className="flex size-6 shrink-0 items-center justify-center rounded-pill bg-copper/15 text-copper-strong"
-                        aria-hidden="true"
+                    <Link
+                        href={`/services/${group.slug}`}
+                        onClick={onClose}
+                        className="mb-1.5 flex min-h-9 items-center gap-2 rounded-control text-caption font-bold uppercase tracking-wide text-accent no-underline hover:bg-surface-tertiary hover:text-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                       >
-                        <Icon className="size-3.5" strokeWidth={2} />
-                      </span>
-                      <span className="truncate">{group.title}</span>
-                    </div>
+                        <span
+                          className="flex size-6 shrink-0 items-center justify-center rounded-pill bg-copper/15 text-copper-strong"
+                          aria-hidden="true"
+                        >
+                          <Icon className="size-3.5" strokeWidth={2} />
+                        </span>
+                        <span className="truncate">{group.title}</span>
+                      </Link>
 
                     <div className="flex flex-col">
                       {rows.map(({ category, service }) => {
@@ -152,9 +156,13 @@ export default function MobileDrawerContent({
                         return (
                           <div key={`${category.slug}-${service.slug}`}>
                             {showSubheading && (
-                              <p className="mb-0.5 mt-2 truncate ps-2 text-tiny font-semibold uppercase tracking-wide text-content-tertiary first:mt-0">
+                              <Link
+                                href={`/services/${group.slug}/${category.slug}`}
+                                onClick={onClose}
+                                className="mb-0.5 mt-2 block truncate ps-2 text-tiny font-semibold uppercase tracking-wide text-content-tertiary no-underline hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                              >
                                 {category.title}
-                              </p>
+                              </Link>
                             )}
                             <Link
                               href={`/pricing#pricing-${group.slug}-${service.slug}`}

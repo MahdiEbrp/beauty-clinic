@@ -3351,6 +3351,32 @@
     "meta": {
       "description": "Complete range of specialized beauty and medical services at Nafas Clinic",
       "title": "Specialized Services | Nafas Beauty Clinic"
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "services": "Services"
+    }
+  },
+  "categoryPage": {
+    "services": {
+      "heading": "{title} — pricing & services",
+      "subtitle": "{count, plural, one {# service} other {# services}} listed"
+    },
+    "siblings": {
+      "heading": "More in {title}"
+    },
+    "faq": {
+      "heading": "Frequently asked questions"
+    }
+  },
+  "groupPage": {
+    "categories": {
+      "heading": "Browse categories",
+      "count": "{count, plural, one {# category} other {# categories}}",
+      "serviceCount": "{count, plural, one {# service} other {# services}}"
+    },
+    "featured": {
+      "heading": "Featured treatments"
     }
   },
   "settingWizard": {

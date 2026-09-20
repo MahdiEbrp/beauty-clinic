@@ -110,31 +110,17 @@ export default function ServicesMegaMenu({
                   const Icon = iconForCatalog(group.icon);
 
                   /*
-                   * Deduplicate services inside a group.
-                   * This protects against stale catalog data where the
-                   * same service exists in multiple categories.
-                   */
-                  const seen = new Set<string>();
-
-                  const services = group.categories.flatMap((category) =>
-                    category.services.filter((service) => {
-                      if (seen.has(service.slug)) {
-                        return false;
-                      }
-
-                      seen.add(service.slug);
-
-                      return true;
-                    }),
-                  );
-
-                  /*
                    * Don't render empty groups.
                    * This also prevents unnecessary blank areas in columns.
                    */
-                  if (services.length === 0) {
+                  if (group.categories.length === 0) {
                     return null;
                   }
+
+                  const serviceCount = group.categories.reduce(
+                    (acc, category) => acc + category.services.length,
+                    0,
+                  );
 
                   return (
                     <section
@@ -147,33 +133,38 @@ export default function ServicesMegaMenu({
                     >
                       {/* Group header */}
                       <div className={groupHeaderClass}>
-                        <span
-                          className="
-                            flex size-6.5 shrink-0
-                            items-center justify-center
-                            rounded-control
-                            bg-copper/10
-                            text-copper-strong
-                          "
-                          aria-hidden="true"
+                        <Link
+                          href={`/services/${group.slug}`}
+                          className="flex min-h-11 min-w-0 max-w-full items-center gap-1.5 rounded-control px-1 no-underline transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                         >
-                          <Icon
-                            className="size-3.5"
-                            strokeWidth={2}
-                          />
-                        </span>
+                          <span
+                            className="
+                              flex size-6.5 shrink-0
+                              items-center justify-center
+                              rounded-control
+                              bg-copper/10
+                              text-copper-strong
+                            "
+                            aria-hidden="true"
+                          >
+                            <Icon
+                              className="size-3.5"
+                              strokeWidth={2}
+                            />
+                          </span>
 
-                        <span
-                          className="
-                            min-w-0
-                            truncate
-                            text-caption
-                            font-bold
-                            text-accent
-                          "
-                        >
-                          {group.title}
-                        </span>
+                          <span
+                            className="
+                              min-w-0
+                              truncate
+                              text-caption
+                              font-bold
+                              text-accent
+                            "
+                          >
+                            {group.title}
+                          </span>
+                        </Link>
 
                         <span
                           className="
@@ -184,23 +175,23 @@ export default function ServicesMegaMenu({
                             tabular-nums
                             text-content-tertiary
                           "
-                          aria-label={`${services.length} services`}
+                          aria-label={`${serviceCount} services`}
                         >
-                          {services.length}
+                          {serviceCount}
                         </span>
                       </div>
 
-                      {/* Services */}
+                      {/* Categories, each linking to its own SEO page */}
                       <ul className="m-0 list-none space-y-px p-0">
-                        {services.map((service) => (
-                          <li key={service.slug}>
+                        {group.categories.map((category) => (
+                          <li key={category.slug}>
                             <NavigationMenuLink asChild>
                               <Link
-                                href={`/pricing#pricing-${group.slug}-${service.slug}`}
+                                href={`/services/${group.slug}/${category.slug}`}
                                 className={serviceLinkClass}
                               >
                                 <span className="min-w-0 truncate">
-                                  {service.title}
+                                  {category.title}
                                 </span>
 
                                 <ArrowLeft

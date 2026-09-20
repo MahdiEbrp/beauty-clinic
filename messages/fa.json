@@ -3351,6 +3351,32 @@
     "meta": {
       "description": "مجموعه کامل خدمات تخصصی زیبایی کلینیک نفس",
       "title": "خدمات تخصصی | کلینیک زیبایی نفس"
+    },
+    "breadcrumb": {
+      "home": "خانه",
+      "services": "خدمات"
+    }
+  },
+  "categoryPage": {
+    "services": {
+      "heading": "{title} — قیمت و خدمات",
+      "subtitle": "{count, plural, one {# خدمت} other {# خدمت}}"
+    },
+    "siblings": {
+      "heading": "بیشتر در {title}"
+    },
+    "faq": {
+      "heading": "پرسش‌های متداول"
+    }
+  },
+  "groupPage": {
+    "categories": {
+      "heading": "مرور دسته‌بندی‌ها",
+      "count": "{count, plural, one {# دسته‌بندی} other {# دسته‌بندی}}",
+      "serviceCount": "{count, plural, one {# خدمت} other {# خدمت}}"
+    },
+    "featured": {
+      "heading": "درمان‌های منتخب"
     }
   },
   "settingWizard": {
