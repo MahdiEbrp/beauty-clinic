@@ -437,6 +437,7 @@
       "fullName": "Full name",
       "acceptTerms": "I have read and agree to the clinic's booking rules.",
       "payDeposit": "Pay deposit · {amount}",
+      "payDepositButton": "Pay deposit",
       "goBackAndEdit": "Go back and edit",
       "guarantee": "Your appointment is protected by Nafas Clinic Guarantee",
       "hideDetails": "Hide details",

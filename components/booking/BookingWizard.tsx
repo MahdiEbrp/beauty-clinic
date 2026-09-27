@@ -226,13 +226,12 @@ function VerifiedWizard(props: BookingWizardProps) {
         ) : null}
         {effectiveStep === 1 ? <ScheduleStep cart={cart} onAssignSlot={assignSlot} onBack={() => setStep(0)} /> : null}
         {effectiveStep === 2 ? (
-          <SummaryStep cart={cart} currency={currency} deposit={deposit} rules={rules} onSubmit={submitBooking} />
+          <SummaryStep cart={cart} rules={rules} onSubmit={submitBooking} />
         ) : null}
         {effectiveStep === 3 && group ? (
           <ConfirmationStep
             group={group}
             contact={contact}
-            currency={currency}
             paymentReference={paymentReference}
             clinic={clinic}
             onOpenInvoice={openInvoice}

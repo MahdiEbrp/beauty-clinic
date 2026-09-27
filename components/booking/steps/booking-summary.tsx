@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Calendar, ChevronDown, Receipt, Sparkles } from "lucide-react";
+import { Calendar, ChevronDown, Receipt } from "lucide-react";
 import { formatNumber } from "@/lib/services/format";
 import { cn } from "@/lib/utils";
 import { SlotLabel } from "../SlotLabel";
@@ -9,14 +9,12 @@ import type { CartItem } from "../types";
 
 type BookingSummaryProps = {
   cart: CartItem[];
-  currency: string;
-  deposit: number;
   open: boolean;
   onToggle: () => void;
 };
 
-/** Collapsible step-3 recap of chosen groups + the online deposit. */
-export function BookingSummary({ cart, currency, deposit, open, onToggle }: BookingSummaryProps) {
+/** Collapsible step-3 recap of the chosen groups. */
+export function BookingSummary({ cart, open, onToggle }: BookingSummaryProps) {
   const t = useTranslations("booking");
 
   return (
@@ -69,18 +67,6 @@ export function BookingSummary({ cart, currency, deposit, open, onToggle }: Book
                   ) : null}
                 </div>
               ))}
-            </div>
-          </div>
-
-          <div className="rounded-control border border-border-primary bg-surface-primary p-3">
-            <div className="flex items-center justify-between text-body-sm font-black text-accent">
-              <span className="flex items-center gap-1.5">
-                <Sparkles className="size-4 text-copper" aria-hidden="true" />
-                {t("summary.depositOnline")}
-              </span>
-              <span className="font-black text-copper-strong">
-                {formatNumber(deposit)} {currency}
-              </span>
             </div>
           </div>
         </div>

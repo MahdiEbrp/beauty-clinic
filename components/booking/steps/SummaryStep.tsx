@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { AlertCircle, AtSign, CreditCard, FileText, Phone, ShieldCheck, User } from "lucide-react";
-import { formatNumber } from "@/lib/services/format";
 import { bookingErrorKey } from "@/lib/bookings/errors";
 import { asTranslate } from "@/src/i18n/message-key";
 import { fetchMyBookings } from "../api";
@@ -16,8 +15,6 @@ import PreGatewayModal from "./PreGatewayModal";
 
 type SummaryStepProps = {
   cart: CartItem[];
-  currency: string;
-  deposit: number;
   rules: PublicRule[];
   onSubmit: (contact: ContactInfo) => Promise<unknown>;
 };
@@ -27,8 +24,8 @@ type FieldErrors = { fullName?: string; phone?: string; email?: string; terms?: 
 const PHONE_RE = /^0?9\d{9}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/** Step 3 — customer details, terms & deposit payment. */
-export default function SummaryStep({ cart, currency, deposit, rules, onSubmit }: SummaryStepProps) {
+/** Step 3 — customer details and terms. */
+export default function SummaryStep({ cart, rules, onSubmit }: SummaryStepProps) {
   const t = useTranslations("booking");
   const looseT = asTranslate(t);
 
@@ -108,7 +105,7 @@ export default function SummaryStep({ cart, currency, deposit, rules, onSubmit }
       }}
     >
       {/* Collapsible booking summary */}
-      <BookingSummary cart={cart} currency={currency} deposit={deposit} open={accordionOpen} onToggle={() => setAccordionOpen((open) => !open)} />
+      <BookingSummary cart={cart} open={accordionOpen} onToggle={() => setAccordionOpen((open) => !open)} />
 
       {/* Contact form */}
       <div className="space-y-4 rounded-panel border border-border-primary bg-surface-secondary p-4 shadow-elevation-1 sm:p-6">
@@ -240,7 +237,7 @@ export default function SummaryStep({ cart, currency, deposit, rules, onSubmit }
             className="inline-flex min-h-13 w-full cursor-pointer items-center justify-center gap-2 rounded-control bg-accent px-4 text-body font-black text-content-contrast shadow-elevation-1 transition-all hover:bg-accent-hover active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent select-none"
           >
             <CreditCard className="size-4 text-copper-light" aria-hidden="true" />
-            {t("summary.payDeposit", { amount: `${formatNumber(deposit)} ${currency}` })}
+            {t("summary.payDepositButton")}
           </button>
 
           <p className="flex items-center justify-center gap-1.5 text-caption text-content-tertiary">
@@ -267,8 +264,6 @@ export default function SummaryStep({ cart, currency, deposit, rules, onSubmit }
           fullName={fullName.trim()}
           phone={cleanPhone()}
           cart={cart}
-          deposit={deposit}
-          currency={currency}
           rules={rules}
           processing={processing}
           onConfirm={() => void handleConfirmPay()}

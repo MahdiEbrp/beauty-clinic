@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { CreditCard, ShieldCheck, X } from "lucide-react";
-import { formatNumber } from "@/lib/services/format";
 import type { PublicRule } from "@/lib/services/rules-types";
 import { SlotLabel } from "../SlotLabel";
 import type { CartItem } from "../types";
@@ -11,21 +10,17 @@ type PreGatewayModalProps = {
   fullName: string;
   phone: string;
   cart: CartItem[];
-  deposit: number;
-  currency: string;
   rules: PublicRule[];
   processing: boolean;
   onConfirm: () => void;
   onClose: () => void;
 };
 
-/** Final confirmation + deposit payment hand-off (Template parity). */
+/** Final confirmation before the payment gateway hand-off. */
 export default function PreGatewayModal({
   fullName,
   phone,
   cart,
-  deposit,
-  currency,
   rules,
   processing,
   onConfirm,
@@ -80,12 +75,6 @@ export default function PreGatewayModal({
                   <span className="shrink-0 text-caption text-content-tertiary"><SlotLabel line={line} /></span>
                 </span>
               ))}
-            </div>
-            <div className="flex justify-between gap-3 border-t border-border-primary/60 pt-1.5">
-              <span className="text-body-sm font-bold text-content-secondary">{t("summary.depositDue")}</span>
-              <span className="text-body-sm font-black text-copper-strong">
-                {formatNumber(deposit)} {currency}
-              </span>
             </div>
           </div>
 

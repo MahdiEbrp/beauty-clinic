@@ -12,7 +12,6 @@ import { HintBlock, Row, SectionTitle } from "./confirm-blocks";
 type ConfirmationStepProps = {
   group: CreatedBookingGroup;
   contact: ContactInfo | null;
-  currency: string;
   paymentReference: string | null;
   clinic: ClinicBookingInfo;
   onOpenInvoice: () => void;
@@ -22,7 +21,6 @@ type ConfirmationStepProps = {
 export default function ConfirmationStep({
   group,
   contact,
-  currency,
   paymentReference,
   clinic,
   onOpenInvoice,
@@ -113,16 +111,6 @@ export default function ConfirmationStep({
           </div>
 
           <HintBlock>{t("confirmation.note")}</HintBlock>
-
-          {/* Totals footer */}
-          <div className="rounded-control bg-copper-deep p-4">
-            <div className="flex items-center justify-between text-body-sm font-bold text-content-contrast/90">
-              <span>{t("confirmation.depositPaid")}</span>
-              <span className="font-black">
-                {formatNumber(group.deposit)} {currency}
-              </span>
-            </div>
-          </div>
 
           <p className="text-caption font-medium leading-relaxed text-content-tertiary">{t("confirmation.smsNote")}</p>
 
