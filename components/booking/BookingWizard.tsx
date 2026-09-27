@@ -145,10 +145,6 @@ function VerifiedWizard(props: BookingWizardProps) {
     );
   }, []);
 
-  const removeLine = useCallback((groupId: string) => {
-    setCart((prev) => (prev.length === 1 ? [] : prev.filter((line) => line.group.id !== groupId)));
-  }, []);
-
   const assignSlot = useCallback((groupId: string, slot: CartItem["slot"]) => {
     setCart((prev) => prev.map((line) => (line.group.id === groupId ? { ...line, slot } : line)));
   }, []);
@@ -226,7 +222,7 @@ function VerifiedWizard(props: BookingWizardProps) {
 
       <main className="mx-auto w-full max-w-4xl flex-1 px-2 pb-40 pt-4 sm:px-5 sm:py-6">
         {effectiveStep === 0 ? (
-          <GroupsStep tree={tree} cart={cart} health={health} phone={clinic.phoneDisplay} onHealthChange={setHealthFlag} onToggle={toggleGroup} onRemove={removeLine} />
+          <GroupsStep tree={tree} cart={cart} health={health} phone={clinic.phoneDisplay} onHealthChange={setHealthFlag} onToggle={toggleGroup} />
         ) : null}
         {effectiveStep === 1 ? <ScheduleStep cart={cart} onAssignSlot={assignSlot} onBack={() => setStep(0)} /> : null}
         {effectiveStep === 2 ? (

@@ -3,9 +3,9 @@ import { IMG } from "../images";
 
 export const HIFU_GROUP: SeedGroup = {
   slug: "hifu",
-  icon: "scan-face",
+  icon: "hifu",
   image: IMG.hifu,
-  displayOrder: 8,
+  displayOrder: 11,
   i18n: [
     {
       locale: "fa",
@@ -23,13 +23,13 @@ export const HIFU_GROUP: SeedGroup = {
         "Lift, tighten, and redefine your natural contours with personalized HIFU services for the face and body.",
       seoTitle: "HIFU Service | Face & Body Skin Tightening",
       seoDescription:
-        "Discover personalized HIFU services for the face and body, designed to support firmer-looking skin and more defined, natural-looking contours.",
+        "Discover personalized HIFU services for the face and the body, designed to support firmer-looking skin and more defined, natural-looking contours.",
     },
   ],
   categories: [
     {
       slug: "hifu-services",
-      icon: "scan-face",
+      icon: "hifu",
       displayOrder: 0,
       i18n: [
         {
@@ -48,7 +48,7 @@ export const HIFU_GROUP: SeedGroup = {
             "HIFU services to lift, tighten and improve the shape and contour of the face and body, tailored to your needs and target area.",
           seoTitle: "HIFU Services | Lift & Skin Tightening",
           seoDescription:
-            "HIFU services for the face and body to lift, tighten and enhance natural contours with a personalized, natural-looking approach.",
+            "HIFU services for the face and the body to lift, tighten and enhance natural contours with a personalized, natural-looking approach.",
         },
       ],
       // Empty on purpose — Mahdi will provide HIFU pricing separately.

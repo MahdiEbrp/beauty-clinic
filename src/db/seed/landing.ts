@@ -64,9 +64,8 @@ export async function seedLanding(): Promise<void> {
         seoTitle: content.seoTitle,
         seoDescription: content.seoDescription,
       })
-      .onConflictDoUpdate({
+      .onConflictDoNothing({
         target: [landingPagesI18n.landingPageId, landingPagesI18n.locale],
-        set: { seoTitle: content.seoTitle, seoDescription: content.seoDescription },
       });
   }
 
@@ -99,15 +98,8 @@ async function seedHero(landingPageId: string): Promise<void> {
         ctaLabel1: content.ctaLabel1,
         ctaLabel2: content.ctaLabel2,
       })
-      .onConflictDoUpdate({
+      .onConflictDoNothing({
         target: [landingHeroI18n.heroId, landingHeroI18n.locale],
-        set: {
-          title: content.title,
-          tagline: content.tagline,
-          description: content.description,
-          ctaLabel1: content.ctaLabel1,
-          ctaLabel2: content.ctaLabel2,
-        },
       });
   }
 }
@@ -127,9 +119,8 @@ async function seedMarquee(landingPageId: string): Promise<void> {
       await db
         .insert(landingMarqueeItemsI18n)
         .values({ marqueeItemId: row.id, locale, text: content.text })
-        .onConflictDoUpdate({
+        .onConflictDoNothing({
           target: [landingMarqueeItemsI18n.marqueeItemId, landingMarqueeItemsI18n.locale],
-          set: { text: content.text },
         });
     }
   }
@@ -150,10 +141,9 @@ async function seedSections(landingPageId: string): Promise<void> {
       await db
         .insert(landingSectionsI18n)
         .values({ sectionId: row.id, locale, heading: content.heading, description: content.description })
-        .onConflictDoUpdate({
-          target: [landingSectionsI18n.sectionId, landingSectionsI18n.locale],
-          set: { heading: content.heading, description: content.description },
-        });
+      .onConflictDoNothing({
+        target: [landingSectionsI18n.sectionId, landingSectionsI18n.locale],
+      });
     }
 
     await seedServiceCards(row.id, section);
@@ -204,13 +194,8 @@ async function seedServiceCards(sectionId: string, section: SeedSection): Promis
           description: content.description,
           ctaLabel: content.ctaLabel,
         })
-        .onConflictDoUpdate({
+        .onConflictDoNothing({
           target: [landingServicesI18n.landingServiceId, landingServicesI18n.locale],
-          set: {
-            title: content.title,
-            description: content.description,
-            ctaLabel: content.ctaLabel,
-          },
         });
     }
   }
@@ -241,9 +226,8 @@ async function seedStats(sectionId: string, section: SeedSection): Promise<void>
       await db
         .insert(landingAboutStatsI18n)
         .values({ statId: row.id, locale, label: content.label })
-        .onConflictDoUpdate({
+        .onConflictDoNothing({
           target: [landingAboutStatsI18n.statId, landingAboutStatsI18n.locale],
-          set: { label: content.label },
         });
     }
   }
@@ -266,9 +250,8 @@ async function seedGallery(sectionId: string, section: SeedSection): Promise<voi
       await db
         .insert(landingGalleryItemsI18n)
         .values({ galleryItemId: row.id, locale, caption: content.caption, alt: content.alt })
-        .onConflictDoUpdate({
+        .onConflictDoNothing({
           target: [landingGalleryItemsI18n.galleryItemId, landingGalleryItemsI18n.locale],
-          set: { caption: content.caption, alt: content.alt },
         });
     }
   }

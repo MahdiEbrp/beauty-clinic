@@ -12,7 +12,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { iconForCatalog } from "@/data/services";
-import type { PublicNavCatalog, PublicNavGroup } from "@/lib/services/types";
+import type { PublicNavCatalog } from "@/lib/services/types";
 import type { NavKey, RouteNavKey } from "@/data/navigation";
 import type { AuthUser } from "@/lib/auth/dal";
 
@@ -29,42 +29,16 @@ function rowClass(active: boolean) {
 }
 
 /**
- * Flattens a group's categories into a de-duplicated { category, service }
- * list. Mirrors the fix already applied in ServicesMegaMenu.tsx: if a
- * service slug appears under more than one category of the same group
- * (stale/over-constrained catalog data), React sees sibling <Link>s with
- * the same `key`, logs "Encountered two children with the same key" for
- * every affected slug, and can duplicate/drop rows on re-render. We keep
- * only the first occurrence per group, tagged with the category it came
- * from so the subheading logic below still works.
- */
-function dedupedServices(group: PublicNavGroup) {
-  const seen = new Set<string>();
-  return group.categories.flatMap((category) =>
-    category.services
-      .filter((service) => {
-        if (seen.has(service.slug)) return false;
-        seen.add(service.slug);
-        return true;
-      })
-      .map((service) => ({ category, service })),
-  );
-}
-
-/**
  * Public mobile drawer content — a visual clone of the dashboard's
  * MobileHeader drawer (flat edges, elevation shadow, start-anchored slide via
  * the parent Sheet). Sections: brand header + locale switch + close, a
  * scrollable nav list whose Services accordion is fed by the lightweight
- * `PublicNavCatalog` tree (group -> category -> service names only, see
+ * `PublicNavCatalog` tree (group -> category names only, see
  * lib/services/types.ts), and an account block pinned to the end.
  *
- * Each group is its own accordion item; each service inside links straight
- * to its entry on the pricing page (`#pricing-<groupSlug>-<serviceSlug>`),
- * matching the desktop mega menu's link scheme. Category names are shown as
- * non-interactive subheadings above their services when a group has more
- * than one category, to keep the list scannable without adding another
- * nesting level of accordion.
+ * Each group is its own block; its categories link to their SEO pages, matching
+ * the desktop mega menu's link scheme. Individual services are intentionally
+ * not listed here (the catalog can hold hundreds of brand-level rows).
  */
 export default function MobileDrawerContent({
   user,
@@ -126,8 +100,7 @@ export default function MobileDrawerContent({
             <AccordionContent className="pb-2 pt-1">
               {groups.map((group) => {
                 const Icon = iconForCatalog(group.icon);
-                const rows = dedupedServices(group);
-                let lastCategorySlug: string | null = null;
+                if (group.categories.length === 0) return null;
 
                 return (
                   <div
@@ -149,31 +122,16 @@ export default function MobileDrawerContent({
                       </Link>
 
                     <div className="flex flex-col">
-                      {rows.map(({ category, service }) => {
-                        const showSubheading =
-                          group.categories.length > 1 && category.slug !== lastCategorySlug;
-                        lastCategorySlug = category.slug;
-                        return (
-                          <div key={`${category.slug}-${service.slug}`}>
-                            {showSubheading && (
-                              <Link
-                                href={`/services/${group.slug}/${category.slug}`}
-                                onClick={onClose}
-                                className="mb-0.5 mt-2 block truncate ps-2 text-tiny font-semibold uppercase tracking-wide text-content-tertiary no-underline hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                              >
-                                {category.title}
-                              </Link>
-                            )}
-                            <Link
-                              href={`/pricing#pricing-${group.slug}-${service.slug}`}
-                              onClick={onClose}
-                              className={`${rowBase} min-h-9 px-2 text-caption text-content-secondary hover:bg-surface-tertiary hover:text-accent`}
-                            >
-                              <span className="truncate">{service.title}</span>
-                            </Link>
-                          </div>
-                        );
-                      })}
+                      {group.categories.map((category) => (
+                        <Link
+                          key={category.slug}
+                          href={`/services/${group.slug}/${category.slug}`}
+                          onClick={onClose}
+                          className={`${rowBase} min-h-9 px-2 text-caption text-content-secondary hover:bg-surface-tertiary hover:text-accent`}
+                        >
+                          <span className="truncate">{category.title}</span>
+                        </Link>
+                      ))}
                     </div>
                   </div>
                 );

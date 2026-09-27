@@ -102,40 +102,12 @@
     "fullName": "Full Name",
     "groups": {
       "title": "Select Treatment Groups",
-      "count": "{n} Groups",
       "selectedCount": "{n} groups selected",
       "searchPlaceholder": "Search face filler, body filler…",
       "clearSearch": "Clear search",
-      "removeGroup": "Remove group",
       "noResultsTitle": "No groups found",
       "noResultsDesc": "Try a different keyword.",
-      "showAll": "All ({n})",
-      "colIndex": "#",
-      "colGroup": "Treatment group",
-      "colCategories": "Categories",
-      "colServices": "Services",
-      "colAction": "Action",
-      "selectLabel": "Select",
-      "selectedLabel": "Selected",
-      "moreInfo": "More info",
-      "showingRange": "{from}–{to} of {total}",
-      "perPage": "Show",
-      "pageFirst": "First",
-      "pagePrev": "Prev",
-      "pageNext": "Next",
-      "pageLast": "Last",
-      "categoryCount": "{n} categories",
-      "serviceCount": "{n} services"
-    },
-    "groupDetail": {
-      "about": "About this group",
-      "close": "Close",
-      "safetyTitle": "Safety Notice",
-      "safetyDesc": "Procedures are performed under medical supervision with sterile, licensed materials.",
-      "selectGroup": "Add to cart",
-      "removeGroup": "Remove from cart",
-      "noDescription": "No detailed description available for this group.",
-      "categoriesLabel": "Categories & services"
+      "showAll": "All ({n})"
     },
     "invoiceModal": {
       "addressLabel": "Address",
@@ -1889,10 +1861,9 @@
   },
   "hero": {
     "cta1": "Book Now",
-    "cta2": "View Services",
+    "cta2": "Discover Services",
     "description": "Specialized skin and beauty services tailored to your unique features. Experience the art of transformation in a calm, luxurious environment.",
     "heading1": "Natural Beauty",
-    "heading2": "Find in your breath",
     "tagline": "Nafas Aesthetic Clinic"
   },
   "jsonLd": {
@@ -2404,7 +2375,16 @@
       "experts": "Trusted specialists",
       "rating": "4.9 clinic rating"
     },
-    "updated": "Last updated:"
+    "updated": "Last updated:",
+    "tabs": {
+      "label": "Price list categories",
+      "injection": "Injection Services",
+      "laser": "Laser Hair Removal",
+      "hifu": "HIFU",
+      "tattoo": "Tattoo Removal & Skin Brightening",
+      "emptyTitle": "Price list is being prepared",
+      "emptyDesc": "Prices for this section will be published soon. Contact the clinic for a quote."
+    }
   },
   "register": {
     "description": "Join Nafas Clinic to manage your bookings.",
@@ -3653,7 +3633,9 @@
         "notify_sms": "SMS on new reservation",
         "notify_email": "Email on new reservation",
         "notify_admin_sms": "Admin SMS copy on new reservation",
-        "notify_admin_email": "Admin email copy on new reservation"
+        "notify_admin_email": "Admin email copy on new reservation",
+        "reminder_sms": "Reminder SMS before appointment",
+        "reminder_hours": "Reminder lead time (hours)"
       },
       "contact": {
         "phone": "Phone number",
@@ -5021,6 +5003,8 @@
     },
     "recipients": {
       "activeOnly": "Only active users with a phone number are shown.",
+      "audienceAll": "All active users",
+      "audienceWithBookings": "Users with bookings",
       "clearPage": "Clear page selection",
       "description": "Choose users from the list or enter numbers manually.",
       "empty": "No active user with a sendable phone number was found.",
@@ -5684,7 +5668,10 @@
     "select": "Select",
     "selectPage": "Select all providers on this page",
     "selectRow": "Select this provider",
-    "status": "Status",
+    "status": {
+      "active": "Active",
+      "default": "Default"
+    },
     "statusAll": "All",
     "statusConfirm": {
       "title": "Move to {status}?",
@@ -5734,10 +5721,6 @@
       "status": "Status",
       "notProvided": "Not provided",
       "secretHidden": "Stored securely"
-    },
-    "status": {
-      "active": "Active",
-      "default": "Default"
     }
   },
   "paymentProviderForm": {
@@ -6073,5 +6056,8 @@
     "sms": "Your appointment {groupRef} is confirmed. {groups}. Deposit paid: {deposit} {currency}. {clinicName} | {clinicPhone}",
     "emailSubject": "Appointment confirmed {groupRef} | {clinicName}",
     "emailBody": "Hello {name},<br/><br/>Your appointment <b>{groupRef}</b> is confirmed.<br/><br/><b>Groups:</b> {groups}<br/><b>Deposit paid:</b> {deposit} {currency}<br/><b>Payment reference:</b> {paymentReference}<br/><br/>Please arrive at least 15 minutes before your appointment time.<br/><br/>{clinicName}<br/>{clinicPhone}"
+  },
+  "bookingReminder": {
+    "sms": "Reminder for appointment {groupRef}: {groups}. Please arrive on time. {clinicName} | {clinicPhone}"
   }
 }

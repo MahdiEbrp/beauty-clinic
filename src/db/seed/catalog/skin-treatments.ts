@@ -4,9 +4,9 @@ import { IMG } from "../images";
 
 export const SKIN_TREATMENTS_GROUP: SeedGroup = {
   slug: "skin-treatments",
-  icon: "sparkles",
+  icon: "peel",
   image: IMG.care,
-  displayOrder: 8,
+  displayOrder: 9,
   i18n: [
     {
       locale: "fa",

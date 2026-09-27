@@ -140,6 +140,18 @@ export const SYSTEM_SETTINGS: SettingInput[] = [
     translations: { fa: "ارسال نسخه ایمیلی نوبت جدید به ادمین", en: "Admin email copy on new reservation" },
   },
   {
+    key: "booking.reminder_sms",
+    value: true,
+    type: "boolean",
+    translations: { fa: "ارسال پیامک یادآوری پیش از نوبت", en: "Reminder SMS before appointment" },
+  },
+  {
+    key: "booking.reminder_hours",
+    value: 24,
+    type: "number",
+    translations: { fa: "فاصله ارسال یادآوری (ساعت قبل از نوبت)", en: "Reminder lead time (hours before appointment)" },
+  },
+  {
     key: "contact.admin_phone",
     value: "",
     type: "string",

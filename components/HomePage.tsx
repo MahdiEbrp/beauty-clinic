@@ -3,7 +3,6 @@
 import { useRouter } from "@/src/i18n/navigation";
 import Hero from "@/components/Hero";
 import Marquee from "@/components/Marquee";
-import Services from "@/components/Services";
 import About from "@/components/About";
 import Gallery from "@/components/Gallery";
 import Contact from "@/components/Contact";
@@ -24,7 +23,6 @@ export default function HomePage({ clinicData, landing }: HomePageProps) {
     <>
       <Hero landing={landing} />
       <Marquee landing={landing} />
-      <Services landing={landing} />
       <About landing={landing} />
       <Gallery landing={landing} />
       <Contact landing={landing} onOpenBooking={openBooking} clinic={clinicData} />

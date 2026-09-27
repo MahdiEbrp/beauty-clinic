@@ -1,11 +1,10 @@
 import type { SeedGroup } from "./types";
-import { FILLER_10CC_CATEGORY } from "./face-filler-10cc";
-import { FILLER_UNDEREYE_CATEGORY } from "./face-filler-undereye";
+import { FACE_FILLER_AREA_CATEGORIES } from "./filler-areas";
 import { IMG } from "../images";
 
 export const FACE_FILLER_GROUP: SeedGroup = {
   slug: "face-filler",
-  icon: "Syringe",
+  icon: "facial",
   image: IMG.filler,
   displayOrder: 1,
   i18n: [
@@ -28,8 +27,5 @@ export const FACE_FILLER_GROUP: SeedGroup = {
         "Enhance your natural beauty with expert face filler services. Restore volume, soften lines, and define lips, cheeks, or chin for a refreshed, balanced look.",
     },
   ],
-  categories: [
-    FILLER_UNDEREYE_CATEGORY,
-    FILLER_10CC_CATEGORY,
-  ],
+  categories: FACE_FILLER_AREA_CATEGORIES,
 };

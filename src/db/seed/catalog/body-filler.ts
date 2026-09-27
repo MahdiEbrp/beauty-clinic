@@ -1,75 +1,153 @@
-import type { SeedGroup } from "./types";
+import type { SeedCategory, SeedGroup } from "./types";
 import { svc, withSeo } from "./types";
 import { IMG } from "../images";
 
+/**
+ * "فیلر بدن" — split into the two treatment areas from the clinic's list
+ * (hips / bikini). Each area offers the same three volume options (per cc,
+ * 50cc, 100cc); slugs are suffixed with the area key to stay globally unique.
+ */
+type BodyArea = {
+  key: string;
+  fa: string;
+  en: string;
+  faDesc: string;
+  enDesc: string;
+};
+
+const BODY_AREAS: BodyArea[] = [
+  {
+    key: "hip",
+    fa: "فیلر باسن",
+    en: "Hip Filler",
+    faDesc:
+      "فرم‌دهی و حجم‌دهی طبیعی باسن با فیلر؛ تناسب و کانتور بهتر متناسب با اندام شما.",
+    enDesc:
+      "Natural hip contouring and volumizing with filler for better balance, tailored to your body.",
+  },
+  {
+    key: "bikini",
+    fa: "فیلر بیکینی",
+    en: "Bikini Filler",
+    faDesc:
+      "فرم‌دهی و حجم‌دهی ناحیه بیکینی با فیلر؛ رویکردی ظریف، ایمن و متناسب.",
+    enDesc:
+      "Bikini-area contouring and volumizing with filler — a refined, safe and personalized approach.",
+  },
+];
+
+type Volume = {
+  key: string;
+  fa: string;
+  en: string;
+  price: number;
+  priceType: "fixed" | "from";
+  faShort: string;
+  enShort: string;
+};
+
+const BODY_VOLUMES: Volume[] = [
+  {
+    key: "per-cc",
+    fa: "هر سی‌سی",
+    en: "per cc",
+    price: 390_000,
+    priceType: "from",
+    faShort: "فیلر بدن به ازای هر سی‌سی؛ مشاوره برای تعیین حجم مناسب.",
+    enShort: "Body filler per cc with consultation to determine the right volume.",
+  },
+  {
+    key: "50cc",
+    fa: "۵۰ سی‌سی",
+    en: "50cc",
+    price: 18_500_000,
+    priceType: "fixed",
+    faShort: "پک ۵۰ سی‌سی فیلر بدن؛ تعادل مناسب بین قیمت و حجم.",
+    enShort: "50cc body filler pack — a good balance between price and volume.",
+  },
+  {
+    key: "100cc",
+    fa: "۱۰۰ سی‌سی",
+    en: "100cc",
+    price: 34_900_000,
+    priceType: "fixed",
+    faShort: "پک ۱۰۰ سی‌سی فیلر بدن؛ اقتصادی‌ترین گزینه برای حجم‌دهی بالا.",
+    enShort: "100cc body filler pack — the most economical option for high volume.",
+  },
+];
+
+function buildCategory(area: BodyArea, displayOrder: number): SeedCategory {
+  return {
+    slug: `body-filler-${area.key}`,
+    icon: "bodyFiller",
+    displayOrder,
+    i18n: [
+      {
+        locale: "fa",
+        name: area.fa,
+        description: area.faDesc,
+        seoTitle: `${area.fa} | قیمت`,
+        seoDescription: area.faDesc,
+      },
+      {
+        locale: "en",
+        name: area.en,
+        description: area.enDesc,
+        seoTitle: `${area.en} | Price`,
+        seoDescription: area.enDesc,
+      },
+    ],
+    services: BODY_VOLUMES.map((volume, index) =>
+      withSeo(
+        svc(
+          `body-filler-${area.key}-${volume.key}`,
+          `${area.fa} ${volume.fa}`,
+          `${area.en} ${volume.en}`,
+          volume.price,
+          index,
+          volume.priceType,
+        ),
+        {
+          fa: {
+            shortDesc: `${volume.faShort} (${area.fa})`,
+            seoTitle: `${area.fa} ${volume.fa} | قیمت`,
+            seoDescription: `قیمت ${area.fa} ${volume.fa}؛ ${area.faDesc}`,
+          },
+          en: {
+            shortDesc: `${volume.enShort} (${area.en})`,
+            seoTitle: `${area.en} ${volume.en} | Price`,
+            seoDescription: `${area.en} ${volume.en} price. ${area.enDesc}`,
+          },
+        },
+      ),
+    ),
+  };
+}
+
 export const BODY_FILLER_GROUP: SeedGroup = {
   slug: "body-filler",
-  icon: "hand-coins",
+  icon: "bodyFiller",
   image: IMG.bodyFiller,
-  displayOrder: 4,
+  displayOrder: 5,
   i18n: [
     {
       locale: "fa",
-      name: "فیلر بدن (ناخن - بیکینی)",
+      name: "فیلر بدن",
       description:
         "فرم طبیعی بدن خود را با روشی ظریف و متناسب با ویژگی‌های شما زیباتر کنید.\nبا هدف بهبود حجم، تناسب و فرم در نواحی منتخب، برای ایجاد ظاهری متعادل‌تر، هماهنگ‌تر و جذاب‌تر.",
-      seoTitle: "فیلر بدن و فرم‌دهی | کانتورینگ طبیعی",
+      seoTitle: "فیلر بدن | کانتورینگ طبیعی باسن و بیکینی",
       seoDescription:
-        "با فیلر و خدمات فرم‌دهی بدن، تناسب و کانتور نواحی موردنظر را با رویکردی ظریف و متناسب با ویژگی‌های شما بهبود دهید. مشاوره و رزرو نوبت.",
+        "با فیلر بدن، تناسب و کانتور باسن و ناحیه بیکینی را با رویکردی ظریف و متناسب با ویژگی‌های شما بهبود دهید. مشاوره و رزرو نوبت.",
     },
     {
       locale: "en",
-      name: "Body Filler (Nails & Bikini)",
+      name: "Body Filler",
       description:
-        "Enhance your body’s natural contours with a refined, personalized approach.\nDesigned to improve volume, balance and definition in selected areas for a more harmonious and confident silhouette.",
-      seoTitle: "Body Filler & Contouring | Natural-Looking Results",
+        "Enhance your body's natural contours with a refined, personalized approach.\nDesigned to improve volume, balance and definition in selected areas for a more harmonious and confident silhouette.",
+      seoTitle: "Body Filler | Hips & Bikini Contouring",
       seoDescription:
-        "Explore personalized body filler and contouring services designed to enhance shape and definition with a refined, natural-looking approach.Book a consultatio.",
+        "Explore personalized body filler services for the hips and bikini area, designed to enhance shape and definition with a refined, natural-looking approach.",
     },
   ],
-  categories: [
-    {
-      slug: "body-filler-hip-bikini",
-      icon: "hand-coins",
-      displayOrder: 0,
-      i18n: [
-        {
-          locale: "fa",
-          name: "فیلر بادی (باسن و بیکینی)",
-          description:
-            "فرم‌دهی طبیعی باسن و ناحیه بیکینی با فیلر؛ افزایش حجم و بهبود تناسب، متناسب با ویژگی‌های بدن شما و با نتیجه‌ای ماندگار.",
-          seoTitle: "فیلر بادی باسن و بیکینی | قیمت",
-          seoDescription:
-            "قیمت و مشاوره فیلر بادی برای باسن و ناحیه بیکینی؛ فرم‌دهی طبیعی و افزایش حجم متناسب با ویژگی‌های بدن شما.",
-        },
-        {
-          locale: "en",
-          name: "Body Filler (Hips & Bikini)",
-          description:
-            "Natural hip and bikini-area contouring with filler — enhance volume and improve balance, tailored to your body with long-lasting results.",
-          seoTitle: "Body Filler for Hips & Bikini Area | Price",
-          seoDescription:
-            "Body filler price and consultation for hips and bikini area. Enhance natural volume and shape tailored to your body.",
-        },
-      ],
-      services: [
-        withSeo(svc("body-filler-per-cc", "فیلر بادی هر سی سی", "Body Filler per cc", 390_000, 0), {
-          fa: {
-            shortDesc:
-              "فیلر بادی هر سی سی برای فرم‌دهی و افزایش حجم باسن و ناحیه بیکینی؛ با مشاوره حرفه‌ای و متناسب با بدن شما.",
-            seoTitle: "فیلر بادی هر سی سی | قیمت",
-            seoDescription:
-              "قیمت فیلر بادی هر سی سی برای فرم‌دهی باسن و ناحیه بیکینی؛ با مشاوره حرفه‌ای و تعیین حجم مناسب برای بدن شما.",
-          },
-          en: {
-            shortDesc:
-              "Body filler per cc for contouring and adding volume to the hips and bikini area with expert consultation.",
-            seoTitle: "Body Filler per cc | Price",
-            seoDescription:
-              "Body filler per cc price for hips and bikini area contouring with expert consultation to determine the right volume for you.",
-          },
-        }),
-      ],
-    },
-  ],
+  categories: BODY_AREAS.map((area, index) => buildCategory(area, index)),
 };

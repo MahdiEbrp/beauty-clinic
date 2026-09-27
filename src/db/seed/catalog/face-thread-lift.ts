@@ -4,9 +4,9 @@ import { IMG } from "../images";
 
 export const FACE_THREAD_LIFT_GROUP: SeedGroup = {
   slug: "face-thread-lift",
-  icon: "Sparkles",
+  icon: "peel",
   image: IMG.skinRejuvenation,
-  displayOrder: 5,
+  displayOrder: 13,
   i18n: [
     {
       locale: "fa",

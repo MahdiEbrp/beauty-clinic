@@ -1,19 +1,19 @@
 import type { SeedGroup } from "./types";
-import { HAIR_MESOTHERAPY_CATEGORY } from "./mesotherapy-hair-services";
+import { HAIR_MESOTHERAPY_CATEGORY } from "./meso-hair-services";
 import { IMG } from "../images";
 
-export const MESOTHERAPY_HAIR_GROUP: SeedGroup = {
-  slug: "mesotherapy-hair",
+export const HAIR_MESOTHERAPY_GROUP: SeedGroup = {
+  slug: "hair-mesotherapy",
   icon: "droplet",
   image: IMG.mesotherapy,
   displayOrder: 7,
   i18n: [
     {
       locale: "fa",
-      name: "مزوتراپی و تقویت مو",
+      name: "تقویت مو",
       description:
-        "مزوتراپی تخصصی برای تقویت ریشه، کاهش ریزش و بهبود کیفیت و تراکم مو؛ متناسب با نیاز و وضعیت موی شما.",
-      seoTitle: "مزوتراپی و تقویت مو | کاهش ریزش و تراکم",
+        "مزوتراپی و خدمات تخصصی برای تقویت ریشه، کاهش ریزش و بهبود کیفیت و تراکم مو؛ متناسب با نیاز و وضعیت موی شما.",
+      seoTitle: "تقویت مو | کاهش ریزش و افزایش تراکم",
       seoDescription:
         "مزوتراپی و تقویت مو برای کاهش ریزش، تقویت ریشه و بهبود کیفیت و تراکم مو با رویکردی متناسب و تخصصی.",
     },

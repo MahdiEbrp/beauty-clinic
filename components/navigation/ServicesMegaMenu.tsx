@@ -117,11 +117,6 @@ export default function ServicesMegaMenu({
                     return null;
                   }
 
-                  const serviceCount = group.categories.reduce(
-                    (acc, category) => acc + category.services.length,
-                    0,
-                  );
-
                   return (
                     <section
                       key={group.slug}
@@ -165,20 +160,6 @@ export default function ServicesMegaMenu({
                             {group.title}
                           </span>
                         </Link>
-
-                        <span
-                          className="
-                            ms-auto
-                            shrink-0
-                            text-[10px]
-                            font-semibold
-                            tabular-nums
-                            text-content-tertiary
-                          "
-                          aria-label={`${serviceCount} services`}
-                        >
-                          {serviceCount}
-                        </span>
                       </div>
 
                       {/* Categories, each linking to its own SEO page */}

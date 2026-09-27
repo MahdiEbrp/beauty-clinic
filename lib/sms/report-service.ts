@@ -1,4 +1,4 @@
-import { and, count, desc, eq, ilike, isNull, or, sql, type SQL } from "drizzle-orm";
+import { and, count, desc, eq, ilike, inArray, isNotNull, isNull, or, sql, type SQL } from "drizzle-orm";
 
 import { ApiError } from "@/lib/api/errors";
 
@@ -13,6 +13,7 @@ import type {
 } from "@/lib/validation/sms";
 import { db } from "@/src/db";
 import {
+  bookings,
   smsMessages,
   smsProviders,
   smsTemplates,
@@ -239,6 +240,13 @@ export async function listSmsRecipients(
       ilike(users.phone, term),
     );
     if (searchCondition) conditions.push(searchCondition);
+  }
+  if (options.audience === "with_bookings") {
+    const bookerIds = db
+      .select({ id: bookings.customerId })
+      .from(bookings)
+      .where(isNotNull(bookings.customerId));
+    conditions.push(inArray(users.id, bookerIds));
   }
   const where = and(...conditions);
   const [countRow] = await db.select({ value: count() }).from(users).where(where);

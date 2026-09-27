@@ -102,40 +102,12 @@
     "fullName": "نام و نام خانوادگی",
     "groups": {
       "title": "انتخاب گروه‌های درمانی",
-      "count": "{n} گروه",
       "selectedCount": "{n} گروه انتخاب شد",
       "searchPlaceholder": "جستجوی فیلر صورت، فیلر بدن…",
       "clearSearch": "پاک کردن جستجو",
-      "removeGroup": "حذف گروه",
       "noResultsTitle": "گروهی پیدا نشد",
       "noResultsDesc": "عبارت دیگری را امتحان کنید.",
-      "showAll": "همه ({n})",
-      "colIndex": "#",
-      "colGroup": "گروه درمانی",
-      "colCategories": "دسته‌ها",
-      "colServices": "خدمات",
-      "colAction": "عملیات",
-      "selectLabel": "انتخاب",
-      "selectedLabel": "انتخاب شد",
-      "moreInfo": "جزئیات بیشتر",
-      "showingRange": "{from} تا {to} از {total}",
-      "perPage": "نمایش",
-      "pageFirst": "اول",
-      "pagePrev": "قبلی",
-      "pageNext": "بعدی",
-      "pageLast": "آخر",
-      "categoryCount": "{n} دسته",
-      "serviceCount": "{n} خدمت"
-    },
-    "groupDetail": {
-      "about": "درباره این گروه",
-      "close": "بستن",
-      "safetyTitle": "نکات ایمنی",
-      "safetyDesc": "تمامی خدمات زیر نظر پزشک با مواد استریل و مجاز انجام می‌شود.",
-      "selectGroup": "افزودن به سبد",
-      "removeGroup": "حذف از سبد",
-      "noDescription": "توضیح کاملی برای این گروه در دسترس نیست.",
-      "categoriesLabel": "دسته‌ها و خدمات"
+      "showAll": "همه ({n})"
     },
     "invoiceModal": {
       "addressLabel": "نشانی",
@@ -1889,10 +1861,9 @@
   },
   "hero": {
     "cta1": "رزرو نوبت",
-    "cta2": "مشاهده خدمات",
+    "cta2": "معرفی خدمات",
     "description": "خدمات تخصصی پوست و زیبایی، متناسب با چهره منحصربه‌فرد شما. هنر تحول را در فضایی آرام و لوکس تجربه کنید.",
     "heading1": "زیبایی طبیعی",
-    "heading2": "در نفس خود بجویید",
     "tagline": "کلینیک تخصصی زیبایی نفس"
   },
   "jsonLd": {
@@ -2404,7 +2375,16 @@
       "experts": "متخصصان مورد اعتماد",
       "rating": "امتیاز ۴.۹ کلینیک"
     },
-    "updated": "آخرین به‌روزرسانی:"
+    "updated": "آخرین به‌روزرسانی:",
+    "tabs": {
+      "label": "دسته‌بندی لیست قیمت",
+      "injection": "خدمات تزریقی",
+      "laser": "لیزر مو زائد",
+      "hifu": "هایفوتراپی",
+      "tattoo": "پاک‌کننده تتو و روشن‌کننده پوست",
+      "emptyTitle": "لیست قیمت در حال آماده‌سازی است",
+      "emptyDesc": "قیمت‌های این بخش به‌زودی منتشر می‌شود. برای استعلام قیمت با کلینیک تماس بگیرید."
+    }
   },
   "register": {
     "description": "به کلینیک نفس بپیوندید و نوبت‌های خود را مدیریت کنید.",
@@ -3637,7 +3617,7 @@
         "subtitle": "کلیدهایی که هنوز دسته‌بندی نشده‌اند."
       }
     },
-"keys": {
+    "keys": {
       "booking": {
         "timezone": "منطقه زمانی",
         "slot_auto": "زمان‌بندی خودکار",
@@ -3653,7 +3633,9 @@
         "notify_sms": "پیامک نوبت جدید",
         "notify_email": "ایمیل نوبت جدید",
         "notify_admin_sms": "نسخه پیامکی نوبت جدید برای ادمین",
-        "notify_admin_email": "نسخه ایمیلی نوبت جدید برای ادمین"
+        "notify_admin_email": "نسخه ایمیلی نوبت جدید برای ادمین",
+        "reminder_sms": "پیامک یادآوری پیش از نوبت",
+        "reminder_hours": "فاصله ارسال یادآوری (ساعت)"
       },
       "contact": {
         "phone": "شماره تلفن",
@@ -5021,6 +5003,8 @@
     },
     "recipients": {
       "activeOnly": "فقط کاربران فعال دارای شماره نمایش داده می‌شوند.",
+      "audienceAll": "همه کاربران فعال",
+      "audienceWithBookings": "کاربران دارای رزرو",
       "clearPage": "لغو انتخاب این صفحه",
       "description": "کاربران را از فهرست انتخاب کنید یا شماره‌ها را دستی وارد کنید.",
       "empty": "کاربر فعالی با شمارهٔ قابل ارسال پیدا نشد.",
@@ -5684,7 +5668,10 @@
     "select": "انتخاب",
     "selectPage": "انتخاب همه درگاه‌های این صفحه",
     "selectRow": "انتخاب این درگاه",
-    "status": "وضعیت",
+    "status": {
+      "active": "فعال",
+      "default": "پیش‌فرض"
+    },
     "statusAll": "همه",
     "statusConfirm": {
       "title": "انتقال به {status}؟",
@@ -5734,10 +5721,6 @@
       "status": "وضعیت",
       "notProvided": "وارد نشده",
       "secretHidden": "به‌صورت امن ذخیره شده"
-    },
-    "status": {
-      "active": "فعال",
-      "default": "پیش‌فرض"
     }
   },
   "paymentProviderForm": {
@@ -6073,5 +6056,8 @@
     "sms": "نوبت {groupRef} شما تأیید شد. {groups}. بیعانه پرداختی: {deposit} {currency}. {clinicName} | {clinicPhone}",
     "emailSubject": "تأیید نوبت {groupRef} | {clinicName}",
     "emailBody": "سلام {name}،<br/><br/>نوبت <b>{groupRef}</b> شما با موفقیت تأیید شد.<br/><br/><b>گروه‌ها:</b> {groups}<br/><b>بیعانه پرداختی:</b> {deposit} {currency}<br/><b>کد پیگیری پرداخت:</b> {paymentReference}<br/><br/>لطفاً حداقل ۱۵ دقیقه پیش از موعد نوبت در کلینیک حاضر باشید.<br/><br/>{clinicName}<br/>{clinicPhone}"
+  },
+  "bookingReminder": {
+    "sms": "یادآوری نوبت {groupRef}: {groups}. لطفاً در زمان مقرر در کلینیک حاضر باشید. {clinicName} | {clinicPhone}"
   }
 }

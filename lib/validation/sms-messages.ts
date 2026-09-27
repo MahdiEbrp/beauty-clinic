@@ -97,6 +97,8 @@ export const listSmsRecipientsQuerySchema = z
       .trim()
       .max(SMS_LIMITS.recipientSearchMaxLength)
       .optional(),
+    /** `with_bookings` restricts the list to users who have at least one booking. */
+    audience: z.enum(["all", "with_bookings"]).default("all"),
   })
   .strict();
 

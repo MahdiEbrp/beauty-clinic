@@ -140,6 +140,29 @@ export async function register(): Promise<void> {
     nextRun: expiryJob.nextRun()?.toISOString() ?? null,
   });
 
+  // 15 minutes — pre-appointment reminder SMS (one per order, idempotent).
+  const { sendUpcomingReminders } = await import("@/lib/bookings/reminders");
+  const reminderJob = new Cron(
+    "*/15 * * * *",
+    { timezone: "UTC", protect: true, name: "booking-reminders" },
+    async () => {
+      try {
+        const result = await sendUpcomingReminders();
+        if (result.sent > 0) {
+          logInfo("bookingReminder.tick", result);
+        }
+      } catch (error) {
+        logError("bookingReminder.tick_failed", {
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    },
+  );
+
+  logInfo("bookingReminder.scheduled", {
+    nextRun: reminderJob.nextRun()?.toISOString() ?? null,
+  });
+
   // Weekly cleanup: Fridays at 6:00 UTC
   const { cleanUnreservedPastSlots, cleanExpiredLogs } = await import(
     "@/lib/cleanup"

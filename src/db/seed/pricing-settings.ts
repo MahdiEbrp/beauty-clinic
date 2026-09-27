@@ -38,7 +38,7 @@ export const PRICING_PAGE_SETTINGS: SettingInput[] = [
       en: "Complete price list for Nafas Clinic beauty services including filler, botox, mesotherapy and laser with top brands",
     },
   },
-  { key: "pricing.page.updated", value: "2026-06-15", type: "string" },
+  { key: "pricing.page.updated", value: "2026-09-27", type: "string" },
   {
     key: "pricing.cta.title",
     value: "می‌خواهید نوبت رزرو کنید؟",

@@ -35,6 +35,13 @@ export async function seedServiceCatalog(): Promise<void> {
   if (deactivated.length > 0) {
     console.log(`Deactivated legacy groups: ${deactivated.join(", ")}`);
   }
+  const { deactivatedCategories, deactivatedServices } = await syncCatalogTree();
+  if (deactivatedCategories.length > 0) {
+    console.log(`Deactivated legacy categories: ${deactivatedCategories.join(", ")}`);
+  }
+  if (deactivatedServices.length > 0) {
+    console.log(`Deactivated legacy services: ${deactivatedServices.join(", ")}`);
+  }
   console.log("Service catalog seeded.");
 }
 
@@ -56,6 +63,56 @@ export async function syncCatalogGroups(): Promise<{ deactivated: string[] }> {
       .where(inArray(serviceGroups.id, toDeactivate));
   }
   return { deactivated: extra.map((row) => row.slug) };
+}
+
+/**
+ * Deactivates categories/services whose slug is no longer part of the seed
+ * tree. Like `syncCatalogGroups`, non-destructive — rows are kept, only
+ * hidden — and bookings that reference them stay intact.
+ */
+export async function syncCatalogTree(): Promise<{
+  deactivatedCategories: string[];
+  deactivatedServices: string[];
+}> {
+  const keepCategorySlugs = new Set<string>();
+  const keepServiceSlugs = new Set<string>();
+  for (const group of CATALOG_SEED) {
+    for (const category of group.categories) {
+      keepCategorySlugs.add(category.slug);
+      for (const service of category.services) {
+        keepServiceSlugs.add(service.slug);
+      }
+    }
+  }
+
+  const categoryRows = await db
+    .select({ id: serviceCategories.id, slug: serviceCategories.slug, isActive: serviceCategories.isActive })
+    .from(serviceCategories);
+  const extraCategories = categoryRows.filter((row) => !keepCategorySlugs.has(row.slug));
+  const categoriesToDeactivate = extraCategories.filter((row) => row.isActive).map((row) => row.id);
+  if (categoriesToDeactivate.length > 0) {
+    await db
+      .update(serviceCategories)
+      .set({ isActive: false })
+      .where(inArray(serviceCategories.id, categoriesToDeactivate));
+  }
+
+  const serviceRows = await db
+    .select({ id: services.id, slug: services.slug, isActive: services.isActive })
+    .from(services);
+  const extraServices = serviceRows.filter((row) => !keepServiceSlugs.has(row.slug));
+  const servicesToDeactivate = extraServices.filter((row) => row.isActive).map((row) => row.id);
+  if (servicesToDeactivate.length > 0) {
+    await db
+      .update(services)
+      .set({ isActive: false })
+      .where(inArray(services.id, servicesToDeactivate));
+  }
+
+  return {
+    deactivatedCategories: extraCategories.map((row) => row.slug),
+    deactivatedServices: extraServices.map((row) => row.slug),
+  };
 }
 
 

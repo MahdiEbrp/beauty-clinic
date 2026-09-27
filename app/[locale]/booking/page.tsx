@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 import { getPublicServiceTree, getRulesForPublic } from "@/lib/services/service";
+import { BOOKABLE_ITEMS, bookingLabelFor } from "@/lib/services/bookable";
 import { getClinicData } from "@/data/clinic";
 import type { Locale } from "@/lib/services/types";
 import { pageUrl } from "@/lib/site";
@@ -39,13 +40,28 @@ export default async function BookingPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const tree = await getPublicServiceTree(locale as Locale);
-  const clinic = await getClinicData(locale as Locale);
-  const rules = await getRulesForPublic(locale as Locale, { status: "active" });
+  const localeTyped = locale as Locale;
+  const tree = await getPublicServiceTree(localeTyped);
+  const clinic = await getClinicData(localeTyped);
+  const rules = await getRulesForPublic(localeTyped, { status: "active" });
+
+  // The booking list is a curated, fixed-order subset of the catalog groups.
+  const groupsBySlug = new Map(tree.groups.map((group) => [group.slug, group]));
+  const bookableGroups = BOOKABLE_ITEMS.flatMap((item) => {
+    const group = groupsBySlug.get(item.slug);
+    if (!group) return [];
+    const label = bookingLabelFor(item.slug, localeTyped);
+    return [label ? { ...group, title: label } : group];
+  });
+
+  const bookableTree = {
+    ...tree,
+    groups: bookableGroups,
+  };
 
   return (
     <BookingWizard
-      tree={tree}
+      tree={bookableTree}
       rules={rules}
       currency={clinic.currency}
       openingHours={clinic.openingHours}

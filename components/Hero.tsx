@@ -5,7 +5,7 @@ import { CalendarPlus, Eye, Heart, Shield, Sparkles, Zap } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import Magnetic from "@/components/motion/magnetic";
 import type { PublicLanding } from "@/lib/landing";
-import Link from "next/link";
+import { Link } from "@/src/i18n/navigation";
 
 interface HeroProps {
   landing: PublicLanding | null;
@@ -104,10 +104,14 @@ export default function Hero({ landing }: HeroProps) {
             className="text-display font-extralight mb-6 leading-[1.1] tracking-tight text-accent"
           >
             {titleLine1 || t("heading1")}
-            <br />
-            <b className="bg-linear-to-br from-accent to-copper bg-clip-text text-transparent">
-              {titleLine2 || t("heading2")}
-            </b>
+            {titleLine2 ? (
+              <>
+                <br />
+                <b className="bg-linear-to-br from-accent to-copper bg-clip-text text-transparent">
+                  {titleLine2}
+                </b>
+              </>
+            ) : null}
           </motion.h1>
 
           <motion.p
@@ -129,13 +133,13 @@ export default function Hero({ landing }: HeroProps) {
               </Link>
             </Magnetic>
             <Magnetic strength={4}>
-              <a
-                href="#services"
+              <Link
+                href="/services"
                 className="inline-flex items-center justify-center gap-3 px-10 py-5 text-body-lg min-h-15 bg-transparent text-accent border-2 border-border-interactive rounded-pill font-bold no-underline transition-all duration-300 hover:border-accent hover:bg-surface-tertiary hover:shadow-elevation-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
                 <Eye className="w-6 h-6" strokeWidth={2} aria-hidden="true" />
                 {data?.ctaLabel2 ?? t("cta2")}
-              </a>
+              </Link>
             </Magnetic>
           </motion.div>
         </motion.div>

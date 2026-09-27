@@ -22,6 +22,7 @@ export function SmsRecipientPicker({
   const [data, setData] = useState<ListSmsRecipientsResult | null>(null);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [audience, setAudience] = useState<"all" | "with_bookings">("all");
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
 
@@ -30,6 +31,7 @@ export function SmsRecipientPicker({
       const query = new URLSearchParams({
         page: String(page),
         perPage: String(SMS_LIMITS.recipientListPerPageDefault),
+        audience,
       });
       if (search.trim()) query.set("search", search.trim());
       setLoading(true);
@@ -47,7 +49,7 @@ export function SmsRecipientPicker({
         .finally(() => setLoading(false));
     }, SMS_LIMITS.searchDebounceMs);
     return () => clearTimeout(timer);
-  }, [page, search]);
+  }, [page, search, audience]);
 
   const selectedIds = useMemo(() => new Set(selected.map((item) => item.id)), [selected]);
   const visible = data?.items ?? [];
@@ -86,6 +88,32 @@ export function SmsRecipientPicker({
         <span className="rounded-pill bg-accent-subtle px-3 py-1 text-dash-caption font-bold text-accent">
           {t("recipients.selected", { count: selected.length })}
         </span>
+      </div>
+
+      <div className="mt-5 flex flex-wrap gap-2" role="group">
+        {(["all", "with_bookings"] as const).map((id) => {
+          const active = audience === id;
+          return (
+            <button
+              key={id}
+              type="button"
+              aria-pressed={active}
+              onClick={() => {
+                setAudience(id);
+                setPage(1);
+              }}
+              className={`inline-flex min-h-10 items-center rounded-pill border px-3 text-dash-caption font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+                active
+                  ? "border-accent bg-accent text-content-contrast"
+                  : "border-border-interactive text-content-secondary hover:bg-surface-tertiary hover:text-accent"
+              }`}
+            >
+              {id === "all"
+                ? t("recipients.audienceAll")
+                : t("recipients.audienceWithBookings")}
+            </button>
+          );
+        })}
       </div>
 
       <div className="mt-5 relative">

@@ -27,7 +27,7 @@ export const HAIR_MESOTHERAPY_CATEGORY: SeedCategory = {
   ],
   services: [
     withSeo(
-      svc("meso-hair-single", "مزوتراپی مو (هر جلسه)", "Hair Mesotherapy (Per Session)", 1_490_000, 0),
+      svc("meso-hair-single", "مزوتراپی مو (هر جلسه)", "Hair Mesotherapy (Per Session)", 1_990_000, 0),
       {
         fa: {
           shortDesc: "مزوتراپی مو در هر جلسه برای تقویت ریشه و کاهش ریزش.",
@@ -67,7 +67,7 @@ export const HAIR_MESOTHERAPY_CATEGORY: SeedCategory = {
       },
     ),
     withSeo(
-      svc("hair-filler-single", "هیر فیلر (هر جلسه)", "Hair Filler (Per Session)", 4_890_000, 2),
+      svc("hair-filler-single", "هیر فیلر (هر جلسه)", "Hair Filler (Per Session)", 5_990_000, 2),
       {
         fa: {
           shortDesc: "هیر فیلر در هر جلسه برای ضخیم‌تر شدن و بهبود کیفیت تارهای مو.",
@@ -84,7 +84,7 @@ export const HAIR_MESOTHERAPY_CATEGORY: SeedCategory = {
       },
     ),
     withSeo(
-      svc("prp-hair", "پی‌آرپی مو", "Hair PRP", 3_100_000, 3),
+      svc("prp-hair-session", "پی‌آرپی مو", "Hair PRP", 3_300_000, 3),
       {
         fa: {
           shortDesc: "پی‌آرپی مو با پلاسمای غنی از پلاکت برای تقویت رشد مو.",

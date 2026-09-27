@@ -61,20 +61,20 @@ export const LANDING_HERO_I18N: {
   taglineIcon: "Sparkles",
   i18n: {
     en: {
-      title: "Natural Beauty\nFind in your breath",
+      title: "Natural Beauty",
       tagline: "Nafas Aesthetic Clinic",
       description:
         "Specialized skin and beauty services tailored to your unique features. Experience the art of transformation in a calm, luxurious environment.",
       ctaLabel1: "Book Now",
-      ctaLabel2: "View Services",
+      ctaLabel2: "Discover Services",
     },
     fa: {
-      title: "زیبایی طبیعی\nدر نفس خود بجویید",
+      title: "زیبایی طبیعی",
       tagline: "کلینیک تخصصی زیبایی نفس",
       description:
         "خدمات تخصصی پوست و زیبایی، متناسب با چهره منحصربه‌فرد شما. هنر تحول را در فضایی آرام و لوکس تجربه کنید.",
       ctaLabel1: "رزرو نوبت",
-      ctaLabel2: "مشاهده خدمات",
+      ctaLabel2: "معرفی خدمات",
     },
   },
 };
@@ -124,7 +124,7 @@ export const LANDING_SERVICE_CARDS: SeedServiceCard[] = [
     "فرم طبیعی بدن خود را با روشی ظریف و متناسب با ویژگی‌های شما زیباتر کنید. با هدف بهبود حجم، تناسب و فرم در نواحی منتخب، برای ایجاد ظاهری متعادل‌تر، هماهنگ‌تر و جذاب‌تر.",
   ),
   svc(
-    "botox-enzyme-treatments",
+    "botox",
     "gelBotox",
     null,
     "Botox & Enzyme Services",
@@ -142,7 +142,7 @@ export const LANDING_SERVICE_CARDS: SeedServiceCard[] = [
     "تعادل را بازگردانده، ویژگی‌های چهره را ظریف کرده و زیبایی طبیعی خود را ارتقا دهید. فیلر تمام صورت، کانتورینگ دقیق و افزایش حجم را تلفیق می‌کند تا ظاهری هماهنگ‌تر، شاداب‌تر و متعادل‌تر خلق کند.",
   ),
   svc(
-    "mesotherapy-skin-rejuvenation",
+    "meso-gel-rejuvenation",
     "rejuvenation",
     IMG.mesotherapy,
     "Mesotherapy & Skin Rejuvenation",
@@ -178,7 +178,7 @@ export const LANDING_SERVICE_CARDS: SeedServiceCard[] = [
     "لیفت، سفت‌کردن و بازتعریف خطوط طبیعی بدن با خدماتی شخصی‌سازی‌شده هایفو برای صورت و بدن.",
   ),
   svc(
-    "skin-care",
+    "skin-treatments",
     "wellness",
     IMG.care,
     "Skin Care",

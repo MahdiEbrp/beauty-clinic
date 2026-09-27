@@ -3,13 +3,13 @@ import { IMG } from "../images";
 
 export const TATTOO_REMOVAL_GROUP: SeedGroup = {
   slug: "tattoo-removal-skin-brightening",
-  icon: "wand-sparkles",
+  icon: "laser",
   image: IMG.pigmentation,
-  displayOrder: 11,
+  displayOrder: 12,
   i18n: [
     {
       locale: "fa",
-      name: "لیزر کیوسویچ (پاک‌کننده تتو و سفیدکننده)",
+      name: "لیزر پاک‌کننده تتو و روشن‌کننده پوست",
       description:
         "با لیزر کیوسوییچ، به کاهش رنگ تتو و بهبود ظاهر برخی لک‌ها و تیرگی‌های پوستی کمک کنید و پوستی یکدست‌تر داشته باشید.",
       seoTitle: "لیزر کیوسویچ | پاک کردن تتو و روشن‌کننده پوست",
@@ -18,7 +18,7 @@ export const TATTOO_REMOVAL_GROUP: SeedGroup = {
     },
     {
       locale: "en",
-      name: "Q-Switch Laser (Tattoo Removal & Brightening)",
+      name: "Tattoo Removal & Skin Brightening Laser",
       description:
         "Reveal clearer, more even-looking skin with targeted Q-switched laser services for tattoo fading and pigmentation concerns.",
       seoTitle: "Q-Switched Laser | Tattoo Removal & Skin Brightening",
@@ -29,7 +29,7 @@ export const TATTOO_REMOVAL_GROUP: SeedGroup = {
   categories: [
     {
       slug: "qswitch-services",
-      icon: "wand-sparkles",
+      icon: "laser",
       displayOrder: 0,
       i18n: [
         {

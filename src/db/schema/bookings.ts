@@ -118,6 +118,8 @@ export const bookings = pgTable(
     isPregnant: boolean("is_pregnant").notNull().default(false),
     /** When the client accepted the clinic booking rules (null = not yet). */
     termsAcceptedAt: timestamp("terms_accepted_at", { withTimezone: true }),
+    /** When the pre-appointment reminder SMS was sent (null = not sent yet). */
+    reminderSentAt: timestamp("reminder_sent_at", { withTimezone: true }),
     createdBy: uuid("created_by").references(() => users.id, {
       onDelete: "set null",
     }),
