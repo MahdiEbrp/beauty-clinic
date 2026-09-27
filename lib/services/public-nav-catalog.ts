@@ -91,12 +91,12 @@ async function loadNavCatalog(locale: Locale): Promise<PublicNavCatalog> {
       and(eq(serviceCategories.groupId, serviceGroups.id), eq(serviceCategories.isActive, true)),
     )
     .innerJoin(services, and(eq(services.categoryId, serviceCategories.id), eq(services.isActive, true)))
-    .leftJoin(groupsI18nFa, eq(groupsI18nFa.groupId, serviceGroups.id))
-    .leftJoin(groupsI18nEn, eq(groupsI18nEn.groupId, serviceGroups.id))
-    .leftJoin(categoriesI18nFa, eq(categoriesI18nFa.categoryId, serviceCategories.id))
-    .leftJoin(categoriesI18nEn, eq(categoriesI18nEn.categoryId, serviceCategories.id))
-    .leftJoin(servicesI18nFa, eq(servicesI18nFa.serviceId, services.id))
-    .leftJoin(servicesI18nEn, eq(servicesI18nEn.serviceId, services.id))
+    .leftJoin(groupsI18nFa, and(eq(groupsI18nFa.groupId, serviceGroups.id), eq(groupsI18nFa.locale, "fa")))
+    .leftJoin(groupsI18nEn, and(eq(groupsI18nEn.groupId, serviceGroups.id), eq(groupsI18nEn.locale, "en")))
+    .leftJoin(categoriesI18nFa, and(eq(categoriesI18nFa.categoryId, serviceCategories.id), eq(categoriesI18nFa.locale, "fa")))
+    .leftJoin(categoriesI18nEn, and(eq(categoriesI18nEn.categoryId, serviceCategories.id), eq(categoriesI18nEn.locale, "en")))
+    .leftJoin(servicesI18nFa, and(eq(servicesI18nFa.serviceId, services.id), eq(servicesI18nFa.locale, "fa")))
+    .leftJoin(servicesI18nEn, and(eq(servicesI18nEn.serviceId, services.id), eq(servicesI18nEn.locale, "en")))
     .where(eq(serviceGroups.isActive, true))
     .orderBy(
       asc(serviceGroups.displayOrder),
