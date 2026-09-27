@@ -281,6 +281,13 @@
       "when": 1790510286690,
       "tag": "0039_dark_mother_askani",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1790526223537,
+      "tag": "0040_warm_black_tarantula",
+      "breakpoints": true
     }
   ]
 }

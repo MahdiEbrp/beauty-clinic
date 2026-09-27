@@ -3,10 +3,37 @@ import { resetCacheForTests } from "@/lib/cache";
 
 vi.mock("server-only", () => ({}));
 
+// A tiny stateful stand-in for the `content_versions` row so the version
+// counter can be exercised without a database.
+const { state } = vi.hoisted(() => ({ state: { value: 0 } }));
+
+vi.mock("@/src/db", () => ({
+  db: {
+    select: () => ({
+      from: () => ({
+        where: () => ({
+          limit: () => Promise.resolve(state.value === 0 ? [] : [{ value: state.value }]),
+        }),
+      }),
+    }),
+    insert: () => ({
+      values: () => ({
+        onConflictDoUpdate: () => ({
+          returning: () => {
+            state.value += 1;
+            return Promise.resolve([{ value: state.value }]);
+          },
+        }),
+      }),
+    }),
+  },
+}));
+
 import { bumpContentVersion, getContentVersion } from "./content-version";
 
 describe("content version", () => {
   beforeEach(() => {
+    state.value = 0;
     resetCacheForTests();
   });
 
@@ -26,8 +53,7 @@ describe("content version", () => {
 
   it("is shared across readers so a bump invalidates every versioned key", async () => {
     await bumpContentVersion();
-    const version = await getContentVersion();
-    expect(version).toBeGreaterThan(0);
-    expect(String(version).length).toBeGreaterThan(0);
+    resetCacheForTests();
+    expect(await getContentVersion()).toBe(1);
   });
 });

@@ -12,3 +12,4 @@ export * from "./sms-received";
 export * from "./email";
 export * from "./payment";
 export * from "./notifications";
+export * from "./content-version";
