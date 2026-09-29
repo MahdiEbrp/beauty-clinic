@@ -6,6 +6,8 @@ import { getGroupCatalog } from "@/lib/services/group-page";
 
 const pages = ["/", "/pricing", "/services", "/care", "/rules"] as const;
 
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [];
 

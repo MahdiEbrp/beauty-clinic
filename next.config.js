@@ -1,5 +1,11 @@
-import type { NextConfig } from "next";
-import createNextIntlPlugin from "next-intl/plugin";
+/* eslint-disable @typescript-eslint/no-require-imports -- CommonJS config required by Liara's buildpack, see below */
+// CommonJS config on purpose. Liara's buildpack injects `output: 'standalone'`
+// by rewriting a `next.config.js`/`next.config.mjs` file (it does not handle
+// `next.config.ts`, and will create a shadowing `next.config.js` that drops the
+// next-intl plugin). Keeping the config here means Liara edits this file in
+// place instead of replacing it, so `withNextIntl` — and therefore the
+// `next-intl/config` alias — stays intact.
+const createNextIntlPlugin = require("next-intl/plugin");
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
@@ -26,13 +32,22 @@ const securityHeaders = [
   },
 ];
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   poweredByHeader: false,
+  // Liara's buildpack wants standalone output; set it so its injection is a
+  // no-op and the plugin wrapper above is preserved.
+  output: "standalone",
   // Keep the postgres driver out of the server bundle so Node built-ins like
   // `net`/`tls` resolve at runtime (instrumentation + API routes import it via
   // the db pool; bundling fails dev compilation with "Can't resolve 'net'").
   serverExternalPackages: ["postgres"],
-  // eslint-disable-next-line @typescript-eslint/require-await -- Next.js requires async headers()
+  // Belt-and-braces for Turbopack: declare the next-intl config alias here too
+  // so it does not depend on the plugin's Turbopack injection.
+  turbopack: {
+    resolveAlias: {
+      "next-intl/config": "./src/i18n/request.ts",
+    },
+  },
   async headers() {
     const isDev = process.env.NODE_ENV !== "production";
     return [
@@ -63,4 +78,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withNextIntl(nextConfig);
+module.exports = withNextIntl(nextConfig);

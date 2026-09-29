@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint --max-warnings=300",
     "lint:size": "node scripts/check-file-lengths.mjs",
@@ -37,7 +37,7 @@
     "lucide-react": "^1.27.0",
     "motion": "^12.43.0",
     "next": "16.2.12",
-    "next-intl": "^4.13.4",
+    "next-intl": "4.14.7",
     "next-themes": "^0.4.6",
     "postgres": "^3.4.9",
     "radix-ui": "^1.6.7",
