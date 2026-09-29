@@ -13,9 +13,23 @@ dns.setDefaultResultOrder("ipv4first");
 
 const globalForDb = globalThis as unknown as { db?: ReturnType<typeof createDb> };
 
+/**
+ * Honor the connection URL's `sslmode` so hosts without TLS (e.g. a plain
+ * Postgres box) can be used via `?sslmode=disable`. Defaults to `require` to
+ * match the production/pooler URLs in `.env.example`.
+ */
+function resolveSslMode(url: string): boolean | "require" | "allow" | "prefer" | "verify-full" {
+  const mode = new URL(url).searchParams.get("sslmode") ?? "require";
+  if (mode === "disable" || mode === "false") return false;
+  if (mode === "allow" || mode === "prefer" || mode === "require" || mode === "verify-full") {
+    return mode;
+  }
+  return "require";
+}
+
 function createDb() {
   const client = postgres(env.DATABASE_URL, {
-    ssl: "require",
+    ssl: resolveSslMode(env.DATABASE_URL),
     // A single connection (max: 1) deadlocks whenever one request issues
     // concurrent queries (e.g. a page awaiting listServices + getCatalogSummary
     // via Promise.all). Keep a small pool so concurrent queries can proceed.

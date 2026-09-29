@@ -97,28 +97,34 @@ async function seed(): Promise<void> {
   console.log("System settings seeded.");
 
   for (const def of SOCIAL_LINKS) {
-    // Insert the link (no-op if the url already exists), then resolve its id by
-    // url so labels are backfilled even for rows seeded in an earlier run.
-    await db
-      .insert(socialLinks)
-      .values({
-        url: def.url,
-        imageUrl: def.imageUrl,
-        displayOrder: def.displayOrder,
-      })
-      .onConflictDoNothing({ target: socialLinks.url });
-
+    // `social_links.url` has no unique constraint, so resolve the row by url and
+    // only insert when missing. Labels are backfilled even for rows seeded in an
+    // earlier run.
     const [existing] = await db
       .select({ id: socialLinks.id })
       .from(socialLinks)
-      .where(eq(socialLinks.url, def.url));
+      .where(eq(socialLinks.url, def.url))
+      .limit(1);
 
-    if (existing) {
+    let socialLinkId = existing?.id;
+    if (!socialLinkId) {
+      const [created] = await db
+        .insert(socialLinks)
+        .values({
+          url: def.url,
+          imageUrl: def.imageUrl,
+          displayOrder: def.displayOrder,
+        })
+        .returning({ id: socialLinks.id });
+      socialLinkId = created?.id;
+    }
+
+    if (socialLinkId) {
       await db
         .insert(socialLinksI18n)
         .values([
-          { socialLinkId: existing.id, locale: "fa", label: def.labelFa },
-          { socialLinkId: existing.id, locale: "en", label: def.labelEn },
+          { socialLinkId, locale: "fa", label: def.labelFa },
+          { socialLinkId, locale: "en", label: def.labelEn },
         ])
         .onConflictDoNothing({
           target: [socialLinksI18n.socialLinkId, socialLinksI18n.locale],
