@@ -48,6 +48,16 @@ function decryptSecret(payload: string): string {
   ]).toString("utf8");
 }
 
+/** Honor the connection URL's `sslmode` (Liara sets `disable`). */
+function resolveSslMode(url: string): boolean | "require" | "allow" | "prefer" | "verify-full" {
+  const mode = new URL(url).searchParams.get("sslmode") ?? "require";
+  if (mode === "disable" || mode === "false") return false;
+  if (mode === "allow" || mode === "prefer" || mode === "require" || mode === "verify-full") {
+    return mode;
+  }
+  return "require";
+}
+
 /** The `sms_providers` row fields this script reads. */
 interface SmsProviderRow {
   id: string;
@@ -104,7 +114,7 @@ async function main() {
   const mobiles = mobileRaw.split(",").map((m) => m.trim()).filter(Boolean);
   const parameters = parseParams(args.params);
 
-  const sql = postgres(DATABASE_URL, { max: 2, ssl: "require" });
+  const sql = postgres(DATABASE_URL, { max: 2, ssl: resolveSslMode(DATABASE_URL) });
   let row: SmsProviderRow | undefined;
   try {
     if (providerId) {

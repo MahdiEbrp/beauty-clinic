@@ -83,6 +83,23 @@ export async function getSmsTemplateForUse(id: string) {
   return { ...row, translations: translations.get(id) ?? {} };
 }
 
+/** Active template by stable key, without translations. Used by OTP delivery. */
+export async function getSmsTemplateByKey(
+  key: string,
+): Promise<typeof smsTemplates.$inferSelect | null> {
+  const [row] = await db
+    .select()
+    .from(smsTemplates)
+    .where(
+      and(
+        eq(smsTemplates.key, key),
+        eq(smsTemplates.isActive, true),
+        isNull(smsTemplates.deletedAt),
+      ),
+    );
+  return row ?? null;
+}
+
 export async function createSmsTemplate(
   input: CreateSmsTemplateInput,
   createdBy: string,

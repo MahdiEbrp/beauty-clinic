@@ -6,8 +6,12 @@ import { getEmailProviderForUse } from "@/lib/email/provider-service";
 import { createEmailProviderAdapter } from "@/lib/email/providers";
 import { getSmsProviderForUse } from "@/lib/sms/provider-service";
 import { createSmsProviderAdapter } from "@/lib/sms/providers";
+import { getSmsTemplateByKey } from "@/lib/sms/template-service";
 import { normalizeIranianPhone } from "@/lib/sms/phone";
-import type { OtpChannel } from "@/src/db/schema";
+import type { OtpChannel, SmsProviderKind } from "@/src/db/schema";
+
+/** Active SMS template whose remote id backs the login OTP (SMS.ir verify). */
+const SMS_OTP_TEMPLATE_KEY = "login-otp";
 
 export type OtpDeliveryInput = {
   channel: OtpChannel;
@@ -40,11 +44,19 @@ async function sendSms(input: OtpDeliveryInput): Promise<void> {
     const provider = await getSmsProviderForUse();
     const adapter = createSmsProviderAdapter(provider);
     const recipients = [normalizeIranianPhone(input.phone) ?? input.phone];
-    const result = await adapter.send({
-      recipients,
-      message: input.smsText,
-      sender: provider.sender ?? provider.credentials.lineNumber,
-    });
+    const verify = await resolveOtpVerify(provider.kind, input.code);
+    const result =
+      verify && adapter.sendVerify
+        ? await adapter.sendVerify({
+            recipients,
+            templateId: verify.templateId,
+            parameters: verify.parameters,
+          })
+        : await adapter.send({
+            recipients,
+            message: input.smsText,
+            sender: provider.sender ?? provider.credentials.lineNumber,
+          });
     if (result.accepted.length === 0) {
       logError("otp.delivery_rejected", { channel: "sms" });
       throw new ApiError(
@@ -56,6 +68,27 @@ async function sendSms(input: OtpDeliveryInput): Promise<void> {
   } catch (error) {
     throw normalizeDeliveryError("sms", error);
   }
+}
+
+/**
+ * SMS.ir renders OTP codes server-side from a pre-approved template, so the
+ * login code goes through `sendVerify` instead of free text. The template's
+ * variable name is the remote parameter name (e.g. `OTP`). Returns null for any
+ * other provider, or when no usable template is registered, so callers fall
+ * back to a free-text send.
+ */
+async function resolveOtpVerify(
+  kind: SmsProviderKind,
+  code: string,
+): Promise<{ templateId: number; parameters: Array<{ name: string; value: string }> } | null> {
+  if (kind !== "sms_ir") return null;
+  const template = await getSmsTemplateByKey(SMS_OTP_TEMPLATE_KEY);
+  const templateId = Number(template?.externalTemplateId);
+  const name = template?.variables[0];
+  if (!template?.externalTemplateId || !Number.isInteger(templateId) || !name) {
+    return null;
+  }
+  return { templateId, parameters: [{ name, value: code }] };
 }
 
 async function sendEmail(input: OtpDeliveryInput): Promise<void> {
