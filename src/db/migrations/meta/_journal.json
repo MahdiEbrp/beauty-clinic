@@ -288,6 +288,13 @@
       "when": 1790526223537,
       "tag": "0040_warm_black_tarantula",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1790797480004,
+      "tag": "0041_lively_synch",
+      "breakpoints": true
     }
   ]
 }

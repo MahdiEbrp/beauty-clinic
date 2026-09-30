@@ -4051,6 +4051,7 @@
       "gmail": "Gmail SMTP with an app password",
       "outlook": "Outlook.com SMTP with STARTTLS",
       "yahoo": "Yahoo Mail SMTP with an app password",
+      "liara": "Liara transactional mail service (HTTP API)",
       "fake": "Simulated provider that logs sends without sending"
     },
     "providerKinds": {
@@ -4058,6 +4059,7 @@
       "gmail": "Gmail",
       "outlook": "Outlook",
       "yahoo": "Yahoo",
+      "liara": "Liara",
       "fake": "Fake sender (test)"
     },
     "providers": {

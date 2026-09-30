@@ -1,0 +1,1 @@
+ALTER TYPE "public"."email_provider_kind" ADD VALUE 'liara' BEFORE 'fake';

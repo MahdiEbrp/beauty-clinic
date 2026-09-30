@@ -43,6 +43,14 @@ export const EMAIL_PROVIDER_OPTIONS: readonly EmailProviderOption[] = [
     defaultEncryption: "ssl",
   },
   {
+    kind: "liara",
+    labelKey: "providerKinds.liara",
+    descriptionKey: "providerDescriptions.liara",
+    defaultHost: "https://mail-service.liara.ir/api/v1/mails",
+    defaultPort: 443,
+    defaultEncryption: "ssl",
+  },
+  {
     kind: "fake",
     labelKey: "providerKinds.fake",
     descriptionKey: "providerDescriptions.fake",

@@ -21,6 +21,7 @@ export const emailProviderKindEnum = pgEnum("email_provider_kind", [
   "outlook",
   "yahoo",
   "custom",
+  "liara",
   "fake",
 ]);
 

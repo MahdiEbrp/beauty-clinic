@@ -4051,6 +4051,7 @@
       "gmail": "SMTP جیمیل با رمز عبور برنامه",
       "outlook": "SMTP اوت‌لوک با STARTTLS",
       "yahoo": "SMTP یاهو با رمز عبور برنامه",
+      "liara": "سرویس ایمیل تراکنشی لیارا (HTTP API)",
       "fake": "سرویس‌دهنده شبیه‌سازی که ارسال را فقط در خروجی ثبت می‌کند"
     },
     "providerKinds": {
@@ -4058,6 +4059,7 @@
       "gmail": "Gmail",
       "outlook": "Outlook",
       "yahoo": "Yahoo",
+      "liara": "لیارا",
       "fake": "فیک سندر (تست)"
     },
     "providers": {

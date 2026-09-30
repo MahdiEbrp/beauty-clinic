@@ -19,6 +19,7 @@ import { seedCareGuides } from "./seed/care-guides";
 import { seedLanding } from "./seed/landing";
 import { seedFakeProviders } from "./seed/fake-providers";
 import { seedGmailProviderFromEnv } from "./seed/gmail-provider";
+import { seedLiaraProviderFromEnv } from "./seed/liara-provider";
 import { seedRules } from "./seed/rules";
 import { seedWorkingHours } from "./seed/working-hours";
 import { withRetry } from "./seed/retry";
@@ -141,6 +142,7 @@ async function seed(): Promise<void> {
   await seedWorkingHours();
   await seedFakeProviders();
   await seedGmailProviderFromEnv();
+  await seedLiaraProviderFromEnv();
 
   // Invalidate every versioned public cache (catalog tree, rules, landing) so
   // freshly-seeded content is served instead of stale entries up to their TTL.
