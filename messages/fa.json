@@ -1482,6 +1482,10 @@
     "uploadShort": "آپلود"
   },
   "footer": {
+    "developer": "برنامه نویس",
+    "developerEmail": "ایمیل",
+    "developerName": "مهدی ابراهیم پور",
+    "developerPhone": "شماره تماس",
     "quickAccess": "دسترسی سریع",
     "quickAccessNav": "پیوندهای دسترسی سریع",
     "socialHeading": "شبکه‌های اجتماعی",

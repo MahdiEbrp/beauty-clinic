@@ -1482,6 +1482,10 @@
     "uploadShort": "Upload"
   },
   "footer": {
+    "developer": "Developer",
+    "developerEmail": "Email",
+    "developerName": "Mahdi Ebrahim Pour",
+    "developerPhone": "Phone",
     "quickAccess": "Quick Access",
     "quickAccessNav": "Quick access links",
     "socialHeading": "Social Media",

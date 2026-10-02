@@ -13,6 +13,15 @@ interface FooterProps {
 const linkClass =
   "text-footer-muted text-body-sm no-underline hover:text-gold transition-colors inline-flex items-center min-h-11 rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold";
 
+const DEVELOPER_PHONE = "09011675969";
+const DEVELOPER_EMAIL = "mahdi.a.ebrp@gmail.com";
+const DEVELOPER_NAME = "Mahdi Ebrahim Pour";
+
+function safeHtmlComment(value: string): string {
+  const clean = value.replace(/[<>]/g, "").replace(/--/g, "\u2010\u2010");
+  return `<!-- ${clean} -->`;
+}
+
 export default function Footer({ clinic }: FooterProps) {
   const t = useTranslations();
   const locale = useLocale();
@@ -83,12 +92,38 @@ export default function Footer({ clinic }: FooterProps) {
           </nav>
         </div>
 
-        <div className="border-t border-footer-border mt-12 py-8 flex justify-between items-center text-body-sm text-footer-muted flex-wrap gap-4">
+        <div className="border-t border-footer-border mt-12 pt-8 pb-36 lg:pb-24 flex flex-col sm:flex-row sm:justify-between sm:items-center text-body-sm text-footer-muted gap-4">
           <span>
             © <span>{new Date().getFullYear()}</span> {t("site.name")}.{" "}
             {t("site.rights")}
           </span>
+
+          <div className="flex flex-col sm:flex-row sm:items-center gap-x-4 gap-y-1">
+            <span>
+              {t("footer.developer")}{" "}
+              <span className="text-footer-heading">
+                {t("footer.developerName")}
+              </span>
+            </span>
+            <a href={`tel:${DEVELOPER_PHONE}`} className={linkClass}>
+              {t("footer.developerPhone")}:{" "}
+              <span dir="ltr">{DEVELOPER_PHONE}</span>
+            </a>
+            <a href={`mailto:${DEVELOPER_EMAIL}`} className={linkClass}>
+              {t("footer.developerEmail")}:{" "}
+              <span dir="ltr">{DEVELOPER_EMAIL}</span>
+            </a>
+          </div>
         </div>
+
+        <div
+          aria-hidden="true"
+          dangerouslySetInnerHTML={{
+            __html: safeHtmlComment(
+              `Developed by ${DEVELOPER_NAME} | Phone: ${DEVELOPER_PHONE} | Email: ${DEVELOPER_EMAIL}`,
+            ),
+          }}
+        />
       </div>
     </footer>
   );
