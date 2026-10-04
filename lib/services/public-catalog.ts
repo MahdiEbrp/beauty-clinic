@@ -4,6 +4,7 @@ import { cacheWrap } from "@/lib/cache";
 import { db } from "@/src/db";
 import { serviceCategories, serviceGroups } from "@/src/db/schema";
 import { bumpContentVersion, getContentVersion } from "./content-version";
+import { notifyIndexNow } from "@/lib/indexnow";
 import type {
   Locale,
   PublicCatalog,
@@ -115,7 +116,17 @@ async function loadCatalog(locale: Locale): Promise<PublicCatalog> {
  * public feed reflects the change immediately instead of waiting out the TTL.
  * The single version bump covers both the catalog and the derived service tree
  * in one atomic step.
+ *
+ * Also announces the change to Bing and the other IndexNow engines. The default
+ * notification is the catalog index rather than the specific group/category
+ * page: these callers only ever load `{ id }` before mutating, so resolving the
+ * affected slug would cost an extra query per admin edit against a 5-connection
+ * pool. The daily sitemap sweep in instrumentation.ts covers the deep URLs
+ * within 24h, and pass an explicit `paths` list whenever the slug is known.
  */
-export async function bustPublicCatalogCache(): Promise<void> {
+export async function bustPublicCatalogCache(
+  paths?: readonly string[],
+): Promise<void> {
   await bumpContentVersion();
+  await notifyIndexNow(paths ?? ["/services"], { source: "catalog" });
 }

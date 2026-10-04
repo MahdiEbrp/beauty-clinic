@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { pageUrl } from "@/lib/site";
+import { buildAlternates } from "@/lib/site";
 import CategoryPage from "@/components/category-page/CategoryPage";
 import { getCategoryPage } from "@/lib/services/category-page";
 import type { Locale } from "@/lib/services/types";
@@ -24,24 +24,25 @@ export async function generateMetadata({
     categorySlug,
   );
 
-  if (!data) return {};
+  // See the group route for why this must be explicit rather than `{}`.
+  if (!data) return { robots: { index: false, follow: false } };
 
   const path = `/services/${data.group.slug}/${data.category.slug}`;
   const tSite = await getTranslations({ locale, namespace: "site" });
-  const title = `${data.category.title} | ${tSite("name")}`;
+  // Hand-written per-locale SEO copy from `service_categories_i18n`; only the
+  // title falls back to a generated pattern, since the category name alone is a
+  // weak meta description.
+  const title = data.category.seoTitle ?? `${data.category.title} | ${tSite("name")}`;
   const description =
-    data.category.description ?? `${data.group.title} — ${data.category.title}`;
+    data.category.seoDescription ??
+    data.category.description ??
+    data.category.services.find((service) => service.shortDesc)?.shortDesc ??
+    `${data.group.title} — ${data.category.title}`;
 
   return {
     title,
     description,
-    alternates: {
-      canonical: pageUrl(locale, path),
-      languages: {
-        fa: pageUrl("fa", path),
-        en: pageUrl("en", path),
-      },
-    },
+    alternates: buildAlternates(locale, path),
     openGraph: {
       title,
       description,

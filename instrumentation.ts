@@ -11,8 +11,11 @@
  *    appointment window has passed (every 15 minutes).
  * 3. Payment holds auto-expiry — cancels unpaid payment holds and releases
  *    their pending bookings (every 15 minutes).
- * 4. Weekly disk cleanup — cleans unreserved past slots and expired logs
- *    (Fridays at 6:00 UTC).
+* 4. Weekly disk cleanup — cleans unreserved past slots and expired logs
+ * (Fridays at 6:00 UTC).
+ * 5. Daily IndexNow sweep — re-announces the whole sitemap to Bing and the
+ * other participating engines, covering any content change that did not go
+ * through a targeted notification.
  *
  * Enable/disable via the SLOTS_CRON_ENABLED env var (default: enabled outside
  * dev so local servers don't fight over the shared dev database).
@@ -199,4 +202,29 @@ export async function register(): Promise<void> {
   logInfo("cleanup.scheduled", {
     nextRun: cleanupJob.nextRun()?.toISOString() ?? null,
   });
+
+  // Daily IndexNow sweep (Bing + other participating engines). No-ops unless
+  // INDEXNOW_KEY is set, so this is free on deployments that have not finished
+  // hosting the key file at the origin root.
+  const { indexNowSweepEnabled, submitSitemapToIndexNow } = await import(
+    "@/lib/indexnow"
+  );
+  if (indexNowSweepEnabled()) {
+    const indexNowJob = new Cron(
+      "30 3 * * *",
+      { timezone: "UTC", protect: true, name: "indexnow-sweep" },
+      async () => {
+        try {
+          await submitSitemapToIndexNow();
+        } catch (error) {
+          logError("indexnow.sweep_failed", {
+            error: error instanceof Error ? error.message : String(error),
+          });
+        }
+      },
+    );
+    logInfo("indexnow.sweep_scheduled", {
+      nextRun: indexNowJob.nextRun()?.toISOString() ?? null,
+    });
+  }
 }

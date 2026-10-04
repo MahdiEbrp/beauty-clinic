@@ -34,12 +34,14 @@ export type PublicCatalog = {
 export type PublicNavService = {
   slug: string;
   title: string;
+  updatedAt: Date;
 };
 
 /** A category with just its services' names, for nav/menu use only. */
 export type PublicNavCategory = {
   slug: string;
   title: string;
+  updatedAt: Date;
   services: PublicNavService[];
 };
 
@@ -48,6 +50,7 @@ export type PublicNavGroup = {
   slug: string;
   icon: string | null;
   title: string;
+  updatedAt: Date;
   categories: PublicNavCategory[];
 };
 
@@ -70,6 +73,10 @@ export type PublicTreeService = {
   title: string;
   shortDesc: string | null;
   fullDesc: string | null;
+  /** Hand-authored per-locale SEO title from `services_i18n.seo_title`. */
+  seoTitle: string | null;
+  /** Hand-authored per-locale meta description. */
+  seoDescription: string | null;
   price: number | null;
   priceType: PriceType;
   durationMin: number | null;
@@ -78,6 +85,8 @@ export type PublicTreeService = {
   isFeatured: boolean;
   images: ServiceDetailImage[];
   faqs: PublicTreeFaq[];
+  /** Real edit timestamp, used for sitemap `lastModified`. */
+  updatedAt: Date;
 };
 
 /** A localized category with its active services. */
@@ -87,6 +96,9 @@ export type PublicTreeCategory = {
   image: string | null;
   title: string;
   description: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  updatedAt: Date;
   services: PublicTreeService[];
 };
 
@@ -98,6 +110,9 @@ export type PublicTreeGroup = {
   image: string | null;
   title: string;
   description: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  updatedAt: Date;
   categories: PublicTreeCategory[];
 };
 

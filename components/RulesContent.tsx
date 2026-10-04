@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { getTranslations } from "next-intl/server";
 
 import RuleCard from "@/components/RuleCard";
-import { siteUrl } from "@/lib/site";
+import { buildAlternates } from "@/lib/site";
 import { getRulesForPublic } from "@/lib/services/rules-admin";
 import type { Locale } from "@/lib/services/types";
 
@@ -58,13 +58,7 @@ export async function generateMetadata({
   return {
     title: t("meta.title"),
     description: t("meta.description"),
-    alternates: {
-      canonical: `${siteUrl}/${locale}/rules`,
-      languages: {
-        fa: `${siteUrl}/fa/rules`,
-        en: `${siteUrl}/en/rules`,
-      },
-    },
+    alternates: buildAlternates(locale, "/rules"),
     openGraph: {
       title: t("meta.title"),
       description: t("meta.description"),

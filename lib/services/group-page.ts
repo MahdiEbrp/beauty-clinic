@@ -30,6 +30,7 @@ export type GroupPageCategory = {
   title: string;
   description: string | null;
   serviceCount: number;
+  updatedAt: Date;
 };
 
 export type GroupPageGroup = {
@@ -37,6 +38,9 @@ export type GroupPageGroup = {
   icon: string | null;
   title: string;
   description: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  updatedAt: Date;
 };
 
 export type GroupPageData = {
@@ -58,6 +62,7 @@ function toCategorySummary(category: PublicTreeCategory): GroupPageCategory {
     title: category.title,
     description: category.description,
     serviceCount: category.services.length,
+    updatedAt: category.updatedAt,
   };
 }
 
@@ -117,14 +122,21 @@ function toGroup(group: PublicTreeGroup): GroupPageGroup {
     icon: group.icon,
     title: group.title,
     description: group.description,
+    seoTitle: group.seoTitle,
+    seoDescription: group.seoDescription,
+    updatedAt: group.updatedAt,
   };
 }
 
 /**
- * Enumerates every active group slug for the locale — used by the dynamic
- * sitemap and (if ever needed) generateStaticParams-style pre-render.
+ * Every active group slug for the locale, with its real edit timestamp — used
+ * by the dynamic sitemap for `lastModified` and (if ever needed) for
+ * generateStaticParams-style pre-render. Reading from the nav catalog keeps the
+ * sitemap on the lightweight feed instead of the full service tree.
  */
-export async function getGroupCatalog(locale: Locale): Promise<string[]> {
+export async function getGroupCatalog(
+  locale: Locale,
+): Promise<{ groupSlug: string; updatedAt: Date }[]> {
   const nav = await getPublicNavCatalog(locale);
-  return nav.groups.map((group) => group.slug);
+  return nav.groups.map((group) => ({ groupSlug: group.slug, updatedAt: group.updatedAt }));
 }

@@ -1,6 +1,17 @@
+import type { Metadata } from "next";
 import { useTranslations } from "next-intl";
 import { AlertTriangle } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
+
+/**
+ * Without this the 404 page inherits `index: true` and the homepage's canonical
+ * from app/[locale]/layout.tsx, so a soft-404 URL (anything that resolves here
+ * but is not a real page) advertises itself as indexable and as a duplicate of
+ * the homepage.
+ */
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default function NotFoundPage() {
   const t = useTranslations();

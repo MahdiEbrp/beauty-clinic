@@ -14,6 +14,7 @@ import {
 } from "@/src/db/schema";
 import type { Locale, ServiceContent, TranslatedContent } from "@/lib/services/types";
 import { getContentVersion, bumpContentVersion } from "@/lib/services/content-version";
+import { notifyIndexNow } from "@/lib/indexnow";
 import { loadServiceTranslations } from "@/lib/services/i18n";
 import {
   emptyAboutStatContentSentinel,
@@ -268,4 +269,5 @@ async function loadLanding(locale: Locale): Promise<PublicLanding> {
 /** Invalidate the cached landing content (shared version bump). */
 export async function bustLandingCache(): Promise<void> {
   await bumpContentVersion();
+  await notifyIndexNow(["/"], { source: "landing" });
 }

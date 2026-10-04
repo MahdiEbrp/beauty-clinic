@@ -38,12 +38,15 @@ export type CategoryPageService = {
   title: string;
   shortDesc: string | null;
   fullDesc: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
   price: number | null;
   priceType: "fixed" | "from" | "on_request";
   durationMin: number | null;
   sessionsCount: number;
   coverImage: string | null;
   isFeatured: boolean;
+  updatedAt: Date;
   images: CategoryPageImage[];
   faqs: CategoryPageFaq[];
 };
@@ -53,6 +56,9 @@ export type CategoryPageCategory = {
   icon: string | null;
   title: string;
   description: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  updatedAt: Date;
   services: CategoryPageService[];
 };
 
@@ -79,18 +85,24 @@ function toCategory(category: PublicTreeCategory): CategoryPageCategory {
     icon: category.icon,
     title: category.title,
     description: category.description,
+    seoTitle: category.seoTitle,
+    seoDescription: category.seoDescription,
+    updatedAt: category.updatedAt,
     services: category.services.map((service) => ({
       id: service.id,
       slug: service.slug,
       title: service.title,
       shortDesc: service.shortDesc,
       fullDesc: service.fullDesc,
+      seoTitle: service.seoTitle,
+      seoDescription: service.seoDescription,
       price: service.price,
       priceType: service.priceType,
       durationMin: service.durationMin,
       sessionsCount: service.sessionsCount,
       coverImage: service.coverImage,
       isFeatured: service.isFeatured,
+      updatedAt: service.updatedAt,
       images: service.images,
       faqs: service.faqs,
     })),
@@ -137,17 +149,23 @@ function toGroup(group: PublicTreeGroup): CategoryPageGroup {
 }
 
 /**
- * Enumerates every active (group, category) pair for the locale — used by the
- * dynamic sitemap and (if ever needed) generateStaticParams-style pre-render.
+ * Every active (group, category) pair for the locale, with real edit timestamps
+ * — used by the dynamic sitemap for `lastModified` and hreflang clusters.
+ * Reading from the nav catalog keeps the sitemap on the lightweight feed rather
+ * than the full service tree.
  */
 export async function getCategoryCatalog(
   locale: Locale,
-): Promise<{ groupSlug: string; categorySlug: string }[]> {
+): Promise<{ groupSlug: string; categorySlug: string; updatedAt: Date }[]> {
   const nav = await getPublicNavCatalog(locale);
-  const pairs: { groupSlug: string; categorySlug: string }[] = [];
+  const pairs: { groupSlug: string; categorySlug: string; updatedAt: Date }[] = [];
   for (const group of nav.groups) {
     for (const category of group.categories) {
-      pairs.push({ groupSlug: group.slug, categorySlug: category.slug });
+      pairs.push({
+        groupSlug: group.slug,
+        categorySlug: category.slug,
+        updatedAt: category.updatedAt,
+      });
     }
   }
   return pairs;

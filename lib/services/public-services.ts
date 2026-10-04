@@ -9,6 +9,7 @@ import {
   serviceImages,
   services,
 } from "@/src/db/schema";
+import { notifyIndexNow } from "@/lib/indexnow";
 import { bumpContentVersion, getContentVersion } from "./content-version";
 import {
   emptyFaqContent,
@@ -146,6 +147,8 @@ async function loadServiceTree(locale: Locale): Promise<PublicServiceTree> {
       title: content.title,
       shortDesc: content.shortDesc,
       fullDesc: content.fullDesc,
+      seoTitle: content.seoTitle,
+      seoDescription: content.seoDescription,
       price: row.price === null ? null : Number(row.price),
       priceType: row.priceType,
       durationMin: row.durationMin,
@@ -154,6 +157,7 @@ async function loadServiceTree(locale: Locale): Promise<PublicServiceTree> {
       isFeatured: row.isFeatured,
       images: imagesByService.get(row.id) ?? [],
       faqs: faqsByService.get(row.id) ?? [],
+      updatedAt: row.updatedAt,
     });
     servicesByCategory.set(row.categoryId, list);
   }
@@ -176,6 +180,9 @@ async function loadServiceTree(locale: Locale): Promise<PublicServiceTree> {
       image: row.image,
       title: content.name,
       description: content.description,
+      seoTitle: content.seoTitle,
+      seoDescription: content.seoDescription,
+      updatedAt: row.updatedAt,
       services: categoryServices,
     });
     categoriesByGroup.set(row.groupId, list);
@@ -194,6 +201,9 @@ async function loadServiceTree(locale: Locale): Promise<PublicServiceTree> {
       image: row.image,
       title: content.name,
       description: content.description,
+      seoTitle: content.seoTitle,
+      seoDescription: content.seoDescription,
+      updatedAt: row.updatedAt,
       categories: groupCategories,
     });
   }
@@ -202,6 +212,13 @@ async function loadServiceTree(locale: Locale): Promise<PublicServiceTree> {
 }
 
 /** Invalidate all versioned public content caches (rules, catalog, tree). */
-export async function bustPublicServiceTreeCache(): Promise<void> {
+export async function bustPublicServiceTreeCache(
+  paths?: readonly string[],
+): Promise<void> {
   await bumpContentVersion();
+  // Services have no detail pages of their own yet, so a price or description
+  // edit surfaces on the catalog index and the pricing table. Both are
+  // notified; see bustPublicCatalogCache for why the specific slug is not
+  // resolved here.
+  await notifyIndexNow(paths ?? ["/services", "/pricing"], { source: "service-tree" });
 }

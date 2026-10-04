@@ -10,7 +10,14 @@ export default defineConfig({
   },
   test: {
     environment: "node",
-    include: ["lib/**/*.test.ts", "src/**/*.test.ts"],
+    include: [
+      "lib/**/*.test.ts",
+      "src/**/*.test.ts",
+      // Route and component tests cover the exported generateMetadata /
+      // JSON-LD contracts, which are where SEO regressions actually live.
+      "app/**/*.test.ts",
+      "components/**/*.test.ts",
+    ],
     env: {
       DATABASE_URL: "postgres://user:pass@localhost:5432/db",
       DIRECT_URL: "postgres://user:pass@localhost:5432/db",

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { CheckCircle2, CreditCard, ShieldCheck, XCircle } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/src/i18n/navigation";
@@ -7,6 +8,19 @@ type PageProps = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ authority?: string; order?: string }>;
 };
+
+/**
+ * Simulated payment gateway for exercising the checkout path without a real
+ * PSP. It must never be reachable in production: it is public, unauthenticated,
+ * and renders a "payment succeeded" surface that an attacker could point a
+ * victim at. The robots rules only ask crawlers to skip it; this makes it
+ * actually absent from a production deploy.
+ */
+function assertGatewayEnabled(): void {
+  if (process.env.NODE_ENV === "production" && process.env.FAKE_PAYMENT_ENABLED !== "true") {
+    notFound();
+  }
+}
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale } = await params;
@@ -19,6 +33,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function FakePaymentPage({ searchParams }: PageProps) {
+  assertGatewayEnabled();
   const t = await getTranslations("fakeGateway");
   const { authority, order } = await searchParams;
 

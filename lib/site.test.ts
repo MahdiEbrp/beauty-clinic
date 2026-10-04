@@ -1,10 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
+  buildAlternates,
   canonicalUrl,
   dirForLocale,
+  hreflangLanguages,
   localePath,
   localizedHref,
+  pageUrl,
   siteUrl,
 } from "./site";
 
@@ -22,11 +25,21 @@ describe("siteUrl", () => {
     expect(fresh.siteUrl).toBe("https://example.com");
   });
 
-  it("falls back to the production URL when unset", async () => {
+  it("falls back to localhost when unset outside production", async () => {
     vi.resetModules();
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
     const fresh = await import("./site");
-    expect(fresh.siteUrl).toBe("https://beauty-clinic-puce-five.vercel.app");
+    expect(fresh.siteUrl).toBe("http://localhost:3000");
+  });
+
+  it("refuses to boot in production without a configured origin", async () => {
+    vi.resetModules();
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
+    vi.stubEnv("NODE_ENV", "production");
+    // A wrong canonical origin is unrecoverable SEO damage (Google indexes the
+    // origin named in the canonical, not the origin being served), so this must
+    // fail the deploy rather than silently emit a preview URL.
+    await expect(import("./site")).rejects.toThrow(/NEXT_PUBLIC_SITE_URL/);
   });
 
   afterEach(() => {
@@ -82,5 +95,43 @@ describe("localizedHref", () => {
   it("adds a leading slash when missing", () => {
     expect(localizedHref("en", "pricing")).toBe("/en/pricing");
     expect(localizedHref("fa", "pricing")).toBe("/pricing");
+  });
+});
+
+describe("pageUrl", () => {
+  it("never emits the /fa prefix, which permanently redirects to /", () => {
+    expect(pageUrl("fa", "/rules")).toBe("https://example.com/rules");
+    expect(pageUrl("fa", "/")).toBe("https://example.com/");
+  });
+
+  it("prefixes non-default locales", () => {
+    expect(pageUrl("en", "/rules")).toBe("https://example.com/en/rules");
+  });
+});
+
+describe("buildAlternates", () => {
+  it("self-references the canonical to the requested locale", () => {
+    const { canonical } = buildAlternates("en", "/rules");
+    expect(canonical).toBe("https://example.com/en/rules");
+  });
+
+  it("resolves the fa alternate to the unprefixed root, not /fa/rules", () => {
+    // Regression guard: the hand-rolled version of this block emitted
+    // `${siteUrl}/${locale}/rules`, so the fa self-canonical pointed at a 301.
+    const { canonical, languages } = buildAlternates("fa", "/rules");
+    expect(canonical).toBe("https://example.com/rules");
+    expect(languages.fa).toBe("https://example.com/rules");
+  });
+
+  it("covers every locale plus x-default", () => {
+    const { languages } = buildAlternates("fa", "/pricing");
+    expect(Object.keys(languages).sort()).toEqual(["en", "fa", "x-default"]);
+    expect(languages["x-default"]).toBe("https://example.com/pricing");
+  });
+});
+
+describe("hreflangLanguages", () => {
+  it("returns the same cluster as buildAlternates for one path", () => {
+    expect(hreflangLanguages("/care")).toEqual(buildAlternates("fa", "/care").languages);
   });
 });

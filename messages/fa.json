@@ -2173,7 +2173,7 @@
       "channelEmail": "ایمیل",
       "channelLabel": "ارسال کد از طریق",
       "channelSms": "پیامک",
-      "codeDescription": "کد ۶ رقمی به {destination} ارسال شد. این کد تا ۲ دقیقه اعتبار دارد.",
+      "codeDescription": "کد ۶ رقمی به {destination} ارسال شد. این کد تا {minutes} دقیقه اعتبار دارد.",
       "codeHeading": "کد تأیید را وارد کنید",
       "codeLabel": "کد ۶ رقمی",
       "email": "نشانی ایمیل",
@@ -2192,11 +2192,11 @@
         "resendCooldown": "لطفاً لحظاتی صبر کنید و سپس کد جدید درخواست کنید.",
         "tooManyAttempts": "تلاش‌های ناموفق بیش از حد بود. کد جدید درخواست کنید یا بعداً دوباره تلاش کنید."
       },
-      "expiresIn": "انقضا تا {seconds} ثانیه دیگر",
+      "expiresIn": "انقضا تا {duration} دیگر",
       "phone": "شماره تماس",
       "phonePlaceholder": "09120000000",
       "resend": "ارسال دوباره کد",
-      "resendIn": "ارسال دوباره تا {seconds} ثانیه دیگر",
+      "resendIn": "ارسال دوباره تا {duration} دیگر",
       "sendCode": "ارسال کد",
       "sendingCode": "در حال ارسال کد…",
       "smsMessage": "کد ورود به کلینیک نفس: {code}",
@@ -3334,6 +3334,7 @@
     "description": "کلینیک زیبایی نفس ارائه‌دهنده مجموعه کاملی از خدمات تخصصی پوست و زیبایی",
     "heading": "خدمات تخصصی ما",
     "meta": {
+      "categoryFallbackDescription": "{group} — {count, plural, one {# دسته‌بندی} other {# دسته‌بندی}}",
       "description": "مجموعه کامل خدمات تخصصی زیبایی کلینیک نفس",
       "title": "خدمات تخصصی | کلینیک زیبایی نفس"
     },

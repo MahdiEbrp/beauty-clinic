@@ -74,16 +74,19 @@ async function loadNavCatalog(locale: Locale): Promise<PublicNavCatalog> {
       groupIcon: serviceGroups.icon,
       groupDisplayOrder: serviceGroups.displayOrder,
       groupName: pickName(groupsI18nFa.name, groupsI18nEn.name, locale),
+      groupUpdatedAt: serviceGroups.updatedAt,
 
       categoryId: serviceCategories.id,
       categorySlug: serviceCategories.slug,
       categoryDisplayOrder: serviceCategories.displayOrder,
       categoryName: pickName(categoriesI18nFa.name, categoriesI18nEn.name, locale),
+      categoryUpdatedAt: serviceCategories.updatedAt,
 
       serviceId: services.id,
       serviceSlug: services.slug,
       serviceDisplayOrder: services.displayOrder,
       serviceTitle: pickName(servicesI18nFa.title, servicesI18nEn.title, locale),
+      serviceUpdatedAt: services.updatedAt,
     })
     .from(serviceGroups)
     .innerJoin(
@@ -116,13 +119,15 @@ async function loadNavCatalog(locale: Locale): Promise<PublicNavCatalog> {
       icon: string | null;
       title: string;
       order: number;
+      updatedAt: Date;
       categoryMap: Map<
         string,
         {
           slug: string;
           title: string;
           order: number;
-          services: { slug: string; title: string; order: number }[];
+          updatedAt: Date;
+          services: { slug: string; title: string; order: number; updatedAt: Date }[];
         }
       >;
     }
@@ -136,6 +141,7 @@ async function loadNavCatalog(locale: Locale): Promise<PublicNavCatalog> {
         icon: row.groupIcon,
         title: row.groupName,
         order: row.groupDisplayOrder,
+        updatedAt: row.groupUpdatedAt,
         categoryMap: new Map(),
       };
       groupMap.set(row.groupId, group);
@@ -147,6 +153,7 @@ async function loadNavCatalog(locale: Locale): Promise<PublicNavCatalog> {
         slug: row.categorySlug,
         title: row.categoryName,
         order: row.categoryDisplayOrder,
+        updatedAt: row.categoryUpdatedAt,
         services: [],
       };
       group.categoryMap.set(row.categoryId, category);
@@ -156,6 +163,7 @@ async function loadNavCatalog(locale: Locale): Promise<PublicNavCatalog> {
       slug: row.serviceSlug,
       title: row.serviceTitle,
       order: row.serviceDisplayOrder,
+      updatedAt: row.serviceUpdatedAt,
     });
   }
 
@@ -165,14 +173,20 @@ async function loadNavCatalog(locale: Locale): Promise<PublicNavCatalog> {
       slug: group.slug,
       icon: group.icon,
       title: group.title,
+      updatedAt: group.updatedAt,
       categories: Array.from(group.categoryMap.values())
         .sort((a, b) => a.order - b.order)
         .map((category) => ({
           slug: category.slug,
           title: category.title,
+          updatedAt: category.updatedAt,
           services: category.services
             .sort((a, b) => a.order - b.order)
-            .map((service) => ({ slug: service.slug, title: service.title })),
+            .map((service) => ({
+              slug: service.slug,
+              title: service.title,
+              updatedAt: service.updatedAt,
+            })),
         })),
     }));
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getClinicData } from "@/data/clinic";
 import HomePage from "@/components/HomePage";
 import { getPublicLanding } from "@/lib/landing";
-import { canonicalUrl, pageUrl } from "@/lib/site";
+import { pageUrl, buildAlternates } from "@/lib/site";
 import type { Locale } from "@/lib/services/types";
 
 export async function generateMetadata({
@@ -16,18 +16,15 @@ export async function generateMetadata({
   return {
     title: landing.seo.title ?? undefined,
     description: landing.seo.description ?? undefined,
-    alternates: {
-      canonical: canonicalUrl(locale),
-      languages: {
-        fa: canonicalUrl("fa"),
-        en: canonicalUrl("en"),
-      },
-    },
+    alternates: buildAlternates(locale, "/"),
     openGraph: {
       title: landing.seo.title ?? undefined,
       description: landing.seo.description ?? undefined,
       type: "website",
       url: pageUrl(locale, "/"),
+    },
+    other: {
+      enamad: "9876985",
     },
   };
 }

@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { AlertTriangle } from "lucide-react";
 import { routing } from "@/src/i18n/routing";
+import { buildAlternates } from "@/lib/site";
 import Link from "next/link";
+
+/** Reached for paths outside any locale segment, so there is no request locale. */
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+  alternates: buildAlternates(routing.defaultLocale, "/"),
+};
 
 /**
  * Root 404: reached for paths outside any locale segment, so there is no request

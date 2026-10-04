@@ -6,6 +6,7 @@ import { cacheWrap } from "@/lib/cache";
 import type { RuleStatusFilter } from "@/lib/validation/rules";
 import { db } from "@/src/db";
 import { rules, rulesI18n } from "@/src/db/schema";
+import { notifyIndexNow } from "@/lib/indexnow";
 import { bumpContentVersion, getContentVersion } from "./content-version";
 import { loadRulesTranslations } from "./i18n-rules";
 import type { AdminRule, ListRulesResult, PublicRule } from "./rules-types";
@@ -179,4 +180,5 @@ async function loadPublicRules(
 /** Invalidate all versioned public content caches (rules, catalog, tree). */
 export async function bustPublicRulesCache(): Promise<void> {
   await bumpContentVersion();
+  await notifyIndexNow(["/rules"], { source: "rules" });
 }

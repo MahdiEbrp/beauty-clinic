@@ -5,7 +5,7 @@ import { getPublicServiceTree, getRulesForPublic } from "@/lib/services/service"
 import { BOOKABLE_ITEMS, bookingLabelFor } from "@/lib/services/bookable";
 import { getClinicData } from "@/data/clinic";
 import type { Locale } from "@/lib/services/types";
-import { pageUrl } from "@/lib/site";
+import { buildAlternates } from "@/lib/site";
 import BookingWizard from "@/components/booking/BookingWizard";
 
 export async function generateMetadata({
@@ -19,13 +19,7 @@ export async function generateMetadata({
   return {
     title: t("meta.title"),
     description: t("meta.description"),
-    alternates: {
-      canonical: pageUrl(locale, "/booking"),
-      languages: {
-        fa: pageUrl("fa", "/booking"),
-        en: pageUrl("en", "/booking"),
-      },
-    },
+    alternates: buildAlternates(locale, "/booking"),
     openGraph: {
       title: t("meta.title"),
       description: t("meta.description"),

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { pageUrl } from "@/lib/site";
+import { buildAlternates } from "@/lib/site";
 import CareContent from "@/components/CareContent";
 
 export async function generateMetadata({
@@ -14,13 +14,7 @@ export async function generateMetadata({
   return {
     title: t("meta.title"),
     description: t("meta.description"),
-    alternates: {
-      canonical: pageUrl(locale, "/care"),
-      languages: {
-        fa: pageUrl("fa", "/care"),
-        en: pageUrl("en", "/care"),
-      },
-    },
+    alternates: buildAlternates(locale, "/care"),
     openGraph: {
       title: t("meta.title"),
       description: t("meta.description"),

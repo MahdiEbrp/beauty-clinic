@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import PricingArticle from "@/components/pricing/article/PricingArticle";
 import { getPricingPage } from "@/lib/services/pricing-page";
-import { pageUrl } from "@/lib/site";
+import { buildAlternates } from "@/lib/site";
 import type { Locale } from "@/lib/services/types";
 
 export async function generateMetadata({
@@ -17,13 +17,7 @@ export async function generateMetadata({
   return {
     title: data.seo.title || t("meta.title"),
     description: data.seo.description || t("meta.description"),
-    alternates: {
-      canonical: pageUrl(locale, "/pricing"),
-      languages: {
-        fa: pageUrl("fa", "/pricing"),
-        en: pageUrl("en", "/pricing"),
-      },
-    },
+    alternates: buildAlternates(locale, "/pricing"),
     openGraph: {
       title: data.seo.title || t("meta.title"),
       description: data.seo.description || t("meta.description"),

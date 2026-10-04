@@ -5,7 +5,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 import { Direction as DirectionPrimitive } from "radix-ui";
 import { routing } from "@/src/i18n/routing";
-import { canonicalUrl, dirForLocale } from "@/lib/site";
+import { buildAlternates, dirForLocale } from "@/lib/site";
 import { getClinicData } from "@/data/clinic";
 import { getPublicNavCatalog } from "@/lib/services/public-nav-catalog";
 import { getSessionCached } from "@/lib/auth/dal";
@@ -24,21 +24,27 @@ export async function generateMetadata({
   return {
     title: t("title"),
     description: t("description"),
-    keywords: [
-      "beauty clinic",
-      "facial",
-      "skincare",
-      "کلینیک زیبایی",
-      "فیشیال",
-      "پوست",
-    ],
-    alternates: { canonical: canonicalUrl(locale) },
+    alternates: buildAlternates(locale, "/"),
     openGraph: {
       title: t("title"),
       description: t("description"),
       type: "website",
+      locale: locale === "fa" ? "fa_IR" : "en_US",
+      siteName: t("name"),
     },
-    robots: { index: true, follow: true },
+    // `max-image-preview: large` is what makes the site's imagery eligible for
+    // large thumbnails in Google image and mobile results; without it Google
+    // defaults to a tiny thumbnail. `-1` means "no limit" for snippets and
+    // video previews. Keywords are intentionally omitted — Google has ignored
+    // them since 2009 and they forced hardcoded bilingual strings into a
+    // per-locale layout.
+    robots: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   };
 }
 

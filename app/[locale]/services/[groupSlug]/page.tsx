@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { pageUrl } from "@/lib/site";
+import { buildAlternates } from "@/lib/site";
 import GroupPage from "@/components/group-page/GroupPage";
 import { getGroupPage } from "@/lib/services/group-page";
 import type { Locale } from "@/lib/services/types";
@@ -19,25 +19,30 @@ export async function generateMetadata({
   const { locale, groupSlug } = await params;
   const data = await getGroupPage(locale as Locale, groupSlug);
 
-  if (!data) return {};
+  // Resolved before the page calls notFound(), so on an unknown slug we must
+  // explicitly refuse indexing rather than return {} and let this fall back to
+  // the locale layout's metadata (which would advertise the homepage's title
+  // and canonical for a junk URL).
+  if (!data) return { robots: { index: false, follow: false } };
 
   const path = `/services/${data.group.slug}`;
   const tSite = await getTranslations({ locale, namespace: "site" });
-  const title = `${data.group.title} | ${tSite("name")}`;
+  const tGroup = await getTranslations({ locale, namespace: "servicesPage" });
+  // The catalog ships a hand-written, per-locale SEO title and description for
+  // every group; only fall back to the generic pattern when they are absent.
+  const title = data.group.seoTitle ?? `${data.group.title} | ${tSite("name")}`;
   const description =
+    data.group.seoDescription ??
     data.group.description ??
-    `${data.group.title} — ${data.categories.length} ${data.categories.length === 1 ? "category" : "categories"}`;
+    tGroup("meta.categoryFallbackDescription", {
+      group: data.group.title,
+      count: data.categories.length,
+    });
 
   return {
     title,
     description,
-    alternates: {
-      canonical: pageUrl(locale, path),
-      languages: {
-        fa: pageUrl("fa", path),
-        en: pageUrl("en", path),
-      },
-    },
+    alternates: buildAlternates(locale, path),
     openGraph: {
       title,
       description,

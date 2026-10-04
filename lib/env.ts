@@ -12,6 +12,13 @@ const envSchema = z.object({
   KV_REST_API_URL: z.string().optional(),
   KV_REST_API_TOKEN: z.string().optional(),
   CRON_SECRET: z.string().min(32).optional(),
+  // IndexNow protocol key, kept in sync with the key file hosted at the domain
+  // root. Leaving it unset disables every submission rather than producing a
+  // 403 from the endpoint.
+  INDEXNOW_KEY: z
+    .string()
+    .regex(/^[A-Za-z0-9-]{8,128}$/)
+    .optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

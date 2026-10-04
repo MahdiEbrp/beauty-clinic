@@ -32,6 +32,34 @@ const securityHeaders = [
   },
 ];
 
+// Private and non-indexable surfaces. These are intentionally NOT listed in
+// robots.txt: Google ignores `Disallow` for *indexing* and cannot read a
+// `noindex` from a page it never fetches, so the header has to be deliverable.
+// The matching meta robots tags stay in place as the belt to this braces.
+// Matched against the locale-stripped path, so both `/dashboard` and
+// `/en/dashboard` are covered by one pattern.
+const noIndexHeader = { key: "X-Robots-Tag", value: "noindex, nofollow" };
+
+const noIndexSources = [
+  "/:locale/api/:path*",
+  "/:locale/dashboard/:path*",
+  "/:locale/login",
+  "/:locale/register",
+  "/:locale/reset-password",
+  "/:locale/forbidden",
+  "/:locale/payment/:path*",
+  "/:locale/fake/:path*",
+  // Default locale is served without a prefix.
+  "/api/:path*",
+  "/dashboard/:path*",
+  "/login",
+  "/register",
+  "/reset-password",
+  "/forbidden",
+  "/payment/:path*",
+  "/fake/:path*",
+];
+
 const nextConfig = {
   poweredByHeader: false,
   // Liara's buildpack wants standalone output; set it so its injection is a
@@ -74,6 +102,7 @@ const nextConfig = {
           },
         ],
       },
+      ...noIndexSources.map((source) => ({ source, headers: [noIndexHeader] })),
     ];
   },
 };

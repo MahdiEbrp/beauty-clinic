@@ -5,6 +5,7 @@ import type { CareGuideStatusFilter } from "@/lib/validation/care-guides";
 import { db } from "@/src/db";
 import { careGuideItems, careGuides, careGuidesI18n } from "@/src/db/schema";
 import { assertSlugAvailable, isUniqueViolation, uniqueSlugError } from "./helpers";
+import { notifyIndexNow } from "@/lib/indexnow";
 import { bumpContentVersion } from "./content-version";
 import type {
   AdminCareGuide,
@@ -274,4 +275,5 @@ export async function deleteCareGuide(id: string): Promise<void> {
 
 export async function bustCareGuidesCache(): Promise<void> {
   await bumpContentVersion();
+  await notifyIndexNow(["/care"], { source: "care-guides" });
 }

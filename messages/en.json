@@ -2173,7 +2173,7 @@
       "channelEmail": "Email",
       "channelLabel": "Send the code via",
       "channelSms": "SMS",
-      "codeDescription": "A 6-digit code was sent to {destination}. It expires in 2 minutes.",
+      "codeDescription": "A 6-digit code was sent to {destination}. It expires in {minutes} minutes.",
       "codeHeading": "Enter the code",
       "codeLabel": "6-digit code",
       "email": "Email address",
@@ -2192,11 +2192,11 @@
         "resendCooldown": "Please wait a moment before requesting a new code.",
         "tooManyAttempts": "Too many incorrect attempts. Request a new code or try again later."
       },
-      "expiresIn": "Expires in {seconds}s",
+      "expiresIn": "Expires in {duration}",
       "phone": "Phone number",
       "phonePlaceholder": "09120000000",
       "resend": "Resend code",
-      "resendIn": "Resend in {seconds}s",
+      "resendIn": "Resend in {duration}",
       "sendCode": "Send code",
       "sendingCode": "Sending code…",
       "smsMessage": "Nafas Clinic login code: {code}",
@@ -3334,6 +3334,7 @@
     "description": "Nafas Beauty Clinic offers a complete range of specialized skin and beauty services",
     "heading": "Our Specialized Services",
     "meta": {
+      "categoryFallbackDescription": "{group} — {count, plural, one {# category} other {# categories}}",
       "description": "Complete range of specialized beauty and medical services at Nafas Clinic",
       "title": "Specialized Services | Nafas Beauty Clinic"
     },
