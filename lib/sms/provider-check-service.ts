@@ -8,6 +8,7 @@ import {
   createSmsProviderAdapter,
   SmsProviderError,
 } from "@/lib/sms/providers";
+import { getSmsTemplateByKey } from "@/lib/sms/template-service";
 import type { TestSmsProviderInput } from "@/lib/validation/sms";
 import { db } from "@/src/db";
 import { smsProviderChecks, smsProviders } from "@/src/db/schema";
@@ -37,11 +38,28 @@ export async function testSmsProvider(
   const adapter = createSmsProviderAdapter(provider);
   const startedAt = Date.now();
   try {
-    const result = await adapter.send({
-      recipients: [recipient],
-      message: input.message,
-      sender: provider.sender ?? provider.credentials.lineNumber,
-    });
+    // Line-number health is meaningless for SMS.ir OTP senders — free-text
+    // bulk sends go through a sender line that commonly rejects with code 123.
+    // The OTP template is the real delivery path, so probe it directly.
+    const otpTemplate = await getSmsTemplateByKey("login-otp");
+    const otpTemplateId = Number(otpTemplate?.externalTemplateId);
+    const otpName = otpTemplate?.variables[0];
+    const useOtp =
+      provider.kind === "sms_ir" &&
+      Number.isInteger(otpTemplateId) &&
+      Boolean(otpName) &&
+      Boolean(adapter.sendVerify);
+    const result = useOtp
+      ? await adapter.sendVerify!({
+          recipients: [recipient],
+          templateId: otpTemplateId,
+          parameters: [{ name: otpName as string, value: input.message }],
+        })
+      : await adapter.send({
+          recipients: [recipient],
+          message: input.message,
+          sender: provider.sender ?? provider.credentials.lineNumber,
+        });
     const responseTimeMs = Date.now() - startedAt;
     const accepted = result.accepted[0];
     await recordProviderCheck({

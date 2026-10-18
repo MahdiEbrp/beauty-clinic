@@ -30,7 +30,8 @@ export function PhoneStep({
   onSubmit: (event: React.SyntheticEvent<HTMLFormElement>) => void;
 }) {
   const t = useTranslations();
-  const isEmail = channel === "email";
+  // SMS only — email disabled; variables kept for future re-enable
+  const isEmail = false;
 
   return (
     <form onSubmit={onSubmit} noValidate className="grid gap-6">
@@ -101,14 +102,17 @@ export function PhoneStep({
         )}
       </div>
 
-      <fieldset>
-        <legend className={labelClass}>{t("login.otp.channelLabel")}</legend>
-        <ChannelPicker
-          value={channel}
-          onChange={onChannelChange}
-          disabled={pending}
-        />
-      </fieldset>
+      {/* Channel picker hidden — SMS only; re-enable by removing this wrapper */}
+      {false && (
+        <fieldset>
+          <legend className={labelClass}>{t("login.otp.channelLabel")}</legend>
+          <ChannelPicker
+            value={channel}
+            onChange={onChannelChange}
+            disabled={pending}
+          />
+        </fieldset>
+      )}
 
       <button
         type="submit"

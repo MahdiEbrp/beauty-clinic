@@ -3350,7 +3350,7 @@
   },
   "categoryPage": {
     "services": {
-      "heading": "{title} — قیمت و خدمات",
+      "heading": "{title} — خدمات",
       "subtitle": "{count, plural, one {# خدمت} other {# خدمت}}"
     },
     "siblings": {
@@ -5600,6 +5600,7 @@
     "addNew": "افزودن",
     "providerKinds": {
       "zarinpal": "ZarinPal",
+      "tabapay": "تاباپی",
       "zibal": "Zibal",
       "idpay": "IDPay",
       "nextpay": "NextPay",
@@ -5609,6 +5610,7 @@
     },
     "providerDescriptions": {
       "zarinpal": "درگاه ZarinPal",
+      "tabapay": "درگاه پرداخت تاباتی",
       "zibal": "Zibal",
       "idpay": "IDPay",
       "nextpay": "NextPay",

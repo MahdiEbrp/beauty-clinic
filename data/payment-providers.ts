@@ -15,6 +15,12 @@ export const PAYMENT_PROVIDER_OPTIONS: readonly PaymentProviderOption[] = [
     defaultApiUrl: "https://api.zarinpal.com",
   },
   {
+    kind: "tabapay",
+    labelKey: "providerKinds.tabapay",
+    descriptionKey: "providerDescriptions.tabapay",
+    defaultApiUrl: "https://api.tabapay.ir",
+  },
+  {
     kind: "zibal",
     labelKey: "providerKinds.zibal",
     descriptionKey: "providerDescriptions.zibal",

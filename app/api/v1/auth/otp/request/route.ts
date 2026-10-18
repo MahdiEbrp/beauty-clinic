@@ -7,14 +7,20 @@ import {
   getLoginUserByIdentifier,
   invalidateLatestLoginOtp,
   issueLoginOtp,
-  OTP_RESEND_COOLDOWN_MS,
-  OTP_TTL_MS,
+  otpTtlMs,
+  otpResendCooldownMs,
 } from "@/lib/auth/otp";
 import { sendLoginOtp } from "@/lib/auth/otp-delivery";
 import { requestOtpSchema } from "@/lib/validation/otp";
+import type { OtpChannel } from "@/src/db/schema";
 
 export const runtime = "nodejs";
 
+/** OTP requests: email over 15 min, SMS over 5 min (per identifier). */
+function otpRateWindowMs(channel: OtpChannel): number {
+  return channel === "sms" ? 5 * 60 * 1000 : 15 * 60 * 1000;
+}
+const otpChannelLimit = 5;
 const REQUEST_RATE_LIMIT = { limit: 5, windowMs: 15 * 60 * 1000 };
 
 export const POST = withSecurity(
@@ -40,8 +46,8 @@ export const POST = withSecurity(
     // Per-identifier limiter on top of the per-IP one: SMS/email bombing protection.
     const identifierLimit = await rateLimit(
       `otp-request-${body.channel}:${identifierKey}`,
-      REQUEST_RATE_LIMIT.limit,
-      REQUEST_RATE_LIMIT.windowMs,
+      otpChannelLimit,
+      otpRateWindowMs(body.channel),
     );
     if (!identifierLimit.allowed) {
       return jsonError("RATE_LIMITED", "Too many attempts. Please try again later.", 429);
@@ -59,8 +65,8 @@ export const POST = withSecurity(
     if (!user || !canReceive) {
       return jsonOk({
         ok: true,
-        expiresInMs: OTP_TTL_MS,
-        resendInMs: OTP_RESEND_COOLDOWN_MS,
+        expiresInMs: otpTtlMs(body.channel),
+        resendInMs: otpResendCooldownMs(body.channel),
       });
     }
 
@@ -91,8 +97,8 @@ export const POST = withSecurity(
 
     return jsonOk({
       ok: true,
-      expiresInMs: OTP_TTL_MS,
-      resendInMs: OTP_RESEND_COOLDOWN_MS,
+      expiresInMs: otpTtlMs(body.channel),
+      resendInMs: otpResendCooldownMs(body.channel),
     });
   },
 );

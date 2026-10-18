@@ -72,7 +72,7 @@ describe("resendLoginOtp", () => {
     mockDb.seed("users", [baseUser]);
     mockDb.seed("otp_codes", [activeCode({ lastSentAt: new Date() })]);
 
-    const result = await resendLoginOtp("u1", "sms");
+    const result = await resendLoginOtp("u1", "email");
 
     expect(result).toMatchObject({ ok: false, reason: "RESEND_COOLDOWN" });
     if (!result.ok && result.reason === "RESEND_COOLDOWN") {
@@ -112,7 +112,7 @@ describe("resendLoginOtp", () => {
       }),
     ]);
 
-    const result = await resendLoginOtp("u1", "sms");
+    const result = await resendLoginOtp("u1", "email");
 
     expect(result).toEqual({ ok: false, reason: "RESEND_LIMIT", retryAfterMs: 0 });
   });

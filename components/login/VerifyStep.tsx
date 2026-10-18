@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { ArrowLeft, Loader2, LogIn, RefreshCw } from "lucide-react";
 import { useCountdown } from "@/lib/hooks/use-countdown";
+import { formatCountdown } from "@/lib/utils";
 import { OtpCodeInput } from "./OtpCodeInput";
 
 const secondaryButtonClass =
@@ -75,7 +76,7 @@ export function VerifyStep({
           </p>
         ) : (
           <p className="text-caption text-content-tertiary">
-            {t("login.otp.expiresIn", { seconds: String(expiry.secondsLeft ?? "") })}
+            {t("login.otp.expiresIn", { duration: formatCountdown(expiry.secondsLeft ?? 0) })}
           </p>
         )}
         <button
@@ -100,7 +101,7 @@ export function VerifyStep({
           )}
           {resend.done
             ? t("login.otp.resend")
-            : t("login.otp.resendIn", { seconds: String(resend.secondsLeft ?? "") })}
+            : t("login.otp.resendIn", { duration: formatCountdown(resend.secondsLeft ?? 0) })}
         </button>
       </div>
 

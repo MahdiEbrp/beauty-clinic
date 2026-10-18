@@ -8,12 +8,16 @@ import { localizedHref } from "@/lib/site";
 export const runtime = "nodejs";
 
 // ZarinPal redirects as GET ?Authority=...&Status=OK
+// Tabapay redirects as GET ?token=...&status=success&amount=...
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const authority = searchParams.get("Authority") ?? searchParams.get("authority");
+  const authority =
+    searchParams.get("Authority") ??
+    searchParams.get("authority") ??
+    searchParams.get("token");
   const status = searchParams.get("Status") ?? searchParams.get("status");
   if (!authority) return NextResponse.redirect(new URL("/payment/failed?reason=missing_authority", request.url));
-  if (status && status !== "OK") {
+  if (status && status !== "OK" && status !== "success") {
     const failed = await markPaymentFailed(authority, "Payment was cancelled or declined by the provider.");
     const path = localizedHref(failed?.locale ?? "fa", "/payment/failed");
     return NextResponse.redirect(new URL(`${path}?authority=${encodeURIComponent(authority)}`, request.url));

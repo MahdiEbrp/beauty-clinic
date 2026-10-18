@@ -9,14 +9,17 @@ import { db } from "@/src/db";
 import { otpCodes, users } from "@/src/db/schema";
 import type { OtpChannel } from "@/src/db/schema";
 
+import {
+  otpTtlMs,
+  otpResendCooldownMs,
+  OTP_TTL_MS,
+  OTP_RESEND_COOLDOWN_MS,
+} from "./otp-limits";
+
+export { OTP_TTL_MS, OTP_RESEND_COOLDOWN_MS, otpTtlMs, otpResendCooldownMs };
+
 export const OTP_CODE_LENGTH = 6;
-/** A code stops verifying 2 minutes after it was issued. */
-export const OTP_TTL_MS = 2 * 60 * 1000;
-/** The client may ask for a new code every 60 seconds. */
-export const OTP_RESEND_COOLDOWN_MS = 60 * 1000;
-/** Wrong codes per code row; the row is consumed when exhausted. */
 export const OTP_MAX_VERIFY_ATTEMPTS = 5;
-/** Resends per code row before a fresh issue is required. */
 export const OTP_MAX_RESENDS = 3;
 /** Cumulative wrong codes per user before the account is locked out. */
 export const MAX_FAILED_LOGIN_ATTEMPTS = 5;
@@ -82,7 +85,7 @@ export async function issueLoginOtp(
 ): Promise<IssuedOtp> {
   const code = generateOtpCode();
   const now = Date.now();
-  const expiresAt = new Date(now + OTP_TTL_MS);
+  const expiresAt = new Date(now + otpTtlMs(channel));
 
   for (let attempt = 0; attempt < 5; attempt++) {
     await db
@@ -109,7 +112,7 @@ export async function issueLoginOtp(
       .returning({ id: otpCodes.id });
 
     if (row) {
-      return { code, expiresAt, resendAt: new Date(now + OTP_RESEND_COOLDOWN_MS) };
+      return { code, expiresAt, resendAt: new Date(now + otpResendCooldownMs(channel)) };
     }
   }
 
@@ -254,11 +257,11 @@ export async function resendLoginOtp(
 ): Promise<ResendLoginOtpResult> {
   const codeRow = await findActiveLoginCode(userId);
   if (!codeRow) return { ok: false, reason: "RESEND_LIMIT", retryAfterMs: 0 };
-  if (codeRow.lastSentAt.getTime() + OTP_RESEND_COOLDOWN_MS > Date.now()) {
+  if (codeRow.lastSentAt.getTime() + otpResendCooldownMs(channel) > Date.now()) {
     return {
       ok: false,
       reason: "RESEND_COOLDOWN",
-      retryAfterMs: codeRow.lastSentAt.getTime() + OTP_RESEND_COOLDOWN_MS - Date.now(),
+      retryAfterMs: codeRow.lastSentAt.getTime() + otpResendCooldownMs(channel) - Date.now(),
     };
   }
   if (codeRow.resends >= OTP_MAX_RESENDS) {
@@ -267,7 +270,7 @@ export async function resendLoginOtp(
 
   const code = generateOtpCode();
   const now = Date.now();
-  const expiresAt = new Date(now + OTP_TTL_MS);
+  const expiresAt = new Date(now + otpTtlMs(channel));
 
   await db
     .update(otpCodes)
@@ -284,7 +287,7 @@ export async function resendLoginOtp(
     ok: true,
     code,
     expiresAt,
-    resendAt: new Date(now + OTP_RESEND_COOLDOWN_MS),
+    resendAt: new Date(now + otpResendCooldownMs(channel)),
     channel: (codeRow.channel) ?? channel,
   };
 }

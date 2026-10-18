@@ -31,6 +31,7 @@ export default function OtpLoginForm() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [channel, setChannel] = useState<"sms" | "email">("sms");
+  // Email disabled for login — SMS only; variables kept for future re-enable
   const [code, setCode] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
   const [codeError, setCodeError] = useState<string | null>(null);
@@ -223,7 +224,10 @@ export default function OtpLoginForm() {
           <p className="text-body text-content-secondary mb-10">
             {step === "request"
               ? t("login.description")
-              : t("login.otp.codeDescription", { destination: maskedDestination })}
+              : t("login.otp.codeDescription", {
+                  destination: maskedDestination,
+                  minutes: String(2),
+                })}
           </p>
 
           {formError && (

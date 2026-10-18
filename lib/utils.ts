@@ -13,3 +13,11 @@ export function initials(name: string): string {
     .map((part) => part[0].toUpperCase())
     .join("");
 }
+
+/** mm:ss for OTP countdowns (Persian digits come from the Estedad `ss01` feature). */
+export function formatCountdown(totalSeconds: number): string {
+  const safe = Math.max(0, Math.floor(totalSeconds));
+  const minutes = Math.floor(safe / 60);
+  const seconds = safe % 60;
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}

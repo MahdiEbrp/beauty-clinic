@@ -28,7 +28,7 @@ export function ChannelPicker({
       onValueChange={(next) => onChange(next as "sms" | "email")}
       disabled={disabled}
       aria-label={t("login.otp.channelLabel")}
-      className="grid grid-cols-2 gap-3"
+      className="grid grid-cols-1 gap-3"
     >
       <RadioGroupPrimitive.Item value="sms" className={itemClass}>
         <MessageSquareText
@@ -38,10 +38,13 @@ export function ChannelPicker({
         />
         {t("login.otp.channelSms")}
       </RadioGroupPrimitive.Item>
-      <RadioGroupPrimitive.Item value="email" className={itemClass}>
-        <Mail className="w-5 h-5" strokeWidth={2} aria-hidden="true" />
-        {t("login.otp.channelEmail")}
-      </RadioGroupPrimitive.Item>
+      {/* Email option hidden — SMS only; re-enable by removing this wrapper */}
+      {false && (
+        <RadioGroupPrimitive.Item value="email" className={itemClass}>
+          <Mail className="w-5 h-5" strokeWidth={2} aria-hidden="true" />
+          {t("login.otp.channelEmail")}
+        </RadioGroupPrimitive.Item>
+      )}
     </RadioGroupPrimitive.Root>
   );
 }

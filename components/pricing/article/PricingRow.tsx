@@ -14,6 +14,8 @@ export type PricingRowProps = {
   groupSlug?: string;
   /** Larger, more prominent reserve button (used on SEO category pages). */
   bookVariant?: "default" | "xl";
+  /** Hide the price tag (category pages list services without prices). */
+  showPrice?: boolean;
 };
 
 /** A single responsive pricing row: name + optional desc/price (right, RTL-aware). */
@@ -23,6 +25,7 @@ export default function PricingRow({
   onBook,
   groupSlug,
   bookVariant = "default",
+  showPrice = true,
 }: PricingRowProps) {
   const t = useTranslations();
   const minutesLabel = t("pricing.article.minutes");
@@ -70,12 +73,14 @@ export default function PricingRow({
         </div>
       </div>
       <div className="flex sm:flex-col items-center sm:items-end justify-between gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border-primary/40">
-        <PriceTag
-          price={service.price}
-          priceType={service.priceType}
-          currency={currency}
-          className="text-base font-extrabold text-accent"
-        />
+        {showPrice ? (
+          <PriceTag
+            price={service.price}
+            priceType={service.priceType}
+            currency={currency}
+            className="text-base font-extrabold text-accent"
+          />
+        ) : null}
         {onBook && (
           <button
             type="button"

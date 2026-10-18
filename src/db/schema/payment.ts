@@ -16,6 +16,7 @@ import { users } from "./auth";
 
 export const paymentProviderKindEnum = pgEnum("payment_provider_kind", [
   "zarinpal",
+  "tabapay",
   "zibal",
   "idpay",
   "nextpay",

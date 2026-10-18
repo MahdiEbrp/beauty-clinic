@@ -3350,7 +3350,7 @@
   },
   "categoryPage": {
     "services": {
-      "heading": "{title} — pricing & services",
+      "heading": "{title} — services",
       "subtitle": "{count, plural, one {# service} other {# services}} listed"
     },
     "siblings": {
@@ -5600,6 +5600,7 @@
     "addNew": "Add New",
     "providerKinds": {
       "zarinpal": "ZarinPal",
+      "tabapay": "Tabapay",
       "zibal": "Zibal",
       "idpay": "IDPay",
       "nextpay": "NextPay",
@@ -5609,6 +5610,7 @@
     },
     "providerDescriptions": {
       "zarinpal": "ZarinPal gateway",
+      "tabapay": "Tabapay payment gateway",
       "zibal": "Zibal",
       "idpay": "IDPay",
       "nextpay": "NextPay",

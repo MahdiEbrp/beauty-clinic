@@ -17,6 +17,12 @@ const DEVELOPER_PHONE = "09011675969";
 const DEVELOPER_EMAIL = "mahdi.a.ebrp@gmail.com";
 const DEVELOPER_NAME = "Mahdi Ebrahim Pour";
 
+// Verbatim copy of the snippet issued in the enamad panel (دسترسی‌ها و امکانات).
+// Injected raw because the panel only honours the exact markup it issued — React's
+// JSX path rewrites the attribute casing and would append its own attributes.
+const ENAMAD_SNIPPET =
+  "<a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=8012387&Code=tGf6kbvd1zly0cWZ1D0Kbs2oh0WstDuM'><img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=8012387&Code=tGf6kbvd1zly0cWZ1D0Kbs2oh0WstDuM' alt='' style='cursor:pointer' code='tGf6kbvd1zly0cWZ1D0Kbs2oh0WstDuM'></a>";
+
 function safeHtmlComment(value: string): string {
   const clean = value.replace(/[<>]/g, "").replace(/--/g, "\u2010\u2010");
   return `<!-- ${clean} -->`;
@@ -93,10 +99,13 @@ export default function Footer({ clinic }: FooterProps) {
         </div>
 
         <div className="border-t border-footer-border mt-12 pt-8 pb-36 lg:pb-24 flex flex-col sm:flex-row sm:justify-between sm:items-center text-body-sm text-footer-muted gap-4">
-          <span>
-            © <span>{new Date().getFullYear()}</span> {t("site.name")}.{" "}
-            {t("site.rights")}
-          </span>
+          <div className="flex items-center gap-4">
+            <div dangerouslySetInnerHTML={{ __html: ENAMAD_SNIPPET }} />
+            <span>
+              © <span>{new Date().getFullYear()}</span> {t("site.name")}.{" "}
+              {t("site.rights")}
+            </span>
+          </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center gap-x-4 gap-y-1">
             <span>

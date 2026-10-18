@@ -9,8 +9,8 @@ import {
   invalidateLatestLoginOtp,
   issueLoginOtp,
   resendLoginOtp,
-  OTP_RESEND_COOLDOWN_MS,
-  OTP_TTL_MS,
+  otpTtlMs,
+  otpResendCooldownMs,
 } from "@/lib/auth/otp";
 import { sendLoginOtp } from "@/lib/auth/otp-delivery";
 import { resendOtpSchema } from "@/lib/validation/otp";
@@ -19,7 +19,15 @@ import type { OtpChannel } from "@/src/db/schema";
 export const runtime = "nodejs";
 
 const RESEND_RATE_LIMIT = { limit: 5, windowMs: 15 * 60 * 1000 };
-const OK_SHAPE = { ok: true, expiresInMs: OTP_TTL_MS, resendInMs: OTP_RESEND_COOLDOWN_MS };
+
+function resendOkShape(channel: OtpChannel) {
+  return { ok: true, expiresInMs: otpTtlMs(channel), resendInMs: otpResendCooldownMs(channel) };
+}
+
+/** OTP resends: email over 15 min, SMS over 5 min (per identifier). */
+function resendRateWindowMs(channel: OtpChannel): number {
+  return channel === "sms" ? 5 * 60 * 1000 : 15 * 60 * 1000;
+}
 
 export const POST = withSecurity(
   {
@@ -44,7 +52,7 @@ export const POST = withSecurity(
     const identifierLimit = await rateLimit(
       `otp-resend-${body.channel}:${identifierKey}`,
       RESEND_RATE_LIMIT.limit,
-      RESEND_RATE_LIMIT.windowMs,
+      resendRateWindowMs(body.channel),
     );
     if (!identifierLimit.allowed) {
       return jsonError("RATE_LIMITED", "Too many attempts. Please try again later.", 429);
@@ -59,7 +67,7 @@ export const POST = withSecurity(
 
     // Enumeration-safe: same response shape as a successful resend.
     if (!user || !canReceive) {
-      return jsonOk(OK_SHAPE);
+      return jsonOk(resendOkShape(body.channel));
     }
 
     const resend = await resendLoginOtp(user.id, body.channel);
@@ -115,5 +123,5 @@ async function deliver(
     }
     throw error;
   }
-  return jsonOk(OK_SHAPE);
+  return jsonOk(resendOkShape(channel));
 }

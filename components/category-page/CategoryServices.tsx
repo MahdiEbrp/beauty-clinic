@@ -12,9 +12,10 @@ type CategoryServicesProps = {
 };
 
 /**
- * The pricing block for a category page — a card mirroring the pricing page's
+ * The services block for a category page — a card mirroring the pricing page's
  * section look, reusing `PricingRow` (name, desc, duration/sessions badges,
- * price tag, book button) for every service in the category.
+ * book button) for every service in the category. Prices are intentionally
+ * hidden on category pages.
  */
 export default function CategoryServices({
   category,
@@ -68,6 +69,7 @@ export default function CategoryServices({
             onBook={() => handleBook(service)}
             groupSlug={groupSlug}
             bookVariant="xl"
+            showPrice={false}
           />
         ))}
       </ul>
