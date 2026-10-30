@@ -55,3 +55,6 @@ unproccess/
 /.file-manager
 services.html
 liara.json
+
+# npm lockfile (repo uses bun.lock)
+package-lock.json
