@@ -566,28 +566,7 @@ body {
   background-position: center;
 }
 
-/* Gradient scrim over the hero photo. Derived from the surface token rather
-   than hardcoded rgba() so it tracks the palette. Strongest behind the hero
-   copy so brand colors never blend with the photo. */
-.hero-overlay {
-  background: linear-gradient(
-    to left,
-    color-mix(in srgb, var(--surface-primary) 100%, transparent) 0%,
-    color-mix(in srgb, var(--surface-primary) 98%, transparent) 35%,
-    color-mix(in srgb, var(--surface-primary) 88%, transparent) 70%,
-    color-mix(in srgb, var(--surface-primary) 55%, transparent) 100%
-  );
-}
 
-html[dir="ltr"] .hero-overlay {
-  background: linear-gradient(
-    to right,
-    color-mix(in srgb, var(--surface-primary) 100%, transparent) 0%,
-    color-mix(in srgb, var(--surface-primary) 98%, transparent) 35%,
-    color-mix(in srgb, var(--surface-primary) 88%, transparent) 70%,
-    color-mix(in srgb, var(--surface-primary) 55%, transparent) 100%
-  );
-}
 
 .btn-hero-primary {
   animation: pulse-glow 2.5s infinite;

@@ -10,12 +10,23 @@ import {
   landingSections,
   landingSectionsI18n,
 } from "@/src/db/schema";
-import { ApiError } from "@/lib/api/errors";
 import { bustLandingCache } from "../../landing";
 import type { TranslatedContent } from "@/lib/services/types";
+import type { AdminHero } from "../types";
 import { eachLocale, findHomePageId } from "./helpers";
 
 // --- Hero ------------------------------------------------------------------
+
+/** Empty hero shape used when no hero row exists yet, so the dashboard can
+ * create the initial hero content instead of 404ing. */
+export const emptyAdminHero: AdminHero = {
+  image: null,
+  taglineIcon: null,
+  translations: {
+    fa: { title: "", tagline: null, description: null, ctaLabel1: "", ctaLabel2: "" },
+    en: { title: "", tagline: null, description: null, ctaLabel1: "", ctaLabel2: "" },
+  },
+};
 
 export type HeroDraft = {
   image?: string | null;
@@ -31,12 +42,14 @@ export type HeroDraft = {
 
 export async function updateHero(draft: HeroDraft): Promise<void> {
   const pageId = await findHomePageId();
-  const [hero] = await db
+  let [hero] = await db
     .select()
     .from(landingHero)
     .where(eq(landingHero.landingPageId, pageId))
     .limit(1);
-  if (!hero) throw new ApiError(404, "LANDING_HERO_NOT_FOUND", "Landing hero not found.");
+  if (!hero) {
+    [hero] = await db.insert(landingHero).values({ landingPageId: pageId }).returning();
+  }
   await db
     .update(landingHero)
     .set({ image: draft.image, taglineIcon: draft.taglineIcon })

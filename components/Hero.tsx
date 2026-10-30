@@ -91,17 +91,18 @@ export default function Hero({ landing }: HeroProps) {
           animate="visible"
           className="max-w-full"
         >
-          <motion.div
-            variants={childVariants}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-surface-secondary/90 backdrop-blur-sm border border-border-primary rounded-pill text-caption font-semibold text-copper-strong mb-8 shadow-elevation-1"
-          >
-            <TaglineGlyph icon={data?.taglineIcon ?? null} />
-            <span>{data?.tagline ?? t("tagline")}</span>
-          </motion.div>
+          <div className="flex flex-col items-start gap-3">
+            <motion.div
+              variants={childVariants}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-surface-secondary/90 backdrop-blur-sm border border-border-primary rounded-pill text-caption font-semibold text-copper-strong shadow-elevation-1"
+            >
+              <TaglineGlyph icon={data?.taglineIcon ?? null} />
+              <span>{data?.tagline ?? t("tagline")}</span>
+            </motion.div>
 
-          <motion.h1
+            <motion.h1
             variants={childVariants}
-            className="text-display font-extralight mb-6 leading-[1.1] tracking-tight text-accent"
+            className="text-display font-extralight mb-6 leading-[1.1] inline-block tracking-tight text-accent backdrop-blur-sm px-4 py-2 rounded-xl bg-surface-primary/40"
           >
             {titleLine1 || t("heading1")}
             {titleLine2 ? (
@@ -113,10 +114,11 @@ export default function Hero({ landing }: HeroProps) {
               </>
             ) : null}
           </motion.h1>
+          </div>
 
           <motion.p
             variants={childVariants}
-            className="text-body-lead max-w-lg mb-12 leading-normal text-content-secondary"
+            className="text-body-lead max-w-lg mb-12 leading-normal text-content-secondary backdrop-blur-sm inline-block px-4 py-2 rounded-xl bg-surface-primary/40"
           >
             {data?.description ?? t("description")}
           </motion.p>
