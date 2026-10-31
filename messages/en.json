@@ -2431,7 +2431,7 @@
     "errors": {
       "loadSlots": "Couldn't load available slots.",
       "serviceRequired": "Choose a service.",
-      "slotRequired": "Choose a time slot."
+      "slotRequired": "Please select at least one time slot"
     },
     "fields": {
       "currency": {
@@ -2463,7 +2463,8 @@
       },
       "time": {
         "label": "Time",
-        "placeholder": "Select a time"
+        "placeholder": "Select a time",
+        "hint": "{count} time slot(s) selected"
       },
       "status": {
         "label": "Status",

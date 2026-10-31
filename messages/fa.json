@@ -2431,7 +2431,7 @@
     "errors": {
       "loadSlots": "بارگذاری اسلات‌ها انجام نشد.",
       "serviceRequired": "خدمتی انتخاب کنید.",
-      "slotRequired": "زمان‌بندی انتخاب کنید."
+      "slotRequired": "حداقل یک تایم انتخاب کنید"
     },
     "fields": {
       "currency": {
@@ -2463,7 +2463,8 @@
       },
       "time": {
         "label": "ساعت",
-        "placeholder": "زمان را انتخاب کنید"
+        "placeholder": "زمان را انتخاب کنید",
+        "hint": "{count} تایم انتخاب شد"
       },
       "status": {
         "label": "وضعیت",

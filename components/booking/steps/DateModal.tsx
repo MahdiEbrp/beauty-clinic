@@ -48,6 +48,8 @@ export default function DateModal({ group, current, cart, onAssign, onClose }: D
   const [pickerDay, setPickerDay] = useState<Date | null>(current ? new Date(`${current.slotDate}T00:00:00`) : null);
   const [pickerSlot, setPickerSlot] = useState<SlotOption | null>(current);
   const [slots, setSlots] = useState<SlotsResult | null>(null);
+  const [availableDateKeys, setAvailableDateKeys] = useState<Set<string>>(new Set());
+  const [availabilityChecked, setAvailabilityChecked] = useState(false);
 
   const years = useMemo(() => Array.from(new Set(windowDates.map((d) => toParts(d, jalali).year))).sort(), [jalali, windowDates]);
   const months = useMemo(
@@ -65,6 +67,34 @@ export default function DateModal({ group, current, cart, onAssign, onClose }: D
   useEffect(() => {
     prefetchDays(windowDates.slice(1, 6).map(gregorianKey), group.id);
   }, [group.id, windowDates]);
+
+  // Prefetch all days in the current month view and hide dates with no slots.
+  useEffect(() => {
+    const dateKeys = days.map(gregorianKey);
+    prefetchDays(dateKeys, group.id);
+
+    const checkAll = async () => {
+      const results = await Promise.allSettled(
+        dateKeys.map(async (dateKey) => {
+          const result = getSlots(dateKey, group.id);
+          const data = await result.fresh;
+          return { dateKey, hasSlots: data.length > 0 };
+        })
+      );
+      const available = new Set(
+        results
+          .filter(
+            (r): r is PromiseFulfilledResult<{ dateKey: string; hasSlots: boolean }> =>
+              r.status === "fulfilled" && r.value.hasSlots,
+          )
+          .map((r) => r.value.dateKey),
+      );
+      setAvailableDateKeys(available);
+      setAvailabilityChecked(true);
+    };
+
+    void checkAll();
+  }, [pickerYear, pickerMonth, group.id, days]);
 
   // Load the chosen day's real slots (stale-while-revalidate via cache).
   useEffect(() => {
@@ -146,6 +176,7 @@ export default function DateModal({ group, current, cart, onAssign, onClose }: D
             years={years}
             months={months}
             days={days}
+            availableDateKeys={availabilityChecked ? availableDateKeys : new Set(days.map(gregorianKey))}
             onYearChange={(year) => {
               setPickerYear(year);
               clearDay();

@@ -116,7 +116,7 @@ export function ReviewBlock({
   mode,
   slotDate,
   groupTitle,
-  slotLabel,
+  slotLabels,
 }: {
   fullName: string;
   phone: string;
@@ -125,7 +125,7 @@ export function ReviewBlock({
   mode: "create" | "edit";
   slotDate: string;
   groupTitle: string;
-  slotLabel: string;
+  slotLabels: string[];
 }) {
   const t = useTranslations("reservationWizard");
   const locale = useLocale();
@@ -143,7 +143,10 @@ export function ReviewBlock({
       {mode === "create" ? (
         <>
           <Row label={t("reviewData.date")} value={reviewDate} />
-          <Row label={t("reviewData.time")} value={slotLabel} />
+          <Row
+            label={t("reviewData.time")}
+            value={slotLabels.length > 0 ? slotLabels.join("، ") : "—"}
+          />
         </>
       ) : (
         <Row label={t("fields.status.label")} value={t(`statuses.${status}`)} />

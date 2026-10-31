@@ -35,16 +35,16 @@ export async function generateMetadata({
 
 export default async function LandingHeroPage() {
   await requirePermission("services.write");
-  let hero: AdminHero | null = null;
+  let hero: AdminHero;
   try {
-    hero = await getLandingHero();
+    const fetched = await getLandingHero();
+    // No hero row yet: open the wizard with empty content so the hero heading,
+    // tagline, description and CTA buttons can be created from the dashboard.
+    hero = fetched ?? emptyAdminHero;
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) notFound();
     throw error;
   }
-  // No hero row yet: open the wizard with empty content so the hero heading,
-  // tagline, description and CTA buttons can be created from the dashboard.
-  hero ??= emptyAdminHero;
 
   return <HeroWizard hero={hero} />;
 }

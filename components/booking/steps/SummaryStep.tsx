@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { AlertCircle, AtSign, CreditCard, FileText, Phone, ShieldCheck, User } from "lucide-react";
+import { AlertCircle, AtSign, CreditCard, Phone, ShieldCheck, User } from "lucide-react";
 import { bookingErrorKey } from "@/lib/bookings/errors";
 import { asTranslate } from "@/src/i18n/message-key";
 import { fetchMyBookings } from "../api";
@@ -32,7 +32,6 @@ export default function SummaryStep({ cart, rules, onSubmit }: SummaryStepProps)
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [notes, setNotes] = useState("");
   const [terms, setTerms] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [accordionOpen, setAccordionOpen] = useState(false);
@@ -82,7 +81,6 @@ export default function SummaryStep({ cart, rules, onSubmit }: SummaryStepProps)
         fullName: fullName.trim(),
         phone: cleanPhone(),
         email: email.trim() || undefined,
-        notes: notes.trim(),
         agreeToTerms: true,
       });
       setShowPreGateway(false);
@@ -193,23 +191,6 @@ export default function SummaryStep({ cart, rules, onSubmit }: SummaryStepProps)
               {errors.email}
             </p>
           ) : null}
-        </div>
-
-        <div className="space-y-1">
-          <label htmlFor="summary-notes" className="block text-caption font-bold text-content-secondary">
-            {t("summary.notes")}
-          </label>
-          <div className="relative">
-            <FileText className="pointer-events-none absolute inset-y-0 inset-s-3 my-auto size-4 text-content-tertiary" aria-hidden="true" />
-            <input
-              id="summary-notes"
-              type="text"
-              value={notes}
-              onChange={(event) => setNotes(event.target.value)}
-              placeholder={t("summary.notesPlaceholder")}
-              className="h-12 w-full rounded-control border border-form-input-border bg-form-input-bg ps-9 pe-3 text-body-sm text-content-primary outline-none transition-colors placeholder:text-content-tertiary hover:border-copper focus:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            />
-          </div>
         </div>
 
         {/* Terms & rules */}

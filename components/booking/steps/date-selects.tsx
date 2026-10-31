@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
+import { useMemo } from "react";
 import { format as formatJalali } from "date-fns-jalali";
 import { weekdayName } from "@/lib/bookings/dates";
 import { Root as SelectRoot, Value as SelectValue, Trigger as SelectTrigger, Content as SelectContent, Item as SelectItem } from "../booking-select";
@@ -44,7 +45,9 @@ type DateSelectsProps = {
   pickerDay: Date | null;
   years: number[];
   months: number[];
+  /** Only days with available slots are shown. */
   days: Date[];
+  availableDateKeys: Set<string>;
   onYearChange: (year: number) => void;
   onMonthChange: (month: number) => void;
   onDayChange: (date: Date) => void;
@@ -60,11 +63,18 @@ export function DateSelects({
   years,
   months,
   days,
+  availableDateKeys,
   onYearChange,
   onMonthChange,
   onDayChange,
 }: DateSelectsProps) {
   const t = useTranslations("booking");
+
+  // Only render days that have available slots.
+  const availableDays = useMemo(
+    () => days.filter((d) => availableDateKeys.has(gregorianKey(d))),
+    [days, availableDateKeys],
+  );
 
   return (
     <>
@@ -110,7 +120,7 @@ export function DateSelects({
             <SelectValue placeholder={t("schedule.chooseDay")} />
           </SelectTrigger>
           <SelectContent>
-            {days.map((date) => {
+            {availableDays.map((date) => {
               const parts = toParts(date, jalali);
               return (
                 <SelectItem key={gregorianKey(date)} value={String(parts.day)}>

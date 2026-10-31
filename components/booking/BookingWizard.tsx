@@ -157,7 +157,7 @@ function VerifiedWizard(props: BookingWizardProps) {
         phone: data.phone,
         email: data.email ?? null,
         locale,
-        notes: data.notes || null,
+        notes: null,
         hasAllergies: false,
         isPregnant: false,
         termsAccepted: data.agreeToTerms,
