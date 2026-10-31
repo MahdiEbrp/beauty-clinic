@@ -3367,6 +3367,9 @@
       "heading": "Reserve your appointment",
       "description": "Choose a service above and book online in minutes. Need guidance? Our consultants will confirm availability and a personalized quote.",
       "book": "Book an appointment"
+    },
+    "gallery": {
+      "heading": "Treatment gallery"
     }
   },
   "groupPage": {

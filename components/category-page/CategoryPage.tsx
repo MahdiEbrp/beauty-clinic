@@ -1,12 +1,9 @@
 import { getTranslations } from "next-intl/server";
 import { pageUrl } from "@/lib/site";
 import CategoryHeader from "./CategoryHeader";
-import CategoryServices from "./CategoryServices";
-import CategorySiblings from "./CategorySiblings";
+import CategoryJsonLd from "./CategoryJsonLd";
 import CategoryFaq, { type CategoryFaqItem } from "./CategoryFaq";
-import CategoryJsonLd, { type BreadcrumbItem } from "./CategoryJsonLd";
-import CategoryBookingCta from "./CategoryBookingCta";
-import FloatingBookingButton from "@/components/FloatingBookingButton";
+import CategoryGallery from "./CategoryGallery";
 import type { CategoryPageData } from "@/lib/services/category-page";
 
 type CategoryPageProps = {
@@ -39,11 +36,15 @@ function toAbsoluteCrumbs(
   }));
 }
 
+type BreadcrumbItem = {
+  label: string;
+  href: string;
+};
+
 /**
- * Assembles every block of a single service-category page:
- * breadcrumb + header, the pricing-style service list, a "more in group"
- * rail, and the aggregated FAQ. The services reuse the pricing page's rows so
- * prices, duration/session badges and the book action stay visually identical.
+ * A single service-category page stripped down to what the visitor actually
+ * needs for a treatment page: the category description and a photo gallery.
+ * Price, brand and reservation/booking UI are intentionally not rendered here.
  */
 export default async function CategoryPage({
   data,
@@ -73,20 +74,11 @@ export default async function CategoryPage({
           crumbs={crumbs}
         />
 
-        <CategoryServices
-          category={data.category}
-          groupSlug={data.group.slug}
-          currency={data.currency}
-        />
-
-        <CategoryBookingCta locale={locale} />
-
-        <CategorySiblings group={data.group} siblings={data.siblings} />
+        {/* Treatment photos: cover image + before/after/gallery shots. */}
+        <CategoryGallery category={data.category} />
 
         <CategoryFaq faqs={faqs} />
       </div>
-
-      <FloatingBookingButton />
     </div>
   );
 }
