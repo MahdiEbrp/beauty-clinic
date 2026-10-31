@@ -2,7 +2,7 @@ import type { NextResponse } from "next/server";
 import { timingSafeEqual } from "node:crypto";
 import type { z } from "zod";
 
-import { hasPermission } from "@/lib/auth/rbac";
+import { hasAnyPermission, hasPermission } from "@/lib/auth/rbac";
 import { getSession, type AuthSession } from "@/lib/auth/dal";
 import { handleApiError, jsonError, jsonOk } from "@/lib/api/errors";
 import { isSameOrigin, readJsonBody } from "@/lib/api/request";
@@ -32,7 +32,10 @@ export type NotificationConfig<Body = unknown, Query = unknown> = {
 
 export type SecurityConfig<Body = unknown, Query = unknown> = {
   auth?: "public" | "required";
+  /** All of these permissions are required (AND semantics). */
   permissions?: string | readonly string[];
+  /** Any one of these permissions is sufficient (OR semantics). */
+  anyPermissions?: readonly string[];
   csrf?: boolean;
   rateLimit?: {
     limit: number;
@@ -142,14 +145,27 @@ export function withSecurity<Body = unknown, Query = unknown>(
         }
         ctx.session = session;
 
-        if (config.permissions && config.permissions.length > 0) {
-          if (!hasPermission(session.user.permissions, config.permissions)) {
+        if (config.permissions || config.anyPermissions) {
+          const hasAll =
+            !config.permissions ||
+            hasPermission(session.user.permissions, config.permissions);
+          const hasAny =
+            !config.anyPermissions ||
+            hasAnyPermission(session.user.permissions, config.anyPermissions);
+          if (!hasAll || !hasAny) {
             logError("api.forbidden", {
               requestId,
               userId: session.user.id,
               permissions: config.permissions,
+              anyPermissions: config.anyPermissions,
             });
-            return reply(jsonError("FORBIDDEN", "You do not have permission to perform this action.", 403));
+            return reply(
+              jsonError(
+                "FORBIDDEN",
+                "You do not have permission to perform this action.",
+                403,
+              ),
+            );
           }
         }
       }

@@ -8,7 +8,9 @@ export const runtime = "nodejs";
 export const GET = withSecurity(
   {
     auth: "required",
-    permissions: "services.read",
+    // خواندن گروه‌های فعال توسط مدیریت خدمات (`services.read`) و همچنین توسط
+    // ویرایشگران ساعت کاری / رزرو نوبت (`appointments.write`) مجاز است.
+    anyPermissions: ["services.read", "appointments.write"],
     validate: { query: listServiceGroupsQuerySchema },
   },
   async (_request, ctx) => {

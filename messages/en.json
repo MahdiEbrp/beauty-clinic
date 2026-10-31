@@ -2431,7 +2431,7 @@
     "errors": {
       "loadSlots": "Couldn't load available slots.",
       "serviceRequired": "Choose a service.",
-      "slotRequired": "Choose a time slot."
+      "slotRequired": "Please select at least one time slot"
     },
     "fields": {
       "currency": {
@@ -2463,7 +2463,8 @@
       },
       "time": {
         "label": "Time",
-        "placeholder": "Select a time"
+        "placeholder": "Select a time",
+        "hint": "{count} time slot(s) selected"
       },
       "status": {
         "label": "Status",
@@ -2495,7 +2496,9 @@
       "createGroup": "Create Group",
       "emptyDescription": "Create a service group first before adding a reservation.",
       "emptyTitle": "No groups available",
-      "searchPlaceholder": "Search groups…"
+      "searchPlaceholder": "Search groups…",
+      "noSelectionHint": "Select at least one service.",
+      "selectedCount": "{count} services selected."
     },
     "serviceStep": {
       "createService": "Create Service",

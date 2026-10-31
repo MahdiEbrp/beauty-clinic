@@ -4,7 +4,7 @@ import { z } from "zod";
 export const listServiceGroupsQuerySchema = z
   .object({
     page: z.coerce.number().int().min(1).max(100000).default(1),
-    perPage: z.coerce.number().int().min(1).max(50).default(10),
+    perPage: z.coerce.number().int().min(1).max(100).default(10),
     search: z.string().trim().max(100).optional(),
     status: z.enum(["all", "active", "inactive"]).default("all"),
   })

@@ -7,12 +7,10 @@ import { useRouter } from "@/src/i18n/navigation";
 import type { BookingStatus } from "@/src/db/schema";
 import type { ReservationAdmin } from "@/lib/bookings/admin-types";
 import { DatePickerField } from "@/components/date-time-picker/date-picker-field";
+import { Check } from "lucide-react";
 import { WizardShell, type WizardStep } from "./wizard-shell";
 import { Field, ReviewBlock, SelectField, inputClass } from "./wizard-fields";
-import {
-  GroupSelectStep,
-  type GroupOption,
-} from "./group-select-step";
+import { GroupSelectStep, type GroupOption } from "./group-select-step";
 
 const STEPS: WizardStep[] = [
   { key: "service", labelKey: "reservationWizard.steps.service.name" },
@@ -38,15 +36,16 @@ export function ReservationWizard({
   const [fullName, setFullName] = useState(reservation?.fullName ?? "");
   const [phone, setPhone] = useState(reservation?.phone ?? "");
   const [email, setEmail] = useState(reservation?.email ?? "");
-  const [notes, setNotes] = useState(reservation?.notes ?? "");
   const [status, setStatus] = useState<BookingStatus>(reservation?.status ?? "pending");
 
-  const [groupId, setGroupId] = useState(reservation?.groupId ?? "");
+  const [groupIds, setGroupIds] = useState<string[]>(
+    reservation?.groupId ? [reservation.groupId] : [],
+  );
   const [groups, setGroups] = useState<GroupOption[]>([]);
   const [groupsLoading, setGroupsLoading] = useState(true);
   const [slotDate, setSlotDate] = useState("");
+  const [slotIds, setSlotIds] = useState<string[]>([]);
   const [slots, setSlots] = useState<Array<{ id: string; label: string }>>([]);
-  const [slotId, setSlotId] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -75,13 +74,13 @@ export function ReservationWizard({
     };
   }, []);
 
+  // Fetch all available slots for the selected date (no group filter — user picks which slot goes to which service).
   useEffect(() => {
     if (!slotDate) return;
     let active = true;
     void (async () => {
       try {
         const params = new URLSearchParams({ date: slotDate });
-        if (groupId) params.set("groupId", groupId);
         const res = await fetch(`/api/public/slots?${params.toString()}`);
         if (!res.ok) return;
         const payload = (await res.json()) as {
@@ -94,7 +93,8 @@ export function ReservationWizard({
             label: `${slot.startTime} – ${slot.endTime}`,
           })),
         );
-        setSlotId("");
+        // Keep only selected slots that still exist.
+        setSlotIds((prev) => prev.filter((id) => payload.data.some((s) => s.id === id)));
       } catch {
         if (active) setSlots([]);
       }
@@ -102,17 +102,30 @@ export function ReservationWizard({
     return () => {
       active = false;
     };
-  }, [slotDate, groupId]);
+  }, [slotDate]);
 
   const customerValid =
     fullName.trim().length >= 2 && /^[0-9+][0-9\s()-]{6,19}$/.test(phone.trim());
+  // Require at least one group and at least one slot (one slot per service ideally).
   const canContinue =
-    step === 0 ? Boolean(groupId) : step === 1 ? customerValid : true;
+    step === 0
+      ? groupIds.length > 0
+      : step === 1
+        ? customerValid && Boolean(slotDate) && slotIds.length > 0
+        : true;
 
   const submit = async () => {
     setSubmitting(true);
     try {
       if (mode === "create") {
+        // Pair each selected group with a selected slot (1-to-1 in order).
+        // Extra slots are ignored; extra groups get the last available slot.
+        const items = groupIds.map((groupId, index) => ({
+          groupId,
+          slotId: slotIds[Math.min(index, slotIds.length - 1)],
+          quantity: 1,
+        }));
+
         const res = await fetch("/api/v1/bookings", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -121,10 +134,8 @@ export function ReservationWizard({
             fullName: fullName.trim(),
             phone: phone.trim(),
             email: email.trim() || null,
-            groupId,
-            slotId,
+            items,
             locale: "fa",
-            notes: notes.trim() || null,
           }),
         });
         if (!res.ok) throw new Error();
@@ -142,7 +153,6 @@ export function ReservationWizard({
           fullName: fullName.trim(),
           phone: phone.trim(),
           email: email.trim() || null,
-          notes: notes.trim() || null,
           status,
         }),
       });
@@ -157,8 +167,11 @@ export function ReservationWizard({
     }
   };
 
-  const selectedGroup =
-    groups.find((item) => item.id === groupId)?.name ?? reservation?.groupTitle;
+  const selectedGroups = groups.filter((item) => groupIds.includes(item.id));
+  const groupTitle = selectedGroups.map((g) => g.name).join(", ") ?? reservation?.groupTitle ?? "—";
+
+  // Build review labels: pair groups with slots in order.
+  const slotLabels = slotIds.map((id) => slots.find((s) => s.id === id)?.label ?? "—");
 
   return (
     <WizardShell
@@ -176,8 +189,8 @@ export function ReservationWizard({
       {step === 0 ? (
         <GroupSelectStep
           groups={groups}
-          selectedId={groupId}
-          onSelect={setGroupId}
+          selectedIds={groupIds}
+          onChange={setGroupIds}
           loading={groupsLoading}
         />
       ) : step === 1 ? (
@@ -226,18 +239,54 @@ export function ReservationWizard({
               </Field>
 
               <Field label={t("fields.time.label")}>
-                <SelectField
-                  value={slotId}
-                  onChange={setSlotId}
-                  placeholder={t("fields.time.placeholder")}
-                  disabled={!slotDate || slots.length === 0}
-                  invalid={!slotId}
-                  options={slots.map((item) => ({
-                    value: item.id,
-                    label: item.label,
-                  }))}
-                />
+                <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-4">
+                  {slots.map((slot) => {
+                    const isSelected = slotIds.includes(slot.id);
+                    return (
+                      <button
+                        key={slot.id}
+                        type="button"
+                        role="checkbox"
+                        aria-checked={isSelected}
+                        onClick={() =>
+                          setSlotIds((prev) =>
+                            isSelected
+                              ? prev.filter((id) => id !== slot.id)
+                              : [...prev, slot.id],
+                          )
+                        }
+                        className={`flex min-h-11 flex-col items-center gap-1.5 rounded-control border p-2 text-start transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+                          isSelected
+                            ? "border-accent bg-accent-subtle/60 text-accent"
+                            : "border-border-primary bg-surface-secondary text-content-secondary hover:border-border-interactive hover:bg-surface-tertiary/50"
+                        }`}
+                      >
+                        <span
+                          className={`flex size-5 shrink-0 items-center justify-center rounded-pill border ${
+                            isSelected
+                              ? "border-accent bg-accent text-content-contrast"
+                              : "border-border-interactive"
+                          }`}
+                          aria-hidden="true"
+                        >
+                          {isSelected && <Check className="size-3" strokeWidth={3} />}
+                        </span>
+                        <span className="text-dash-caption font-semibold text-center leading-none">
+                          {slot.label}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </Field>
+
+              <p className="text-dash-caption text-content-tertiary">
+                {slotIds.length === 0
+                  ? t("errors.slotRequired")
+                  : t("fields.time.hint", {
+                      count: slotIds.length,
+                    })}
+              </p>
             </>
           )}
 
@@ -255,30 +304,17 @@ export function ReservationWizard({
               />
             </Field>
           )}
-
-          <div className="sm:col-span-2">
-            <Field label={t("fields.notes.label")}>
-              <textarea
-                rows={3}
-                value={notes}
-                onChange={(event) => setNotes(event.target.value)}
-                placeholder={t("fields.notes.placeholder")}
-                className="w-full rounded-control border border-form-input-border bg-form-input-bg p-3 text-dash-body-sm text-accent outline-none focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-              />
-            </Field>
-          </div>
         </div>
       ) : (
         <ReviewBlock
           fullName={fullName}
           phone={phone}
           email={email}
-          notes={notes}
+          groupTitle={groupTitle}
+          slotDate={slotDate}
+          slotLabels={slotLabels}
           status={status}
           mode={mode}
-          slotDate={slotDate}
-          groupTitle={selectedGroup ?? "—"}
-          slotLabel={slots.find((item) => item.id === slotId)?.label ?? "—"}
         />
       )}
     </WizardShell>

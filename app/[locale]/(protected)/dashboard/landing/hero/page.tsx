@@ -5,7 +5,8 @@ import { getTranslations } from "next-intl/server";
 import HeroWizard from "@/components/landing-admin/wizard/HeroWizard";
 import { ApiError } from "@/lib/api/errors";
 import { requirePermission } from "@/lib/auth/dal";
-import { getLandingHero } from "@/lib/landing/admin";
+import type { AdminHero } from "@/lib/landing/admin";
+import { emptyAdminHero, getLandingHero } from "@/lib/landing/admin";
 import { pageUrl } from "@/lib/site";
 
 const ROUTE = "/dashboard/landing/hero";
@@ -34,14 +35,16 @@ export async function generateMetadata({
 
 export default async function LandingHeroPage() {
   await requirePermission("services.write");
-  let hero;
+  let hero: AdminHero;
   try {
-    hero = await getLandingHero();
+    const fetched = await getLandingHero();
+    // No hero row yet: open the wizard with empty content so the hero heading,
+    // tagline, description and CTA buttons can be created from the dashboard.
+    hero = fetched ?? emptyAdminHero;
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) notFound();
     throw error;
   }
-  if (!hero) notFound();
 
   return <HeroWizard hero={hero} />;
 }

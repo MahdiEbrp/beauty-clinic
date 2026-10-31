@@ -10,6 +10,7 @@ export type {
   StatusFilter,
 } from "./queries";
 export {
+  emptyAdminHero,
   createMarqueeItem,
   updateMarqueeItem,
   deleteMarqueeItem,
