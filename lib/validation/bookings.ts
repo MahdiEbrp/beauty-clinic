@@ -74,6 +74,15 @@ export const availableSlotsQuerySchema = z
   })
   .strict();
 
+/** One order line: a service group + slot pair with seat count. */
+export const bookingItemSchema = z
+  .object({
+    groupId: z.uuid(),
+    slotId: z.uuid(),
+    quantity: z.number().int().min(1).max(10).default(1),
+  })
+  .strict();
+
 export const createBookingSchema = z
   .object({
     fullName: z.string().trim().min(2).max(160),
@@ -83,21 +92,35 @@ export const createBookingSchema = z
       .regex(/^[0-9+][0-9\s()-]{6,19}$/, "Enter a valid phone number")
       .max(24),
     email: z.email().trim().max(254).optional().nullable(),
-    groupId: z.uuid(),
-    slotId: z.uuid(),
+    groupId: z.uuid().optional(),
+    slotId: z.uuid().optional(),
     locale: z.enum(["fa", "en"]).default("fa"),
     notes: z.string().trim().max(1000).optional().nullable(),
+    /** Multiple service groups sharing one slot (one reservation, many services). */
+    items: z.array(bookingItemSchema).min(1).max(10).optional(),
   })
-  .strict();
-
-/** One order line: a service group + slot pair with seat count. */
-export const bookingItemSchema = z
-  .object({
-    groupId: z.uuid(),
-    slotId: z.uuid(),
-    quantity: z.number().int().min(1).max(10).default(1),
-  })
-  .strict();
+  .strict()
+  .superRefine((data, ctx) => {
+    if (data.items && data.items.length > 0) {
+      // Group booking mode — items provided; groupId/slotId not required.
+      return;
+    }
+    // Single booking mode — groupId and slotId are required.
+    if (!data.groupId) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["groupId"],
+        message: "Service group is required.",
+      });
+    }
+    if (!data.slotId) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["slotId"],
+        message: "Time slot is required.",
+      });
+    }
+  });
 
 /**
  * Multi-group order: one row per item, all sharing the generated group ref.

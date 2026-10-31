@@ -112,7 +112,6 @@ export function ReviewBlock({
   fullName,
   phone,
   email,
-  notes,
   status,
   mode,
   slotDate,
@@ -122,7 +121,6 @@ export function ReviewBlock({
   fullName: string;
   phone: string;
   email: string;
-  notes: string;
   status: BookingStatus;
   mode: "create" | "edit";
   slotDate: string;
@@ -150,9 +148,6 @@ export function ReviewBlock({
       ) : (
         <Row label={t("fields.status.label")} value={t(`statuses.${status}`)} />
       )}
-      <div className="sm:col-span-2">
-        <Row label={t("fields.notes.label")} value={notes || "—"} />
-      </div>
     </dl>
   );
 }

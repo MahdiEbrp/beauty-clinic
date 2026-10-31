@@ -2495,7 +2495,9 @@
       "createGroup": "Create Group",
       "emptyDescription": "Create a service group first before adding a reservation.",
       "emptyTitle": "No groups available",
-      "searchPlaceholder": "Search groups…"
+      "searchPlaceholder": "Search groups…",
+      "noSelectionHint": "Select at least one service.",
+      "selectedCount": "{count} services selected."
     },
     "serviceStep": {
       "createService": "Create Service",

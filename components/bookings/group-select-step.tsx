@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { AlertTriangle, Check, LayoutGrid, Search } from "lucide-react";
+import { AlertTriangle, CheckSquare, LayoutGrid, Search } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
 
 export type GroupOption = {
@@ -11,18 +11,19 @@ export type GroupOption = {
 };
 
 /**
- * Group picker for the admin reservation wizard. Only the group is shown —
- * service prices are never part of a booking.
+ * Group picker for the admin reservation wizard. Supports selecting multiple
+ * service groups that share a single date/time slot (one reservation, many
+ * services). Service prices are never part of a booking.
  */
 export function GroupSelectStep({
   groups,
-  selectedId,
-  onSelect,
+  selectedIds,
+  onChange,
   loading,
 }: {
   groups: GroupOption[];
-  selectedId: string;
-  onSelect: (id: string) => void;
+  selectedIds: string[];
+  onChange: (ids: string[]) => void;
   loading?: boolean;
 }) {
   const t = useTranslations("reservationWizard");
@@ -33,6 +34,13 @@ export function GroupSelectStep({
     if (!q) return groups;
     return groups.filter((group) => group.name.toLowerCase().includes(q));
   }, [groups, query]);
+
+  const isSelected = (id: string) => selectedIds.includes(id);
+  const toggle = (id: string) => {
+    onChange(
+      isSelected(id) ? selectedIds.filter((item) => item !== id) : [...selectedIds, id],
+    );
+  };
 
   if (loading) {
     return (
@@ -67,6 +75,8 @@ export function GroupSelectStep({
     );
   }
 
+  const selectedCount = selectedIds.length;
+
   return (
     <div className="space-y-4">
       <div className="flex h-11 items-center gap-2 rounded-control border border-form-input-border bg-form-input-bg px-3 transition-colors focus-within:border-copper">
@@ -82,29 +92,29 @@ export function GroupSelectStep({
 
       <div className="grid gap-2 sm:grid-cols-2">
         {filtered.map((group) => {
-          const isSelected = group.id === selectedId;
+          const checked = isSelected(group.id);
           return (
             <button
               key={group.id}
               type="button"
-              role="radio"
-              aria-checked={isSelected}
-              onClick={() => onSelect(group.id)}
+              role="checkbox"
+              aria-checked={checked}
+              onClick={() => toggle(group.id)}
               className={`flex min-h-12 items-center gap-3 rounded-control border p-3 text-start transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
-                isSelected
+                checked
                   ? "border-accent bg-accent-subtle/60 text-accent"
                   : "border-border-primary bg-surface-secondary text-content-secondary hover:border-border-interactive hover:bg-surface-tertiary/50"
               }`}
             >
               <span
                 className={`flex size-5 shrink-0 items-center justify-center rounded-pill border ${
-                  isSelected
+                  checked
                     ? "border-accent bg-accent text-content-contrast"
                     : "border-border-interactive"
                 }`}
                 aria-hidden="true"
               >
-                {isSelected && <Check className="size-3" strokeWidth={3} />}
+                {checked && <CheckSquare className="size-3" strokeWidth={3} />}
               </span>
               <div className="min-w-0 flex-1">
                 <span className="block truncate text-dash-body font-semibold">{group.name}</span>
@@ -114,6 +124,12 @@ export function GroupSelectStep({
           );
         })}
       </div>
+
+      <p className="flex items-center gap-1.5 text-dash-caption text-content-tertiary">
+        {selectedCount === 0
+          ? t("groupStep.noSelectionHint")
+          : t("groupStep.selectedCount", { count: selectedCount })}
+      </p>
     </div>
   );
 }

@@ -2495,7 +2495,9 @@
       "createGroup": "ایجاد گروه",
       "emptyDescription": "ابتدا یک گروه خدمت ایجاد کنید.",
       "emptyTitle": "گروهی موجود نیست",
-      "searchPlaceholder": "جستجوی گروه‌ها…"
+      "searchPlaceholder": "جستجوی گروه‌ها…",
+      "noSelectionHint": "حداقل یک خدمت انتخاب کنید.",
+      "selectedCount": "{count} خدمت انتخاب شد."
     },
     "serviceStep": {
       "createService": "ایجاد خدمت",

@@ -9,10 +9,7 @@ import type { ReservationAdmin } from "@/lib/bookings/admin-types";
 import { DatePickerField } from "@/components/date-time-picker/date-picker-field";
 import { WizardShell, type WizardStep } from "./wizard-shell";
 import { Field, ReviewBlock, SelectField, inputClass } from "./wizard-fields";
-import {
-  GroupSelectStep,
-  type GroupOption,
-} from "./group-select-step";
+import { GroupSelectStep, type GroupOption } from "./group-select-step";
 
 const STEPS: WizardStep[] = [
   { key: "service", labelKey: "reservationWizard.steps.service.name" },
@@ -38,10 +35,11 @@ export function ReservationWizard({
   const [fullName, setFullName] = useState(reservation?.fullName ?? "");
   const [phone, setPhone] = useState(reservation?.phone ?? "");
   const [email, setEmail] = useState(reservation?.email ?? "");
-  const [notes, setNotes] = useState(reservation?.notes ?? "");
   const [status, setStatus] = useState<BookingStatus>(reservation?.status ?? "pending");
 
-  const [groupId, setGroupId] = useState(reservation?.groupId ?? "");
+  const [groupIds, setGroupIds] = useState<string[]>(
+    reservation?.groupId ? [reservation.groupId] : [],
+  );
   const [groups, setGroups] = useState<GroupOption[]>([]);
   const [groupsLoading, setGroupsLoading] = useState(true);
   const [slotDate, setSlotDate] = useState("");
@@ -75,13 +73,15 @@ export function ReservationWizard({
     };
   }, []);
 
+  const primaryGroupId = groupIds.length > 0 ? groupIds[0] : undefined;
+
   useEffect(() => {
-    if (!slotDate) return;
+    if (!slotDate || !primaryGroupId) return;
     let active = true;
     void (async () => {
       try {
-        const params = new URLSearchParams({ date: slotDate });
-        if (groupId) params.set("groupId", groupId);
+        // Fetch slots for the first selected group (all selected groups share one slot).
+        const params = new URLSearchParams({ date: slotDate, groupId: primaryGroupId });
         const res = await fetch(`/api/public/slots?${params.toString()}`);
         if (!res.ok) return;
         const payload = (await res.json()) as {
@@ -102,17 +102,27 @@ export function ReservationWizard({
     return () => {
       active = false;
     };
-  }, [slotDate, groupId]);
+  }, [slotDate, primaryGroupId]);
 
   const customerValid =
     fullName.trim().length >= 2 && /^[0-9+][0-9\s()-]{6,19}$/.test(phone.trim());
   const canContinue =
-    step === 0 ? Boolean(groupId) : step === 1 ? customerValid : true;
+    step === 0
+      ? groupIds.length > 0
+      : step === 1
+        ? customerValid && Boolean(slotDate) && Boolean(slotId)
+        : true;
 
   const submit = async () => {
     setSubmitting(true);
     try {
       if (mode === "create") {
+        const items = groupIds.map((groupId) => ({
+          groupId,
+          slotId,
+          quantity: 1,
+        }));
+
         const res = await fetch("/api/v1/bookings", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -121,10 +131,8 @@ export function ReservationWizard({
             fullName: fullName.trim(),
             phone: phone.trim(),
             email: email.trim() || null,
-            groupId,
-            slotId,
+            items,
             locale: "fa",
-            notes: notes.trim() || null,
           }),
         });
         if (!res.ok) throw new Error();
@@ -142,7 +150,6 @@ export function ReservationWizard({
           fullName: fullName.trim(),
           phone: phone.trim(),
           email: email.trim() || null,
-          notes: notes.trim() || null,
           status,
         }),
       });
@@ -157,8 +164,8 @@ export function ReservationWizard({
     }
   };
 
-  const selectedGroup =
-    groups.find((item) => item.id === groupId)?.name ?? reservation?.groupTitle;
+  const selectedGroups = groups.filter((item) => groupIds.includes(item.id));
+  const groupTitle = selectedGroups.map((g) => g.name).join(", ") ?? reservation?.groupTitle ?? "—";
 
   return (
     <WizardShell
@@ -176,8 +183,8 @@ export function ReservationWizard({
       {step === 0 ? (
         <GroupSelectStep
           groups={groups}
-          selectedId={groupId}
-          onSelect={setGroupId}
+          selectedIds={groupIds}
+          onChange={setGroupIds}
           loading={groupsLoading}
         />
       ) : step === 1 ? (
@@ -255,30 +262,17 @@ export function ReservationWizard({
               />
             </Field>
           )}
-
-          <div className="sm:col-span-2">
-            <Field label={t("fields.notes.label")}>
-              <textarea
-                rows={3}
-                value={notes}
-                onChange={(event) => setNotes(event.target.value)}
-                placeholder={t("fields.notes.placeholder")}
-                className="w-full rounded-control border border-form-input-border bg-form-input-bg p-3 text-dash-body-sm text-accent outline-none focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-              />
-            </Field>
-          </div>
         </div>
       ) : (
         <ReviewBlock
           fullName={fullName}
           phone={phone}
           email={email}
-          notes={notes}
+          groupTitle={groupTitle}
+          slotDate={slotDate}
+          slotLabel={slots.find((item) => item.id === slotId)?.label ?? "—"}
           status={status}
           mode={mode}
-          slotDate={slotDate}
-          groupTitle={selectedGroup ?? "—"}
-          slotLabel={slots.find((item) => item.id === slotId)?.label ?? "—"}
         />
       )}
     </WizardShell>
