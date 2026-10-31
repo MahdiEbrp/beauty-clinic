@@ -7,7 +7,7 @@ import { findCartConflicts } from "@/lib/booking/scheduling";
 import { cn } from "@/lib/utils";
 import { SlotLabel } from "../SlotLabel";
 import DateModal from "./DateModal";
-import type { CartItem, SelectedGroup, SlotOption } from "../types";
+import type { CartItem, SlotOption } from "../types";
 
 type ScheduleStepProps = {
   cart: CartItem[];
@@ -16,16 +16,37 @@ type ScheduleStepProps = {
 };
 
 /**
- * Step 2 — per-group date & time. Each cart line (a treatment group) opens its
- * own themed DateModal fed by REAL slot availability.
+ * Step 2 — ONE shared date & time picker applied to ALL selected services.
+ *
+ * The customer chooses a single date+slot once; every cart line receives the
+ * same slot. `findCartConflicts` intentionally skips pairs whose slot ids are
+ * identical, so a shared slot creates no false self-conflicts and the cart is
+ * considered fully scheduled as soon as one slot is chosen.
  */
 export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleStepProps) {
   const t = useTranslations("booking");
-  const [activeGroup, setActiveGroup] = useState<SelectedGroup | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [sharedSlot, setSharedSlot] = useState<SlotOption | null>(null);
 
   const scheduledCount = cart.filter((line) => line.slot).length;
   const allScheduled = cart.length > 0 && scheduledCount === cart.length;
   const conflicts = findCartConflicts(cart);
+
+  const primaryGroup = cart[0]?.group ?? null;
+
+  const openPicker = () => {
+    if (!primaryGroup) return;
+    setModalOpen(true);
+  };
+
+  // One slot for every line: assign the chosen slot to all cart lines at once.
+  const assignToAll = (_groupId: string, slot: SlotOption) => {
+    setSharedSlot(slot);
+    cart.forEach((line) => onAssignSlot(line.group.id, slot));
+    setModalOpen(false);
+  };
+
+  const slotFor = (line: CartItem): SlotOption | null => sharedSlot ?? line.slot;
 
   if (cart.length === 0) {
     return (
@@ -95,7 +116,7 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
 
         <div className="divide-y divide-border-primary/60">
           {cart.map((line, index) => {
-            const assigned = line.slot;
+            const assigned = slotFor(line);
             return (
               <div key={line.group.id} className="w-full bg-surface-primary even:bg-surface-secondary/15 hover:bg-surface-secondary/50">
                 {/* Desktop row */}
@@ -116,7 +137,8 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
                   <div className="flex items-center justify-center">
                     <button
                       type="button"
-                      onClick={() => setActiveGroup(line.group)}
+                      onClick={openPicker}
+                      aria-label={assigned ? t("schedule.editSlot") : t("schedule.pick")}
                       className={cn(
                         "inline-flex min-h-11 w-full max-w-64 cursor-pointer select-none items-center justify-between gap-1.5 rounded-pill border px-3 text-caption font-bold transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
                         assigned
@@ -127,10 +149,10 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
                       <span className="inline-flex min-w-0 items-center gap-1.5">
                         <CalendarDays className="size-3.5 shrink-0 text-copper" aria-hidden="true" />
                         <span className="truncate">
-                          {assigned ? <SlotLabel line={line} /> : t("schedule.pickDateTime")}
+                          {assigned ? <SlotLabel line={{ ...line, slot: assigned }} /> : t("schedule.pickDateTime")}
                         </span>
                       </span>
-                      <span className="shrink-0 text-caption font-black opacity-90">
+                      <span className="shrink-0 text-caption font-bold opacity-90">
                         {assigned ? t("schedule.editSlot") : t("schedule.pick")}
                       </span>
                     </button>
@@ -154,16 +176,19 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
 
                   <button
                     type="button"
-                    onClick={() => setActiveGroup(line.group)}
+                    onClick={openPicker}
+                    aria-label={assigned ? t("schedule.editSlot") : t("schedule.pick")}
                     className={cn(
                       "inline-flex min-h-11 w-full cursor-pointer select-none items-center justify-between gap-2 rounded-control border px-3 py-2 text-caption font-bold transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
-                      assigned ? "border-copper bg-copper/10 text-copper-deep" : "border-border-interactive bg-surface-secondary text-content-secondary hover:border-copper",
+                      assigned
+                        ? "border-copper bg-copper/10 text-copper-deep"
+                        : "border-border-interactive bg-surface-secondary text-content-secondary hover:border-copper",
                     )}
                   >
                     <span className="inline-flex min-w-0 items-center gap-1.5">
                       <CalendarDays className="size-4 shrink-0 text-copper" aria-hidden="true" />
                       <span className="truncate">
-                        {assigned ? <SlotLabel line={line} /> : t("schedule.pickDateTime")}
+                        {assigned ? <SlotLabel line={{ ...line, slot: assigned }} /> : t("schedule.pickDateTime")}
                       </span>
                     </span>
                     <span className="shrink-0 text-caption font-bold text-copper underline">
@@ -177,14 +202,15 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
         </div>
       </div>
 
-      {/* Per-group date/time modal */}
-      {activeGroup ? (
+      {/* Shared date/time modal — one picker for every selected service */}
+      {modalOpen && primaryGroup ? (
         <DateModal
-          group={activeGroup}
-          current={cart.find((line) => line.group.id === activeGroup.id)?.slot ?? null}
+          group={primaryGroup}
+          shared
+          current={sharedSlot}
           cart={cart}
-          onAssign={onAssignSlot}
-          onClose={() => setActiveGroup(null)}
+          onAssign={assignToAll}
+          onClose={() => setModalOpen(false)}
         />
       ) : null}
 
