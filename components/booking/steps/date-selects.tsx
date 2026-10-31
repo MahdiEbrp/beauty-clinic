@@ -110,7 +110,7 @@ export function DateSelects({
 
       <DateField label={t("schedule.day")}>
         <SelectRoot
-          value={pickerDay ? String(toParts(pickerDay, jalali).day) : undefined}
+          value={pickerDay ? String(toParts(pickerDay, jalali).day) : ""}
           onValueChange={(value) => {
             const date = days.find((d) => toParts(d, jalali).day === Number(value));
             if (date) onDayChange(date);
