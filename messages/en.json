@@ -260,6 +260,7 @@
       "emptyDay": "No available times on this day.",
       "feedbackMultiDay": "Your services were scheduled on separate days.",
       "feedbackSameDay": "All {n} services were scheduled automatically with no conflicts.",
+      "forAllServices": "For all services",
       "full": "Full",
       "itinerarySub": "Review the date and time set for every service",
       "itineraryTitle": "Schedule Summary",

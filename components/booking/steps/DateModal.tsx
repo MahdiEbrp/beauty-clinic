@@ -13,6 +13,9 @@ import { formatPrettyDate } from "./pretty-date";
 
 type DateModalProps = {
   group: SelectedGroup;
+  /** When true, the chosen date+time is applied to ALL cart lines (shared
+   * selector) instead of a single group — header and conflict hints adapt. */
+  shared?: boolean;
   /** Slot already assigned to this group, if any (used to pre-open the picker). */
   current: SlotOption | null;
   cart: CartItem[];
@@ -23,7 +26,7 @@ type DateModalProps = {
 const WINDOW_DAYS = 30;
 
 /** Themed per-group date & time picker bound to real slots. */
-export default function DateModal({ group, current, cart, onAssign, onClose }: DateModalProps) {
+export default function DateModal({ group, shared, current, cart, onAssign, onClose }: DateModalProps) {
   const t = useTranslations("booking");
   const locale = useLocale() as "fa" | "en";
   const jalali = locale === "fa";
@@ -123,10 +126,14 @@ export default function DateModal({ group, current, cart, onAssign, onClose }: D
   };
 
   const disabledTitles = new Map<string, string>();
-  slots?.data?.forEach((slot) => {
-    const conflict = lockedBy(slot);
-    if (conflict) disabledTitles.set(slot.id, conflict);
-  });
+  // In shared mode every cart line intentionally receives the same slot, so
+  // same-slot overlap hints would wrongly mark every candidate as "taken".
+  if (!shared) {
+    slots?.data?.forEach((slot) => {
+      const conflict = lockedBy(slot);
+      if (conflict) disabledTitles.set(slot.id, conflict);
+    });
+  }
 
   const canConfirm = pickerSlot !== null;
   const loading = pickerDateKey !== null && slots?.data === null;
@@ -154,7 +161,7 @@ export default function DateModal({ group, current, cart, onAssign, onClose }: D
             <div className="min-w-0">
               <h3 className="text-body font-black text-accent">{t("schedule.dateModalTitle")}</h3>
               <p className="truncate text-caption text-content-secondary">
-                {group.title}
+                {shared ? t("schedule.forAllServices") : group.title}
               </p>
             </div>
           </div>
