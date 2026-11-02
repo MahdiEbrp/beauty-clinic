@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter } from "@/src/i18n/navigation";
 import FloatingBookingButton from "@/components/FloatingBookingButton";
 import PricingCta from "./PricingCta";
 import PricingFaq from "./PricingFaq";
@@ -10,64 +9,66 @@ import PricingHeader from "./PricingHeader";
 import PricingJumpNav from "./PricingJumpNav";
 import PricingSearch from "./PricingSearch";
 import PricingSection from "./PricingSection";
-import type { PricingPageData, PricingService } from "@/lib/services/pricing-page";
+import type { PricingPageData } from "@/lib/services/pricing-page";
 
 type PricingArticleProps = {
   data: PricingPageData;
-  onBookService?: (service: PricingService) => void;
   dir?: "ltr" | "rtl";
 };
 
-/** Price-list categories — the clinic's top-level grouping on the pricing page. */
-const INJECTION_SLUGS = new Set([
-  "face-filler",
-  "full-face-filler",
-  "botox",
-  "enzyme",
-  "body-filler",
-  "meso-gel-rejuvenation",
-  "hair-mesotherapy",
-  "meso-fatburn",
-  "skin-treatments",
-  "face-thread-lift",
-]);
-const LASER_SLUG = "laser-hair-removal";
-const HIFU_SLUG = "hifu";
-const TATTOO_SLUG = "tattoo-removal-skin-brightening";
-
 type TabId = "injection" | "laser" | "hifu" | "tattoo";
+
+/** Number of sections rendered in the right column (top-to-bottom). */
+const RIGHT_COLUMN_COUNT = 4;
 
 /**
  * Top-level pricing article rendering the DB view model.
  *
- * The catalog is split into four price-list tabs (injection services, laser
- * hair removal, HIFU, tattoo removal). Only the active tab's groups are
- * rendered, searched and linked in the jump nav.
+ * Layout: two-column grid. Right column rendered first (top-to-bottom),
+ * then left column (top-to-bottom), per the reference pricing page.
+ * Each section is a card with a "خدمات | قیمت (تومان)" table — no
+ * reservation buttons appear on the pricing page.
  */
 export default function PricingArticle({
   data,
-  onBookService,
   dir,
 }: PricingArticleProps) {
   const t = useTranslations();
   const locale = useLocale();
-  const router = useRouter();
   const resolvedDir: "ltr" | "rtl" = dir ?? (locale === "fa" ? "rtl" : "ltr");
-  const [tab, setTab] = useState<TabId>("injection");
+  const [tab, setTab] = useState<"injection" | "laser" | "hifu" | "tattoo">(
+    "injection"
+  );
 
-  const handleBook: (service: PricingService) => void =
-    onBookService ??
-    ((service) => router.push(`/booking?service=${service.slug}`));
+  const LASER_SLUG = "laser-hair-removal";
+  const HIFU_SLUG = "hifu";
+  const TATTOO_SLUG = "tattoo-removal-skin-brightening";
 
-  const groupsFor = (id: TabId) => {
+  const INJECTION_SLUGS = new Set([
+    "face-filler",
+    "full-face-filler",
+    "botox",
+    "enzyme",
+    "body-filler",
+    "meso-gel-rejuvenation",
+    "hair-mesotherapy",
+    "meso-fatburn",
+    "skin-treatments",
+    "face-thread-lift",
+  ]);
+
+  const groupsFor = (id: string) => {
     if (id === "laser") return data.groups.filter((g) => g.slug === LASER_SLUG);
     if (id === "hifu") return data.groups.filter((g) => g.slug === HIFU_SLUG);
     if (id === "tattoo") return data.groups.filter((g) => g.slug === TATTOO_SLUG);
     return data.groups.filter((g) => INJECTION_SLUGS.has(g.slug));
   };
 
-  const activeGroups = groupsFor(tab);
-  const tabs: { id: TabId; label: string }[] = [
+  const activeGroups = groupsFor(tab).sort(
+    (a, b) => (a.displayOrder ?? 999) - (b.displayOrder ?? 999)
+  );
+
+  const tabs: { id: string; label: string }[] = [
     { id: "injection", label: t("pricing.tabs.injection") },
     { id: "laser", label: t("pricing.tabs.laser") },
     { id: "hifu", label: t("pricing.tabs.hifu") },
@@ -79,6 +80,10 @@ export default function PricingArticle({
     title: group.title,
     count: group.categories.reduce((acc, cat) => acc + cat.services.length, 0),
   }));
+
+  // Split into right column (first N groups) and left column (rest)
+  const rightColumnGroups = activeGroups.slice(0, RIGHT_COLUMN_COUNT);
+  const leftColumnGroups = activeGroups.slice(RIGHT_COLUMN_COUNT);
 
   return (
     <div
@@ -106,7 +111,7 @@ export default function PricingArticle({
                 type="button"
                 role="tab"
                 aria-selected={active}
-                onClick={() => setTab(entry.id)}
+                onClick={() => setTab(entry.id as TabId)}
                 className="min-h-11 flex-1 cursor-pointer rounded-control px-4 text-body-sm font-bold transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                 style={
                   active
@@ -143,26 +148,35 @@ export default function PricingArticle({
               dir={resolvedDir}
             />
 
-            <main className="flex-1 w-full space-y-8 min-w-0">
-              {activeGroups.map((group, index) => (
-                <PricingSection
-                  key={group.slug}
-                  group={group}
-                  currency={data.currency}
-                  index={index}
-                />
-              ))}
+            <main className="flex-1 w-full min-w-0">
+              {/* Two-column section grid: right column first, then left column */}
+              <div
+                className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+                style={{ direction: resolvedDir }}
+              >
+                <div className="space-y-8 lg:space-y-8">
+                  {rightColumnGroups.map((group, index) => (
+                    <PricingSection
+                      key={group.slug}
+                      group={group}
+                      index={index}
+                    />
+                  ))}
+                </div>
+                <div className="space-y-8 lg:space-y-8">
+                  {leftColumnGroups.map((group, index) => (
+                    <PricingSection
+                      key={group.slug}
+                      group={group}
+                      index={rightColumnGroups.length + index}
+                    />
+                  ))}
+                </div>
+              </div>
 
-              <div className="space-y-8 pt-4">
+              <div className="space-y-8 pt-4 lg:pt-0">
                 <PricingFaq faqs={data.faqs} heading={t("pricing.faq.heading")} />
-                <PricingCta
-                  cta={data.cta}
-                  onPrimaryClick={
-                    activeGroups[0]?.categories[0]?.services[0]
-                      ? () => handleBook(activeGroups[0].categories[0].services[0])
-                      : undefined
-                  }
-                />
+                <PricingCta cta={data.cta} onPrimaryClick={undefined} />
               </div>
             </main>
           </>

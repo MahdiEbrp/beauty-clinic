@@ -35,12 +35,14 @@ export type PricingService = {
   coverImage: string | null;
   isFeatured: boolean;
   images: ServiceDetailImage[];
+  displayOrder: number;
 };
 
 export type PricingCategory = {
   slug: string;
   title: string;
   description: string | null;
+  displayOrder: number;
   services: PricingService[];
 };
 
@@ -48,6 +50,7 @@ export type PricingGroup = {
   slug: string;
   title: string;
   description: string | null;
+  displayOrder: number;
   categories: PricingCategory[];
 };
 
@@ -117,10 +120,12 @@ function toGroups(tree: PublicServiceTree): PricingGroup[] {
     slug: group.slug,
     title: group.title,
     description: group.description,
+    displayOrder: group.displayOrder,
     categories: group.categories.map((category) => ({
       slug: category.slug,
       title: category.title,
       description: category.description,
+      displayOrder: category.displayOrder,
       services: category.services.map((service) => ({
         id: service.id,
         slug: service.slug,
@@ -133,6 +138,7 @@ function toGroups(tree: PublicServiceTree): PricingGroup[] {
         coverImage: service.coverImage,
         isFeatured: service.isFeatured,
         images: service.images,
+        displayOrder: service.displayOrder,
       })),
     })),
   }));

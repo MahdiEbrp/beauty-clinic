@@ -47,6 +47,7 @@ export type CategoryPageService = {
   coverImage: string | null;
   isFeatured: boolean;
   updatedAt: Date;
+  displayOrder: number;
   images: CategoryPageImage[];
   faqs: CategoryPageFaq[];
 };
@@ -59,6 +60,7 @@ export type CategoryPageCategory = {
   seoTitle: string | null;
   seoDescription: string | null;
   updatedAt: Date;
+  displayOrder: number;
   services: CategoryPageService[];
 };
 
@@ -88,6 +90,7 @@ function toCategory(category: PublicTreeCategory): CategoryPageCategory {
     seoTitle: category.seoTitle,
     seoDescription: category.seoDescription,
     updatedAt: category.updatedAt,
+    displayOrder: category.displayOrder,
     services: category.services.map((service) => ({
       id: service.id,
       slug: service.slug,
@@ -103,6 +106,7 @@ function toCategory(category: PublicTreeCategory): CategoryPageCategory {
       coverImage: service.coverImage,
       isFeatured: service.isFeatured,
       updatedAt: service.updatedAt,
+      displayOrder: service.displayOrder,
       images: service.images,
       faqs: service.faqs,
     })),
