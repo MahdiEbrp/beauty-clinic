@@ -1,4 +1,4 @@
-import { db } from "./index";
+import { db } from "../index";
 import {
   serviceCategories,
   serviceCategoriesI18n,
@@ -6,7 +6,7 @@ import {
   serviceGroupsI18n,
   services,
   servicesI18n,
-} from "./schema";
+} from "../schema";
 import { inArray } from "drizzle-orm";
 
 type PriceService = {
@@ -71,29 +71,6 @@ const GROUPS: PriceGroup[] = [
           { slug: "face-filler-stylage", faTitle: "استایلج", enTitle: "Stylage", price: 23_900_000, displayOrder: 14, priceType: "fixed" },
           { slug: "face-filler-illunse", faTitle: "الانسه", enTitle: "Illunse", price: 24_900_000, displayOrder: 15, priceType: "fixed" },
           { slug: "face-filler-juvederm", faTitle: "ژوویدرم", enTitle: "Juvederm", price: 26_490_000, displayOrder: 16, priceType: "fixed" },
-        ],
-      },
-    ],
-  },
-  {
-    slug: "filler-sensitive-areas",
-    faName: "فیلر نقاط حساس",
-    enName: "Sensitive Areas Filler",
-    faDesc: "فیلر برای نقاط حساس چهره با برندهای متنوع.",
-    enDesc: "Filler for sensitive facial areas with diverse brands.",
-    displayOrder: 2,
-    categories: [
-      {
-        slug: "sensitive-filler-brands",
-        faName: "برندهای فیلر نقاط حساس",
-        enName: "Sensitive Areas Filler Brands",
-        faDesc: "فیلر نقاط حساس چهره با برندهای معتبر.",
-        enDesc: "Sensitive area face filler with reputable brands.",
-        displayOrder: 1,
-        services: [
-          { slug: "sensitive-de-moi", faTitle: "دی می", enTitle: "De Moi", price: 6_190_000, displayOrder: 1, priceType: "fixed" },
-          { slug: "sensitive-fillorga", faTitle: "فیورج", enTitle: "Fillorga", price: 6_390_000, displayOrder: 2, priceType: "fixed" },
-          { slug: "sensitive-innosense", faTitle: "اینووسنس", enTitle: "Innosense", price: 6_790_000, displayOrder: 3, priceType: "fixed" },
         ],
       },
     ],

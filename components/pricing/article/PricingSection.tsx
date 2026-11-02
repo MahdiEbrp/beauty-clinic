@@ -1,13 +1,12 @@
 import React from "react";
 import PricingCategory from "./PricingCategory";
-import type { PricingGroup, PricingService } from "@/lib/services/pricing-page";
+import type { PricingGroup } from "@/lib/services/pricing-page";
 
 export type PricingSectionProps = {
   key?: React.Key;
   group: PricingGroup;
   currency?: string;
   index?: number;
-  onBook?: (service: PricingService) => void;
 };
 
 /**
@@ -21,7 +20,6 @@ export default function PricingSection({
   group,
   currency = "",
   index = 0,
-  onBook,
 }: PricingSectionProps) {
 
   return (
@@ -51,7 +49,6 @@ export default function PricingSection({
             key={category.slug}
             category={category}
             currency={currency}
-            onBook={onBook}
             groupSlug={group.slug}
           />
         ))}

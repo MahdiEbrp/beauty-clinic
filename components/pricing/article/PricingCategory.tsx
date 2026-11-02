@@ -1,12 +1,11 @@
 import React from "react";
 import PricingRow from "./PricingRow";
-import type { PricingCategory as PricingCategoryType, PricingService } from "@/lib/services/pricing-page";
+import type { PricingCategory as PricingCategoryType } from "@/lib/services/pricing-page";
 
 export type PricingCategoryProps = {
   key?: React.Key;
   category: PricingCategoryType;
   currency?: string;
-  onBook?: (service: PricingService) => void;
   /** Owning group slug, for per-service pricing anchors (`#pricing-<groupSlug>-<serviceSlug>`). */
   groupSlug?: string;
 };
@@ -15,7 +14,6 @@ export type PricingCategoryProps = {
 export default function PricingCategory({
   category,
   currency = "$",
-  onBook,
   groupSlug,
 }: PricingCategoryProps) {
   return (
@@ -36,7 +34,6 @@ export default function PricingCategory({
             key={service.id}
             service={service}
             currency={currency}
-            onBook={onBook}
             groupSlug={groupSlug}
           />
         ))}
