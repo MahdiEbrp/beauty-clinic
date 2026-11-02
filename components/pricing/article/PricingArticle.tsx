@@ -150,7 +150,6 @@ export default function PricingArticle({
                   group={group}
                   currency={data.currency}
                   index={index}
-                  onBook={handleBook}
                 />
               ))}
 
