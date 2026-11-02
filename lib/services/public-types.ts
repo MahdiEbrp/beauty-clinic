@@ -87,6 +87,7 @@ export type PublicTreeService = {
   faqs: PublicTreeFaq[];
   /** Real edit timestamp, used for sitemap `lastModified`. */
   updatedAt: Date;
+  displayOrder: number;
 };
 
 /** A localized category with its active services. */
@@ -99,6 +100,7 @@ export type PublicTreeCategory = {
   seoTitle: string | null;
   seoDescription: string | null;
   updatedAt: Date;
+  displayOrder: number;
   services: PublicTreeService[];
 };
 
@@ -113,6 +115,7 @@ export type PublicTreeGroup = {
   seoTitle: string | null;
   seoDescription: string | null;
   updatedAt: Date;
+  displayOrder: number;
   categories: PublicTreeCategory[];
 };
 

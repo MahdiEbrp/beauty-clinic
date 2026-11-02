@@ -158,6 +158,7 @@ async function loadServiceTree(locale: Locale): Promise<PublicServiceTree> {
       images: imagesByService.get(row.id) ?? [],
       faqs: faqsByService.get(row.id) ?? [],
       updatedAt: row.updatedAt,
+      displayOrder: row.displayOrder,
     });
     servicesByCategory.set(row.categoryId, list);
   }
@@ -183,6 +184,7 @@ async function loadServiceTree(locale: Locale): Promise<PublicServiceTree> {
       seoTitle: content.seoTitle,
       seoDescription: content.seoDescription,
       updatedAt: row.updatedAt,
+      displayOrder: row.displayOrder,
       services: categoryServices,
     });
     categoriesByGroup.set(row.groupId, list);
@@ -204,6 +206,7 @@ async function loadServiceTree(locale: Locale): Promise<PublicServiceTree> {
       seoTitle: content.seoTitle,
       seoDescription: content.seoDescription,
       updatedAt: row.updatedAt,
+      displayOrder: row.displayOrder,
       categories: groupCategories,
     });
   }
