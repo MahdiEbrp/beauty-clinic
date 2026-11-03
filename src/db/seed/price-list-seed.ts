@@ -16,14 +16,13 @@ type PriceService = {
   price: number | null;
   displayOrder: number;
   priceType: "fixed" | "from" | "on_request";
+  unit: string | null;
 };
 
 type PriceCategory = {
   slug: string;
   faName: string;
   enName: string;
-  faDesc: string;
-  enDesc: string;
   displayOrder: number;
   services: PriceService[];
 };
@@ -32,28 +31,28 @@ type PriceGroup = {
   slug: string;
   faName: string;
   enName: string;
-  faDesc: string;
-  enDesc: string;
   displayOrder: number;
   categories: PriceCategory[];
 };
 
 /**
- * Section order (matching the reference pricing page, 10 sections):
+ * Section order (matching the reference pricing page):
  *
  * Right column (top to bottom):
- *   1. face-filler        -> فیلر صورت (+ فیلر نقاط حساس)
- *   2. pack-contouring    -> پک‌های کانتورینگ و فول فیس
- *   3. botox              -> بوتاکس
- *   4. enzyme             -> آنزیم از بین برنده فیلر
- *   5. body-filler        -> فیلر بدن (باسن و بیکینی)
+ *   1. face-filler        -> فیلر صورت (incl. فیلر نقاط حساس as category)
+ *   2. pack-10cc          -> پک ۱۰ سیسی کانتورینگ
+ *   3. enzyme             -> آنزیم از بین برنده فیلر
+ *   4. body-filler        -> فیلر بدن
  *
  * Left column (top to bottom):
- *   6. meso-rejuvenation  -> مizu ژل - مizu مو - جوانساز - درمان پوستی
- *   7. hair-strengthening -> تقویت مو
- *   8. fat-dissolving     -> چربی‌سوزی و لاغری موضعی
- *   9. skin-treatments    -> درمان‌های پوستی
- *  10. thread-lift        -> نخ لیفت صورت
+ *   5. meso-rejuvenation  -> مizu ژل - مizu مو - جوانساز - درمان پوستی
+ *   6. botox              -> بوتاکس
+ *   7. laser-hair-removal -> لیزر
+ *   8. hifu               -> HIFU
+ *
+ * Removed per user feedback: پک‌های فول فیس, تقویت مو, چربی‌سوزی,
+ * درمان‌های پوستی, نخ لیفت (not in Excel nor poster).
+ * filler-sensitive-areas is now a category under face-filler (not separate group).
  */
 const GROUPS: PriceGroup[] = [
   // ===== RIGHT COLUMN =====
@@ -61,113 +60,63 @@ const GROUPS: PriceGroup[] = [
     slug: "face-filler",
     faName: "فیلر صورت",
     enName: "Face Filler",
-    faDesc:
-      "زیبایی طبیعی خود را با فیلرهای ظریف و حرفه‌ای برجسته‌تر کنید. با بازگرداندن حجم از دست‌رفته، کاهش خطوط ظریف و فرم‌دهی لب، گونه یا چانه، چهره‌ای شاداب‌تر و متعادل‌تر داشته باشید؛ طوری که همچنان خودِ واقعی شما باشید.",
-    enDesc:
-      "Enhance your natural beauty with subtle, elegant facial fillers. Restore lost volume, soften fine lines, and beautifully define your lips, cheeks, or chin.",
     displayOrder: 1,
     categories: [
       {
         slug: "face-filler-brands",
         faName: "برندهای فیلر لب و صورت",
         enName: "Face Filler Brands",
-        faDesc: "فیلر لب و صورت با برندهای معتبر و متنوع.",
-        enDesc: "Face filler with reputable and diverse brands.",
         displayOrder: 1,
         services: [
-          // Order: highest price first (per reference image)
-          { slug: "face-filler-juvederm", faTitle: "ژوویدرم", enTitle: "Juvederm", price: 26_490_000, displayOrder: 1, priceType: "fixed" },
-          { slug: "face-filler-illunse", faTitle: "الانس", enTitle: "Illunse", price: 24_900_000, displayOrder: 2, priceType: "fixed" },
-          { slug: "face-filler-stylage", faTitle: "استایلیج", enTitle: "Stylage", price: 23_900_000, displayOrder: 3, priceType: "fixed" },
-          { slug: "face-filler-revolax", faTitle: "ریلن", enTitle: "Revolax", price: 15_900_000, displayOrder: 4, priceType: "fixed" },
-          { slug: "face-filler-perfecta", faTitle: "پرفکتا", enTitle: "Perfecta", price: 10_900_000, displayOrder: 5, priceType: "fixed" },
-          { slug: "face-filler-restylane-plus", faTitle: "رووفیل پلاس", enTitle: "Restylane Plus", price: 9_900_000, displayOrder: 6, priceType: "fixed" },
-          { slug: "face-filler-innosense", faTitle: "اینووسنس", enTitle: "Innosense", price: 6_590_000, displayOrder: 7, priceType: "fixed" },
-          { slug: "face-filler-fillorga", faTitle: "فیورج", enTitle: "Fillorga", price: 6_290_000, displayOrder: 8, priceType: "fixed" },
-          { slug: "face-filler-de-moi", faTitle: "دی می", enTitle: "De Moi", price: 5_990_000, displayOrder: 9, priceType: "fixed" },
-          { slug: "face-filler-derm-arcane", faTitle: "درم آرکان", enTitle: "Derm Arcane", price: 5_390_000, displayOrder: 10, priceType: "fixed" },
-          { slug: "face-filler-eptq", faTitle: "اپی تی کیو", enTitle: "eptq", price: 2_990_000, displayOrder: 11, priceType: "fixed" },
-          { slug: "face-filler-zishal", faTitle: "زیشل", enTitle: "Zishal", price: 2_690_000, displayOrder: 12, priceType: "fixed" },
-          { slug: "face-filler-deneb", faTitle: "دنبی", enTitle: "Deneb", price: 2_490_000, displayOrder: 13, priceType: "fixed" },
-          { slug: "face-filler-restylane", faTitle: "رووفیل", enTitle: "Restylane", price: 2_190_000, displayOrder: 14, priceType: "fixed" },
-          { slug: "face-filler-audry", faTitle: "اودری", enTitle: "Audry", price: 1_890_000, displayOrder: 15, priceType: "fixed" },
+          // Order: highest price first (per reference image), unit = cc
+          { slug: "face-filler-juvederm", faTitle: "ژوویدرم", enTitle: "Juvederm", price: 26_490_000, displayOrder: 1, priceType: "fixed", unit: "cc" },
+          { slug: "face-filler-illunse", faTitle: "الانس", enTitle: "Illunse", price: 24_900_000, displayOrder: 2, priceType: "fixed", unit: "cc" },
+          { slug: "face-filler-stylage", faTitle: "استایلیج", enTitle: "Stylage", price: 23_900_000, displayOrder: 3, priceType: "fixed", unit: "cc" },
+          { slug: "face-filler-revolax", faTitle: "ریلن", enTitle: "Revolax", price: 15_900_000, displayOrder: 4, priceType: "fixed", unit: "cc" },
+          { slug: "face-filler-perfecta", faTitle: "پرفکتا", enTitle: "Perfecta", price: 10_900_000, displayOrder: 5, priceType: "fixed", unit: "cc" },
+          { slug: "face-filler-restylane-plus", faTitle: "رووفیل پلاس", enTitle: "Restylane Plus", price: 9_900_000, displayOrder: 6, priceType: "fixed", unit: "cc" },
+          { slug: "face-filler-innosense", faTitle: "اینووسنس", enTitle: "Innosense", price: 6_590_000, displayOrder: 7, priceType: "fixed", unit: "cc" },
+          { slug: "face-filler-fillorga", faTitle: "فیورج", enTitle: "Fillorga", price: 6_290_000, displayOrder: 8, priceType: "fixed", unit: "cc" },
+          { slug: "face-filler-de-moi", faTitle: "دی می", enTitle: "De Moi", price: 5_990_000, displayOrder: 9, priceType: "fixed", unit: "cc" },
+          { slug: "face-filler-derm-arcane", faTitle: "درم آرکان", enTitle: "Derm Arcane", price: 5_390_000, displayOrder: 10, priceType: "fixed", unit: "cc" },
+          { slug: "face-filler-eptq", faTitle: "اپی تی کیو", enTitle: "eptq", price: 2_990_000, displayOrder: 11, priceType: "fixed", unit: "cc" },
+          { slug: "face-filler-zishal", faTitle: "زیشل", enTitle: "Zishal", price: 2_690_000, displayOrder: 12, priceType: "fixed", unit: "cc" },
+          { slug: "face-filler-deneb", faTitle: "دنبی", enTitle: "Deneb", price: 2_490_000, displayOrder: 13, priceType: "fixed", unit: "cc" },
+          { slug: "face-filler-restylane", faTitle: "رووفیل", enTitle: "Restylane", price: 2_190_000, displayOrder: 14, priceType: "fixed", unit: "cc" },
+          { slug: "face-filler-audry", faTitle: "اودری", enTitle: "Audry", price: 1_890_000, displayOrder: 15, priceType: "fixed", unit: "cc" },
         ],
       },
       {
         slug: "face-filler-sensitive",
         faName: "فیلر نقاط حساس",
         enName: "Sensitive Areas Filler",
-        faDesc: "فیلر برای نقاط حساس چهره با برندهای معتبر.",
-        enDesc: "Filler for sensitive facial areas with reputable brands.",
         displayOrder: 2,
         services: [
-          { slug: "sensitive-innosense", faTitle: "اینووسنس (فیلر نقاط حساس)", enTitle: "Innosense (Sensitive)", price: 6_790_000, displayOrder: 1, priceType: "fixed" },
-          { slug: "sensitive-fillorga", faTitle: "فیورج (فیلر نقاط حساس)", enTitle: "Fillorga (Sensitive)", price: 6_390_000, displayOrder: 2, priceType: "fixed" },
-          { slug: "sensitive-de-moi", faTitle: "دی می (فیلر نقاط حساس)", enTitle: "De Moi (Sensitive)", price: 6_190_000, displayOrder: 3, priceType: "fixed" },
+          // Names WITHOUT "(فیلر نقاط حساس)" suffix, unit = cc
+          { slug: "sensitive-innosense", faTitle: "اینووسنس", enTitle: "Innosense (Sensitive)", price: 6_790_000, displayOrder: 1, priceType: "fixed", unit: "cc" },
+          { slug: "sensitive-fillorga", faTitle: "فیورج", enTitle: "Fillorga (Sensitive)", price: 6_390_000, displayOrder: 2, priceType: "fixed", unit: "cc" },
+          { slug: "sensitive-de-moi", faTitle: "دی می", enTitle: "De Moi (Sensitive)", price: 6_190_000, displayOrder: 3, priceType: "fixed", unit: "cc" },
         ],
       },
     ],
   },
   {
-    slug: "pack-contouring",
-    faName: "پک‌های کانتورینگ و فول فیس",
-    enName: "Contouring & Full Face Packs",
-    faDesc: "ترIMITاز چهره را بازگردانید و زیبایی طبیعی خود را ظریف‌تر برجسته کنید. فیلر فول فیس با ترکیب فرم‌دهی دقیق و بهبود حجم نواحی مختلف صورت، به ایجاد چهره‌ای هماهنگ‌تر، شاداب‌تر و متعادل‌تر کمک می‌کند.",
-    enDesc: "Restore facial balance and highlight your natural beauty more subtly. Full face filler with precise contouring and volume enhancement across different areas helps create a more harmonious, radiant, and balanced face.",
+    slug: "pack-10cc",
+    faName: "پک ۱۰ سیسی کانتورینگ",
+    enName: "Pack 10cc Contouring",
     displayOrder: 2,
     categories: [
       {
-        slug: "full-face-packs",
-        faName: "پکیج‌های فول فیس",
-        enName: "Full Face Packs",
-        faDesc: "پکیج‌های حجم‌دهی و فرم‌دهی کامل صورت با ترکیب چند ناحیه؛ متناسب با نیاز چهره شما و با نتیجه‌ای هماهنگ و طبیعی.",
-        enDesc: "Full face volume and contouring packages combining multiple areas; tailored to your face's needs with a harmonious and natural result.",
-        displayOrder: 1,
-        services: [
-          { slug: "ffp-3cc", faTitle: "پک فول فیس ۳ سی‌سی", enTitle: "Full Face Pack 3cc", price: 12_900_000, displayOrder: 1, priceType: "fixed" },
-          { slug: "ffp-5cc", faTitle: "پک فول فیس ۵ سی‌سی", enTitle: "Full Face Pack 5cc", price: 19_900_000, displayOrder: 2, priceType: "fixed" },
-          { slug: "ffp-8cc", faTitle: "پک فول فیس ۸ سی‌سی", enTitle: "Full Face Pack 8cc", price: 29_900_000, displayOrder: 3, priceType: "fixed" },
-          { slug: "ffp-custom", faTitle: "پک فول فیس اختصاصی", enTitle: "Full Face Pack Custom", price: 39_900_000, displayOrder: 4, priceType: "from" },
-        ],
-      },
-      {
         slug: "pack-10cc-brands",
-        faName: "برندهای پک ۱۰ سی سی",
+        faName: "برندهای پک ۱۰ سیسی",
         enName: "Pack 10cc Brands",
-        faDesc: "پک ۱۰ سیسی با برندهای مختلف.",
-        enDesc: "Pack 10cc with different brands.",
-        displayOrder: 2,
-        services: [
-          { slug: "pack-10cc-eptq", faTitle: "اپی تی کیو", enTitle: "Pack eptq", price: 24_900_000, displayOrder: 1, priceType: "fixed" },
-          { slug: "pack-10cc-zishal", faTitle: "زیشل", enTitle: "Pack Zishal", price: 20_900_000, displayOrder: 2, priceType: "fixed" },
-          { slug: "pack-10cc-deneb", faTitle: "دنبی", enTitle: "Pack Deneb", price: 18_900_000, displayOrder: 3, priceType: "fixed" },
-          { slug: "pack-10cc-restylane", faTitle: "رووفیل", enTitle: "Pack Restylane", price: 15_900_000, displayOrder: 4, priceType: "fixed" },
-          { slug: "pack-10cc-audry", faTitle: "اودری", enTitle: "Pack Audry", price: 13_900_000, displayOrder: 5, priceType: "fixed" },
-        ],
-      },
-    ],
-  },
-  {
-    slug: "botox",
-    faName: "بوتاکس",
-    enName: "Botox",
-    faDesc: "با بوتاکس، خطوط صورت را نرم‌تر کرده و فرم و تعادل چهره را متناسب با ویژگی‌های شما بهبود دهید.",
-    enDesc: "Refine your features, soften expression lines, and restore facial balance with personalized Botox treatments.",
-    displayOrder: 3,
-    categories: [
-      {
-        slug: "botox-areas",
-        faName: "نواحی بوتاکس",
-        enName: "Botox Areas",
-        faDesc: "بوتاکس برای نواحی مختلف چهره و بدن.",
-        enDesc: "Botox for different face and body areas.",
         displayOrder: 1,
         services: [
-          { slug: "botox-full-face", faTitle: "فول فیس", enTitle: "Full Face", price: 1_890_000, displayOrder: 1, priceType: "fixed" },
-          { slug: "botox-cat-eye", faTitle: "چشم گربه ای", enTitle: "Cat Eye", price: 1_690_000, displayOrder: 2, priceType: "fixed" },
-          { slug: "botox-gummy-smile", faTitle: "لبخند لثه ای", enTitle: "Gummy Smile", price: 890_000, displayOrder: 3, priceType: "fixed" },
-          { slug: "botox-sweating", faTitle: "تعریق", enTitle: "Sweating", price: 3_290_000, displayOrder: 4, priceType: "fixed" },
-          { slug: "botox-migraine", faTitle: "میگرن", enTitle: "Migraine", price: 2_390_000, displayOrder: 5, priceType: "fixed" },
+          { slug: "pack-10cc-eptq", faTitle: "اپی تی کیو", enTitle: "Pack eptq", price: 24_900_000, displayOrder: 1, priceType: "fixed", unit: null },
+          { slug: "pack-10cc-zishal", faTitle: "زیشل", enTitle: "Pack Zishal", price: 20_900_000, displayOrder: 2, priceType: "fixed", unit: null },
+          { slug: "pack-10cc-deneb", faTitle: "دنبی", enTitle: "Pack Deneb", price: 18_900_000, displayOrder: 3, priceType: "fixed", unit: null },
+          { slug: "pack-10cc-restylane", faTitle: "رووفیل", enTitle: "Pack Restylane", price: 15_900_000, displayOrder: 4, priceType: "fixed", unit: null },
+          { slug: "pack-10cc-audry", faTitle: "اودری", enTitle: "Pack Audry", price: 13_900_000, displayOrder: 5, priceType: "fixed", unit: null },
         ],
       },
     ],
@@ -176,55 +125,35 @@ const GROUPS: PriceGroup[] = [
     slug: "enzyme",
     faName: "آنزیم از بین برنده فیلر",
     enName: "Enzyme - Filler Dissolver",
-    faDesc: "خدمات انزیم برای حذف مواد تزریقی.",
-    enDesc: "Enzyme for dissolving injected materials.",
-    displayOrder: 4,
+    displayOrder: 3,
     categories: [
       {
         slug: "enzyme-services",
         faName: "خدمات انزیم",
         enName: "Enzyme Services",
-        faDesc: "انزیم هیالورونیداز برای از بین بردن فیلر.",
-        enDesc: "Hyaluronidase enzyme for filler removal.",
         displayOrder: 1,
         services: [
-          { slug: "enzyme-anzyne", faTitle: "آنزیم هیالورونیداز (انگلیسی)", enTitle: "Hyaluronidase (English)", price: 2_190_000, displayOrder: 1, priceType: "fixed" },
+          { slug: "enzyme-anzyne", faTitle: "آنزیم هیالورونیداز (انگلیسی)", enTitle: "Hyaluronidase (English)", price: 2_190_000, displayOrder: 1, priceType: "fixed", unit: "cc" },
         ],
       },
     ],
   },
   {
     slug: "body-filler",
-    faName: "فیلر بدن (باسن و بیکینی)",
-    enName: "Body Filler (Hips & Bikini)",
-    faDesc: "فرم طبیعی بدن خود را با روشی ظریف و متناسب با ویژگی‌های شما زیباتر کنید. با هدف بهبود حجم، تناسب و فرم در نواحی منتخب، برای ایجاد ظاهری متعادل‌تر، هماهنگ‌تر و جذاب‌تر.",
-    enDesc: "Enhance your body's natural contours with a refined, personalized approach. Aiming to improve volume, proportion, and shape in selected areas, to create a more balanced, harmonious, and attractive appearance.",
-    displayOrder: 5,
+    faName: "فیلر بدن",
+    enName: "Body Filler",
+    displayOrder: 4,
     categories: [
       {
-        slug: "body-filler-hips",
-        faName: "فیلر باسن",
-        enName: "Hips Filler",
-        faDesc: "فرم‌دهی و حجم‌دهی طبیعی باسن با فیلر؛ تناسب و کانتور بهتر متناسب با اندام شما.",
-        enDesc: "Natural shaping and volumizing of hips with filler; better proportion and contour tailored to your body.",
+        slug: "body-filler-volumes",
+        faName: "حجم‌های فیلر بدن",
+        enName: "Body Filler Volumes",
         displayOrder: 1,
         services: [
-          { slug: "body-filler-hips-per-cc", faTitle: "فیلر باسن هر سی‌سی", enTitle: "Hips Filler per cc", price: 390_000, displayOrder: 1, priceType: "from" },
-          { slug: "body-filler-hips-50cc", faTitle: "فیلر باسن ۵۰ سی‌سی", enTitle: "Hips Filler 50cc", price: 18_500_000, displayOrder: 2, priceType: "fixed" },
-          { slug: "body-filler-hips-100cc", faTitle: "فیلر باسن ۱۰۰ سی‌سی", enTitle: "Hips Filler 100cc", price: 34_900_000, displayOrder: 3, priceType: "fixed" },
-        ],
-      },
-      {
-        slug: "body-filler-bikini",
-        faName: "فیلر بیکینی",
-        enName: "Bikini Filler",
-        faDesc: "فرم‌دهی و حجم‌دهی ناحیه بیکینی با فیلر؛ رویکردی ظریف، ایمن و متناسب.",
-        enDesc: "Shaping and volumizing the bikini area with filler; a refined, safe, and tailored approach.",
-        displayOrder: 2,
-        services: [
-          { slug: "body-filler-bikini-per-cc", faTitle: "فیلر بیکینی هر سی‌سی", enTitle: "Bikini Filler per cc", price: 390_000, displayOrder: 1, priceType: "from" },
-          { slug: "body-filler-bikini-50cc", faTitle: "فیلر بیکینی ۵۰ سی‌سی", enTitle: "Bikini Filler 50cc", price: 18_500_000, displayOrder: 2, priceType: "fixed" },
-          { slug: "body-filler-bikini-100cc", faTitle: "فیلر بیکینی ۱۰۰ سی‌سی", enTitle: "Bikini Filler 100cc", price: 34_900_000, displayOrder: 3, priceType: "fixed" },
+          // NOT split into باسن/بیکینی — exactly 3 rows
+          { slug: "body-filler-per-cc", faTitle: "فیلر بدن هر سی‌سی", enTitle: "Body Filler per cc", price: 390_000, displayOrder: 1, priceType: "from", unit: "cc" },
+          { slug: "body-filler-50cc", faTitle: "فیلر بدن ۵۰ سی‌سی", enTitle: "Body Filler 50cc", price: 18_500_000, displayOrder: 2, priceType: "fixed", unit: "cc" },
+          { slug: "body-filler-100cc", faTitle: "فیلر بدن ۱۰۰ سی‌سی", enTitle: "Body Filler 100cc", price: 34_900_000, displayOrder: 3, priceType: "fixed", unit: "cc" },
         ],
       },
     ],
@@ -234,143 +163,110 @@ const GROUPS: PriceGroup[] = [
     slug: "meso-rejuvenation",
     faName: "مizu ژل - مizu مو - جوانساز - درمان پوستی",
     enName: "Meso Gel - Meso Hair - Rejuvenation - Skin Treatment",
-    faDesc: "سرویس‌های مizuتراپی و جوانساز پوستی با برندهای معتبر.",
-    enDesc: "Mesotherapy and skin rejuvenation services with reputable brands.",
-    displayOrder: 6,
+    displayOrder: 5,
     categories: [
       {
         slug: "meso-services",
         faName: "خدمات مizuتراپی",
         enName: "Mesotherapy Services",
-        faDesc: "مizuتراپی، پلازما، و جوانسازی پوستی.",
-        enDesc: "Mesotherapy, PRP, and skin rejuvenation.",
         displayOrder: 1,
         services: [
-          { slug: "meso-keyara-gel", faTitle: "مizu 젤 کیارا", enTitle: "Meso Gel Keyara", price: 3_900_000, displayOrder: 1, priceType: "fixed" },
-          { slug: "meso-provoyaj", faTitle: "مizu 젤 پروایج", enTitle: "Meso Gel Provoyaj", price: 5_790_000, displayOrder: 2, priceType: "fixed" },
-          { slug: "meso-face", faTitle: "مizuتراپی صورت", enTitle: "Meso Face", price: 1_990_000, displayOrder: 3, priceType: "fixed" },
-          { slug: "meso-undereye", faTitle: "مizuتراپی زیر چشم", enTitle: "Meso Undereye", price: 1_990_000, displayOrder: 4, priceType: "fixed" },
-          { slug: "meso-prp-skin", faTitle: "پی آر پی پوست", enTitle: "PRP Skin", price: 3_400_000, displayOrder: 5, priceType: "fixed" },
-          { slug: "meso-eyebrow", faTitle: "مizu ابرو", enTitle: "Meso Eyebrow", price: 1_990_000, displayOrder: 6, priceType: "fixed" },
-          { slug: "meso-hair", faTitle: "مizu مو", enTitle: "Meso Hair", price: 1_990_000, displayOrder: 7, priceType: "fixed" },
-          { slug: "meso-fatburn-neck", faTitle: "مizu چربی‌سوز غبغب", enTitle: "Meso Fatburn Neck", price: 1_690_000, displayOrder: 8, priceType: "fixed" },
-          { slug: "meso-prp-hair", faTitle: "پی آر پی مو", enTitle: "PRP Hair", price: 3_300_000, displayOrder: 9, priceType: "fixed" },
-          { slug: "meso-hair-filler", faTitle: "هیر فیلر", enTitle: "Hair Filler", price: 5_990_000, displayOrder: 10, priceType: "fixed" },
-          { slug: "meso-needling", faTitle: "مزونیدلینگ", enTitle: "Meso Needling", price: 2_390_000, displayOrder: 11, priceType: "fixed" },
-          { slug: "meso-sabcizhen", faTitle: "سابسیژن", enTitle: "Sabcizhen", price: 5_900_000, displayOrder: 12, priceType: "fixed" },
-          { slug: "meso-jalbro-hmw", faTitle: "جالبرو HMW (جوانساز و آبرسان)", enTitle: "Jalbro HMW", price: 14_900_000, displayOrder: 13, priceType: "fixed" },
-          { slug: "meso-jalbro-classic", faTitle: "جالبرو کلاسیک (بازسازی بافت‌های خشک و آسیب‌دیده پوست)", enTitle: "Jalbro Classic", price: 13_900_000, displayOrder: 14, priceType: "fixed" },
-          { slug: "meso-super-hydro", faTitle: "جالبرو سوپر هیدرو (کلاژن‌ساز و جوانساز قوی)", enTitle: "Jalbro Super Hydro", price: 22_900_000, displayOrder: 15, priceType: "fixed" },
-          { slug: "meso-proflo-astral", faTitle: "پروفایلو استراکچرا (لیفت و جوانسازی صورت)", enTitle: "Profhilo AstraFill", price: 23_900_000, displayOrder: 16, priceType: "fixed" },
-          { slug: "meso-proflo-classic", faTitle: "پروفایلو کلاسیک (آبرسان و جوانساز قوی)", enTitle: "Proflo Classic", price: 19_900_000, displayOrder: 17, priceType: "fixed" },
-          { slug: "meso-liquid-thread", faTitle: "نخ مایع (PLLA - کلاژن‌ساز تزریقی)", enTitle: "Liquid Thread PLLA", price: 23_900_000, displayOrder: 18, priceType: "fixed" },
-          { slug: "meso-luxyva", faTitle: "لوکسیوا (بهبود بافت و کاهش خطوط ریز)", enTitle: "Luxyva", price: 5_900_000, displayOrder: 19, priceType: "fixed" },
-          { slug: "meso-dymono", faTitle: "دیمونو (مizu 젤 با اثر شبیه بوتاکس)", enTitle: "Dymono", price: 18_900_000, displayOrder: 20, priceType: "fixed" },
+          // Fixed pricing; مizu چربی‌سوز غبgebung = 1,990,000 (consistent)
+          // مizu مو, هیر فیلر, پی‌آرپی مو appear ONLY here (no duplicates)
+          { slug: "meso-keyara-gel", faTitle: "مizuژل کیارا", enTitle: "Meso Gel Keyara", price: 3_900_000, displayOrder: 1, priceType: "fixed", unit: null },
+          { slug: "meso-provoyaj", faTitle: "مizuژل پروایج", enTitle: "Meso Gel Provoyaj", price: 5_790_000, displayOrder: 2, priceType: "fixed", unit: null },
+          { slug: "meso-face", faTitle: "مizuتراپی صورت", enTitle: "Meso Face", price: 1_990_000, displayOrder: 3, priceType: "fixed", unit: null },
+          { slug: "meso-undereye", faTitle: "مizuتراپی زیر چشم", enTitle: "Meso Undereye", price: 1_990_000, displayOrder: 4, priceType: "fixed", unit: null },
+          { slug: "meso-prp-skin", faTitle: "پی آر پی پوست", enTitle: "PRP Skin", price: 3_400_000, displayOrder: 5, priceType: "fixed", unit: null },
+          { slug: "meso-eyebrow", faTitle: "مizu ابرو", enTitle: "Meso Eyebrow", price: 1_990_000, displayOrder: 6, priceType: "fixed", unit: null },
+          { slug: "meso-hair", faTitle: "مizu مو", enTitle: "Meso Hair", price: 1_990_000, displayOrder: 7, priceType: "fixed", unit: null },
+          { slug: "meso-fatburn-neck", faTitle: "مizu چربی‌سوز غبغب", enTitle: "Meso Fatburn Neck", price: 1_990_000, displayOrder: 8, priceType: "fixed", unit: null },
+          { slug: "meso-prp-hair", faTitle: "پی آر پی مو", enTitle: "PRP Hair", price: 3_300_000, displayOrder: 9, priceType: "fixed", unit: null },
+          { slug: "meso-hair-filler", faTitle: "هیر فیلر", enTitle: "Hair Filler", price: 5_990_000, displayOrder: 10, priceType: "fixed", unit: null },
+          { slug: "meso-needling", faTitle: "مزونیدلینگ", enTitle: "Meso Needling", price: 2_390_000, displayOrder: 11, priceType: "fixed", unit: null },
+          { slug: "meso-sabcizhen", faTitle: "سابسیژن", enTitle: "Sabcizhen", price: 5_900_000, displayOrder: 12, priceType: "fixed", unit: null },
+          { slug: "meso-jalbro-hmw", faTitle: "جالبرو HMW (جوانساز و آبرسان)", enTitle: "Jalbro HMW", price: 14_900_000, displayOrder: 13, priceType: "fixed", unit: null },
+          { slug: "meso-jalbro-classic", faTitle: "جالبرو کلاسیک (بازسازی بافت‌های خشک و آسیب‌دیده پوست)", enTitle: "Jalbro Classic", price: 13_900_000, displayOrder: 14, priceType: "fixed", unit: null },
+          { slug: "meso-super-hydro", faTitle: "جالبرو سوپر هیدرو (کلاژن‌ساز و جوانساز قوی)", enTitle: "Jalbro Super Hydro", price: 22_900_000, displayOrder: 15, priceType: "fixed", unit: null },
+          { slug: "meso-proflo-astral", faTitle: "پروفایلو استراکچرا (لیفت و جوانسازی صورت)", enTitle: "Profhilo AstraFill", price: 23_900_000, displayOrder: 16, priceType: "fixed", unit: null },
+          { slug: "meso-proflo-classic", faTitle: "پروفایلو کلاسیک (آبرسان و جوانساز قوی)", enTitle: "Proflo Classic", price: 19_900_000, displayOrder: 17, priceType: "fixed", unit: null },
+          { slug: "meso-liquid-thread", faTitle: "نخ مایع (PLLA - کلاژن‌ساز تزریقی)", enTitle: "Liquid Thread PLLA", price: 23_900_000, displayOrder: 18, priceType: "fixed", unit: null },
+          { slug: "meso-luxyva", faTitle: "لوکسیوا (بهبود بافت و کاهش خطوط ریز)", enTitle: "Luxyva", price: 5_900_000, displayOrder: 19, priceType: "fixed", unit: null },
+          { slug: "meso-dymono", faTitle: "دیمونو (مizu ژل با اثر شبیه بوتاکس)", enTitle: "Dymono", price: 18_900_000, displayOrder: 20, priceType: "fixed", unit: null },
         ],
       },
     ],
   },
   {
-    slug: "hair-strengthening",
-    faName: "تقویت مو",
-    enName: "Hair Strengthening",
-    faDesc: "مizuتراپی و خدمات تخصصی برای تقویت ریشه، کاهش ریزش و بهبود کیفیت و تراکم مو؛ متناسب با نیاز و وضعیت موی شما.",
-    enDesc: "Mesotherapy and specialized services for root strengthening, hair loss reduction, and improved hair quality and density; tailored to your hair's needs and condition.",
+    slug: "botox",
+    faName: "بوتاکس",
+    enName: "Botox",
+    displayOrder: 6,
+    categories: [
+      {
+        slug: "botox-areas",
+        faName: "نواحی بوتاکس",
+        enName: "Botox Areas",
+        displayOrder: 1,
+        services: [
+          // Service titles do NOT repeat category name
+          { slug: "botox-full-face", faTitle: "فول فیس", enTitle: "Full Face", price: 1_890_000, displayOrder: 1, priceType: "fixed", unit: null },
+          { slug: "botox-cat-eye", faTitle: "چشم گربه ای", enTitle: "Cat Eye", price: 1_690_000, displayOrder: 2, priceType: "fixed", unit: null },
+          { slug: "botox-gummy-smile", faTitle: "لبخند لثه ای", enTitle: "Gummy Smile", price: 890_000, displayOrder: 3, priceType: "fixed", unit: null },
+          { slug: "botox-sweating", faTitle: "تعریق", enTitle: "Sweating", price: 3_290_000, displayOrder: 4, priceType: "fixed", unit: null },
+          { slug: "botox-migraine", faTitle: "میگرن", enTitle: "Migraine", price: 2_390_000, displayOrder: 5, priceType: "fixed", unit: null },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "laser-hair-removal",
+    faName: "لیزر",
+    enName: "Laser",
     displayOrder: 7,
     categories: [
       {
-        slug: "hair-services",
-        faName: "مizuتراپی و تقویت مو",
-        enName: "Mesotherapy & Hair Strengthening",
-        faDesc: "مizuتراپی و خدمات تقویتی مو برای کاهش ریزش، تقویت ریشه و بهبود کیفیت و تراکم مو؛ متناسب با وضعیت موی شما.",
-        enDesc: "Mesotherapy and hair strengthening services for hair loss reduction, root strengthening, and improved hair quality and density; tailored to your hair condition.",
+        slug: "laser-packages",
+        faName: "پکیج‌های لیزر",
+        enName: "Laser Packages",
         displayOrder: 1,
         services: [
-          { slug: "hair-meso-per-session", faTitle: "مizuتراپی مو (هر جلسه)", enTitle: "Hair Meso (per session)", price: 1_990_000, displayOrder: 1, priceType: "fixed" },
-          { slug: "hair-meso-4-pack", faTitle: "پکیج ۴ جلسه مizuتراپی مو", enTitle: "Hair Meso 4-Session Pack", price: 5_490_000, displayOrder: 2, priceType: "fixed" },
-          { slug: "hair-filler-per-session", faTitle: "هیر فیلر (هر جلسه)", enTitle: "Hair Filler (per session)", price: 5_990_000, displayOrder: 3, priceType: "fixed" },
-          { slug: "hair-prp", faTitle: "پی آر پی مو", enTitle: "PRP Hair", price: 3_300_000, displayOrder: 4, priceType: "fixed" },
-          { slug: "hair-booster", faTitle: "بوستر تقویت مو", enTitle: "Hair Booster", price: 2_890_000, displayOrder: 5, priceType: "fixed" },
-          { slug: "hair-scalp-meso", faTitle: "مizuتراپی آبرسانی پوست سر", enTitle: "Scalp Meso", price: 1_690_000, displayOrder: 6, priceType: "fixed" },
+          // No "پک شخصی" (not in Excel)
+          { slug: "laser-full-body-pack", faTitle: "پکیج فول بادی", enTitle: "Full Body Pack", price: 990_000, displayOrder: 1, priceType: "fixed", unit: null },
+          { slug: "laser-full-practical-pack", faTitle: "پکیج فول کاربردی", enTitle: "Full Practical Pack", price: 880_000, displayOrder: 2, priceType: "fixed", unit: null },
+          { slug: "laser-practical-pack", faTitle: "پکیج کاربردی", enTitle: "Practical Pack", price: 790_000, displayOrder: 3, priceType: "fixed", unit: null },
+          { slug: "laser-face", faTitle: "صورت", enTitle: "Face", price: 150_000, displayOrder: 4, priceType: "fixed", unit: null },
+          { slug: "laser-upper-lip", faTitle: "پشت لب", enTitle: "Upper Lip", price: 90_000, displayOrder: 5, priceType: "fixed", unit: null },
+          { slug: "laser-chin", faTitle: "چانه", enTitle: "Chin", price: 90_000, displayOrder: 6, priceType: "fixed", unit: null },
+          { slug: "laser-neck", faTitle: "غبغب", enTitle: "Neck", price: 90_000, displayOrder: 7, priceType: "fixed", unit: null },
+          { slug: "laser-underarm", faTitle: "زیر بغل", enTitle: "Underarm", price: 200_000, displayOrder: 8, priceType: "fixed", unit: null },
+          { slug: "laser-forearm", faTitle: "ساق دست", enTitle: "Forearm", price: 200_000, displayOrder: 9, priceType: "fixed", unit: null },
+          { slug: "laser-full-arm", faTitle: "دست کامل", enTitle: "Full Arm", price: 250_000, displayOrder: 10, priceType: "fixed", unit: null },
+          { slug: "laser-abdomen", faTitle: "شکم", enTitle: "Abdomen", price: 155_000, displayOrder: 11, priceType: "fixed", unit: null },
+          { slug: "laser-back", faTitle: "کمر", enTitle: "Back", price: 150_000, displayOrder: 12, priceType: "fixed", unit: null },
+          { slug: "laser-bikini", faTitle: "بیکینی", enTitle: "Bikini", price: 190_000, displayOrder: 13, priceType: "fixed", unit: null },
+          { slug: "laser-calf", faTitle: "ساق پا", enTitle: "Calf", price: 180_000, displayOrder: 14, priceType: "fixed", unit: null },
+          { slug: "laser-full-leg", faTitle: "پا کامل", enTitle: "Full Leg", price: 300_000, displayOrder: 15, priceType: "fixed", unit: null },
         ],
       },
     ],
   },
   {
-    slug: "fat-dissolving",
-    faName: "چربی‌سوزی و لاغری موضعی",
-    enName: "Fat Dissolving & Local Slimming",
-    faDesc: "مizuچربی‌سوز برای کاهش موضعی چربی و فرم‌دهی نواحی موردنظر؛ متناسب با ناحیه و نیاز شما.",
-    enDesc: "Meso fat-dissolving for localized fat reduction and shaping of target areas; tailored to the area and your needs.",
+    slug: "hifu",
+    faName: "HIFU",
+    enName: "HIFU",
     displayOrder: 8,
     categories: [
       {
-        slug: "fat-dissolving-services",
-        faName: "مizuچربی‌سوز",
-        enName: "Meso Fat Dissolving",
-        faDesc: "مizuچربی‌سوز برای کاهش موضعی چربی در نواحی مختلف بدن؛ متناسب با ناحیه و نیاز شما و با رویکردی تدریجی و ایمن.",
-        enDesc: "Meso fat-dissolving for localized fat reduction in different body areas; tailored to the area and your needs with a gradual and safe approach.",
+        slug: "hifu-areas",
+        faName: "نواحی HIFU",
+        enName: "HIFU Areas",
         displayOrder: 1,
         services: [
-          { slug: "fat-dissolve-per-session", faTitle: "مizu چربی‌سوز (هر جلسه)", enTitle: "Meso Fat Dissolve (per session)", price: 1_890_000, displayOrder: 1, priceType: "fixed" },
-          { slug: "fat-dissolve-4-pack", faTitle: "پکیج ۴ جلسه مizu چربی‌سوز", enTitle: "Meso Fat Dissolve 4-Session Pack", price: 6_900_000, displayOrder: 2, priceType: "fixed" },
-          { slug: "fat-dissolve-abdomen", faTitle: "مizu چربی‌سوز شکم و پهلو", enTitle: "Meso Fat Dissolve Abdomen & Flanks", price: 2_290_000, displayOrder: 3, priceType: "fixed" },
-          { slug: "fat-dissolve-arm", faTitle: "مizu چربی‌سوز بازو", enTitle: "Meso Fat Dissolve Arm", price: 1_990_000, displayOrder: 4, priceType: "fixed" },
-          { slug: "fat-dissolve-thigh", faTitle: "مizu چربی‌سوز ران", enTitle: "Meso Fat Dissolve Thigh", price: 2_190_000, displayOrder: 5, priceType: "fixed" },
-          { slug: "fat-dissolve-neck", faTitle: "مizu چربی‌سوز غبغب", enTitle: "Meso Fat Dissolve Neck", price: 1_690_000, displayOrder: 6, priceType: "fixed" },
-        ],
-      },
-    ],
-  },
-  {
-    slug: "skin-treatments",
-    faName: "درمان‌های پوستی",
-    enName: "Skin Treatments",
-    faDesc: "خدمات تخصصی درمان پوست برای بهبود بافت، لک، جوش و شادابی؛ متناسب با نوع پوست و نیاز شما.",
-    enDesc: "Specialized skin treatment services for texture improvement, blemishes, acne, and radiance; tailored to your skin type and needs.",
-    displayOrder: 9,
-    categories: [
-      {
-        slug: "skin-services",
-        faName: "درمان‌های پوستی",
-        enName: "Skin Treatments",
-        faDesc: "خدمات تخصصی درمان پوست برای بهبود بافت، لک، جوش و شادابی؛ متناسب با نوع پوست و نیاز شما.",
-        enDesc: "Specialized skin treatment services for texture improvement, blemishes, acne, and radiance; tailored to your skin type and needs.",
-        displayOrder: 1,
-        services: [
-          { slug: "skin-hifu-face", faTitle: "هایفوتراپی صورت", enTitle: "HIFU Face", price: 8_900_000, displayOrder: 1, priceType: "from" },
-          { slug: "skin-microneedling", faTitle: "میکرونیدلینگ", enTitle: "Microneedling", price: 2_490_000, displayOrder: 2, priceType: "fixed" },
-          { slug: "skin-hydrafacial", faTitle: "هیدرافیشیال", enTitle: "HydraFacial", price: 2_900_000, displayOrder: 3, priceType: "fixed" },
-          { slug: "skin-peel", faTitle: "پیلینگ شیمیایی", enTitle: "Chemical Peel", price: 1_890_000, displayOrder: 4, priceType: "fixed" },
-          { slug: "skin-fractional-laser", faTitle: "لیزر فراکشنال", enTitle: "Fractional Laser", price: 4_900_000, displayOrder: 5, priceType: "from" },
-          { slug: "skin-brightening-meso", faTitle: "مizuتراپی شفاف‌سازی پوست", enTitle: "Skin Brightening Meso", price: 2_100_000, displayOrder: 6, priceType: "fixed" },
-          { slug: "skin-acne", faTitle: "درمان آکنه و جوش", enTitle: "Acne Treatment", price: 2_490_000, displayOrder: 7, priceType: "fixed" },
-        ],
-      },
-    ],
-  },
-  {
-    slug: "thread-lift",
-    faName: "نخ لیفت صورت",
-    enName: "Thread Lift Face",
-    faDesc: "با نخ لیفت صورت، افتادگی خفیف پوست را بدون جراحی بهبود دهید و فرم و کانتور صورت را طبیعی‌تر و جوان‌تر کنید.",
-    enDesc: "With facial thread lift, improve mild skin sagging without surgery and make facial form and contour more natural and youthful.",
-    displayOrder: 10,
-    categories: [
-      {
-        slug: "thread-lift-areas",
-        faName: "نخ لیفت صورت",
-        enName: "Thread Lift Areas",
-        faDesc: "نخ لیفت برای بهبود افتادگی خفیف پوست و فرم‌دهی طبیعی چهره بدون جراحی؛ متناسب با ناحیه و نیاز شما.",
-        enDesc: "Thread lift for improving mild skin sagging and natural facial shaping without surgery; tailored to the area and your needs.",
-        displayOrder: 1,
-        services: [
-          { slug: "thread-face", faTitle: "نخ لیفت صورت", enTitle: "Thread Lift Face", price: 18_900_000, displayOrder: 1, priceType: "from" },
-          { slug: "thread-jawline", faTitle: "نخ لیفت خط فک و غبغب", enTitle: "Thread Lift Jawline & Neck", price: 14_900_000, displayOrder: 2, priceType: "from" },
-          { slug: "thread-neck", faTitle: "نخ لیفت گردن", enTitle: "Thread Lift Neck", price: 13_900_000, displayOrder: 3, priceType: "from" },
-          { slug: "thread-brow", faTitle: "نخ لیفت پیشانی و ابرو", enTitle: "Thread Lift Forehead & Brow", price: 16_900_000, displayOrder: 4, priceType: "from" },
-          { slug: "thread-cheek", faTitle: "نخ لیفت گونه", enTitle: "Thread Lift Cheek", price: 15_900_000, displayOrder: 5, priceType: "from" },
-          { slug: "thread-full-face", faTitle: "نخ لیفت کامل صورت", enTitle: "Thread Lift Full Face", price: 29_900_000, displayOrder: 6, priceType: "from" },
+          // 3 rows from Excel: 2,990,000 / 3,390,000 / 3,990,000
+          { slug: "hifu-face", faTitle: "صورت", enTitle: "Face", price: 2_990_000, displayOrder: 1, priceType: "fixed", unit: null },
+          { slug: "hifu-neck", faTitle: "غبغب", enTitle: "Neck", price: 3_390_000, displayOrder: 2, priceType: "fixed", unit: null },
+          { slug: "hifu-face-neck", faTitle: "صورت و غبغب", enTitle: "Face & Neck", price: 3_990_000, displayOrder: 3, priceType: "fixed", unit: null },
         ],
       },
     ],
@@ -395,20 +291,19 @@ async function upsertGroup(g: PriceGroup) {
 
   for (const locale of ["fa", "en"] as const) {
     const name = locale === "fa" ? g.faName : g.enName;
-    const desc = locale === "fa" ? g.faDesc : g.enDesc;
     await db
       .insert(serviceGroupsI18n)
       .values({
         groupId: row.id,
         locale,
         name,
-        description: desc,
+        description: null,
         seoTitle: `${name} | قیمت`,
-        seoDescription: desc,
+        seoDescription: null,
       })
       .onConflictDoUpdate({
         target: [serviceGroupsI18n.groupId, serviceGroupsI18n.locale],
-        set: { name, description: desc, seoTitle: `${name} | قیمت`, seoDescription: desc },
+        set: { name, description: null, seoTitle: `${name} | قیمت`, seoDescription: null },
       });
   }
 
@@ -436,20 +331,19 @@ async function upsertCategory(groupId: string, c: PriceCategory) {
 
   for (const locale of ["fa", "en"] as const) {
     const name = locale === "fa" ? c.faName : c.enName;
-    const desc = locale === "fa" ? c.faDesc : c.enDesc;
     await db
       .insert(serviceCategoriesI18n)
       .values({
         categoryId: row.id,
         locale,
         name,
-        description: desc,
+        description: null,
         seoTitle: `${name} | قیمت`,
-        seoDescription: desc,
+        seoDescription: null,
       })
       .onConflictDoUpdate({
         target: [serviceCategoriesI18n.categoryId, serviceCategoriesI18n.locale],
-        set: { name, description: desc, seoTitle: `${name} | قیمت`, seoDescription: desc },
+        set: { name, description: null, seoTitle: `${name} | قیمت`, seoDescription: null },
       });
   }
 
@@ -466,6 +360,7 @@ async function upsertService(categoryId: string, s: PriceService) {
       slug: s.slug,
       price: s.price === null ? null : String(s.price),
       priceType: s.priceType,
+      unit: s.unit,
       durationMin: null,
       sessionsCount: 1,
       displayOrder: s.displayOrder,
@@ -478,6 +373,7 @@ async function upsertService(categoryId: string, s: PriceService) {
         categoryId,
         price: s.price === null ? null : String(s.price),
         priceType: s.priceType,
+        unit: s.unit,
         displayOrder: s.displayOrder,
         isActive: true,
         isFeatured: false,
@@ -493,13 +389,13 @@ async function upsertService(categoryId: string, s: PriceService) {
         serviceId: row.id,
         locale,
         title,
-        shortDesc: title,
+        shortDesc: null,
         seoTitle: `${title} | قیمت`,
-        seoDescription: title,
+        seoDescription: null,
       })
       .onConflictDoUpdate({
         target: [servicesI18n.serviceId, servicesI18n.locale],
-        set: { title, shortDesc: title, seoTitle: `${title} | قیمت`, seoDescription: title },
+        set: { title, shortDesc: null, seoTitle: `${title} | قیمت`, seoDescription: null },
       });
   }
 }
