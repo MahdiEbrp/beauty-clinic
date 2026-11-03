@@ -48,6 +48,7 @@ export type CategoryPageService = {
   isFeatured: boolean;
   updatedAt: Date;
   displayOrder: number;
+  unit: string | null;
   images: CategoryPageImage[];
   faqs: CategoryPageFaq[];
 };
@@ -107,6 +108,7 @@ function toCategory(category: PublicTreeCategory): CategoryPageCategory {
       isFeatured: service.isFeatured,
       updatedAt: service.updatedAt,
       displayOrder: service.displayOrder,
+      unit: service.unit,
       images: service.images,
       faqs: service.faqs,
     })),

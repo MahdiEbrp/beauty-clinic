@@ -65,6 +65,7 @@ export default function CategoryServices({
               coverImage: service.coverImage,
               images: service.images,
               displayOrder: service.displayOrder,
+              unit: service.unit,
             }}
             currency={currency}
             onBook={() => handleBook(service)}

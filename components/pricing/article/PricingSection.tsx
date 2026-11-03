@@ -8,10 +8,11 @@ export type PricingSectionProps = {
 };
 
 /**
- * One pricing section per DB group, rendered as a two-column table:
+ * One pricing section per DB group, rendered as a compact two-column table:
  * خدمات | قیمت (تومان).
  *
- * Anchored at `#pricing-<slug>` so the jump-nav can deep-link.
+ * No descriptions, no category cards — just group title + flat table.
+ * Anchored at `#pricing-<slug>` for deep linking.
  */
 export default function PricingSection({
   group,
@@ -28,38 +29,33 @@ export default function PricingSection({
   const formatPrice = (s: PricingService): string => {
     if (s.price === null) return "قیمت از طریق تماس";
     const n = Math.round(Number(s.price));
-    return n.toLocaleString("fa-IR") + " تومان";
+    const prefix = s.priceType === "from" ? "از " : "";
+    const unit = s.unit ? ` ${s.unit}` : "";
+    return `${prefix}${n.toLocaleString("fa-IR")} تومان${unit}`;
   };
 
   return (
-    <article
+    <section
       id={`pricing-${group.slug}`}
-      className="scroll-mt-24 rounded-card border border-border-primary bg-surface-secondary/90 p-6 sm:p-8 shadow-elevation-1 transition-all"
+      className="scroll-mt-24 rounded-card border border-border-primary bg-surface-secondary/90 p-4 sm:p-6 shadow-elevation-1"
     >
-      <div className="flex flex-col gap-2 pb-5 border-b border-border-primary/60">
-        <div className="flex items-center gap-2">
-          <span className="flex size-6 items-center justify-center rounded-full bg-copper/20 text-xs font-bold text-copper-strong">
-            {String(index + 1).padStart(2, "0")}
-          </span>
-        </div>
-        <h3 className="text-2xl font-bold text-accent tracking-tight">
+      <div className="mb-3 flex items-center gap-2">
+        <span className="flex size-5 items-center justify-center rounded-full bg-copper/10 text-[10px] font-bold text-copper-strong">
+          {String(index + 1).padStart(2, "0")}
+        </span>
+        <h3 className="text-xl font-bold text-accent tracking-tight">
           {group.title}
         </h3>
-        {group.description ? (
-          <p className="text-dash-body text-content-secondary leading-relaxed max-w-2xl">
-            {group.description}
-          </p>
-        ) : null}
       </div>
 
-      <div className="mt-4 overflow-hidden rounded-control border border-border-interactive bg-surface-secondary">
-        <table className="w-full text-left rtl:text-right">
+      <div className="overflow-hidden rounded-control border border-border-interactive bg-surface-secondary">
+        <table className="w-full text-left rtl:text-right text-sm">
           <thead>
             <tr className="border-b border-border-interactive bg-surface-secondary/50">
-              <th className="px-4 py-3 text-xs font-bold text-content-tertiary uppercase tracking-wider">
+              <th className="px-3 py-2 text-xs font-bold text-content-tertiary uppercase tracking-wider">
                 خدمات
               </th>
-              <th className="px-4 py-3 text-xs font-bold text-content-tertiary uppercase tracking-wider text-end rtl:text-start">
+              <th className="px-3 py-2 text-xs font-bold text-content-tertiary uppercase tracking-wider text-end rtl:text-start">
                 قیمت (تومان)
               </th>
             </tr>
@@ -71,10 +67,10 @@ export default function PricingSection({
                 id={`pricing-${group.slug}-${service.slug}`}
                 className="hover:bg-surface-tertiary/20 transition-colors"
               >
-                <td className="px-4 py-3 text-body-sm text-content-primary">
+                <td className="px-3 py-2 text-body-sm text-content-primary">
                   {service.title}
                 </td>
-                <td className="px-4 py-3 text-body-sm font-extrabold text-accent text-end rtl:text-start tabular-nums">
+                <td className="px-3 py-2 text-body-sm font-extrabold text-accent text-end rtl:text-start tabular-nums">
                   {formatPrice(service)}
                 </td>
               </tr>
@@ -82,7 +78,7 @@ export default function PricingSection({
           </tbody>
         </table>
       </div>
-    </article>
+    </section>
   );
 }
 

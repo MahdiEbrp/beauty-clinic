@@ -159,6 +159,7 @@ async function loadServiceTree(locale: Locale): Promise<PublicServiceTree> {
       faqs: faqsByService.get(row.id) ?? [],
       updatedAt: row.updatedAt,
       displayOrder: row.displayOrder,
+      unit: row.unit,
     });
     servicesByCategory.set(row.categoryId, list);
   }

@@ -36,6 +36,7 @@ export type PricingService = {
   isFeatured: boolean;
   images: ServiceDetailImage[];
   displayOrder: number;
+  unit: string | null;
 };
 
 export type PricingCategory = {
@@ -119,18 +120,18 @@ function toGroups(tree: PublicServiceTree): PricingGroup[] {
   return tree.groups.map((group) => ({
     slug: group.slug,
     title: group.title,
-    description: group.description,
+    description: null,
     displayOrder: group.displayOrder,
     categories: group.categories.map((category) => ({
       slug: category.slug,
       title: category.title,
-      description: category.description,
+      description: null,
       displayOrder: category.displayOrder,
       services: category.services.map((service) => ({
         id: service.id,
         slug: service.slug,
         title: service.title,
-        shortDesc: service.shortDesc,
+        shortDesc: null,
         price: service.price,
         priceType: service.priceType,
         durationMin: service.durationMin,
@@ -139,6 +140,7 @@ function toGroups(tree: PublicServiceTree): PricingGroup[] {
         isFeatured: service.isFeatured,
         images: service.images,
         displayOrder: service.displayOrder,
+        unit: service.unit,
       })),
     })),
   }));

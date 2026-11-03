@@ -79,6 +79,7 @@ export const services = pgTable(
     slug: text("slug").notNull(),
     price: numeric("price", { precision: 12, scale: 2 }),
     priceType: priceTypeEnum("price_type").notNull().default("fixed"),
+    unit: text("unit"),
     durationMin: integer("duration_min"),
     sessionsCount: integer("sessions_count").notNull().default(1),
     coverImage: text("cover_image"),
