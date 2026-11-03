@@ -69,7 +69,7 @@ export default function PricingArticle({
                   />
                 ))}
               </div>
-              <div className="space-y-8 lg:space-y-8">
+              <div className="space-y-8 lg:space-y-8 border-l border-border-primary/40 lg:border-0 lg:border-t lg:pt-8 lg:mt-8">
                 {leftColumnGroups.map((group, index) => (
                   <PricingSection
                     key={group.slug}
