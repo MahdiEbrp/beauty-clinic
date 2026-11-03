@@ -11,7 +11,8 @@ export type PricingSectionProps = {
  * One pricing section per DB group, rendered as a compact two-column table:
  * خدمات | قیمت (تومان).
  *
- * No descriptions, no category cards — just group title + flat table.
+ * Uses accent + copper brand colors for section numbering, titles,
+ * table headers and prices. Surface tones keep the card grounded.
  * Anchored at `#pricing-<slug>` for deep linking.
  */
 export default function PricingSection({
@@ -36,40 +37,40 @@ export default function PricingSection({
   return (
     <section
       id={`pricing-${group.slug}`}
-      className="scroll-mt-24 rounded-card border border-border-primary bg-surface-secondary/90 p-4 sm:p-6 shadow-elevation-1"
+      className="scroll-mt-24 rounded-card border border-border-primary bg-surface-secondary shadow-elevation-1 transition-all duration-300 group hover:border-copper-strong/50 hover:shadow-elevation-2 hover:-translate-y-0.5"
     >
-      <div className="mb-3 flex items-center gap-2">
-        <span className="flex size-5 items-center justify-center rounded-full bg-copper/10 text-[10px] font-bold text-copper-strong">
+      <div className="mb-3 flex items-center gap-2 border-b border-border-interactive/40 pb-2">
+        <span className="flex size-7 items-center justify-center rounded-full bg-accent text-content-contrast text-[11px] font-bold tracking-tighter shadow-sm shadow-accent/20">
           {String(index + 1).padStart(2, "0")}
         </span>
-        <h3 className="text-xl font-bold text-accent tracking-tight">
+        <h3 className="text-xl font-extrabold text-accent tracking-tight">
           {group.title}
         </h3>
       </div>
 
-      <div className="overflow-hidden rounded-control border border-border-interactive bg-surface-secondary">
+      <div className="overflow-hidden rounded-control border border-border-interactive bg-surface-secondary/60">
         <table className="w-full text-left rtl:text-right text-sm">
           <thead>
-            <tr className="border-b border-border-interactive bg-surface-secondary/50">
-              <th className="px-3 py-2 text-xs font-bold text-content-tertiary uppercase tracking-wider">
+            <tr className="border-b border-border-interactive bg-accent-subtle">
+              <th className="px-3 py-2.5 text-xs font-bold text-accent uppercase tracking-wider">
                 خدمات
               </th>
-              <th className="px-3 py-2 text-xs font-bold text-content-tertiary uppercase tracking-wider text-end rtl:text-start">
+              <th className="px-3 py-2.5 text-xs font-bold text-accent uppercase tracking-wider text-end rtl:text-start">
                 قیمت (تومان)
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border-interactive/30">
+          <tbody className="divide-y divide-border-interactive/40">
             {services.map((service) => (
               <tr
                 key={service.id}
                 id={`pricing-${group.slug}-${service.slug}`}
-                className="hover:bg-surface-tertiary/20 transition-colors"
+                className="hover:bg-copper/5 transition-colors group-hover:bg-copper-strong/10"
               >
-                <td className="px-3 py-2 text-body-sm text-content-primary">
+                <td className="px-3 py-2.5 text-body-sm text-content-secondary">
                   {service.title}
                 </td>
-                <td className="px-3 py-2 text-body-sm font-extrabold text-accent text-end rtl:text-start tabular-nums">
+                <td className="px-3 py-2.5 text-body-sm font-extrabold text-accent text-end rtl:text-start tabular-nums group-hover:text-copper-strong">
                   {formatPrice(service)}
                 </td>
               </tr>
