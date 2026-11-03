@@ -36,7 +36,6 @@ export type PricingService = {
   isFeatured: boolean;
   images: ServiceDetailImage[];
   displayOrder: number;
-  unit: string | null;
 };
 
 export type PricingCategory = {
@@ -140,7 +139,6 @@ function toGroups(tree: PublicServiceTree): PricingGroup[] {
         isFeatured: service.isFeatured,
         images: service.images,
         displayOrder: service.displayOrder,
-        unit: service.unit,
       })),
     })),
   }));
