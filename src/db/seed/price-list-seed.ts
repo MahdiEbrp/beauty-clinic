@@ -101,27 +101,15 @@ const GROUPS: PriceGroup[] = [
   },
   {
     slug: "pack-10cc",
-    faName: "پک‌های کانتورینگ و فول فیس",
-    enName: "Contouring & Full Face Packs",
+    faName: "پک ۱۰ سیسی کانتورینگ",
+    enName: "Pack 10cc Contouring",
     displayOrder: 2,
     categories: [
-      {
-        slug: "full-face-packs",
-        faName: "پکیج‌های فول فیس",
-        enName: "Full Face Packs",
-        displayOrder: 1,
-        services: [
-          { slug: "ffp-3cc", faTitle: "پک فول فیس ۳ سیسی", enTitle: "Full Face Pack 3cc", price: 12_900_000, displayOrder: 1, priceType: "fixed" },
-          { slug: "ffp-5cc", faTitle: "پک فول فیس ۵ سیسی", enTitle: "Full Face Pack 5cc", price: 19_900_000, displayOrder: 2, priceType: "fixed" },
-          { slug: "ffp-8cc", faTitle: "پک فول فیس ۸ سیسی", enTitle: "Full Face Pack 8cc", price: 29_900_000, displayOrder: 3, priceType: "fixed" },
-          { slug: "ffp-custom", faTitle: "پک فول Fiس اختصاصی", enTitle: "Full Face Pack Custom", price: 39_900_000, displayOrder: 4, priceType: "from" },
-        ],
-      },
       {
         slug: "pack-10cc-brands",
         faName: "برندهای پک ۱۰ سیسی",
         enName: "Pack 10cc Brands",
-        displayOrder: 2,
+        displayOrder: 1,
         services: [
           { slug: "pack-10cc-eptq", faTitle: "اپی تی کیو", enTitle: "Pack eptq", price: 24_900_000, displayOrder: 1, priceType: "fixed" },
           { slug: "pack-10cc-zishal", faTitle: "زیشال", enTitle: "Pack Zishal", price: 20_900_000, displayOrder: 2, priceType: "fixed" },
