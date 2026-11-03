@@ -88,7 +88,6 @@ export type PublicTreeService = {
   /** Real edit timestamp, used for sitemap `lastModified`. */
   updatedAt: Date;
   displayOrder: number;
-  unit: string | null;
 };
 
 /** A localized category with its active services. */

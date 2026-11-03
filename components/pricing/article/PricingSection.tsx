@@ -30,8 +30,7 @@ export default function PricingSection({
     if (s.price === null) return "قیمت از طریق تماس";
     const n = Math.round(Number(s.price));
     const prefix = s.priceType === "from" ? "از " : "";
-    const unit = s.unit ? ` ${s.unit}` : "";
-    return `${prefix}${n.toLocaleString("fa-IR")} تومان${unit}`;
+    return `${prefix}${n.toLocaleString("fa-IR")} تومان`;
   };
 
   return (
