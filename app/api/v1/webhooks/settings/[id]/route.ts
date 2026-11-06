@@ -1,5 +1,4 @@
 import type { NextResponse } from "next/server";
-import { z } from "zod";
 
 import { ApiError, jsonOk, jsonError, handleApiError } from "@/lib/api/errors";
 import { authenticateWebhook } from "@/lib/webhooks/service";
@@ -65,7 +64,7 @@ async function handler(
     if (method === "GET") {
       const { user } = await requireAuthAndPerm(request, "settings.read");
       await rateLimitCheck(user.id, `webhook:setting:get:${user.id}`, reply);
-      const setting = await getWebhookSetting(id, user.id);
+      const setting = await getWebhookSetting(id);
       if (!setting) return reply(jsonError("SETTING_NOT_FOUND", "System setting not found.", 404));
       logInfo("webhook.setting_get", { requestId, userId: user.id });
       return reply(jsonOk({ setting }));
@@ -91,7 +90,7 @@ async function handler(
       if (!parsed.success) {
         return reply(jsonError("VALIDATION_ERROR", "Invalid request body.", 400));
       }
-      await updateWebhookSetting(id, parsed.data, user.id);
+      await updateWebhookSetting(id, parsed.data);
       logInfo("webhook.setting_updated", { requestId, userId: user.id });
       return reply(jsonOk({ updated: true }));
     }
@@ -99,7 +98,7 @@ async function handler(
     if (method === "DELETE") {
       const { user } = await requireAuthAndPerm(request, "settings.manage");
       await rateLimitCheck(user.id, `webhook:setting:delete:${user.id}`, reply);
-      await deleteWebhookSetting(id, user.id);
+      await deleteWebhookSetting(id);
       logInfo("webhook.setting_deleted", { requestId, userId: user.id });
       return reply(jsonOk({ deleted: true }));
     }

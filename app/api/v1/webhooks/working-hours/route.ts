@@ -1,5 +1,4 @@
 import type { NextResponse } from "next/server";
-import { z } from "zod";
 
 import { ApiError, withApiHandler, jsonOk, jsonError, handleApiError } from "@/lib/api/errors";
 import { authenticateWebhook } from "@/lib/webhooks/service";
@@ -85,7 +84,7 @@ async function handler(
         return reply(jsonError("VALIDATION_ERROR", "Invalid query parameters.", 400));
       }
 
-      const result = await listWebhookWorkingHours(parsed.data, user.id);
+      const result = await listWebhookWorkingHours(parsed.data);
       logInfo("webhook.workinghours_listed", { requestId, userId: user.id });
       return reply(jsonOk(result));
     }
@@ -100,7 +99,7 @@ async function handler(
         return reply(jsonError("VALIDATION_ERROR", "Invalid request body.", 400));
       }
 
-      const result = await createWebhookWorkingHour(parsed.data, user.id);
+      const result = await createWebhookWorkingHour(parsed.data);
       logInfo("webhook.workinghour_created", { requestId, userId: user.id });
       return reply(jsonOk(result, 201));
     }

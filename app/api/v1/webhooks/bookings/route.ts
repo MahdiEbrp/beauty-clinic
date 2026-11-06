@@ -20,12 +20,12 @@ const WEBHOOK_RATE_LIMIT = {
   windowMs: 60 * 60 * 1000,
 };
 
-async function requirePermission(
+function requirePermission(
   user: { permissions: string[]; id: string },
   permission: string,
   requestId: string,
   reply: (response: NextResponse) => NextResponse,
-): Promise<void> {
+): void {
   if (!user.permissions.includes(permission)) {
     logError("webhook.forbidden", {
       requestId,
@@ -111,7 +111,7 @@ async function listHandler(request: Request): Promise<NextResponse> {
       );
     }
 
-    const result = await listWebhookBookings(parsed.data, user.id);
+    const result = await listWebhookBookings(parsed.data);
 
     logInfo("webhook.bookings_listed", { requestId, userId: user.id });
     return reply(jsonOk(result));

@@ -63,7 +63,7 @@ async function handler(
     if (method === "GET") {
       const { user } = await requireAuthAndPerm(request, "appointments.read");
       await rateLimitCheck(user.id, `webhook:workinghours:get:${user.id}`, reply);
-      const row = await getWebhookWorkingHour(id, user.id);
+      const row = await getWebhookWorkingHour(id);
       if (!row) return reply(jsonError("WORKING_HOURS_NOT_FOUND", "Working hours not found.", 404));
       logInfo("webhook.workinghour_get", { requestId, userId: user.id });
       return reply(jsonOk(row));
@@ -89,7 +89,7 @@ async function handler(
       if (!parsed.success) {
         return reply(jsonError("VALIDATION_ERROR", "Invalid request body.", 400));
       }
-      const row = await updateWebhookWorkingHour(id, parsed.data, user.id);
+      const row = await updateWebhookWorkingHour(id, parsed.data);
       logInfo("webhook.workinghour_updated", { requestId, userId: user.id });
       return reply(jsonOk(row));
     }
@@ -97,7 +97,7 @@ async function handler(
     if (method === "DELETE") {
       const { user } = await requireAuthAndPerm(request, "appointments.manage");
       await rateLimitCheck(user.id, `webhook:workinghours:delete:${user.id}`, reply);
-      await deleteWebhookWorkingHour(id, user.id);
+      await deleteWebhookWorkingHour(id);
       logInfo("webhook.workinghour_deleted", { requestId, userId: user.id });
       return reply(jsonOk({ ok: true }));
     }

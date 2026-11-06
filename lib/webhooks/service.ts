@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import "server-only";
 
 import { and, eq, isNull } from "drizzle-orm";
@@ -8,38 +9,14 @@ import { ApiError } from "@/lib/api/errors";
 import { hashPassword } from "@/lib/auth/password";
 import { logInfo } from "@/lib/log";
 import { createBookingGroup } from "@/lib/bookings/service";
+import {
+  webhookListBookingsQuerySchema,
+  webhookUpdateBookingSchema,
+} from "./schema";
 import type {
   WebhookCreateBookingInput,
   WebhookListBookingsQuery,
   WebhookUpdateBookingInput,
-} from "./schema";
-import {
-  webhookListBookingsQuerySchema,
-  webhookUpdateBookingSchema,
-  webhookCreateServiceGroupSchema,
-  webhookUpdateServiceGroupSchema,
-  webhookCreateServiceCategorySchema,
-  webhookUpdateServiceCategorySchema,
-  webhookCreateServiceSchema,
-  webhookUpdateServiceSchema,
-  webhookCreateUserSchema,
-  webhookUpdateUserStatusSchema,
-  webhookListUsersQuerySchema,
-  webhookCreateWorkingHourSchema,
-  webhookUpdateWorkingHourSchema,
-  webhookListWorkingHoursQuerySchema,
-  webhookCreateSettingSchema,
-  webhookUpdateSettingSchema,
-  webhookListSettingsQuerySchema,
-  webhookCreateRuleSchema,
-  webhookUpdateRuleSchema,
-  webhookListRulesQuerySchema,
-  webhookCreateCareGuideSchema,
-  webhookUpdateCareGuideSchema,
-  webhookListCareGuidesQuerySchema,
-  webhookCreateCareGuideItemSchema,
-  webhookUpdateCareGuideItemSchema,
-  webhookListCareGuideItemsQuerySchema,
 } from "./schema";
 import type {
   WebhookCreateServiceGroupInput,
@@ -153,6 +130,7 @@ async function authenticateUser(
     .limit(1);
 
   const dummyHash =
+    // eslint-disable-next-line no-secrets/no-secrets
     "$argon2id$v=19$m=19456,t=2,p=1$dGVzdHNhbHQ$dummyhashvaluefornotfounduser";
   void dummyHash;
 
@@ -273,7 +251,6 @@ export async function createWebhookBooking(
 
 export async function listWebhookBookings(
   query: WebhookListBookingsQuery,
-  actorUserId: string,
 ) {
   const { listBookings } = await import("@/lib/bookings/service");
   const parsed = webhookListBookingsQuerySchema.safeParse(query);
@@ -281,7 +258,7 @@ export async function listWebhookBookings(
   return listBookings(parsed.data);
 }
 
-export async function getWebhookBooking(id: string, actorUserId: string) {
+export async function getWebhookBooking(id: string) {
   const { getBooking } = await import("@/lib/bookings/service");
   return getBooking(id);
 }
@@ -289,7 +266,6 @@ export async function getWebhookBooking(id: string, actorUserId: string) {
 export async function updateWebhookBooking(
   id: string,
   input: WebhookUpdateBookingInput,
-  actorUserId: string,
 ) {
   const { updateBookingDetails } = await import("@/lib/bookings/service");
   const parsed = webhookUpdateBookingSchema.safeParse(input);
@@ -297,7 +273,7 @@ export async function updateWebhookBooking(
   return updateBookingDetails(id, parsed.data);
 }
 
-export async function deleteWebhookBooking(id: string, actorUserId: string) {
+export async function deleteWebhookBooking(id: string) {
   const { deleteBooking } = await import("@/lib/bookings/service");
   return deleteBooking(id);
 }
@@ -308,20 +284,18 @@ export async function deleteWebhookBooking(id: string, actorUserId: string) {
 
 export async function listWebhookServices(
   query: WebhookListServicesQuery,
-  actorUserId: string,
 ) {
   const { listServices } = await import("@/lib/services/services");
   return listServices(query);
 }
 
-export async function getWebhookService(id: string, actorUserId: string) {
+export async function getWebhookService(id: string) {
   const { getService } = await import("@/lib/services/services");
   return getService(id);
 }
 
 export async function createWebhookService(
   input: WebhookCreateServiceInput,
-  actorUserId: string,
 ) {
   const { createService } = await import("@/lib/services/service-mutations");
   return createService(input);
@@ -330,13 +304,12 @@ export async function createWebhookService(
 export async function updateWebhookService(
   id: string,
   input: WebhookUpdateServiceInput,
-  actorUserId: string,
 ) {
   const { updateService } = await import("@/lib/services/service-mutations");
   return updateService(id, input);
 }
 
-export async function deleteWebhookService(id: string, actorUserId: string) {
+export async function deleteWebhookService(id: string) {
   const { deleteService } = await import("@/lib/services/service-mutations");
   return deleteService(id);
 }
@@ -347,25 +320,23 @@ export async function deleteWebhookService(id: string, actorUserId: string) {
 
 export async function listWebhookServiceGroups(
   query: { page?: number; perPage?: number; search?: string; status?: string },
-  actorUserId: string,
 ) {
   const { listServiceGroups } = await import("@/lib/services/groups");
   return listServiceGroups({
     page: query.page ?? 1,
     perPage: query.perPage ?? 20,
     search: query.search,
-    status: query.status as any,
+    status: query.status as unknown as "all" | "active" | "inactive",
   });
 }
 
-export async function getWebhookServiceGroup(id: string, actorUserId: string) {
+export async function getWebhookServiceGroup(id: string) {
   const { getGroup } = await import("@/lib/services/groups");
   return getGroup(id);
 }
 
 export async function createWebhookServiceGroup(
   input: WebhookCreateServiceGroupInput,
-  actorUserId: string,
 ) {
   const { createGroup } = await import("@/lib/services/groups");
   return createGroup(input);
@@ -374,13 +345,12 @@ export async function createWebhookServiceGroup(
 export async function updateWebhookServiceGroup(
   id: string,
   input: WebhookUpdateServiceGroupInput,
-  actorUserId: string,
 ) {
   const { updateGroup } = await import("@/lib/services/groups");
   return updateGroup(id, input);
 }
 
-export async function deleteWebhookServiceGroup(id: string, actorUserId: string) {
+export async function deleteWebhookServiceGroup(id: string) {
   const { deleteGroup } = await import("@/lib/services/groups");
   return deleteGroup(id);
 }
@@ -391,25 +361,23 @@ export async function deleteWebhookServiceGroup(id: string, actorUserId: string)
 
 export async function listWebhookServiceCategories(
   query: { page?: number; perPage?: number; search?: string; status?: string },
-  actorUserId: string,
 ) {
   const { listServiceCategories } = await import("@/lib/services/categories-admin");
   return listServiceCategories({
     page: query.page ?? 1,
     perPage: query.perPage ?? 20,
     search: query.search,
-    status: query.status as any,
+    status: query.status as unknown as "all" | "active" | "inactive",
   });
 }
 
-export async function getWebhookServiceCategory(id: string, actorUserId: string) {
+export async function getWebhookServiceCategory(id: string) {
   const { getCategory } = await import("@/lib/services/categories");
   return getCategory(id);
 }
 
 export async function createWebhookServiceCategory(
   input: WebhookCreateServiceCategoryInput,
-  actorUserId: string,
 ) {
   const { createCategory } = await import("@/lib/services/categories");
   return createCategory(input);
@@ -418,13 +386,12 @@ export async function createWebhookServiceCategory(
 export async function updateWebhookServiceCategory(
   id: string,
   input: WebhookUpdateServiceCategoryInput,
-  actorUserId: string,
 ) {
   const { updateCategory } = await import("@/lib/services/categories");
   return updateCategory(id, input);
 }
 
-export async function deleteWebhookServiceCategory(id: string, actorUserId: string) {
+export async function deleteWebhookServiceCategory(id: string) {
   const { deleteCategory } = await import("@/lib/services/categories");
   return deleteCategory(id);
 }
@@ -435,7 +402,6 @@ export async function deleteWebhookServiceCategory(id: string, actorUserId: stri
 
 export async function listWebhookUsers(
   query: WebhookListUsersQuery,
-  actorUserId: string,
 ) {
   const { listUsers } = await import("@/lib/users/service");
   return listUsers(query);
@@ -443,7 +409,6 @@ export async function listWebhookUsers(
 
 export async function createWebhookUser(
   input: WebhookCreateUserInput,
-  actorUserId: string,
   actorPermissions: string[],
 ) {
   const { createUser } = await import("@/lib/users/service");
@@ -453,13 +418,12 @@ export async function createWebhookUser(
 export async function updateWebhookUserStatus(
   id: string,
   input: WebhookUpdateUserStatusInput,
-  actorUserId: string,
 ) {
   const { updateUserStatus } = await import("@/lib/users/service");
   return updateUserStatus(id, input);
 }
 
-export async function deleteWebhookUser(id: string, actorUserId: string) {
+export async function deleteWebhookUser(id: string) {
   const { softDeleteUser } = await import("@/lib/users/service");
   return softDeleteUser(id);
 }
@@ -470,7 +434,6 @@ export async function deleteWebhookUser(id: string, actorUserId: string) {
 
 export async function listWebhookWorkingHours(
   query: WebhookListWorkingHoursQuery,
-  actorUserId: string,
 ) {
   const { listWorkingHoursAdmin } = await import("@/lib/bookings/working-hours-admin");
   return listWorkingHoursAdmin({
@@ -481,14 +444,13 @@ export async function listWebhookWorkingHours(
   });
 }
 
-export async function getWebhookWorkingHour(id: string, actorUserId: string) {
+export async function getWebhookWorkingHour(id: string) {
   const { getWorkingHour } = await import("@/lib/bookings/working-hours-admin");
   return getWorkingHour(id);
 }
 
 export async function createWebhookWorkingHour(
   input: WebhookCreateWorkingHourInput,
-  actorUserId: string,
 ) {
   const { createWorkingHour } = await import("@/lib/bookings/working-hours-admin");
   return createWorkingHour(input);
@@ -497,13 +459,12 @@ export async function createWebhookWorkingHour(
 export async function updateWebhookWorkingHour(
   id: string,
   input: WebhookUpdateWorkingHourInput,
-  actorUserId: string,
 ) {
   const { updateWorkingHour } = await import("@/lib/bookings/working-hours-admin");
   return updateWorkingHour(id, input);
 }
 
-export async function deleteWebhookWorkingHour(id: string, actorUserId: string) {
+export async function deleteWebhookWorkingHour(id: string) {
   const { deleteWorkingHour } = await import("@/lib/bookings/working-hours-admin");
   return deleteWorkingHour(id);
 }
@@ -514,20 +475,18 @@ export async function deleteWebhookWorkingHour(id: string, actorUserId: string) 
 
 export async function listWebhookSettings(
   query: WebhookListSettingsQuery,
-  actorUserId: string,
 ) {
   const { listSystemSettings } = await import("@/lib/settings/admin");
   return listSystemSettings(query);
 }
 
-export async function getWebhookSetting(id: string, actorUserId: string) {
+export async function getWebhookSetting(id: string) {
   const { getSystemSettingById } = await import("@/lib/settings/admin");
   return getSystemSettingById(id);
 }
 
 export async function createWebhookSetting(
   input: WebhookCreateSettingInput,
-  actorUserId: string,
 ) {
   const { createSystemSetting } = await import("@/lib/settings/admin");
   return createSystemSetting(input);
@@ -536,13 +495,12 @@ export async function createWebhookSetting(
 export async function updateWebhookSetting(
   id: string,
   input: WebhookUpdateSettingInput,
-  actorUserId: string,
 ) {
   const { updateSystemSetting } = await import("@/lib/settings/admin");
   return updateSystemSetting(id, input);
 }
 
-export async function deleteWebhookSetting(id: string, actorUserId: string) {
+export async function deleteWebhookSetting(id: string) {
   const { deleteSystemSetting } = await import("@/lib/settings/admin");
   return deleteSystemSetting(id);
 }
@@ -553,20 +511,18 @@ export async function deleteWebhookSetting(id: string, actorUserId: string) {
 
 export async function listWebhookRules(
   query: WebhookListRulesQuery,
-  actorUserId: string,
 ) {
   const { listRulesAdmin } = await import("@/lib/services/rules-admin");
   return listRulesAdmin(query);
 }
 
-export async function getWebhookRule(id: string, actorUserId: string) {
+export async function getWebhookRule(id: string) {
   const { getRule } = await import("@/lib/services/rules");
   return getRule(id);
 }
 
 export async function createWebhookRule(
   input: WebhookCreateRuleInput,
-  actorUserId: string,
 ) {
   const { createRule } = await import("@/lib/services/rules");
   return createRule(input);
@@ -575,13 +531,12 @@ export async function createWebhookRule(
 export async function updateWebhookRule(
   id: string,
   input: WebhookUpdateRuleInput,
-  actorUserId: string,
 ) {
   const { updateRule } = await import("@/lib/services/rules");
   return updateRule(id, input);
 }
 
-export async function deleteWebhookRule(id: string, actorUserId: string) {
+export async function deleteWebhookRule(id: string) {
   const { deleteRule } = await import("@/lib/services/rules");
   return deleteRule(id);
 }
@@ -592,20 +547,18 @@ export async function deleteWebhookRule(id: string, actorUserId: string) {
 
 export async function listWebhookCareGuides(
   query: WebhookListCareGuidesQuery,
-  actorUserId: string,
 ) {
   const { listCareGuidesAdmin } = await import("@/lib/services/care-guides");
   return listCareGuidesAdmin(query);
 }
 
-export async function getWebhookCareGuide(id: string, actorUserId: string) {
+export async function getWebhookCareGuide(id: string) {
   const { getCareGuide } = await import("@/lib/services/care-guides");
   return getCareGuide(id);
 }
 
 export async function createWebhookCareGuide(
   input: WebhookCreateCareGuideInput,
-  actorUserId: string,
 ) {
   const { createCareGuide } = await import("@/lib/services/care-guides");
   return createCareGuide(input);
@@ -614,13 +567,12 @@ export async function createWebhookCareGuide(
 export async function updateWebhookCareGuide(
   id: string,
   input: WebhookUpdateCareGuideInput,
-  actorUserId: string,
 ) {
   const { updateCareGuide } = await import("@/lib/services/care-guides");
   return updateCareGuide(id, input);
 }
 
-export async function deleteWebhookCareGuide(id: string, actorUserId: string) {
+export async function deleteWebhookCareGuide(id: string) {
   const { deleteCareGuide } = await import("@/lib/services/care-guides");
   return deleteCareGuide(id);
 }
@@ -631,20 +583,18 @@ export async function deleteWebhookCareGuide(id: string, actorUserId: string) {
 
 export async function listWebhookCareGuideItems(
   query: WebhookListCareGuideItemsQuery,
-  actorUserId: string,
 ) {
   const { listCareGuideItemsAdmin } = await import("@/lib/services/care-guide-items");
   return listCareGuideItemsAdmin(query);
 }
 
-export async function getWebhookCareGuideItem(id: string, actorUserId: string) {
+export async function getWebhookCareGuideItem(id: string) {
   const { getCareGuideItem } = await import("@/lib/services/care-guide-items");
   return getCareGuideItem(id);
 }
 
 export async function createWebhookCareGuideItem(
   input: WebhookCreateCareGuideItemInput,
-  actorUserId: string,
 ) {
   const { createCareGuideItem } = await import("@/lib/services/care-guide-items");
   return createCareGuideItem(input);
@@ -653,13 +603,12 @@ export async function createWebhookCareGuideItem(
 export async function updateWebhookCareGuideItem(
   id: string,
   input: WebhookUpdateCareGuideItemInput,
-  actorUserId: string,
 ) {
   const { updateCareGuideItem } = await import("@/lib/services/care-guide-items");
   return updateCareGuideItem(id, input);
 }
 
-export async function deleteWebhookCareGuideItem(id: string, actorUserId: string) {
+export async function deleteWebhookCareGuideItem(id: string) {
   const { deleteCareGuideItem } = await import("@/lib/services/care-guide-items");
   return deleteCareGuideItem(id);
 }

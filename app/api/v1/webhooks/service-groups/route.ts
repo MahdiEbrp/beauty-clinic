@@ -1,5 +1,4 @@
 import type { NextResponse } from "next/server";
-import { z } from "zod";
 
 import { ApiError, withApiHandler, jsonOk, jsonError, handleApiError } from "@/lib/api/errors";
 import { authenticateWebhook } from "@/lib/webhooks/service";
@@ -85,8 +84,7 @@ async function handler(
           perPage: query.perPage ? Number(query.perPage) : undefined,
           search: query.search,
           status: query.status,
-        },
-        user.id,
+        }
       );
       logInfo("webhook.groups_listed", { requestId, userId: user.id });
       return reply(jsonOk(result));
@@ -102,7 +100,7 @@ async function handler(
         return reply(jsonError("VALIDATION_ERROR", "Invalid request body.", 400));
       }
 
-      const result = await createWebhookServiceGroup(parsed.data, user.id);
+      const result = await createWebhookServiceGroup(parsed.data);
       logInfo("webhook.group_created", { requestId, userId: user.id, groupId: result.id });
       return reply(jsonOk(result, 201));
     }

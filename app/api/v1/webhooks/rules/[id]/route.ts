@@ -63,7 +63,7 @@ async function handler(
     if (method === "GET") {
       const { user } = await requireAuthAndPerm(request, "rules.read");
       await rateLimitCheck(user.id, `webhook:rule:get:${user.id}`, reply);
-      const rule = await getWebhookRule(id, user.id);
+      const rule = await getWebhookRule(id);
       logInfo("webhook.rule_get", { requestId, userId: user.id });
       return reply(jsonOk(rule));
     }
@@ -88,7 +88,7 @@ async function handler(
       if (!parsed.success) {
         return reply(jsonError("VALIDATION_ERROR", "Invalid request body.", 400));
       }
-      await updateWebhookRule(id, parsed.data, user.id);
+      await updateWebhookRule(id, parsed.data);
       logInfo("webhook.rule_updated", { requestId, userId: user.id });
       return reply(jsonOk({ ok: true }));
     }
@@ -96,7 +96,7 @@ async function handler(
     if (method === "DELETE") {
       const { user } = await requireAuthAndPerm(request, "rules.manage");
       await rateLimitCheck(user.id, `webhook:rule:delete:${user.id}`, reply);
-      await deleteWebhookRule(id, user.id);
+      await deleteWebhookRule(id);
       logInfo("webhook.rule_deleted", { requestId, userId: user.id });
       return reply(jsonOk({ ok: true }));
     }

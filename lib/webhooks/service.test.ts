@@ -1,14 +1,15 @@
+/* eslint-disable max-lines */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { MockDb } from "@/lib/test/mock-db";
 
 import type { WebhookCreateBookingInput } from "./schema";
 
 const hashPasswordMock = vi.hoisted(() => ({
-  hashPassword: vi.fn(async (plain: string) => `hash:${plain}`),
+  hashPassword: vi.fn((plain: string) => `hash:${plain}`),
 }));
 
 const argon2Mock = vi.hoisted(() => ({
-  verify: vi.fn(async () => true),
+  verify: vi.fn(() => Promise.resolve(true)),
 }));
 
 const bookingMock = vi.hoisted(() => ({
@@ -133,10 +134,10 @@ beforeEach(() => {
   // Clear in-memory auth attempt tracker between tests
   clearAuthAttemptsForTesting();
   hashPasswordMock.hashPassword.mockImplementation(
-    async (plain: string) => `hash:${plain}`,
+    (plain: string) => `hash:${plain}`,
   );
-  argon2Mock.verify.mockImplementation(async () => true);
-  bookingMock.createBookingGroup.mockImplementation(async () => ({
+  argon2Mock.verify.mockImplementation(() => Promise.resolve(true));
+  bookingMock.createBookingGroup.mockImplementation(() => ({
     groupRef: "NF-12345",
     items: [],
     deposit: 1000000,
@@ -201,10 +202,11 @@ describe("authenticateWebhook", () => {
   });
 
   it("rejects invalid password", async () => {
-    argon2Mock.verify.mockImplementation(async () => false);
+    argon2Mock.verify.mockImplementation(() => Promise.resolve(false));
 
     await expect(
       authenticateWebhook(
+    // eslint-disable-next-line no-secrets/no-secrets
         `Basic ${Buffer.from("webhook@clinic.com:WrongPassword1!").toString("base64")}`,
       ),
     ).rejects.toMatchObject({
@@ -247,11 +249,12 @@ describe("authenticateWebhook", () => {
   });
 
   it("locks out after 5 failed attempts", async () => {
-    argon2Mock.verify.mockImplementation(async () => false);
+    argon2Mock.verify.mockImplementation(() => Promise.resolve(false));
 
     for (let i = 0; i < 5; i++) {
       await expect(
         authenticateWebhook(
+    // eslint-disable-next-line no-secrets/no-secrets
           `Basic ${Buffer.from("webhook@clinic.com:WrongPassword1!").toString("base64")}`,
         ),
       ).rejects.toMatchObject({ code: "INVALID_CREDENTIALS" });
@@ -269,19 +272,20 @@ describe("authenticateWebhook", () => {
   });
 
   it("clears failed attempts after successful auth", async () => {
-    argon2Mock.verify.mockImplementation(async () => false);
+    argon2Mock.verify.mockImplementation(() => Promise.resolve(false));
 
     // 2 failed attempts
     for (let i = 0; i < 2; i++) {
       try {
         await authenticateWebhook(
+    // eslint-disable-next-line no-secrets/no-secrets
           `Basic ${Buffer.from("webhook@clinic.com:WrongPassword1!").toString("base64")}`,
         );
       } catch {}
     }
 
     // Now a valid password should succeed
-    argon2Mock.verify.mockImplementation(async () => true);
+    argon2Mock.verify.mockImplementation(() => Promise.resolve(true));
     const user = await authenticateWebhook(
       `Basic ${Buffer.from("webhook@clinic.com:SuperSecret1!").toString("base64")}`,
     );
@@ -308,6 +312,7 @@ describe("createWebhookBooking", () => {
         phone: "+989121234567",
         email: "customer@example.com",
         termsAccepted: true,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         items: expect.arrayContaining([
           expect.objectContaining({
             groupId: "11111111-1111-1111-1111-111111111111",

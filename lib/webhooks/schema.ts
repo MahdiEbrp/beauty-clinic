@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { z } from "zod";
 
 import { SLUG_PATTERN } from "@/lib/validation/slug";
@@ -94,7 +95,6 @@ export const webhookListServicesQuerySchema = z
 export type WebhookListServicesQuery = z.infer<typeof webhookListServicesQuerySchema>;
 
 const priceTypeSchema = z.enum(["fixed", "from", "on_request"]);
-const localeSchema = z.enum(["en", "fa"]);
 
 export const serviceGroupI18nSchema = z
   .object({
