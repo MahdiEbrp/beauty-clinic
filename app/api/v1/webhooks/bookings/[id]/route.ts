@@ -63,7 +63,7 @@ async function handler(
     if (method === "GET") {
       const { user } = await requireAuthAndPerm(request, "appointments.read");
       await rateLimitCheck(user.id, `webhook:booking:get:${user.id}`, reply);
-      const booking = await getWebhookBooking(id, user.id);
+      const booking = await getWebhookBooking(id);
       logInfo("webhook.booking_get", { requestId, userId: user.id, bookingId: id });
       return reply(jsonOk(booking));
     }
@@ -88,7 +88,7 @@ async function handler(
       if (!parsed.success) {
         return reply(jsonError("VALIDATION_ERROR", "Invalid request body.", 400));
       }
-      const booking = await updateWebhookBooking(id, parsed.data, user.id);
+      const booking = await updateWebhookBooking(id, parsed.data);
       logInfo("webhook.booking_updated", { requestId, userId: user.id, bookingId: id });
       return reply(jsonOk(booking));
     }
@@ -96,7 +96,7 @@ async function handler(
     if (method === "DELETE") {
       const { user } = await requireAuthAndPerm(request, "appointments.manage");
       await rateLimitCheck(user.id, `webhook:booking:delete:${user.id}`, reply);
-      await deleteWebhookBooking(id, user.id);
+      await deleteWebhookBooking(id);
       logInfo("webhook.booking_deleted", { requestId, userId: user.id, bookingId: id });
       return reply(jsonOk({ ok: true }));
     }

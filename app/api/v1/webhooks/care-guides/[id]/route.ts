@@ -63,7 +63,7 @@ async function handler(
     if (method === "GET") {
       const { user } = await requireAuthAndPerm(request, "care-guides.read");
       await rateLimitCheck(user.id, `webhook:careguide:get:${user.id}`, reply);
-      const guide = await getWebhookCareGuide(id, user.id);
+      const guide = await getWebhookCareGuide(id);
       logInfo("webhook.careguide_get", { requestId, userId: user.id });
       return reply(jsonOk(guide));
     }
@@ -88,7 +88,7 @@ async function handler(
       if (!parsed.success) {
         return reply(jsonError("VALIDATION_ERROR", "Invalid request body.", 400));
       }
-      await updateWebhookCareGuide(id, parsed.data, user.id);
+      await updateWebhookCareGuide(id, parsed.data);
       logInfo("webhook.careguide_updated", { requestId, userId: user.id });
       return reply(jsonOk({ ok: true }));
     }
@@ -96,7 +96,7 @@ async function handler(
     if (method === "DELETE") {
       const { user } = await requireAuthAndPerm(request, "care-guides.manage");
       await rateLimitCheck(user.id, `webhook:careguide:delete:${user.id}`, reply);
-      await deleteWebhookCareGuide(id, user.id);
+      await deleteWebhookCareGuide(id);
       logInfo("webhook.careguide_deleted", { requestId, userId: user.id });
       return reply(jsonOk({ ok: true }));
     }

@@ -63,7 +63,7 @@ async function handler(
     if (method === "GET") {
       const { user } = await requireAuthAndPerm(request, "services.read");
       await rateLimitCheck(user.id, `webhook:category:get:${user.id}`, reply);
-      const category = await getWebhookServiceCategory(id, user.id);
+      const category = await getWebhookServiceCategory(id);
       logInfo("webhook.category_get", { requestId, userId: user.id, categoryId: id });
       return reply(jsonOk(category));
     }
@@ -88,7 +88,7 @@ async function handler(
       if (!parsed.success) {
         return reply(jsonError("VALIDATION_ERROR", "Invalid request body.", 400));
       }
-      await updateWebhookServiceCategory(id, parsed.data, user.id);
+      await updateWebhookServiceCategory(id, parsed.data);
       logInfo("webhook.category_updated", { requestId, userId: user.id, categoryId: id });
       return reply(jsonOk({ ok: true }));
     }
@@ -96,7 +96,7 @@ async function handler(
     if (method === "DELETE") {
       const { user } = await requireAuthAndPerm(request, "services.manage");
       await rateLimitCheck(user.id, `webhook:category:delete:${user.id}`, reply);
-      await deleteWebhookServiceCategory(id, user.id);
+      await deleteWebhookServiceCategory(id);
       logInfo("webhook.category_deleted", { requestId, userId: user.id, categoryId: id });
       return reply(jsonOk({ ok: true }));
     }

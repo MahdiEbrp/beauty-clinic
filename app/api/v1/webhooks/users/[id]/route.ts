@@ -84,7 +84,7 @@ async function handler(
       if (!parsed.success) {
         return reply(jsonError("VALIDATION_ERROR", "Invalid request body.", 400));
       }
-      await updateWebhookUserStatus(id, parsed.data, user.id);
+      await updateWebhookUserStatus(id, parsed.data);
       logInfo("webhook.user_updated", { requestId, userId: user.id, targetUserId: id });
       return reply(jsonOk({ ok: true }));
     }
@@ -92,7 +92,7 @@ async function handler(
     if (method === "DELETE") {
       const { user } = await requireAuthAndPerm(request, "users.manage");
       await rateLimitCheck(user.id, `webhook:user:delete:${user.id}`, reply);
-      await deleteWebhookUser(id, user.id);
+      await deleteWebhookUser(id);
       logInfo("webhook.user_deleted", { requestId, userId: user.id, targetUserId: id });
       return reply(jsonOk({ ok: true }));
     }
