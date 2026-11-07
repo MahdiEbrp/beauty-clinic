@@ -46,7 +46,7 @@ async function rateLimitCheck(
 
 async function handler(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
   method: "PATCH" | "DELETE",
 ): Promise<NextResponse> {
   const requestId = crypto.randomUUID();
@@ -55,7 +55,7 @@ async function handler(
     return response;
   };
 
-  const id = params?.id;
+  const { id } = await params;
   if (!id || !z.uuid().safeParse(id).success) return reply(invalidId());
 
   const authUser = await authenticateWebhook(request.headers.get("authorization"));
@@ -103,7 +103,7 @@ async function handler(
   }
 }
 
-export const PATCH = async (request: Request, { params }: { params: { id: string } }) =>
+export const PATCH = async (request: Request, { params }: { params: Promise<{ id: string }> }) =>
   handler(request, { params }, "PATCH");
-export const DELETE = async (request: Request, { params }: { params: { id: string } }) =>
+export const DELETE = async (request: Request, { params }: { params: Promise<{ id: string }> }) =>
   handler(request, { params }, "DELETE");
