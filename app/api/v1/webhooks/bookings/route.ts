@@ -1,4 +1,5 @@
 import type { NextResponse } from "next/server";
+import { z } from "zod";
 
 import { withApiHandler, jsonOk, jsonError, handleApiError } from "@/lib/api/errors";
 import { authenticateWebhook } from "@/lib/webhooks/service";
@@ -107,7 +108,12 @@ async function listHandler(request: Request): Promise<NextResponse> {
     const parsed = webhookListBookingsQuerySchema.safeParse(query);
     if (!parsed.success) {
       return reply(
-        jsonError("VALIDATION_ERROR", "Invalid query parameters.", 400),
+        jsonError(
+          "VALIDATION_ERROR",
+          "Invalid query parameters.",
+          400,
+          z.treeifyError(parsed.error),
+        ),
       );
     }
 
@@ -150,7 +156,12 @@ async function createHandler(request: Request): Promise<NextResponse> {
     const parsed = webhookCreateBookingSchema.safeParse(body);
     if (!parsed.success) {
       return reply(
-        jsonError("VALIDATION_ERROR", "Invalid request body.", 400),
+        jsonError(
+          "VALIDATION_ERROR",
+          "Invalid request body.",
+          400,
+          z.treeifyError(parsed.error),
+        ),
       );
     }
 
