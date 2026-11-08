@@ -1,4 +1,5 @@
 import type { NextResponse } from "next/server";
+import { z } from "zod";
 
 import { ApiError, withApiHandler, jsonOk, jsonError, handleApiError } from "@/lib/api/errors";
 import { authenticateWebhook } from "@/lib/webhooks/service";
@@ -81,7 +82,7 @@ async function handler(
 
       const parsed = webhookListCareGuideItemsQuerySchema.safeParse(query);
       if (!parsed.success) {
-        return reply(jsonError("VALIDATION_ERROR", "Invalid query parameters.", 400));
+        return reply(jsonError("VALIDATION_ERROR", "Invalid query parameters.", 400, z.treeifyError(parsed.error)));
       }
 
       const result = await listWebhookCareGuideItems(parsed.data);
@@ -96,7 +97,7 @@ async function handler(
       const body = await jsonBody(request, reply);
       const parsed = webhookCreateCareGuideItemSchema.safeParse(body);
       if (!parsed.success) {
-        return reply(jsonError("VALIDATION_ERROR", "Invalid request body.", 400));
+        return reply(jsonError("VALIDATION_ERROR", "Invalid request body.", 400, z.treeifyError(parsed.error)));
       }
 
       const result = await createWebhookCareGuideItem(parsed.data);

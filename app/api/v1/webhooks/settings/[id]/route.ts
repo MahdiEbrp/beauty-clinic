@@ -1,4 +1,5 @@
 import type { NextResponse } from "next/server";
+import { z } from "zod";
 
 import { ApiError, jsonOk, jsonError, handleApiError } from "@/lib/api/errors";
 import { authenticateWebhook } from "@/lib/webhooks/service";
@@ -88,7 +89,7 @@ async function handler(
       }
       const parsed = webhookUpdateSettingSchema.safeParse(body);
       if (!parsed.success) {
-        return reply(jsonError("VALIDATION_ERROR", "Invalid request body.", 400));
+        return reply(jsonError("VALIDATION_ERROR", "Invalid request body.", 400, z.treeifyError(parsed.error)));
       }
       await updateWebhookSetting(id, parsed.data);
       logInfo("webhook.setting_updated", { requestId, userId: user.id });
