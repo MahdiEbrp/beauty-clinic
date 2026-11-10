@@ -48,7 +48,13 @@ export default async function proxy(request: NextRequest) {
   if (preflight) return preflight;
 
   if (MUTATION_METHODS.has(request.method)) {
-    if (!checkCsrf(request).ok) {
+    // Machine-to-machine traffic uses stateless Basic Auth — no cookie-based
+    // CSRF check needed. Bots and external callers don't send a matching
+    // Origin/Referer, so bypassing here lets them reach webhook/API endpoints.
+    const isBotAuth = request.headers.get("authorization")?.startsWith(
+      "Basic ",
+    );
+    if (!isBotAuth && !checkCsrf(request).ok) {
       return jsonBlock(
         request,
         "CROSS_ORIGIN_FORBIDDEN",
