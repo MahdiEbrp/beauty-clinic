@@ -1,7 +1,7 @@
 "use client";
 
 import { Clock, CreditCard } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 import type { Column } from "@/components/admin-list/types";
 import { formatPrice } from "@/components/admin-list/helpers";
@@ -59,20 +59,22 @@ export function myReservationColumns(): Column<MyReservationAdmin>[] {
 
 function CancelCaption({ row }: { row: MyReservationAdmin }) {
   const t = useTranslations();
+  const locale = useLocale() as "fa" | "en";
   if (!row.cancelUntil) return null;
   return (
     <span className="text-dash-caption text-content-tertiary">
-      {t(msgKey("myReservations.cancelUntil"), { date: formatSlotDate(row.cancelUntil) })}
+      {t(msgKey("myReservations.cancelUntil"), { date: formatSlotDate(row.cancelUntil, locale) })}
     </span>
   );
 }
 
 function DateCell({ row }: { row: MyReservationAdmin }) {
+  const locale = useLocale() as "fa" | "en";
   return (
     <div className="flex min-w-0 flex-col gap-0.5">
       <div className="flex min-w-0 items-center gap-1.5">
         <Clock className="size-3.5 shrink-0 text-content-tertiary" aria-hidden="true" />
-        <span className="truncate text-accent">{formatSlotDate(row.slotStart)}</span>
+        <span className="truncate text-accent">{formatSlotDate(row.slotStart, locale)}</span>
       </div>
       <CancelCaption row={row} />
     </div>
@@ -80,6 +82,7 @@ function DateCell({ row }: { row: MyReservationAdmin }) {
 }
 
 export function MyReservationMobileCard({ row }: { row: MyReservationAdmin }) {
+  const locale = useLocale() as "fa" | "en";
   return (
     <div className="min-w-0 space-y-1">
       <div className="flex items-center justify-between gap-2">
@@ -90,7 +93,7 @@ export function MyReservationMobileCard({ row }: { row: MyReservationAdmin }) {
         {row.groupTitle} · {row.phone}
       </p>
       <p className="text-dash-caption text-content-tertiary">
-        {formatSlotDate(row.slotStart)} · {formatPrice(row.totalAmount, row.currency)}
+        {formatSlotDate(row.slotStart, locale)} · {formatPrice(row.totalAmount, row.currency)}
       </p>
       <CancelCaption row={row} />
     </div>

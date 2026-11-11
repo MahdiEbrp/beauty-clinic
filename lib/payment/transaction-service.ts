@@ -101,8 +101,10 @@ export async function verifyPaymentTransaction(authority: string, amount?: numbe
   const newStatus = v.verified ? "verified" : "failed";
   const newlyVerified = v.verified && !late;
   await db.update(paymentTransactions).set({ status: newStatus, refId: v.refId ?? null, cardPan: v.cardPan ?? null, errorMessage: v.verified ? null : v.providerStatus ?? null, verifiedAt: v.verified ? new Date() : null, updatedAt: new Date(), completedAt: new Date() }).where(eq(paymentTransactions.id, tx.id));
-  // also update bookings to paid if verified
-  if (v.verified && !late) {
+  // also update bookings to paid if verified — honor the payment even when the
+  // checkout window has already expired so the customer isn't shown a failure
+  // page after a successful gateway payment.
+  if (v.verified) {
     await db.execute(sql`UPDATE bookings SET status='paid', payment_reference=${v.refId ?? authority}, updated_at=NOW() WHERE group_ref=${tx.bookingGroupRef} AND status IN ('pending','waiting')`);
   }
   return { verified: v.verified, refId: v.refId, transactionId: tx.id, locale, bookingGroupRef: tx.bookingGroupRef, late, newlyVerified };

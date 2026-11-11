@@ -1,21 +1,42 @@
 "use client";
 
+import { format as formatJalali } from "date-fns-jalali";
 import { Clock, CreditCard } from "lucide-react";
+import { useLocale } from "next-intl";
 import type { Column } from "@/components/admin-list/types";
 import { formatPrice } from "@/components/admin-list/helpers";
 import type { ReservationAdmin } from "@/lib/bookings/admin-types";
 import { BookingStatusMenu } from "./booking-status-menu";
 
-export function formatSlotDate(iso: string | null): string {
+export function formatSlotDate(iso: string | null, locale: "fa" | "en" = "en"): string {
   if (!iso) return "—";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "—";
+  if (locale === "fa") {
+    return `${formatJalali(d, "yyyy/MM/dd")} — ${formatTime(d)}`;
+  }
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   const hh = String(d.getHours()).padStart(2, "0");
   const mm = String(d.getMinutes()).padStart(2, "0");
   return `${y}/${m}/${day} — ${hh}:${mm}`;
+}
+
+function formatTime(d: Date): string {
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mm = String(d.getMinutes()).padStart(2, "0");
+  return `${hh}:${mm}`;
+}
+
+function DateCell({ iso }: { iso: string | null }) {
+  const locale = useLocale() as "fa" | "en";
+  return (
+    <div className="flex min-w-0 items-center gap-1.5">
+      <Clock className="size-3.5 shrink-0 text-content-tertiary" aria-hidden="true" />
+      <span className="truncate text-accent">{formatSlotDate(iso, locale)}</span>
+    </div>
+  );
 }
 
 export function reservationColumns(): Column<ReservationAdmin>[] {
@@ -39,12 +60,7 @@ export function reservationColumns(): Column<ReservationAdmin>[] {
       key: "date",
       labelKey: "bookingReservations.table.date",
       responsive: "desktop",
-      render: (row) => (
-        <div className="flex min-w-0 items-center gap-1.5">
-          <Clock className="size-3.5 shrink-0 text-content-tertiary" aria-hidden="true" />
-          <span className="truncate text-accent">{formatSlotDate(row.slotStart)}</span>
-        </div>
-      ),
+      render: (row) => <DateCell iso={row.slotStart} />,
     },
     {
       key: "amount",
@@ -71,6 +87,7 @@ export function reservationColumns(): Column<ReservationAdmin>[] {
 }
 
 export function ReservationMobileCard({ row }: { row: ReservationAdmin }) {
+  const locale = useLocale() as "fa" | "en";
   return (
     <div className="min-w-0 space-y-1">
       <div className="flex items-center justify-between gap-2">
@@ -81,7 +98,7 @@ export function ReservationMobileCard({ row }: { row: ReservationAdmin }) {
         {row.groupTitle} · {row.phone}
       </p>
       <p className="text-dash-caption text-content-tertiary">
-        {formatSlotDate(row.slotStart)} · {formatPrice(row.totalAmount, row.currency)}
+        {formatSlotDate(row.slotStart, locale)} · {formatPrice(row.totalAmount, row.currency)}
       </p>
     </div>
   );
