@@ -63,6 +63,7 @@ export async function deleteWorkingHours(ids: string[]): Promise<string[]> {
   await bustSlotPatternCache();
   await refreshPatternSlots();
   return [];
+}
 
 export async function getWorkingHour(
   id: string,
