@@ -1,7 +1,9 @@
 import postgres from 'postgres';
 import dotenv from 'dotenv';
+import dns from 'node:dns';
 
 dotenv.config({ path: ['.env.local', '.env'] });
+dns.setDefaultResultOrder('ipv4first');
 
 /**
  * One-time data migration: move weekly working hours out of the legacy
@@ -17,7 +19,24 @@ dotenv.config({ path: ['.env.local', '.env'] });
  *  - deletes the legacy setting row after a successful backfill
  */
 async function main() {
-  const sql = postgres(process.env.DATABASE_URL, { ssl: 'require' });
+  // Use the direct Postgres endpoint for data migrations rather than the
+  // transaction pooler. DATABASE_URL remains a fallback for self-hosted setups.
+  const connectionUrl = process.env.DIRECT_URL || process.env.DATABASE_URL;
+  if (!connectionUrl) {
+    throw new Error('DIRECT_URL or DATABASE_URL must be set in .env.local or .env');
+  }
+
+  const sslMode = new URL(connectionUrl).searchParams.get('sslmode') ?? 'require';
+  const ssl = sslMode === 'disable' ? false : sslMode;
+
+  const sql = postgres(connectionUrl, {
+    ssl,
+    max: 1,
+    prepare: false,
+    connect_timeout: 20,
+    keep_alive: 30,
+    onnotice: () => {},
+  });
 
   // Resolve per-day records from the legacy setting (or fall back to defaults).
   const rows = await sql`SELECT value FROM settings WHERE scope = 'system' AND key = 'clinic.opening_hours' LIMIT 1`;
