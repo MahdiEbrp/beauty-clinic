@@ -142,6 +142,27 @@ export async function availableSlots(
   return rows.filter((s) => s.available);
 }
 
+/**
+ * Slots suitable for one shared time across multiple selected service groups.
+ * Unlinked slots accept every group; linked slots must include all requested
+ * groups. Capacity is checked against the total number of seats the order adds
+ * to this one shared slot, mirroring createBookingGroup's atomic validation.
+ */
+export async function availableSlotsForGroups(
+  slotDate: string,
+  groupIds: string[],
+  quantity: number,
+): Promise<SlotSummary[]> {
+  const selected = [...new Set(groupIds)];
+  if (selected.length === 0 || quantity < 1) return [];
+  const rows = await listSlots({ from: slotDate, to: slotDate });
+  return rows.filter((slot) =>
+    slot.available &&
+    slot.capacity - slot.bookedCount >= quantity &&
+    (slot.groupIds.length === 0 || selected.every((id) => slot.groupIds.includes(id))),
+  );
+}
+
 export async function createSlots(
   input: {
     groupIds?: string[];
