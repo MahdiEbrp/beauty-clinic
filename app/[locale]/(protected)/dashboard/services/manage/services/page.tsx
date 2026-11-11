@@ -3,11 +3,10 @@ import { getTranslations } from "next-intl/server";
 
 import ServicesContent from "@/ServicesContent";
 import { requirePermission } from "@/lib/auth/dal";
-import { listServices } from "@/lib/services/service";
+import { listServiceCategoryOptions, listServices } from "@/lib/services/service";
 import { getClinicData } from "@/data/clinic";
 import type { Locale } from "@/lib/services/types";
 import { pageUrl } from "@/lib/site";
-import { listServiceCategoryOptions } from "@/lib/services/service";
 import { listServicesQuerySchema } from "@/lib/validation/services";
 
 const ROUTE = "/dashboard/services/manage/services";
