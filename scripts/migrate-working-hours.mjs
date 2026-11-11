@@ -49,10 +49,10 @@ async function main() {
   const defaults = [
     { key: 'booking.timezone', value: 'Asia/Tehran', type: 'string' },
     { key: 'booking.slot_auto', value: 'true', type: 'boolean' },
-    { key: 'booking.slot_interval_min', value: '180', type: 'number' },
+    { key: 'booking.slot_interval_min', value: '30', type: 'number' },
     { key: 'booking.slot_duration_min', value: '30', type: 'number' },
     { key: 'booking.slot_default_capacity', value: '1', type: 'number' },
-    { key: 'booking.slot_window_days', value: '30', type: 'number' },
+    { key: 'booking.slot_window_days', value: '180', type: 'number' },
   ];
   for (const def of defaults) {
     const found = await sql`SELECT 1 FROM settings WHERE scope = 'system' AND key = ${def.key} LIMIT 1`;
