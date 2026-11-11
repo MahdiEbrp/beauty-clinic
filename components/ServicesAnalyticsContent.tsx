@@ -3,7 +3,6 @@
 import { useFormatter, useTranslations } from "next-intl";
 import {
   ArrowUpRight,
-  LayoutGrid,
   Network,
   Plus,
   Settings2,
@@ -141,6 +140,12 @@ export default function ServicesAnalyticsContent({
               <Plus className="size-4" aria-hidden="true" />
               {t("serviceServices.add")}
             </Link>
+            <Link href="/dashboard/services/manage/groups" className={secondaryAction}>
+              {t("servicesAnalytics.manage")} {t("servicesAnalytics.hub.group.name")}
+            </Link>
+            <Link href="/dashboard/services/manage/categories" className={secondaryAction}>
+              {t("servicesAnalytics.manage")} {t("servicesAnalytics.hub.category.name")}
+            </Link>
           </div>
         ) : null}
 
@@ -162,16 +167,24 @@ export default function ServicesAnalyticsContent({
                       <div className="min-w-0">
                         <h3 className="truncate text-dash-heading font-bold text-content-primary">{group.name}</h3>
                         <p className="text-dash-caption text-content-secondary">
-                          {t("servicesAnalytics.counts.total", { count: format.number(group.categoryCount) })} · {group.isActive ? t("servicesAnalytics.counts.active", { count: 1 }) : t("serviceGroups.deactivate")}
+                          {t("servicesAnalytics.counts.total", { count: format.number(group.categoryCount) })}
                         </p>
                       </div>
                     </div>
-                    {canWrite ? (
+                    <div className="flex flex-wrap items-center gap-2">
+                      {canWrite ? (
+                      <Link href={`/dashboard/services/manage/categories/add?groupId=${encodeURIComponent(group.id)}`} className={secondaryAction}>
+                        <Plus className="size-4" aria-hidden="true" />
+                        {t("serviceCategories.add")}
+                      </Link>
+                      ) : null}
+                      {canWrite ? (
                       <Link href={`/dashboard/services/manage/groups/${group.id}/edit`} className={secondaryAction}>
                         <Settings2 className="size-4" aria-hidden="true" />
                         {t("serviceGroups.actions.edit")}
                       </Link>
-                    ) : null}
+                      ) : null}
+                    </div>
                   </div>
 
                   <div className="space-y-2 p-3 sm:p-4">
@@ -193,6 +206,12 @@ export default function ServicesAnalyticsContent({
                           </div>
                         </div>
                         <div className="flex flex-wrap items-center gap-2">
+                          {canWrite ? (
+                            <Link href={`/dashboard/services/manage/services/add?categoryId=${encodeURIComponent(category.id)}`} className={secondaryAction}>
+                              <Plus className="size-4" aria-hidden="true" />
+                              {t("serviceServices.add")}
+                            </Link>
+                          ) : null}
                           <Link href={`/dashboard/services/manage/services?categoryId=${encodeURIComponent(category.id)}`} className={primaryAction}>
                             <Stethoscope className="size-4" aria-hidden="true" />
                             {t("servicesAnalytics.manage")} {t("servicesAnalytics.hub.service.name")}
