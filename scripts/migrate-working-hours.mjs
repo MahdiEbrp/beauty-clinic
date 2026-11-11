@@ -48,8 +48,8 @@ async function main() {
   // Seed the timezone + slot-generator settings if absent.
   const defaults = [
     { key: 'booking.timezone', value: 'Asia/Tehran', type: 'string' },
-    { key: 'booking.slot_auto', value: 'false', type: 'boolean' },
-    { key: 'booking.slot_interval_min', value: '30', type: 'number' },
+    { key: 'booking.slot_auto', value: 'true', type: 'boolean' },
+    { key: 'booking.slot_interval_min', value: '180', type: 'number' },
     { key: 'booking.slot_duration_min', value: '30', type: 'number' },
     { key: 'booking.slot_default_capacity', value: '1', type: 'number' },
     { key: 'booking.slot_window_days', value: '30', type: 'number' },
@@ -63,6 +63,19 @@ async function main() {
       `;
       console.log(`${def.key} seeded.`);
     }
+  }
+
+  // Upgrade only the exact legacy defaults introduced by this migration.
+  // Any administrator-customized value is preserved.
+  const [autoSetting] = await sql`SELECT value FROM settings WHERE scope = 'system' AND key = 'booking.slot_auto' LIMIT 1`;
+  if (autoSetting?.value === false) {
+    await sql`UPDATE settings SET value = 'true'::jsonb, updated_at = NOW() WHERE scope = 'system' AND key = 'booking.slot_auto'`;
+    console.log('Legacy slot auto-generation default enabled.');
+  }
+  const [windowSetting] = await sql`SELECT value FROM settings WHERE scope = 'system' AND key = 'booking.slot_window_days' LIMIT 1`;
+  if (Number(windowSetting?.value) === 30) {
+    await sql`UPDATE settings SET value = '180'::jsonb, updated_at = NOW() WHERE scope = 'system' AND key = 'booking.slot_window_days'`;
+    console.log('Legacy slot-generation window extended to 180 days.');
   }
 
   // Remove the now-migrated legacy setting.
