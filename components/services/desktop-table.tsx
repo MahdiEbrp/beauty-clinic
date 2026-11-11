@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { AlertTriangle, RefreshCw, Star, Stethoscope } from "lucide-react";
 import type { AdminService } from "@/lib/services/types";
-import { SelectionCheckbox, statusOf, statusClass, formatPrice } from "./helpers";
+import { SelectionCheckbox, statusOf, statusClass } from "./helpers";
 import { ServiceRowSkeleton } from "./skeletons";
 import { ServiceRowActions } from "./row-actions";
 import { ServicesEmptyState } from "./empty-state";
@@ -63,7 +63,7 @@ function ServicesErrorState() {
 
 export function ServicesDesktopTable() {
   const t = useTranslations();
-  const { data, isLoading, hasLoadFailed, canWrite, selectedIds, allVisibleSelected, selectAllRef, toggleServiceSelection, togglePageSelection, currency } = useServices();
+  const { data, isLoading, hasLoadFailed, canWrite, selectedIds, allVisibleSelected, selectAllRef, toggleServiceSelection, togglePageSelection } = useServices();
 
   if (hasLoadFailed) {
     return (
