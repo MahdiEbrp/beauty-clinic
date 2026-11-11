@@ -50,7 +50,9 @@ export async function readGeneratorConfig(): Promise<GeneratorConfig> {
     DEFAULTS.durationMin,
   );
   return {
-    auto: settings.get(SLOT_GENERATOR_KEYS.auto) === true,
+    auto: settings.has(SLOT_GENERATOR_KEYS.auto)
+      ? settings.get(SLOT_GENERATOR_KEYS.auto) === true
+      : DEFAULTS.auto,
     // Never space slots closer together than their own duration — otherwise
     // planWindowSlots would produce overlapping starts that double-book.
     intervalMin: Math.max(intervalMin, durationMin),
