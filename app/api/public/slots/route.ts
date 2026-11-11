@@ -1,9 +1,9 @@
+import { z } from "zod";
+
 import { jsonOk, withSecurity } from "@/lib/api/security";
 import { clientIp } from "@/lib/api/request";
 import { availableSlots, availableSlotsForGroups } from "@/lib/bookings/slots";
 import { availableSlotsQuerySchema, sharedAvailableSlotsQuerySchema } from "@/lib/validation/bookings";
-import { z } from "zod";
-
 export const runtime = "nodejs";
 
 /**
