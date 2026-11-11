@@ -21,8 +21,8 @@ export async function GET(request: Request) {
   // Normalize before classifying a decline so "SUCCESS"/"Ok" is not mistaken
   // for a failed payment and the verified callback path remains authoritative.
   const normalizedStatus = status?.trim().toLowerCase();
-  const successStatuses = new Set(["ok", "success", "1"]);
-  if (normalizedStatus && !successStatuses.has(normalizedStatus)) {
+  const declinedStatuses = new Set(["nok", "failed", "failure", "cancel", "cancelled", "canceled", "0", "false"]);
+  if (normalizedStatus && declinedStatuses.has(normalizedStatus)) {
     const failed = await markPaymentFailed(authority, "Payment was cancelled or declined by the provider.");
     const path = localizedHref(failed?.locale ?? "fa", "/payment/failed");
     return NextResponse.redirect(new URL(`${path}?authority=${encodeURIComponent(authority)}`, request.url));
