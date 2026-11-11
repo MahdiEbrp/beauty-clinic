@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 export default async function PaymentDashboardPage() {
-  const session = await requirePermission("payment.read");
+  await requirePermission("payment.read");
   const overview = await getPaymentOverview();
-  return <PaymentHub user={session.user} overview={overview} />;
+  return <PaymentHub overview={overview} />;
 }

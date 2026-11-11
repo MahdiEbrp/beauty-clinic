@@ -15,8 +15,7 @@ import GroupsStep from "./steps/GroupsStep";
 import ScheduleStep from "./steps/ScheduleStep";
 import SummaryStep from "./steps/SummaryStep";
 import ConfirmationStep from "./steps/ConfirmationStep";
-import { buildInvoice } from "./invoice";
-import type { InvoiceData } from "./modals/PrintInvoiceModal";
+
 import type { CartItem, ContactInfo, HealthFlags, SelectedGroup, WizardStep } from "./types";
 
 export type ClinicBookingInfo = {
@@ -87,7 +86,7 @@ function findGroupBySlug(tree: PublicServiceTree, slug: string): SelectedGroup |
 }
 
 function VerifiedWizard(props: BookingWizardProps) {
-  const { tree, rules, currency, clinic, minCancelHours, defaultDeposit } = props;
+  const { tree, rules, clinic, minCancelHours } = props;
   const t = useTranslations("booking");
   const locale = useLocale() as "fa" | "en";
   const searchParams = useSearchParams();
@@ -100,7 +99,6 @@ function VerifiedWizard(props: BookingWizardProps) {
   const [group, setGroup] = useState<Awaited<ReturnType<typeof createBookingGroup>> | null>(null);
   const [paymentReference] = useState<string | null>(null);
   const [showMyBookings, setShowMyBookings] = useState(false);
-  const [invoice, setInvoice] = useState<InvoiceData | null>(null);
   const checkoutKey = useRef<string | null>(null);
 
   // One-time hydration + ?group= / ?service= preselect.
@@ -126,7 +124,7 @@ function VerifiedWizard(props: BookingWizardProps) {
     window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
   }, [cart, hydrated]);
 
-  const deposit = cart.length > 0 ? defaultDeposit : 0;
+
 
   const allScheduled = cart.length > 0 && cart.every((line) => line.slot);
   const conflicts = useMemo(() => findCartConflicts(cart), [cart]);
@@ -202,12 +200,6 @@ function VerifiedWizard(props: BookingWizardProps) {
   // Defensive: never render the confirmation step without a saved group.
   const effectiveStep: WizardStep = step === 3 && !group ? 0 : step;
 
-  const openInvoice = useCallback(() => {
-    if (!group) return;
-    setInvoice(buildInvoice(group, cart, contact, currency, deposit, paymentReference));
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- group only
-  }, [group]);
-
   return (
     <>
       <Stepper
@@ -234,7 +226,6 @@ function VerifiedWizard(props: BookingWizardProps) {
             contact={contact}
             paymentReference={paymentReference}
             clinic={clinic}
-            onOpenInvoice={openInvoice}
           />
         ) : null}
 
@@ -243,11 +234,8 @@ function VerifiedWizard(props: BookingWizardProps) {
 
       <BookingModals
         showMyBookings={showMyBookings}
-        invoice={invoice}
-        clinic={clinic}
         minCancelHours={minCancelHours}
         onCloseMyBookings={() => setShowMyBookings(false)}
-        onCloseInvoice={() => setInvoice(null)}
       />
     </>
   );

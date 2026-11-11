@@ -1,22 +1,18 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import { BarChart3, CreditCard, Network, Plus, Settings2 } from "lucide-react";
+import { BarChart3, CreditCard, Network, Settings2 } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
 
-import type { AuthUser } from "@/lib/auth/dal";
 import type { PaymentOverview } from "@/lib/payment/report-service";
 
 function percentage(part: number, total: number): number {
   return total === 0 ? 0 : Math.round((part / total) * 100);
 }
 
-export function PaymentHub({ user, overview }: { user: AuthUser; overview: PaymentOverview }) {
+export function PaymentHub({ overview }: { overview: PaymentOverview }) {
   const t = useTranslations("paymentAdmin");
   const format = useFormatter();
-  const canSend = user.permissions.includes("payment.send");
-  const canWrite = user.permissions.includes("payment.write");
-
   const rows = [
     { key: "providers" as const, count: overview.activeProviderCount, dot: "bg-accent", track: "bg-accent/10", fill: "bg-accent" },
     { key: "transactions" as const, count: overview.totalTransactions, dot: "bg-copper-deep", track: "bg-surface-tertiary/30", fill: "bg-copper-deep" },
@@ -29,7 +25,6 @@ export function PaymentHub({ user, overview }: { user: AuthUser; overview: Payme
       title: t("hub.providers.name"),
       description: t("hub.providers.description"),
       href: "/dashboard/payment/providers" as const,
-      addHref: "/dashboard/payment/providers/add" as const,
       icon: Network,
       badge: t("counts.active", { count: format.number(overview.activeProviderCount) }),
       features: [
@@ -37,31 +32,26 @@ export function PaymentHub({ user, overview }: { user: AuthUser; overview: Payme
         { icon: BarChart3, label: t("hub.providers.featureHealth") },
         { icon: Network, label: t("hub.providers.featureDefault") },
       ],
-      showAdd: canWrite,
+      showAdd: false,
     },
     {
       key: "transactions" as const,
       title: t("hub.transactions.name"),
       description: t("hub.transactions.description"),
       href: "/dashboard/payment/transactions" as const,
-      addHref: "/dashboard/payment/transactions/add" as const,
       icon: CreditCard,
       badge: t("counts.amount", { amount: format.number(overview.totalVolume) }),
       features: [
-        { icon: CreditCard, label: t("hub.transactions.featureCreate") },
-        { icon: Settings2, label: t("hub.transactions.featureStatus") },
+        { icon: CreditCard, label: t("hub.transactions.featureStatus") },
         { icon: BarChart3, label: t("hub.transactions.featureFilter") },
       ],
-      showAdd: canSend,
+      showAdd: false,
     },
   ];
 
   const totalAssets = overview.activeProviderCount + overview.totalTransactions;
   const manageClass =
     "flex-1 px-4 py-2.5 min-h-11 flex items-center justify-center gap-2 whitespace-nowrap rounded-pill bg-accent text-on-primary text-dash-body-sm font-semibold transition-colors duration-300 hover:bg-primary-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
-  const addClass =
-    "flex-1 px-4 py-2.5 min-h-11 flex items-center justify-center gap-2 whitespace-nowrap rounded-pill border border-accent bg-accent/5 text-accent text-dash-body-sm font-semibold transition-colors duration-300 hover:bg-accent/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
-
   return (
     <div className="space-y-6 sm:space-y-8">
       <header className="space-y-2">
@@ -141,12 +131,6 @@ export function PaymentHub({ user, overview }: { user: AuthUser; overview: Payme
                   <Settings2 className="size-4 shrink-0" aria-hidden="true" />
                   <span>{t("manage")}</span>
                 </Link>
-                {card.showAdd && (
-                  <Link href={card.addHref} className={addClass}>
-                    <Plus className="size-4 shrink-0" aria-hidden="true" />
-                    <span>{t("addNew")}</span>
-                  </Link>
-                )}
               </div>
             </div>
           ))}
