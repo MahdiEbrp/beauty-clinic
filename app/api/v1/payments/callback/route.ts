@@ -17,7 +17,12 @@ export async function GET(request: Request) {
     searchParams.get("token");
   const status = searchParams.get("Status") ?? searchParams.get("status");
   if (!authority) return NextResponse.redirect(new URL("/payment/failed?reason=missing_authority", request.url));
-  if (status && status !== "OK" && status !== "success") {
+  // Gateway status parameters are inconsistently cased across providers.
+  // Normalize before classifying a decline so "SUCCESS"/"Ok" is not mistaken
+  // for a failed payment and the verified callback path remains authoritative.
+  const normalizedStatus = status?.trim().toLowerCase();
+  const successStatuses = new Set(["ok", "success", "1"]);
+  if (normalizedStatus && !successStatuses.has(normalizedStatus)) {
     const failed = await markPaymentFailed(authority, "Payment was cancelled or declined by the provider.");
     const path = localizedHref(failed?.locale ?? "fa", "/payment/failed");
     return NextResponse.redirect(new URL(`${path}?authority=${encodeURIComponent(authority)}`, request.url));
