@@ -1,5 +1,7 @@
 import postgres from 'postgres';
-import 'dotenv/config';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: ['.env.local', '.env'] });
 
 /**
  * One-time data migration: move weekly working hours out of the legacy
@@ -69,12 +71,18 @@ async function main() {
   // Any administrator-customized value is preserved.
   const [autoSetting] = await sql`SELECT value FROM settings WHERE scope = 'system' AND key = 'booking.slot_auto' LIMIT 1`;
   if (autoSetting?.value === false) {
-    await sql`UPDATE settings SET value = 'true'::jsonb, updated_at = NOW() WHERE scope = 'system' AND key = 'booking.slot_auto'`;
+    const [autoMeta] = await sql`SELECT created_at, updated_at FROM settings WHERE scope = 'system' AND key = 'booking.slot_auto' LIMIT 1`;
+    if (autoMeta && new Date(autoMeta.created_at).getTime() === new Date(autoMeta.updated_at).getTime()) {
+      await sql`UPDATE settings SET value = 'true'::jsonb, updated_at = NOW() WHERE scope = 'system' AND key = 'booking.slot_auto'`;
+    }
     console.log('Legacy slot auto-generation default enabled.');
   }
   const [windowSetting] = await sql`SELECT value FROM settings WHERE scope = 'system' AND key = 'booking.slot_window_days' LIMIT 1`;
   if (Number(windowSetting?.value) === 30) {
-    await sql`UPDATE settings SET value = '180'::jsonb, updated_at = NOW() WHERE scope = 'system' AND key = 'booking.slot_window_days'`;
+    const [windowMeta] = await sql`SELECT created_at, updated_at FROM settings WHERE scope = 'system' AND key = 'booking.slot_window_days' LIMIT 1`;
+    if (windowMeta && new Date(windowMeta.created_at).getTime() === new Date(windowMeta.updated_at).getTime()) {
+      await sql`UPDATE settings SET value = '180'::jsonb, updated_at = NOW() WHERE scope = 'system' AND key = 'booking.slot_window_days'`;
+    }
     console.log('Legacy slot-generation window extended to 180 days.');
   }
 
