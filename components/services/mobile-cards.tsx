@@ -8,6 +8,7 @@ import { ServiceCardSkeleton } from "./skeletons";
 import { ServiceRowActions } from "./row-actions";
 import { ServicesEmptyState } from "./empty-state";
 import { useServices } from "./services-context";
+import { QuickPriceEditor } from "./quick-price-editor";
 
 function ServiceCardIcon({ service }: { service: AdminService }) {
   return (
@@ -43,7 +44,7 @@ function ServiceCard({ service }: { service: AdminService }) {
         <p dir="ltr" className="mt-0.5 truncate text-end text-dash-caption text-content-tertiary">{service.slug}</p>
         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-dash-caption text-content-secondary">
           {service.categoryName && <span>{service.categoryName}</span>}
-          <span>{service.price ? formatPrice(service.price, currency) : t("serviceServices.price_on_request")}</span>
+          <QuickPriceEditor service={service} />
           {service.isFeatured && (
             <span className="inline-flex items-center gap-1 text-amber-400">
               <Star className="size-3" />
