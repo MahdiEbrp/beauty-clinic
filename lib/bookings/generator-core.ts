@@ -141,11 +141,19 @@ export async function ensureAutoSlotsCore(
   const dayPlansByDate = new Map<string, DayPlan>();
   for (let dayOffset = 0; dayOffset < config.windowDays; dayOffset += 1) {
     const dateKey = zonedDateKey(config.timeZone, new Date(), dayOffset);
-    const window = byDay.get(weekdayOf(dateKey));
-    if (!window) continue;
-    const patterns = patternMap.get(window.day);
+    const weekday = weekdayOf(dateKey);
+    const window = byDay.get(weekday);
+    // Keep closed weekdays in the reconciliation window as empty schedules.
+    // This closes previously generated, unbooked slots when a day is disabled.
+    const effectiveWindow: WorkingHour = window ?? {
+      day: weekday,
+      opens: "00:00",
+      closes: "00:00",
+      capacity: config.capacity,
+    };
+    const patterns = window ? patternMap.get(weekday) : undefined;
     dayPlansByDate.set(dateKey, {
-      window,
+      window: effectiveWindow,
       pattern: patterns && patterns.length > 0 ? patterns : undefined,
     });
   }
