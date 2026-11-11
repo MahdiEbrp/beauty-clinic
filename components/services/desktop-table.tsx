@@ -8,6 +8,7 @@ import { ServiceRowSkeleton } from "./skeletons";
 import { ServiceRowActions } from "./row-actions";
 import { ServicesEmptyState } from "./empty-state";
 import { useServices } from "./services-context";
+import { QuickPriceEditor } from "./quick-price-editor";
 
 function StatusBadge({ service }: { service: AdminService }) {
   const t = useTranslations();
@@ -126,11 +127,7 @@ export function ServicesDesktopTable() {
                   <td className="px-3 py-4">
                     <span className="text-dash-body-sm text-content-secondary">{service.categoryName ?? "—"}</span>
                   </td>
-<td className="px-3 py-4 text-center">
-                      <span dir="ltr" className="text-dash-body-sm text-accent">
-                        {service.price ? formatPrice(service.price, currency) : t("serviceServices.price_on_request")}
-                      </span>
-                    </td>
+<td className="px-3 py-4 text-center"><QuickPriceEditor service={service} /></td>
                   <td className="px-3 py-4 text-center">
                     <span className="text-dash-body-sm text-content-secondary">
                       {service.durationMin ? `${Number(service.durationMin)} ${t("serviceServices.durationUnit")}` : "—"}
