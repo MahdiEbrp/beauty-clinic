@@ -28,7 +28,10 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
   const [sharedSlot, setSharedSlot] = useState<SlotOption | null>(null);
 
   const selectedSlot = sharedSlot ?? cart[0]?.slot ?? null;
-  const allScheduled = cart.length > 0 && Boolean(selectedSlot);
+  const allScheduled =
+    cart.length > 0 &&
+    Boolean(selectedSlot) &&
+    cart.every((line) => line.slot?.id === selectedSlot?.id);
   const scheduledCount = allScheduled ? cart.length : 0;
   const conflicts = findCartConflicts(cart);
 
