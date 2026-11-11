@@ -20,7 +20,7 @@ type CacheEntry = {
 const TTL_MS = 45 * 1000;
 const cache = new Map<string, CacheEntry>();
 
- type SharedSlotQuery = { groupIds: string[]; quantity: number };
+type SharedSlotQuery = { groupIds: string[]; quantity: number };
 
 function key(date: string, groupId?: string, shared?: SharedSlotQuery): string {
   if (shared) return `${date}::shared:${[...shared.groupIds].sort().join(",")}:${shared.quantity}`;
@@ -45,7 +45,7 @@ function load(date: string, groupId: string | undefined, shared?: SharedSlotQuer
         entry.inflight = null;
         cache.set(cacheKey, entry);
       });
-    cache.set(key(date, groupId), entry);
+    cache.set(cacheKey, entry);
   }
   return entry.inflight;
 }
@@ -70,7 +70,7 @@ export function getSlots(date: string, groupId?: string, shared?: SharedSlotQuer
     void load(date, groupId, shared);
     return { data: entry.data, fresh: load(date, groupId, shared), hit: false };
   }
-  return { data: null, fresh: load(date, groupId), hit: false };
+  return { data: null, fresh: load(date, groupId, shared), hit: false };
 }
 
 /** Warm the cache for upcoming days (called from the day strip). */
