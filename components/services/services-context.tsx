@@ -21,14 +21,16 @@ export function ServicesProvider({
   user,
   initialData,
   currency,
+  categoryId,
   children,
 }: {
   user: AuthUser;
   initialData: ServicesResult;
   currency: string;
+  categoryId?: string;
   children: React.ReactNode;
 }) {
-  const list = useServicesList(user, initialData);
+  const list = useServicesList(user, initialData, categoryId);
   const actions = useServicesActions(list);
   const bulk = useServicesBulk(list, actions);
   return (
