@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { BadgeCheck, CalendarCheck, CheckCircle2, Clock3, Home, Printer, Sparkles } from "lucide-react";
+import { BadgeCheck, CalendarCheck, CheckCircle2, Clock3, Home, Sparkles } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
 import { formatNumber } from "@/lib/services/format";
 import { formatSlotLabel, type CalendarKind } from "@/lib/bookings/dates";
@@ -14,16 +14,14 @@ type ConfirmationStepProps = {
   contact: ContactInfo | null;
   paymentReference: string | null;
   clinic: ClinicBookingInfo;
-  onOpenInvoice: () => void;
 };
 
-/** Success voucher (Template parity) for the whole confirmed group. */
+/** Success voucher for the whole confirmed group. */
 export default function ConfirmationStep({
   group,
   contact,
   paymentReference,
   clinic,
-  onOpenInvoice,
 }: ConfirmationStepProps) {
   const t = useTranslations("booking");
   const locale = useLocale() as "fa" | "en";
@@ -116,14 +114,6 @@ export default function ConfirmationStep({
 
           <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:justify-between">
             <div className="flex flex-col gap-2 sm:flex-row">
-              <button
-                type="button"
-                onClick={onOpenInvoice}
-                className="inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-control border border-border-interactive bg-surface-secondary px-4 text-body-sm font-bold text-content-primary transition-colors hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-              >
-                <Printer className="size-4 text-copper" aria-hidden="true" />
-                {t("confirmation.print")}
-              </button>
               {whatsapp ? (
                 <a
                   href={whatsapp}
