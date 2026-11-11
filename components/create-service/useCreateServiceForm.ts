@@ -24,6 +24,7 @@ import type {
 export function useCreateServiceForm(
   initialService?: AdminService,
   categoryOptions: CategoryOption[] = [],
+  initialCategoryId?: string,
 ) {
   const t = useTranslations("serviceWizard");
   const router = useRouter();
@@ -32,7 +33,7 @@ export function useCreateServiceForm(
 
   const [step, setStep] = useState<number>(1);
   const [lang, setLang] = useState<Locale>("en");
-  const [categoryId, setCategoryId] = useState(seed?.categoryId ?? "");
+  const [categoryId, setCategoryId] = useState(seed?.categoryId ?? initialCategoryId ?? "");
   const [content, setContent] = useState<Record<Locale, LangContent>>(
     seed?.content ?? {
       en: { title: "", shortDesc: "", fullDesc: "" },
