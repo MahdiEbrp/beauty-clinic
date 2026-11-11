@@ -37,13 +37,14 @@ export function ServicesContent({
   categoryId,
   categoryName,
 }: { user: AuthUser; initialData: ServicesResult; currency: string; categoryId?: string; categoryName?: string }) {
+  const t = useTranslations();
   return (
     <ServicesProvider user={user} initialData={initialData} currency={currency} categoryId={categoryId}>
       <ServicesHeader />
       {categoryName ? (
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-control border border-accent/20 bg-accent/5 px-4 py-3">
           <p className="text-dash-body-sm font-semibold text-content-primary">{categoryName}</p>
-          <Link href="/dashboard/services/manage/services" className="text-dash-caption font-bold text-accent underline underline-offset-4">{useTranslations()("serviceServices.clearFilters")}</Link>
+          <Link href="/dashboard/services/manage/services" className="text-dash-caption font-bold text-accent underline underline-offset-4">{t("serviceServices.clearFilters")}</Link>
         </div>
       ) : null}
       <div className="mt-4 space-y-4">
