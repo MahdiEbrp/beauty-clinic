@@ -5,6 +5,7 @@ import { db } from "@/src/db";
 import { bookingSlotGroups, bookings, bookingSlots } from "@/src/db/schema";
 import { existingSlotKeys, requireSlot, replaceSlotGroups } from "./slot-support";
 import { computeSlotStatus, type SlotStatus } from "./slot-status";
+import { hhmm, minutesOf, planWindowSlots } from "./generator-utils";
 
 export type SlotSummary = {
   id: string;
@@ -205,6 +206,78 @@ export async function createSlots(
       groupMap.get(row.id) ?? toCreate[index]?.groupIds ?? [],
     ),
   );
+}
+
+/**
+ * Bulk-generates slots for a date range on selected weekdays within a time
+ * window. Idempotent: existing (date, start_time) rows are skipped.
+ * Returns the created slots.
+ */
+export async function bulkGenerateSlots(input: {
+  fromDate: string;
+  toDate: string;
+  daysOfWeek: string[];
+  opens: string;
+  closes: string;
+  intervalMin: number;
+  durationMin: number;
+  capacity: number;
+  groupIds?: string[];
+}): Promise<SlotSummary[]> {
+  const from = new Date(`${input.fromDate}T12:00:00Z`);
+  const to = new Date(`${input.toDate}T12:00:00Z`);
+  if (to.getTime() < from.getTime()) {
+    throw new ApiError(400, "INVALID_DATE_RANGE", "To date must be after from date.");
+  }
+
+  const present = new Set(input.daysOfWeek);
+  const window = { opens: input.opens, closes: input.closes };
+  const starts = planWindowSlots(window, input.intervalMin, input.durationMin);
+
+  // Collect all (date, start_time) pairs to create, one batch per date.
+  const toCreate: {
+    groupIds?: string[];
+    slotDate: string;
+    startTime: string;
+    endTime: string;
+    capacity: number;
+  }[] = [];
+
+  const cursor = new Date(from);
+  while (cursor <= to) {
+    const year = cursor.getUTCFullYear();
+    const month = String(cursor.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(cursor.getUTCDate()).padStart(2, "0");
+    const dateKey = `${year}-${month}-${day}`;
+
+    const weekday = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ][cursor.getUTCDay()] ?? "";
+
+    if (present.has(weekday)) {
+      for (const start of starts) {
+        toCreate.push({
+          slotDate: dateKey,
+          startTime: start,
+          endTime: hhmm(minutesOf(start) + input.durationMin),
+          capacity: input.capacity,
+          groupIds: input.groupIds,
+        });
+      }
+    }
+
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+
+  if (toCreate.length === 0) return [];
+
+  return createSlots(toCreate);
 }
 
 export async function getSlot(id: string): Promise<SlotSummary> {

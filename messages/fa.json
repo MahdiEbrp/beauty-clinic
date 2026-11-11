@@ -698,6 +698,56 @@
       "syncing": "در حال همگام‌سازی...",
       "generated": "{count} نوبت ساخته شد",
       "generateError": "ساخت نوبت‌ها انجام نشد"
+    },
+    "weekdays": {
+      "saturday": "شنبه",
+      "sunday": "یکشنبه",
+      "monday": "دوشنبه",
+      "tuesday": "سه‌شنبه",
+      "wednesday": "چهارشنبه",
+      "thursday": "پنج‌شنبه",
+      "friday": "جمعه"
+    },
+    "bulkGenerate": {
+      "title": "ساخت دسته‌ای نوبت",
+      "description": "بازه تاریخ، روزهای هفته و بازه زمانی را مشخص کنید؛ نوبت‌ها بصورت خودکار ساخته می‌شوند.",
+      "fields": {
+        "fromDate": {
+          "label": "از تاریخ"
+        },
+        "toDate": {
+          "label": "تا تاریخ"
+        },
+        "days": {
+          "label": "روزهای هفته",
+          "hint": "روزهایی را انتخاب کنید که برای آن‌ها نوبت ساخته شود."
+        },
+        "opens": {
+          "label": "از ساعت"
+        },
+        "closes": {
+          "label": "تا ساعت"
+        },
+        "interval": {
+          "label": "فاصله نوبت‌ها",
+          "hint": "دقیقه"
+        },
+        "duration": {
+          "label": "مدت هر نوبت",
+          "hint": "دقیقه"
+        },
+        "capacity": {
+          "label": "ظرفیت",
+          "hint": "تعداد رزرو در هر نوبت"
+        },
+        "groups": {
+          "label": "گروه‌های خدماتی"
+        }
+      },
+      "actions": {
+        "generate": "ساخت نوبت‌ها",
+        "generating": "در حال ساخت..."
+      }
     }
   },
   "workingHours": {
