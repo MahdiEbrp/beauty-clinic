@@ -16,6 +16,7 @@ import type { FieldErrors, GroupOption, LangContent, LangSeo, Locale } from "./t
 export function useCreateCategoryForm(
   initialCategory?: AdminServiceCategory,
   groupOptions: GroupOption[] = [],
+  initialGroupId?: string,
 ) {
   const t = useTranslations("categoryWizard");
   const router = useRouter();
@@ -25,7 +26,7 @@ export function useCreateCategoryForm(
   const [step, setStep] = useState<number>(1);
   const [lang, setLang] = useState<Locale>("en");
 
-  const [groupId, setGroupId] = useState(seed?.groupId ?? "");
+  const [groupId, setGroupId] = useState(seed?.groupId ?? initialGroupId ?? "");
 
   const [content, setContent] = useState<Record<Locale, LangContent>>(
     seed?.content ?? {
