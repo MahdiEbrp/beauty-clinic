@@ -7,6 +7,8 @@ import { listServices } from "@/lib/services/service";
 import { getClinicData } from "@/data/clinic";
 import type { Locale } from "@/lib/services/types";
 import { pageUrl } from "@/lib/site";
+import { listServiceCategoryOptions } from "@/lib/services/service";
+import { listServicesQuerySchema } from "@/lib/validation/services";
 
 const ROUTE = "/dashboard/services/manage/services";
 
@@ -34,12 +36,29 @@ export async function generateMetadata({
 
 export default async function ManageServicesPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ categoryId?: string | string[] }>;
 }) {
   const session = await requirePermission("services.read");
-  const { locale } = await params;
-  const initialData = await listServices({ page: 1, perPage: 10 });
-  const clinic = await getClinicData(locale as Locale);
-  return <ServicesContent user={session.user} initialData={initialData} currency={clinic.currency} />;
+  const [{ locale }, query] = await Promise.all([params, searchParams]);
+  const rawCategoryId = typeof query.categoryId === "string" ? query.categoryId : undefined;
+  const parsed = listServicesQuerySchema.safeParse({ categoryId: rawCategoryId });
+  const categoryId = parsed.success ? parsed.data.categoryId : undefined;
+  const [initialData, clinic, categoryOptions] = await Promise.all([
+    listServices({ page: 1, perPage: 10, categoryId }),
+    getClinicData(locale as Locale),
+    listServiceCategoryOptions(),
+  ]);
+  const categoryName = categoryOptions.find((option) => option.id === categoryId)?.name;
+  return (
+    <ServicesContent
+      user={session.user}
+      initialData={initialData}
+      currency={clinic.currency}
+      categoryId={categoryId}
+      categoryName={categoryName}
+    />
+  );
 }
