@@ -36,9 +36,18 @@ async function handle<T>(fetchPromise: Promise<Response>): Promise<T> {
   return body.data;
 }
 
-export function fetchAvailableSlots(date: string, groupId?: string): Promise<SlotOption[]> {
+export function fetchAvailableSlots(
+  date: string,
+  groupId?: string,
+  shared?: { groupIds: string[]; quantity: number },
+): Promise<SlotOption[]> {
   const params = new URLSearchParams({ date });
-  if (groupId) params.set("groupId", groupId);
+  if (shared) {
+    params.set("groupIds", shared.groupIds.join(","));
+    params.set("quantity", String(shared.quantity));
+  } else if (groupId) {
+    params.set("groupId", groupId);
+  }
   return handle<SlotOption[]>(fetch(`/api/public/slots?${params.toString()}`));
 }
 
