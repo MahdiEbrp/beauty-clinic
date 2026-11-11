@@ -37,8 +37,9 @@ type PaymentTransactionListRow = {
 };
 
 export async function listPaymentTransactions(opts: ListPaymentTransactionsQuery): Promise<ListPaymentTransactionsResult> {
-  const conds: SQL[] = [];
-  if (opts.status && opts.status !== "all") conds.push(eq(paymentTransactions.status, opts.status));
+  // The dashboard is a payment ledger, not a manual transaction workbench:
+  // only provider-verified, completed payments are part of its result set.
+  const conds: SQL[] = [eq(paymentTransactions.status, "verified")];
   if (opts.search) {
     const s = or(ilike(paymentTransactions.bookingGroupRef, `%${opts.search}%`), ilike(paymentTransactions.authority, `%${opts.search}%`));
     if (s) conds.push(s);
