@@ -111,7 +111,7 @@ export default function DateModal({ group, shared, current, cart, onAssign, onCl
     /* eslint-disable react-hooks/set-state-in-effect -- sync snapshot + async revalidate from the cache */
     setSlots(result);
     void result.fresh.then(
-      () => setSlots(getSlots(pickerDateKey, group.id)),
+      () => setSlots(getSlots(pickerDateKey, availabilityGroupId, sharedQuery)),
       () => setSlots(result), // fallback to cached data on refresh failure (rate limit, etc.)
     );
     /* eslint-enable react-hooks/set-state-in-effect */
