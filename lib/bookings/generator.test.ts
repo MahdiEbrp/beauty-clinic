@@ -173,6 +173,8 @@ describe("readGeneratorConfig", () => {
     vi.mocked(loadSystemSettingsMap).mockResolvedValue(new Map());
     const cfg = await readGeneratorConfig();
     expect(cfg.timeZone).toBe("Asia/Tehran");
+    expect(cfg.auto).toBe(true);
+    expect(cfg.windowDays).toBe(180);
   });
 });
 
