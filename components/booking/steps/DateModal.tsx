@@ -23,13 +23,18 @@ type DateModalProps = {
   onClose: () => void;
 };
 
-const WINDOW_DAYS = 30;
+const WINDOW_DAYS = 180;
 
 /** Themed per-group date & time picker bound to real slots. */
 export default function DateModal({ group, shared, current, cart, onAssign, onClose }: DateModalProps) {
   const t = useTranslations("booking");
   const locale = useLocale() as "fa" | "en";
   const jalali = locale === "fa";
+  const sharedQuery = useMemo(() => shared ? {
+    groupIds: [...new Set(cart.map((line) => line.group.id))].sort(),
+    quantity: cart.reduce((total, line) => total + line.quantity, 0),
+  } : undefined, [cart, shared]);
+  const availabilityGroupId = shared ? undefined : group.id;
 
   const windowDates = useMemo(() => {
     const out: Date[] = [];
@@ -68,18 +73,18 @@ export default function DateModal({ group, shared, current, cart, onAssign, onCl
 
   // Warm the cache for the next days while the customer browses.
   useEffect(() => {
-    prefetchDays(windowDates.slice(1, 6).map(gregorianKey), group.id);
-  }, [group.id, windowDates]);
+    prefetchDays(windowDates.slice(1, 6).map(gregorianKey), availabilityGroupId, sharedQuery);
+  }, [availabilityGroupId, sharedQuery, windowDates]);
 
   // Prefetch all days in the current month view and hide dates with no slots.
   useEffect(() => {
     const dateKeys = days.map(gregorianKey);
-    prefetchDays(dateKeys, group.id);
+    prefetchDays(dateKeys, availabilityGroupId, sharedQuery);
 
     const checkAll = async () => {
       const results = await Promise.allSettled(
         dateKeys.map(async (dateKey) => {
-          const result = getSlots(dateKey, group.id);
+          const result = getSlots(dateKey, availabilityGroupId, sharedQuery);
           const data = await result.fresh;
           return { dateKey, hasSlots: data.length > 0 };
         })
@@ -97,20 +102,20 @@ export default function DateModal({ group, shared, current, cart, onAssign, onCl
     };
 
     void checkAll();
-  }, [pickerYear, pickerMonth, group.id, days]);
+  }, [pickerYear, pickerMonth, availabilityGroupId, sharedQuery, days]);
 
   // Load the chosen day's real slots (stale-while-revalidate via cache).
   useEffect(() => {
     if (!pickerDateKey) return;
-    const result = getSlots(pickerDateKey, group.id);
+    const result = getSlots(pickerDateKey, availabilityGroupId, sharedQuery);
     /* eslint-disable react-hooks/set-state-in-effect -- sync snapshot + async revalidate from the cache */
     setSlots(result);
     void result.fresh.then(
-      () => setSlots(getSlots(pickerDateKey, group.id)),
+      () => setSlots(getSlots(pickerDateKey, availabilityGroupId, sharedQuery)),
       () => setSlots(result), // fallback to cached data on refresh failure (rate limit, etc.)
     );
     /* eslint-enable react-hooks/set-state-in-effect */
-  }, [pickerDateKey, group.id]);
+  }, [pickerDateKey, availabilityGroupId, sharedQuery]);
 
   const clearDay = () => {
     setPickerDay(null);

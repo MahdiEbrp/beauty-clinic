@@ -3,11 +3,12 @@
 import { useTranslations } from "next-intl";
 import { Star, Stethoscope } from "lucide-react";
 import type { AdminService } from "@/lib/services/types";
-import { statusOf, statusClass, formatPrice } from "./helpers";
+import { statusOf, statusClass } from "./helpers";
 import { ServiceCardSkeleton } from "./skeletons";
 import { ServiceRowActions } from "./row-actions";
 import { ServicesEmptyState } from "./empty-state";
 import { useServices } from "./services-context";
+import { QuickPriceEditor } from "./quick-price-editor";
 
 function ServiceCardIcon({ service }: { service: AdminService }) {
   return (
@@ -28,7 +29,7 @@ function ServiceCardIcon({ service }: { service: AdminService }) {
 
 function ServiceCard({ service }: { service: AdminService }) {
   const t = useTranslations();
-  const { canWrite, isSyncing, currency } = useServices();
+  const { canWrite, isSyncing } = useServices();
   const state = statusOf(service);
   return (
     <article className={`flex items-start gap-3 rounded-card border border-border-primary bg-surface-secondary p-3.5 ${isSyncing(service.id) ? "opacity-60" : ""}`}>
@@ -43,7 +44,7 @@ function ServiceCard({ service }: { service: AdminService }) {
         <p dir="ltr" className="mt-0.5 truncate text-end text-dash-caption text-content-tertiary">{service.slug}</p>
         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-dash-caption text-content-secondary">
           {service.categoryName && <span>{service.categoryName}</span>}
-          <span>{service.price ? formatPrice(service.price, currency) : t("serviceServices.price_on_request")}</span>
+          <QuickPriceEditor service={service} />
           {service.isFeatured && (
             <span className="inline-flex items-center gap-1 text-amber-400">
               <Star className="size-3" />

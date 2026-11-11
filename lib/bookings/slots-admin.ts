@@ -93,7 +93,7 @@ async function bookedCounts(slotIds: string[]): Promise<Map<string, number>> {
   const rows = await db
     .select({
       slotId: bookings.slotId,
-      count: sql<number>`count(*)::int`,
+      count: sql<number>`coalesce(sum(${bookings.quantity}), 0)::int`,
     })
     .from(bookings)
     .where(

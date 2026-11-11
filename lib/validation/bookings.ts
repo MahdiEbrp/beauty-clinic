@@ -129,6 +129,21 @@ export const availableSlotsQuerySchema = z
   })
   .strict();
 
+/** Shared appointment picker: a slot must accept every selected service group
+ * and have enough remaining seats for the whole multi-service order. */
+export const sharedAvailableSlotsQuerySchema = z
+  .object({
+    date: slotDateSchema,
+    groupIds: z
+      .string()
+      .trim()
+      .min(1)
+      .transform((value) => [...new Set(value.split(",").map((id) => id.trim()).filter(Boolean))])
+      .pipe(z.array(z.uuid()).min(1).max(10)),
+    quantity: z.coerce.number().int().min(1).max(100).default(1),
+  })
+  .strict();
+
 /** One order line: a service group + slot pair with seat count. */
 export const bookingItemSchema = z
   .object({

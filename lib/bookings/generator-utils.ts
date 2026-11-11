@@ -21,11 +21,11 @@ export const SLOT_GENERATOR_KEYS = {
 } as const;
 
 export const DEFAULTS: GeneratorConfig = {
-  auto: false,
+  auto: true,
   intervalMin: 30,
   durationMin: 30,
   capacity: 1,
-  windowDays: 30,
+  windowDays: 180,
   timeZone: DEFAULT_CLINIC_TIMEZONE,
   groupIds: [],
 };

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { AlertCircle, ArrowRight, CalendarDays, Check } from "lucide-react";
 import { findCartConflicts } from "@/lib/booking/scheduling";
-import { cn } from "@/lib/utils";
 import { SlotLabel } from "../SlotLabel";
 import DateModal from "./DateModal";
 import type { CartItem, SlotOption } from "../types";
@@ -28,8 +27,12 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
   const [modalOpen, setModalOpen] = useState(false);
   const [sharedSlot, setSharedSlot] = useState<SlotOption | null>(null);
 
-  const scheduledCount = cart.filter((line) => line.slot).length;
-  const allScheduled = cart.length > 0 && scheduledCount === cart.length;
+  const selectedSlot = sharedSlot ?? cart[0]?.slot ?? null;
+  const allScheduled =
+    cart.length > 0 &&
+    Boolean(selectedSlot) &&
+    cart.every((line) => line.slot?.id === selectedSlot?.id);
+  const scheduledCount = allScheduled ? cart.length : 0;
   const conflicts = findCartConflicts(cart);
 
   const primaryGroup = cart[0]?.group ?? null;
@@ -46,7 +49,6 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
     setModalOpen(false);
   };
 
-  const slotFor = (line: CartItem): SlotOption | null => sharedSlot ?? line.slot;
 
   if (cart.length === 0) {
     return (
@@ -80,17 +82,28 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
             </span>
           </div>
 
-          {allScheduled ? (
-            <span className="inline-flex items-center gap-1.5 self-start rounded-pill border border-success/30 bg-success/15 px-3 py-1 text-caption font-black text-success sm:self-auto">
-              <Check className="size-3.5" strokeWidth={3} aria-hidden="true" />
-              {t("schedule.allScheduled")}
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1 self-start rounded-pill border border-copper/30 bg-copper/15 px-3 py-1 text-caption font-black text-copper-deep sm:self-auto">
-              <AlertCircle className="size-3.5" aria-hidden="true" />
-              {t("schedule.progressScheduled", { n: scheduledCount, total: cart.length })}
-            </span>
-          )}
+          <div className="flex flex-wrap items-center gap-2">
+            {allScheduled ? (
+              <span className="inline-flex items-center gap-1.5 rounded-pill border border-success/30 bg-success/15 px-3 py-1 text-caption font-black text-success">
+                <Check className="size-3.5" strokeWidth={3} aria-hidden="true" />
+                {t("schedule.allScheduled")}
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 rounded-pill border border-copper/30 bg-copper/15 px-3 py-1 text-caption font-black text-copper-deep">
+                <AlertCircle className="size-3.5" aria-hidden="true" />
+                {t("schedule.progressScheduled", { n: scheduledCount, total: cart.length })}
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={openPicker}
+              className="inline-flex min-h-11 items-center gap-2 rounded-pill border border-copper bg-copper/10 px-4 text-caption font-bold text-copper-deep transition-colors hover:bg-copper hover:text-content-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              <CalendarDays className="size-4" aria-hidden="true" />
+              {selectedSlot && cart[0] ? <SlotLabel line={{ ...cart[0], slot: selectedSlot }} /> : t("schedule.pickDateTime")}
+              <span className="font-black underline">{selectedSlot ? t("schedule.editSlot") : t("schedule.pick")}</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -108,19 +121,17 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
       {/* Table */}
       <div className="overflow-hidden rounded-panel border border-border-primary bg-surface-primary shadow-xs">
         {/* Desktop header */}
-        <div className="hidden grid-cols-[3.5rem_minmax(0,1fr)_16rem] items-center gap-3 border-b border-border-primary/80 bg-surface-secondary/90 px-4 py-3 text-caption font-black text-accent md:grid">
+        <div className="hidden grid-cols-[3.5rem_minmax(0,1fr)] items-center gap-3 border-b border-border-primary/80 bg-surface-secondary/90 px-4 py-3 text-caption font-black text-accent md:grid">
           <div className="text-center">{t("schedule.colIndex")}</div>
           <div>{t("schedule.colGroup")}</div>
-          <div className="text-center">{t("schedule.colSlot")}</div>
         </div>
 
         <div className="divide-y divide-border-primary/60">
           {cart.map((line, index) => {
-            const assigned = slotFor(line);
             return (
               <div key={line.group.id} className="w-full bg-surface-primary even:bg-surface-secondary/15 hover:bg-surface-secondary/50">
                 {/* Desktop row */}
-                <div className="hidden grid-cols-[3.5rem_minmax(0,1fr)_16rem] items-center gap-3 px-4 py-3 md:grid">
+                <div className="hidden grid-cols-[3.5rem_minmax(0,1fr)] items-center gap-3 px-4 py-3 md:grid">
                   <div className="flex items-center justify-center">
                     <span className="flex size-6 shrink-0 items-center justify-center rounded-lg border border-border-interactive/70 bg-surface-secondary text-caption font-black text-content-secondary">
                       {index + 1}
@@ -134,29 +145,6 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
                     ) : null}
                   </div>
 
-                  <div className="flex items-center justify-center">
-                    <button
-                      type="button"
-                      onClick={openPicker}
-                      aria-label={assigned ? t("schedule.editSlot") : t("schedule.pick")}
-                      className={cn(
-                        "inline-flex min-h-11 w-full max-w-64 cursor-pointer select-none items-center justify-between gap-1.5 rounded-pill border px-3 text-caption font-bold transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
-                        assigned
-                          ? "border-copper bg-copper/10 text-copper-deep hover:bg-copper hover:text-content-contrast"
-                          : "border-border-interactive bg-surface-secondary text-content-secondary hover:border-copper hover:bg-surface-tertiary hover:text-accent",
-                      )}
-                    >
-                      <span className="inline-flex min-w-0 items-center gap-1.5">
-                        <CalendarDays className="size-3.5 shrink-0 text-copper" aria-hidden="true" />
-                        <span className="truncate">
-                          {assigned ? <SlotLabel line={{ ...line, slot: assigned }} /> : t("schedule.pickDateTime")}
-                        </span>
-                      </span>
-                      <span className="shrink-0 text-caption font-bold opacity-90">
-                        {assigned ? t("schedule.editSlot") : t("schedule.pick")}
-                      </span>
-                    </button>
-                  </div>
                 </div>
 
                 {/* Mobile row */}
@@ -174,27 +162,7 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
                     <p className="truncate border-t border-border-primary/40 pt-2 text-caption text-content-tertiary">{line.group.description}</p>
                   ) : null}
 
-                  <button
-                    type="button"
-                    onClick={openPicker}
-                    aria-label={assigned ? t("schedule.editSlot") : t("schedule.pick")}
-                    className={cn(
-                      "inline-flex min-h-11 w-full cursor-pointer select-none items-center justify-between gap-2 rounded-control border px-3 py-2 text-caption font-bold transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
-                      assigned
-                        ? "border-copper bg-copper/10 text-copper-deep"
-                        : "border-border-interactive bg-surface-secondary text-content-secondary hover:border-copper",
-                    )}
-                  >
-                    <span className="inline-flex min-w-0 items-center gap-1.5">
-                      <CalendarDays className="size-4 shrink-0 text-copper" aria-hidden="true" />
-                      <span className="truncate">
-                        {assigned ? <SlotLabel line={{ ...line, slot: assigned }} /> : t("schedule.pickDateTime")}
-                      </span>
-                    </span>
-                    <span className="shrink-0 text-caption font-bold text-copper underline">
-                      {assigned ? t("schedule.editSlot") : t("schedule.pick")}
-                    </span>
-                  </button>
+
                 </div>
               </div>
             );
@@ -207,7 +175,7 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
         <DateModal
           group={primaryGroup}
           shared
-          current={sharedSlot}
+          current={selectedSlot}
           cart={cart}
           onAssign={assignToAll}
           onClose={() => setModalOpen(false)}

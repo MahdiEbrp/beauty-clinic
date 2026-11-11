@@ -37,8 +37,9 @@ type PaymentTransactionListRow = {
 };
 
 export async function listPaymentTransactions(opts: ListPaymentTransactionsQuery): Promise<ListPaymentTransactionsResult> {
-  const conds: SQL[] = [];
-  if (opts.status && opts.status !== "all") conds.push(eq(paymentTransactions.status, opts.status));
+  // The dashboard is a payment ledger, not a manual transaction workbench:
+  // only provider-verified, completed payments are part of its result set.
+  const conds: SQL[] = [eq(paymentTransactions.status, "verified")];
   if (opts.search) {
     const s = or(ilike(paymentTransactions.bookingGroupRef, `%${opts.search}%`), ilike(paymentTransactions.authority, `%${opts.search}%`));
     if (s) conds.push(s);
@@ -99,7 +100,9 @@ export async function verifyPaymentTransaction(authority: string, amount?: numbe
   const amountRial = amount !== undefined ? Math.round(amount * 10) : Math.round(Number(tx.amount) * 10);
   const v = await adapter.verify({ authority, amount: amountRial });
   const newStatus = v.verified ? "verified" : "failed";
-  const newlyVerified = v.verified && !late;
+  // A verified late payment still deserves the one-time confirmation message.
+  // Already-verified callbacks return above with newlyVerified=false, preventing duplicates.
+  const newlyVerified = v.verified;
   await db.update(paymentTransactions).set({ status: newStatus, refId: v.refId ?? null, cardPan: v.cardPan ?? null, errorMessage: v.verified ? null : v.providerStatus ?? null, verifiedAt: v.verified ? new Date() : null, updatedAt: new Date(), completedAt: new Date() }).where(eq(paymentTransactions.id, tx.id));
   // also update bookings to paid if verified — honor the payment even when the
   // checkout window has already expired so the customer isn't shown a failure

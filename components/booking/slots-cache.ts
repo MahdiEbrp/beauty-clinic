@@ -20,18 +20,22 @@ type CacheEntry = {
 const TTL_MS = 45 * 1000;
 const cache = new Map<string, CacheEntry>();
 
-function key(date: string, groupId?: string): string {
+type SharedSlotQuery = { groupIds: string[]; quantity: number };
+
+function key(date: string, groupId?: string, shared?: SharedSlotQuery): string {
+  if (shared) return `${date}::shared:${[...shared.groupIds].sort().join(",")}:${shared.quantity}`;
   return groupId ? `${date}::${groupId}` : date;
 }
 
-function load(date: string, groupId: string | undefined): Promise<SlotOption[]> {
-  const entry = cache.get(key(date, groupId)) ?? {
+function load(date: string, groupId: string | undefined, shared?: SharedSlotQuery): Promise<SlotOption[]> {
+  const cacheKey = key(date, groupId, shared);
+  const entry = cache.get(cacheKey) ?? {
     data: null,
     fetchedAt: 0,
     inflight: null,
   };
   if (!entry.inflight) {
-    entry.inflight = fetchAvailableSlots(date, groupId)
+    entry.inflight = fetchAvailableSlots(date, groupId, shared)
       .then((data) => {
         entry.data = data;
         entry.fetchedAt = Date.now();
@@ -39,9 +43,9 @@ function load(date: string, groupId: string | undefined): Promise<SlotOption[]> 
       })
       .finally(() => {
         entry.inflight = null;
-        cache.set(key(date, groupId), entry);
+        cache.set(cacheKey, entry);
       });
-    cache.set(key(date, groupId), entry);
+    cache.set(cacheKey, entry);
   }
   return entry.inflight;
 }
@@ -56,25 +60,25 @@ export type SlotsResult = {
 };
 
 /** Read-through cache: returns the instant snapshot plus the fresh promise. */
-export function getSlots(date: string, groupId?: string): SlotsResult {
-  const entry = cache.get(key(date, groupId));
+export function getSlots(date: string, groupId?: string, shared?: SharedSlotQuery): SlotsResult {
+  const entry = cache.get(key(date, groupId, shared));
   if (entry?.data && Date.now() - entry.fetchedAt < TTL_MS) {
     return { data: entry.data, fresh: Promise.resolve(entry.data), hit: true };
   }
   if (entry?.data) {
     // stale-while-revalidate: render now, refresh in the background
-    void load(date, groupId);
-    return { data: entry.data, fresh: load(date, groupId), hit: false };
+    void load(date, groupId, shared);
+    return { data: entry.data, fresh: load(date, groupId, shared), hit: false };
   }
-  return { data: null, fresh: load(date, groupId), hit: false };
+  return { data: null, fresh: load(date, groupId, shared), hit: false };
 }
 
 /** Warm the cache for upcoming days (called from the day strip). */
-export function prefetchDays(dates: string[], groupId?: string): void {
+export function prefetchDays(dates: string[], groupId?: string, shared?: SharedSlotQuery): void {
   for (const date of dates) {
-    const entry = cache.get(key(date, groupId));
+    const entry = cache.get(key(date, groupId, shared));
     if (!entry?.data || Date.now() - entry.fetchedAt > TTL_MS) {
-      void load(date, groupId);
+      void load(date, groupId, shared);
     }
   }
 }

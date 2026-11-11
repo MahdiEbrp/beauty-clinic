@@ -23,9 +23,11 @@ const WIZARD_STEPS = CATEGORY_STEPS as ReadonlyArray<{ id: number; key: string }
 export default function CreateServiceCategoryForm({
   category,
   groupOptions = [],
+  initialGroupId,
 }: {
   category?: AdminServiceCategory;
   groupOptions?: GroupOption[];
+  initialGroupId?: string;
 }) {
   const t = useTranslations("categoryWizard");
   const {
@@ -66,7 +68,7 @@ export default function CreateServiceCategoryForm({
     setImageUrl,
     handlePrimary,
     onIconSelect,
-  } = useCreateCategoryForm(category, groupOptions);
+  } = useCreateCategoryForm(category, groupOptions, initialGroupId);
 
   const isLangAware = CATEGORY_LANG_AWARE_STEPS.has(step);
   const heading = mode === "edit" ? t("editHeading") : t("heading");

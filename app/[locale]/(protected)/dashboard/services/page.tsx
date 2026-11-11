@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import ServicesAnalyticsContent from "@/components/ServicesAnalyticsContent";
 import { requirePermission } from "@/lib/auth/dal";
 import { getPerformanceView } from "@/lib/services/performance";
+import { getCatalogSummary } from "@/lib/services/service";
 import { pageUrl } from "@/lib/site";
 
 export async function generateMetadata({
@@ -29,8 +30,14 @@ export async function generateMetadata({
 }
 
 export default async function ServicesPage() {
-  await requirePermission("services.read");
-  const data = await getPerformanceView();
+  const session = await requirePermission("services.read");
+  const [data, catalog] = await Promise.all([getPerformanceView(), getCatalogSummary()]);
 
-  return <ServicesAnalyticsContent data={data} />;
+  return (
+    <ServicesAnalyticsContent
+      data={data}
+      catalog={catalog}
+      canWrite={session.user.permissions.includes("services.write")}
+    />
+  );
 }

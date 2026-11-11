@@ -3,11 +3,12 @@
 import { useTranslations } from "next-intl";
 import { AlertTriangle, RefreshCw, Star, Stethoscope } from "lucide-react";
 import type { AdminService } from "@/lib/services/types";
-import { SelectionCheckbox, statusOf, statusClass, formatPrice } from "./helpers";
+import { SelectionCheckbox, statusOf, statusClass } from "./helpers";
 import { ServiceRowSkeleton } from "./skeletons";
 import { ServiceRowActions } from "./row-actions";
 import { ServicesEmptyState } from "./empty-state";
 import { useServices } from "./services-context";
+import { QuickPriceEditor } from "./quick-price-editor";
 
 function StatusBadge({ service }: { service: AdminService }) {
   const t = useTranslations();
@@ -62,7 +63,7 @@ function ServicesErrorState() {
 
 export function ServicesDesktopTable() {
   const t = useTranslations();
-  const { data, isLoading, hasLoadFailed, canWrite, selectedIds, allVisibleSelected, selectAllRef, toggleServiceSelection, togglePageSelection, currency } = useServices();
+  const { data, isLoading, hasLoadFailed, canWrite, selectedIds, allVisibleSelected, selectAllRef, toggleServiceSelection, togglePageSelection } = useServices();
 
   if (hasLoadFailed) {
     return (
@@ -126,11 +127,7 @@ export function ServicesDesktopTable() {
                   <td className="px-3 py-4">
                     <span className="text-dash-body-sm text-content-secondary">{service.categoryName ?? "—"}</span>
                   </td>
-<td className="px-3 py-4 text-center">
-                      <span dir="ltr" className="text-dash-body-sm text-accent">
-                        {service.price ? formatPrice(service.price, currency) : t("serviceServices.price_on_request")}
-                      </span>
-                    </td>
+<td className="px-3 py-4 text-center"><QuickPriceEditor service={service} /></td>
                   <td className="px-3 py-4 text-center">
                     <span className="text-dash-body-sm text-content-secondary">
                       {service.durationMin ? `${Number(service.durationMin)} ${t("serviceServices.durationUnit")}` : "—"}

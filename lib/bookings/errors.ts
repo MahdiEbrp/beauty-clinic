@@ -52,7 +52,7 @@ const CODE_TO_NO = Object.fromEntries(
 ) as Record<BookingErrorCode, number>;
 
 /** Room to book out; beyond this the slot is "too far in advance". */
-export const MAX_ADVANCE_DAYS = 30;
+export const MAX_ADVANCE_DAYS = 180;
 
 /** The default fallback for any unexpected booking failure. */
 export const UNKNOWN_BOOKING_ERROR_KEY = "systemError";

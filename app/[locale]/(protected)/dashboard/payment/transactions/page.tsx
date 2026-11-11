@@ -28,7 +28,7 @@ export default async function PaymentTransactionsPage() {
   const result = await listPaymentTransactions({
     page: 1,
     perPage: PAYMENT_LIMITS.transactionListPerPageDefault,
-    status: "all",
+    status: "verified",
   });
   const initialData: ListResult<PaymentTransactionAdmin> = {
     items: mapPaymentTransactions(result.items),

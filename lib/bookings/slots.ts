@@ -47,7 +47,7 @@ async function bookedCounts(slotIds: string[]): Promise<Map<string, number>> {
   const rows = await db
     .select({
       slotId: bookings.slotId,
-      count: sql<number>`count(*)::int`,
+      count: sql<number>`coalesce(sum(${bookings.quantity}), 0)::int`,
     })
     .from(bookings)
     .where(
@@ -140,6 +140,27 @@ export async function availableSlots(
 ): Promise<SlotSummary[]> {
   const rows = await listSlots({ from: slotDate, to: slotDate, groupId });
   return rows.filter((s) => s.available);
+}
+
+/**
+ * Slots suitable for one shared time across multiple selected service groups.
+ * Unlinked slots accept every group; linked slots must include all requested
+ * groups. Capacity is checked against the total number of seats the order adds
+ * to this one shared slot, mirroring createBookingGroup's atomic validation.
+ */
+export async function availableSlotsForGroups(
+  slotDate: string,
+  groupIds: string[],
+  quantity: number,
+): Promise<SlotSummary[]> {
+  const selected = [...new Set(groupIds)];
+  if (selected.length === 0 || quantity < 1) return [];
+  const rows = await listSlots({ from: slotDate, to: slotDate });
+  return rows.filter((slot) =>
+    slot.available &&
+    slot.capacity - slot.bookedCount >= quantity &&
+    (slot.groupIds.length === 0 || selected.every((id) => slot.groupIds.includes(id))),
+  );
 }
 
 export async function createSlots(

@@ -1,7 +1,6 @@
 import { after, NextResponse } from "next/server";
 
 import { notifyNewReservation } from "@/lib/notifications/booking-notifier";
-import { markPaymentFailed } from "@/lib/payment/booking-checkout";
 import { verifyPaymentTransaction } from "@/lib/payment/transaction-service";
 import { localizedHref } from "@/lib/site";
 
@@ -15,13 +14,10 @@ export async function GET(request: Request) {
     searchParams.get("Authority") ??
     searchParams.get("authority") ??
     searchParams.get("token");
-  const status = searchParams.get("Status") ?? searchParams.get("status");
   if (!authority) return NextResponse.redirect(new URL("/payment/failed?reason=missing_authority", request.url));
-  if (status && status !== "OK" && status !== "success") {
-    const failed = await markPaymentFailed(authority, "Payment was cancelled or declined by the provider.");
-    const path = localizedHref(failed?.locale ?? "fa", "/payment/failed");
-    return NextResponse.redirect(new URL(`${path}?authority=${encodeURIComponent(authority)}`, request.url));
-  }
+  // Query status strings differ across providers and can be stale or oddly cased.
+  // Never mark a payment failed from redirect parameters alone: the provider's
+  // server-to-server verification response is the authoritative payment result.
   try {
     const res = await verifyPaymentTransaction(authority);
     if (res.verified && res.newlyVerified) {

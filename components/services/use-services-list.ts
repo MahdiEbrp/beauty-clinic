@@ -62,6 +62,7 @@ export interface ServicesListState {
 export function useServicesList(
   currentUser: AuthUser,
   initialData: ServicesResult,
+  categoryId?: string,
 ): ServicesListState {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -137,6 +138,7 @@ export function useServicesList(
           featured: params.featured,
         });
         if (params.search) qs.set("search", params.search);
+        if (categoryId) qs.set("categoryId", categoryId);
         const response = await fetch(`/api/v1/services?${qs.toString()}`, {
           credentials: "include",
         });
@@ -149,7 +151,7 @@ export function useServicesList(
         setIsLoading(false);
       }
     },
-    [],
+    [categoryId],
   );
 
   useEffect(() => {
