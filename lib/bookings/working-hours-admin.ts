@@ -45,6 +45,7 @@ export async function setWorkingHoursActive(
     .set({ isActive, updatedAt: new Date() })
     .where(inArray(workingHours.id, ids));
   await bustWorkingHoursCache();
+  await refreshPatternSlots();
 }
 
 /** Bulk-deletes working-hours rows along with their day patterns. */
@@ -60,8 +61,8 @@ export async function deleteWorkingHours(ids: string[]): Promise<string[]> {
   await deletePatternsForDays(days);
   await bustWorkingHoursCache();
   await bustSlotPatternCache();
+  await refreshPatternSlots();
   return [];
-}
 
 export async function getWorkingHour(
   id: string,
@@ -157,7 +158,7 @@ export async function createWorkingHour(input: {
   });
   await bustWorkingHoursCache();
   await bustSlotPatternCache();
-  if (sorted.length > 0) await refreshPatternSlots();
+  await refreshPatternSlots();
   return toRow(row);
 }
 
@@ -191,9 +192,8 @@ export async function updateWorkingHour(
   });
   await bustWorkingHoursCache();
   await bustSlotPatternCache();
-  // Re-materialize even when patterns were cleared, so a pattern→uniform
-  // switch removes the slots that no longer belong to the day's grid.
-  if (patterns !== undefined) await refreshPatternSlots();
+  // Re-materialize after every schedule change so generated starts stay in sync.
+  await refreshPatternSlots();
   return toRow(row);
 }
 
@@ -210,4 +210,5 @@ export async function deleteWorkingHour(id: string): Promise<void> {
   });
   await bustWorkingHoursCache();
   await bustSlotPatternCache();
+  await refreshPatternSlots();
 }
