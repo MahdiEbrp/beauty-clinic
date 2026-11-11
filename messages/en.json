@@ -698,6 +698,56 @@
       "syncing": "Syncing...",
       "generated": "{count} slots generated",
       "generateError": "Could not generate slots"
+    },
+    "weekdays": {
+      "saturday": "Saturday",
+      "sunday": "Sunday",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday"
+    },
+    "bulkGenerate": {
+      "title": "Bulk Slot Generation",
+      "description": "Specify a date range, weekdays, and time window; slots are created automatically.",
+      "fields": {
+        "fromDate": {
+          "label": "From date"
+        },
+        "toDate": {
+          "label": "To date"
+        },
+        "days": {
+          "label": "Days of week",
+          "hint": "Select weekdays to generate slots for."
+        },
+        "opens": {
+          "label": "Opens at"
+        },
+        "closes": {
+          "label": "Closes at"
+        },
+        "interval": {
+          "label": "Interval",
+          "hint": "minutes"
+        },
+        "duration": {
+          "label": "Duration",
+          "hint": "minutes"
+        },
+        "capacity": {
+          "label": "Capacity",
+          "hint": "bookings per slot"
+        },
+        "groups": {
+          "label": "Service groups"
+        }
+      },
+      "actions": {
+        "generate": "Generate slots",
+        "generating": "Generating..."
+      }
     }
   },
   "workingHours": {

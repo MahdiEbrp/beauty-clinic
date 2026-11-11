@@ -48,6 +48,61 @@ export const createSlotsSchema = z
   })
   .strict();
 
+const WEEKDAY_NAMES = [
+  "Saturday",
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+] as const;
+
+/**
+ * Bulk slot generation: date range + weekdays + time window + interval.
+ * Generates one slot per start time for every matching date in the range.
+ */
+export const bulkGenerateSlotsSchema = z
+  .object({
+    fromDate: slotDateSchema,
+    toDate: slotDateSchema,
+    /** Weekday names whose dates get slots (empty = every day in range). */
+    daysOfWeek: z.array(z.enum(WEEKDAY_NAMES)).min(1).max(7),
+    opens: z.string().trim().regex(TIME_PATTERN, "Time must be HH:MM"),
+    closes: z.string().trim().regex(TIME_PATTERN, "Time must be HH:MM"),
+    intervalMin: z.number().int().min(5).max(1440).default(30),
+    durationMin: z.number().int().min(5).max(1440).default(30),
+    capacity: z.number().int().min(1).max(500).default(1),
+    /** Empty = slot accepts every service group. */
+    groupIds: z.array(z.uuid()).max(50).optional(),
+  })
+  .strict()
+  .superRefine((data, ctx) => {
+    if (data.toDate < data.fromDate) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["toDate"],
+        message: "End date must be after start date.",
+      });
+    }
+    if (data.closes <= data.opens) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["closes"],
+        message: "Closing time must be after opening time.",
+      });
+    }
+    if (data.intervalMin < data.durationMin) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["intervalMin"],
+        message: "Interval must be at least the slot duration.",
+      });
+    }
+  });
+
+export type BulkGenerateSlotsInput = z.infer<typeof bulkGenerateSlotsSchema>;
+
 export const updateSlotSchema = z
   .object({
     groupIds: z.array(z.uuid()).max(50).optional(),
