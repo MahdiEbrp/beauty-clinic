@@ -22,12 +22,14 @@ const WIZARD_STEPS = SERVICE_STEPS as ReadonlyArray<{ id: number; key: string }>
 export default function CreateServiceServiceForm({
   service,
   categoryOptions = [],
+  initialCategoryId,
 }: {
   service?: AdminService;
   categoryOptions?: CategoryOption[];
+  initialCategoryId?: string;
 }) {
   const t = useTranslations("serviceWizard");
-  const f = useCreateServiceForm(service, categoryOptions);
+  const f = useCreateServiceForm(service, categoryOptions, initialCategoryId);
 
   const isLangAware = new Set([2, 5, 6]).has(f.step);
   const heading = f.mode === "edit" ? t("editHeading") : t("heading");
