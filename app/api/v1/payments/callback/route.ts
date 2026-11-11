@@ -1,7 +1,6 @@
 import { after, NextResponse } from "next/server";
 
 import { notifyNewReservation } from "@/lib/notifications/booking-notifier";
-import { markPaymentFailed } from "@/lib/payment/booking-checkout";
 import { verifyPaymentTransaction } from "@/lib/payment/transaction-service";
 import { localizedHref } from "@/lib/site";
 
@@ -15,18 +14,10 @@ export async function GET(request: Request) {
     searchParams.get("Authority") ??
     searchParams.get("authority") ??
     searchParams.get("token");
-  const status = searchParams.get("Status") ?? searchParams.get("status");
   if (!authority) return NextResponse.redirect(new URL("/payment/failed?reason=missing_authority", request.url));
-  // Gateway status parameters are inconsistently cased across providers.
-  // Normalize before classifying a decline so "SUCCESS"/"Ok" is not mistaken
-  // for a failed payment and the verified callback path remains authoritative.
-  const normalizedStatus = status?.trim().toLowerCase();
-  const declinedStatuses = new Set(["nok", "failed", "failure", "cancel", "cancelled", "canceled", "0", "false"]);
-  if (normalizedStatus && declinedStatuses.has(normalizedStatus)) {
-    const failed = await markPaymentFailed(authority, "Payment was cancelled or declined by the provider.");
-    const path = localizedHref(failed?.locale ?? "fa", "/payment/failed");
-    return NextResponse.redirect(new URL(`${path}?authority=${encodeURIComponent(authority)}`, request.url));
-  }
+  // Query status strings differ across providers and can be stale or oddly cased.
+  // Never mark a payment failed from redirect parameters alone: the provider's
+  // server-to-server verification response is the authoritative payment result.
   try {
     const res = await verifyPaymentTransaction(authority);
     if (res.verified && res.newlyVerified) {
