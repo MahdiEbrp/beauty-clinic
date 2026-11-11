@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Star, Stethoscope } from "lucide-react";
 import type { AdminService } from "@/lib/services/types";
-import { statusOf, statusClass, formatPrice } from "./helpers";
+import { statusOf, statusClass } from "./helpers";
 import { ServiceCardSkeleton } from "./skeletons";
 import { ServiceRowActions } from "./row-actions";
 import { ServicesEmptyState } from "./empty-state";
@@ -29,7 +29,7 @@ function ServiceCardIcon({ service }: { service: AdminService }) {
 
 function ServiceCard({ service }: { service: AdminService }) {
   const t = useTranslations();
-  const { canWrite, isSyncing, currency } = useServices();
+  const { canWrite, isSyncing } = useServices();
   const state = statusOf(service);
   return (
     <article className={`flex items-start gap-3 rounded-card border border-border-primary bg-surface-secondary p-3.5 ${isSyncing(service.id) ? "opacity-60" : ""}`}>
