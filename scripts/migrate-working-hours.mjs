@@ -67,22 +67,26 @@ async function main() {
     }
   }
 
-  // Upgrade only the exact legacy defaults introduced by this migration.
-  // Any administrator-customized value is preserved.
-  const [autoSetting] = await sql`SELECT value FROM settings WHERE scope = 'system' AND key = 'booking.slot_auto' LIMIT 1`;
-  if (autoSetting?.value === false) {
-    const [autoMeta] = await sql`SELECT created_at, updated_at FROM settings WHERE scope = 'system' AND key = 'booking.slot_auto' LIMIT 1`;
-    if (autoMeta && new Date(autoMeta.created_at).getTime() === new Date(autoMeta.updated_at).getTime()) {
-      await sql`UPDATE settings SET value = 'true'::jsonb, updated_at = NOW() WHERE scope = 'system' AND key = 'booking.slot_auto'`;
-    }
+  // Upgrade only settings that still carry the untouched seeded defaults.
+  // Admin-edited values have updated_at changed and are deliberately preserved.
+  const upgradedAuto = await sql`
+    UPDATE settings
+    SET value = 'true'::jsonb, updated_at = NOW()
+    WHERE scope = 'system' AND key = 'booking.slot_auto'
+      AND value = 'false'::jsonb AND created_at = updated_at
+    RETURNING id
+  `;
+  if (upgradedAuto.length > 0) {
     console.log('Legacy slot auto-generation default enabled.');
   }
-  const [windowSetting] = await sql`SELECT value FROM settings WHERE scope = 'system' AND key = 'booking.slot_window_days' LIMIT 1`;
-  if (Number(windowSetting?.value) === 30) {
-    const [windowMeta] = await sql`SELECT created_at, updated_at FROM settings WHERE scope = 'system' AND key = 'booking.slot_window_days' LIMIT 1`;
-    if (windowMeta && new Date(windowMeta.created_at).getTime() === new Date(windowMeta.updated_at).getTime()) {
-      await sql`UPDATE settings SET value = '180'::jsonb, updated_at = NOW() WHERE scope = 'system' AND key = 'booking.slot_window_days'`;
-    }
+  const upgradedWindow = await sql`
+    UPDATE settings
+    SET value = '180'::jsonb, updated_at = NOW()
+    WHERE scope = 'system' AND key = 'booking.slot_window_days'
+      AND value = '30'::jsonb AND created_at = updated_at
+    RETURNING id
+  `;
+  if (upgradedWindow.length > 0) {
     console.log('Legacy slot-generation window extended to 180 days.');
   }
 
