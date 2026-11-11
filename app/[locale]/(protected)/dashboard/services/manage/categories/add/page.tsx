@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { z } from "zod";
 import { getTranslations } from "next-intl/server";
 
 import CreateServiceCategoryForm from "@/components/create-category/CreateServiceCategoryForm";
@@ -30,9 +31,18 @@ export async function generateMetadata({
   };
 }
 
-export default async function AddServiceCategoryPage() {
+export default async function AddServiceCategoryPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ groupId?: string | string[] }>;
+}) {
   await requirePermission("services.write");
-  const groupOptions = await listGroupOptions();
+  const [groupOptions, query] = await Promise.all([listGroupOptions(), searchParams]);
+  const rawGroupId = typeof query.groupId === "string" ? query.groupId : undefined;
+  const parsed = z.uuid().safeParse(rawGroupId);
+  const initialGroupId = parsed.success && groupOptions.some((option) => option.id === parsed.data)
+    ? parsed.data
+    : undefined;
 
-  return <CreateServiceCategoryForm groupOptions={groupOptions} />;
+  return <CreateServiceCategoryForm groupOptions={groupOptions} initialGroupId={initialGroupId} />;
 }
