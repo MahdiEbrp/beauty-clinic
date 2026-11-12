@@ -3,6 +3,7 @@ import { z } from "zod";
 import { jsonOk, withSecurity } from "@/lib/api/security";
 import { clientIp } from "@/lib/api/request";
 import { availableSlots, availableSlotsForGroups } from "@/lib/bookings/slots";
+import { ensureAutoSlots } from "@/lib/bookings/generator";
 import { availableSlotsQuerySchema, sharedAvailableSlotsQuerySchema } from "@/lib/validation/bookings";
 export const runtime = "nodejs";
 
@@ -21,6 +22,10 @@ export const GET = withSecurity(
     validate: { query: z.union([availableSlotsQuerySchema, sharedAvailableSlotsQuerySchema]) },
   },
   async (_request, ctx) => {
+    // Materialize the configured window on demand instead of depending only on
+    // a daily timer in a possibly short-lived serverless process.
+    await ensureAutoSlots();
+
     const query = ctx.query ?? (() => { throw new Error("Query params are missing"); })();
     const slots = "groupIds" in query
       ? await availableSlotsForGroups(query.date, query.groupIds, query.quantity)
