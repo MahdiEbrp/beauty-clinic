@@ -15,7 +15,8 @@ export const GET = withSecurity(
   {
     auth: "public",
     rateLimit: {
-      limit: 30,
+      // The booking calendar prefetches one request per date in the visible month.
+      limit: 120,
       windowMs: 60 * 1000,
       key: (request) => `slots:availability:${clientIp(request) ?? "unknown"}`,
     },
