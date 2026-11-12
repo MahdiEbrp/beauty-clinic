@@ -163,6 +163,42 @@ export async function availableSlotsForGroups(
   );
 }
 
+/**
+ * Dates that contain at least one genuinely bookable slot in a range.
+ * Uses the same booking_slots rows, capacity accounting and group links as
+ * the dashboard slot list, but returns only distinct date keys for the
+ * public booking calendar.
+ */
+export async function availableSlotDates(
+  from: string,
+  to: string,
+  groupId?: string,
+  shared?: { groupIds: string[]; quantity: number },
+): Promise<string[]> {
+  const selected = shared ? [...new Set(shared.groupIds)] : [];
+  if (shared && (selected.length === 0 || shared.quantity < 1)) return [];
+
+  const rows = await listSlots({
+    from,
+    to,
+    groupId: shared ? undefined : groupId,
+  });
+
+  const dates = new Set<string>();
+  for (const slot of rows) {
+    if (!slot.available) continue;
+    if (
+      shared &&
+      (
+        slot.capacity - slot.bookedCount < shared.quantity ||
+        (slot.groupIds.length > 0 && !selected.every((id) => slot.groupIds.includes(id)))
+      )
+    ) continue;
+    dates.add(slot.slotDate);
+  }
+  return [...dates].sort();
+}
+
 export async function createSlots(
   input: {
     groupIds?: string[];
