@@ -53,7 +53,7 @@ type DateSelectsProps = {
   onDayChange: (date: Date) => void;
 };
 
-/** Year / Month / Day Radix selects for the 30-day booking window. */
+/** Year / Month / Day Radix selects for dates with available capacity. */
 export function DateSelects({
   jalali,
   locale,
