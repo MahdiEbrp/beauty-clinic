@@ -96,16 +96,5 @@ export async function guardPatternWithinDay(
   }
 }
 
-/**
- * Best-effort re-materialization so a saved pattern immediately reshapes the
- * unbooked slots inside the generation window. Failures are swallowed — the
- * daily cron retries the same idempotent run.
- */
-export async function refreshPatternSlots(): Promise<void> {
-  try {
-    const { ensureAutoSlots } = await import("./generator");
-    await ensureAutoSlots(true);
-  } catch {
-    /* best-effort — the daily cron covers it */
-  }
-}
+// Slot generation is manual only (date range on /dashboard/slots).
+// No automatic re-materialization after pattern changes.
