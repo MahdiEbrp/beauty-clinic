@@ -91,6 +91,7 @@ async function syncActiveSlots(
   config: GeneratorConfig,
 ): Promise<void> {
   const deactivateIds: string[] = [];
+  const activateIds: string[] = [];
   const capacityByTarget = new Map<number, string[]>();
 
   for (const [dateKey, plan] of dayPlansByDate) {
@@ -100,10 +101,14 @@ async function syncActiveSlots(
       const targetCapacity = desired.get(row.startTime);
       if (targetCapacity === undefined) {
         if (row.isActive) deactivateIds.push(row.id);
-      } else if (row.capacity !== targetCapacity) {
-        const ids = capacityByTarget.get(targetCapacity);
-        if (ids) ids.push(row.id);
-        else capacityByTarget.set(targetCapacity, [row.id]);
+      } else {
+        // Reactivate unbooked slots if working hours now include their start.
+        if (!row.isActive) activateIds.push(row.id);
+        if (row.capacity !== targetCapacity) {
+          const ids = capacityByTarget.get(targetCapacity);
+          if (ids) ids.push(row.id);
+          else capacityByTarget.set(targetCapacity, [row.id]);
+        }
       }
     }
   }
@@ -113,6 +118,12 @@ async function syncActiveSlots(
       .update(bookingSlots)
       .set({ isActive: false, updatedAt: new Date() })
       .where(inArray(bookingSlots.id, deactivateIds));
+  }
+  if (activateIds.length > 0) {
+    await tx
+      .update(bookingSlots)
+      .set({ isActive: true, updatedAt: new Date() })
+      .where(inArray(bookingSlots.id, activateIds));
   }
   for (const [capacity, ids] of capacityByTarget) {
     await tx
