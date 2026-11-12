@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Check, X, CalendarDays, LoaderCircle } from "lucide-react";
 import { doSlotsOverlap, slotDuration } from "@/lib/booking/scheduling";
 import { cn } from "@/lib/utils";
+import { fetchAvailableDates } from "../api";
 import { getSlots, prefetchDays, type SlotsResult } from "../slots-cache";
 import type { CartItem, SelectedGroup, SlotOption } from "../types";
 import { DateSelects, gregorianKey, toParts } from "./date-selects";
@@ -59,50 +60,115 @@ export default function DateModal({ group, shared, current, cart, onAssign, onCl
   const [availableDateKeys, setAvailableDateKeys] = useState<Set<string>>(new Set());
   const [availabilityChecked, setAvailabilityChecked] = useState(false);
 
-  const years = useMemo(() => Array.from(new Set(windowDates.map((d) => toParts(d, jalali).year))).sort(), [jalali, windowDates]);
+  // Calendar options are built only from dates that have real free capacity.
+  const availableDates = useMemo(
+    () => windowDates.filter((date) => availableDateKeys.has(gregorianKey(date))),
+    [availableDateKeys, windowDates],
+  );
+  const years = useMemo(
+    () => Array.from(new Set(availableDates.map((date) => toParts(date, jalali).year))).sort(),
+    [availableDates, jalali],
+  );
   const months = useMemo(
-    () => Array.from(new Set(windowDates.filter((d) => toParts(d, jalali).year === pickerYear).map((d) => toParts(d, jalali).month))).sort((a, b) => a - b),
-    [jalali, pickerYear, windowDates],
+    () => Array.from(
+      new Set(
+        availableDates
+          .filter((date) => toParts(date, jalali).year === pickerYear)
+          .map((date) => toParts(date, jalali).month),
+      ),
+    ).sort((a, b) => a - b),
+    [availableDates, jalali, pickerYear],
   );
   const days = useMemo(
-    () => windowDates.filter((d) => toParts(d, jalali).year === pickerYear && toParts(d, jalali).month === pickerMonth),
-    [jalali, pickerMonth, pickerYear, windowDates],
+    () => availableDates.filter((date) => {
+      const parts = toParts(date, jalali);
+      return parts.year === pickerYear && parts.month === pickerMonth;
+    }),
+    [availableDates, jalali, pickerMonth, pickerYear],
   );
 
   const pickerDateKey = pickerDay ? gregorianKey(pickerDay) : null;
 
-  // Warm the cache for the next days while the customer browses.
+  // One batched query reads the same slot records used by /dashboard/slots.
+  // The API returns only date keys with an active slot and remaining capacity.
   useEffect(() => {
-    prefetchDays(windowDates.slice(1, 6).map(gregorianKey), availabilityGroupId, sharedQuery);
+    let active = true;
+    setAvailabilityChecked(false);
+    void fetchAvailableDates(
+      gregorianKey(windowDates[0]!),
+      gregorianKey(windowDates[windowDates.length - 1]!),
+      availabilityGroupId,
+      sharedQuery,
+    ).then(
+      (dateKeys) => {
+        if (!active) return;
+        setAvailableDateKeys(new Set(dateKeys));
+        setAvailabilityChecked(true);
+      },
+      () => {
+        if (!active) return;
+        setAvailableDateKeys(new Set());
+        setAvailabilityChecked(true);
+      },
+    );
+
+    return () => {
+      active = false;
+    };
   }, [availabilityGroupId, sharedQuery, windowDates]);
 
-  // Prefetch all days in the current month view and hide dates with no slots.
+  // Keep the current month only when it has free days; otherwise jump to the
+  // nearest month that contains a bookable date. Preserve a current selection
+  // only while its date is still available for this service/cart.
   useEffect(() => {
-    const dateKeys = days.map(gregorianKey);
-    prefetchDays(dateKeys, availabilityGroupId, sharedQuery);
+    if (!availabilityChecked) return;
 
-    const checkAll = async () => {
-      const results = await Promise.allSettled(
-        dateKeys.map(async (dateKey) => {
-          const result = getSlots(dateKey, availabilityGroupId, sharedQuery);
-          const data = await result.fresh;
-          return { dateKey, hasSlots: data.length > 0 };
-        })
-      );
-      const available = new Set(
-        results
-          .filter(
-            (r): r is PromiseFulfilledResult<{ dateKey: string; hasSlots: boolean }> =>
-              r.status === "fulfilled" && r.value.hasSlots,
-          )
-          .map((r) => r.value.dateKey),
-      );
-      setAvailableDateKeys(available);
-      setAvailabilityChecked(true);
-    };
+    const currentDate = current
+      ? availableDates.find((date) => gregorianKey(date) === current.slotDate)
+      : undefined;
+    const dateInSelectedMonth = availableDates.find((date) => {
+      const parts = toParts(date, jalali);
+      return parts.year === pickerYear && parts.month === pickerMonth;
+    });
+    const targetDate = currentDate ?? dateInSelectedMonth ?? availableDates[0];
 
-    void checkAll();
-  }, [pickerYear, pickerMonth, availabilityGroupId, sharedQuery, days]);
+    if (!targetDate) {
+      if (pickerDay) {
+        setPickerDay(null);
+        setPickerSlot(null);
+        setSlots(null);
+      }
+      return;
+    }
+
+    const targetParts = toParts(targetDate, jalali);
+    if (pickerYear !== targetParts.year) setPickerYear(targetParts.year);
+    if (pickerMonth !== targetParts.month) setPickerMonth(targetParts.month);
+
+    if (current && !currentDate && pickerDay) {
+      setPickerDay(null);
+      setPickerSlot(null);
+      setSlots(null);
+    }
+  }, [
+    availabilityChecked,
+    availableDates,
+    current,
+    jalali,
+    pickerDay,
+    pickerMonth,
+    pickerYear,
+  ]);
+
+  // Warm only the first few genuinely available dates for instant time loading.
+  useEffect(() => {
+    if (!availabilityChecked) return;
+    prefetchDays(
+      availableDates.slice(0, 5).map(gregorianKey),
+      availabilityGroupId,
+      sharedQuery,
+    );
+  }, [availabilityChecked, availableDates, availabilityGroupId, sharedQuery]);
 
   // Load the chosen day's real slots (stale-while-revalidate via cache).
   useEffect(() => {
@@ -180,32 +246,47 @@ export default function DateModal({ group, shared, current, cart, onAssign, onCl
           </button>
         </div>
 
-        {/* Year / Month / Day selects */}
+        {/* Only years/months/days with free slots are selectable. */}
         <div className="space-y-3">
-          <DateSelects
-            jalali={jalali}
-            locale={locale}
-            pickerYear={pickerYear}
-            pickerMonth={pickerMonth}
-            pickerDay={pickerDay}
-            years={years}
-            months={months}
-            days={days}
-            availableDateKeys={availabilityChecked ? availableDateKeys : new Set(days.map(gregorianKey))}
-            onYearChange={(year) => {
-              setPickerYear(year);
-              clearDay();
-            }}
-            onMonthChange={(month) => {
-              setPickerMonth(month);
-              clearDay();
-            }}
-            onDayChange={(date) => {
-              setPickerDay(date);
-              setPickerSlot(null);
-              setSlots(null);
-            }}
-          />
+          {!availabilityChecked ? (
+            <div className="flex items-center justify-center gap-2 rounded-control border border-border-interactive bg-surface-secondary px-4 py-6 text-caption font-bold text-content-secondary">
+              <LoaderCircle className="size-4 animate-spin text-copper" aria-hidden="true" />
+              {t("schedule.loadingTimes")}
+            </div>
+          ) : availableDates.length === 0 ? (
+            <p className="rounded-control border border-dashed border-border-interactive bg-surface-secondary px-4 py-6 text-center text-caption text-content-tertiary">
+              {t("schedule.emptyDay")}
+            </p>
+          ) : (
+            <DateSelects
+              jalali={jalali}
+              locale={locale}
+              pickerYear={pickerYear}
+              pickerMonth={pickerMonth}
+              pickerDay={pickerDay}
+              years={years}
+              months={months}
+              days={days}
+              availableDateKeys={availableDateKeys}
+              onYearChange={(year) => {
+                const firstMonth = availableDates
+                  .map((date) => toParts(date, jalali))
+                  .find((parts) => parts.year === year)?.month;
+                setPickerYear(year);
+                if (firstMonth) setPickerMonth(firstMonth);
+                clearDay();
+              }}
+              onMonthChange={(month) => {
+                setPickerMonth(month);
+                clearDay();
+              }}
+              onDayChange={(date) => {
+                setPickerDay(date);
+                setPickerSlot(null);
+                setSlots(null);
+              }}
+            />
+          )}
 
           {/* Time slots */}
           <div className="space-y-2">
