@@ -51,9 +51,11 @@ export default function DateModal({ group, shared, current, cart, onAssign, onCl
 
   const initialParts = current ? toParts(new Date(`${current.slotDate}T00:00:00`), jalali) : null;
   const todayParts = toParts(new Date(), jalali);
+  const fallbackYear = initialParts?.year ?? todayParts.year;
+  const fallbackMonth = initialParts?.month ?? todayParts.month;
 
-  const [pickerYear, setPickerYear] = useState(initialParts?.year ?? todayParts.year);
-  const [pickerMonth, setPickerMonth] = useState(initialParts?.month ?? todayParts.month);
+  const [pickerYear, setPickerYear] = useState(fallbackYear);
+  const [pickerMonth, setPickerMonth] = useState(fallbackMonth);
   const [pickerDay, setPickerDay] = useState<Date | null>(current ? new Date(`${current.slotDate}T00:00:00`) : null);
   const [pickerSlot, setPickerSlot] = useState<SlotOption | null>(current);
   const [slots, setSlots] = useState<SlotsResult | null>(null);
@@ -93,7 +95,9 @@ export default function DateModal({ group, shared, current, cart, onAssign, onCl
   // The API returns only date keys with an active slot and remaining capacity.
   useEffect(() => {
     let active = true;
+    /* eslint-disable react-hooks/set-state-in-effect -- reset while the new range is loading */
     setAvailabilityChecked(false);
+    /* eslint-enable react-hooks/set-state-in-effect */
     void fetchAvailableDates(
       gregorianKey(windowDates[0]!),
       gregorianKey(windowDates[windowDates.length - 1]!),
@@ -117,47 +121,45 @@ export default function DateModal({ group, shared, current, cart, onAssign, onCl
     };
   }, [availabilityGroupId, sharedQuery, windowDates]);
 
-  // Keep the current month only when it has free days; otherwise jump to the
-  // nearest month that contains a bookable date. Preserve a current selection
-  // only while its date is still available for this service/cart.
+  // After availability loads, retain the requested date when it is still free;
+  // otherwise choose the first available month (prefer the current month).
+  // The effect intentionally does not depend on the user's later month choice.
+  const currentDateKey = current?.slotDate ?? null;
   useEffect(() => {
     if (!availabilityChecked) return;
 
-    const currentDate = current
-      ? availableDates.find((date) => gregorianKey(date) === current.slotDate)
+    const currentDate = currentDateKey
+      ? availableDates.find((date) => gregorianKey(date) === currentDateKey)
       : undefined;
-    const dateInSelectedMonth = availableDates.find((date) => {
+    const preferredMonthDate = availableDates.find((date) => {
       const parts = toParts(date, jalali);
-      return parts.year === pickerYear && parts.month === pickerMonth;
+      return parts.year === fallbackYear && parts.month === fallbackMonth;
     });
-    const targetDate = currentDate ?? dateInSelectedMonth ?? availableDates[0];
+    const targetDate = currentDate ?? preferredMonthDate ?? availableDates[0];
 
-    if (!targetDate) {
-      if (pickerDay) {
-        setPickerDay(null);
-        setPickerSlot(null);
-        setSlots(null);
-      }
-      return;
-    }
-
-    const targetParts = toParts(targetDate, jalali);
-    if (pickerYear !== targetParts.year) setPickerYear(targetParts.year);
-    if (pickerMonth !== targetParts.month) setPickerMonth(targetParts.month);
-
-    if (current && !currentDate && pickerDay) {
+    /* eslint-disable react-hooks/set-state-in-effect -- synchronize selection with authoritative availability */
+    if (currentDateKey && !currentDate) {
       setPickerDay(null);
       setPickerSlot(null);
       setSlots(null);
     }
+    if (targetDate) {
+      const parts = toParts(targetDate, jalali);
+      setPickerYear(parts.year);
+      setPickerMonth(parts.month);
+    } else {
+      setPickerDay(null);
+      setPickerSlot(null);
+      setSlots(null);
+    }
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [
     availabilityChecked,
     availableDates,
-    current,
+    currentDateKey,
+    fallbackMonth,
+    fallbackYear,
     jalali,
-    pickerDay,
-    pickerMonth,
-    pickerYear,
   ]);
 
   // Warm only the first few genuinely available dates for instant time loading.
