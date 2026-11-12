@@ -51,6 +51,25 @@ export function fetchAvailableSlots(
   return handle<SlotOption[]>(fetch(`/api/public/slots?${params.toString()}`));
 }
 
+/** Loads all dates with free slots in one request for the booking calendar. */
+export function fetchAvailableDates(
+  from: string,
+  to: string,
+  groupId?: string,
+  shared?: { groupIds: string[]; quantity: number },
+): Promise<string[]> {
+  const params = new URLSearchParams({ from, to });
+  if (shared) {
+    params.set("groupIds", shared.groupIds.join(","));
+    params.set("quantity", String(shared.quantity));
+  } else if (groupId) {
+    params.set("groupId", groupId);
+  }
+  return handle<string[]>(
+    fetch(`/api/public/availability-days?${params.toString()}`),
+  );
+}
+
 /** Creates a multi-group booking order (one row per cart line). */
 export function createBookingGroup(payload: {
   fullName: string;
