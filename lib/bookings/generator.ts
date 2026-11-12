@@ -68,18 +68,42 @@ export async function readGeneratorConfig(): Promise<GeneratorConfig> {
 }
 
 /**
- * Materializes missing auto-slots for the configured window. Runs inside ONE
- * transaction that first takes a PostgreSQL advisory xact lock, so parallel
- * server instances/restarts never double-insert. Idempotent — existing
- * (date, start_time) rows are never overwritten or deleted, so "slots
- * auto-append unless an admin limited or changed hours" holds by
- * construction. Unbooked slots additionally converge to the schedule: capacity
- * updates + removed starts deactivated on pattern days, and group links
- * rewritten on every day (booked slots are always preserved).
+ * Short in-process single-flight/cooldown for public availability reads. The
+ * calendar requests many individual dates at once, but the generator operates
+ * on the whole configured window.
+ */
+let lastAutoGenerationAt = 0;
+let autoGenerationInFlight: Promise<{ created: number }> | null = null;
+const AUTO_GENERATION_COOLDOWN_MS = 30_000;
+
+/**
+ * Materializes missing auto-slots for the configured window. The transaction
+ * uses a PostgreSQL advisory xact lock so multiple instances never double-
+ * insert. Public availability reads can call this safely: concurrent reads in
+ * one process share a run and subsequent reads briefly reuse that window.
+ * Forced admin/schedule refreshes always bypass the cooldown.
  */
 export async function ensureAutoSlots(force = false): Promise<{ created: number }> {
-  const config = await readGeneratorConfig();
-  return ensureAutoSlotsWithConfig(config, force);
+  if (!force && autoGenerationInFlight) return autoGenerationInFlight;
+  if (!force && Date.now() - lastAutoGenerationAt < AUTO_GENERATION_COOLDOWN_MS) {
+    return { created: 0 };
+  }
+
+  const run = async () => {
+    const config = await readGeneratorConfig();
+    const result = await ensureAutoSlotsWithConfig(config, force);
+    lastAutoGenerationAt = Date.now();
+    return result;
+  };
+
+  if (force) return run();
+
+  autoGenerationInFlight = run();
+  try {
+    return await autoGenerationInFlight;
+  } finally {
+    autoGenerationInFlight = null;
+  }
 }
 
 /**
