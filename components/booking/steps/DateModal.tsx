@@ -125,6 +125,7 @@ export default function DateModal({ group, shared, current, cart, onAssign, onCl
   // otherwise choose the first available month (prefer the current month).
   // The effect intentionally does not depend on the user's later month choice.
   const currentDateKey = current?.slotDate ?? null;
+  const selectedDateKey = pickerDay ? gregorianKey(pickerDay) : null;
   useEffect(() => {
     if (!availabilityChecked) return;
 
@@ -136,9 +137,14 @@ export default function DateModal({ group, shared, current, cart, onAssign, onCl
       return parts.year === fallbackYear && parts.month === fallbackMonth;
     });
     const targetDate = currentDate ?? preferredMonthDate ?? availableDates[0];
+    const selectedDateIsAvailable =
+      selectedDateKey !== null && availableDateKeys.has(selectedDateKey);
 
     /* eslint-disable react-hooks/set-state-in-effect -- synchronize selection with authoritative availability */
-    if (currentDateKey && !currentDate) {
+    if (
+      (currentDateKey && !currentDate) ||
+      (selectedDateKey && !selectedDateIsAvailable)
+    ) {
       setPickerDay(null);
       setPickerSlot(null);
       setSlots(null);
@@ -155,11 +161,13 @@ export default function DateModal({ group, shared, current, cart, onAssign, onCl
     /* eslint-enable react-hooks/set-state-in-effect */
   }, [
     availabilityChecked,
+    availableDateKeys,
     availableDates,
     currentDateKey,
     fallbackMonth,
     fallbackYear,
     jalali,
+    selectedDateKey,
   ]);
 
   // Warm only the first few genuinely available dates for instant time loading.
