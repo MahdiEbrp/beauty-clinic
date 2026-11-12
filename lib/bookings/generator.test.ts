@@ -35,12 +35,25 @@ vi.mock("@/src/db", () => ({
   },
 }));
 
-function mockTx(existing: Array<{ id?: string; slotDate: string; startTime: string }> = []) {
+function mockTx(existing: Array<{ id?: string; slotDate: string; startTime: string; capacity?: number; isActive?: boolean }> = []) {
+  const updateSets: unknown[] = [];
+  const update = vi.fn().mockImplementation(() => ({
+    set: vi.fn((values: unknown) => {
+      updateSets.push(values);
+      return { where: vi.fn().mockResolvedValue(undefined) };
+    }),
+  }));
+  const existingRows = existing.map((row) => ({
+    ...row,
+    capacity: row.capacity ?? 1,
+    isActive: row.isActive ?? true,
+  }));
   return {
+    updateSets,
     execute: vi.fn().mockResolvedValue([]),
     select: vi.fn()
       .mockReturnValueOnce({
-        from: vi.fn().mockReturnValue({ where: vi.fn().mockReturnValue(existing) }),
+        from: vi.fn().mockReturnValue({ where: vi.fn().mockReturnValue(existingRows) }),
       })
       .mockReturnValueOnce({
         from: vi.fn().mockReturnValue({ where: vi.fn().mockReturnValue([]) }),
@@ -55,9 +68,7 @@ function mockTx(existing: Array<{ id?: string; slotDate: string; startTime: stri
         }),
       }),
     }),
-    update: vi.fn().mockReturnValue({
-      set: vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue(undefined) }),
-    }),
+    update,
     delete: vi.fn().mockReturnValue({
       where: vi.fn().mockResolvedValue(undefined),
     }),
@@ -225,6 +236,42 @@ describe("ensureAutoSlotsWithConfig", () => {
     });
     expect(typeof result.created).toBe("number");
     expect(result.created).toBeGreaterThanOrEqual(0);
+  });
+
+  it("reactivates existing unbooked slots that match the current working-hours grid", async () => {
+    const dateKey = zonedDateKey("UTC", new Date(), 0);
+    const tx = mockTx([
+      {
+        id: "inactive-slot",
+        slotDate: dateKey,
+        startTime: "09:00",
+        capacity: 1,
+        isActive: false,
+      },
+    ]);
+    vi.mocked(db.transaction).mockImplementation(async (fn) => fn(tx as never));
+    vi.mocked(loadWorkingHourRecords).mockResolvedValue([
+      {
+        day: weekdayOf(dateKey),
+        opens: "09:00",
+        closes: "10:00",
+        capacity: 1,
+      },
+    ] as never);
+
+    await ensureAutoSlotsWithConfig({
+      ...DEFAULTS,
+      auto: true,
+      intervalMin: 30,
+      durationMin: 30,
+      windowDays: 1,
+      timeZone: "UTC",
+    });
+
+    expect(tx.updateSets).toContainEqual({
+      isActive: true,
+      updatedAt: expect.any(Date),
+    });
   });
 
   it("is idempotent — second run creates nothing", async () => {
