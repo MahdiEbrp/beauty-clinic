@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { useRouter } from "@/src/i18n/navigation";
-import { CalendarDays, Clock, Plus, X } from "lucide-react";
+import { Clock, Plus } from "lucide-react";
 import type { AuthUser } from "@/lib/auth/dal";
 import type {
   AdminListConfig,
@@ -39,7 +39,6 @@ export function SlotsListView({
   const router = useRouter();
   const t = useTranslations();
   const [generating, setGenerating] = useState(false);
-  const [showGenerator, setShowGenerator] = useState(false);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
@@ -70,24 +69,6 @@ export function SlotsListView({
     Number(intervalMin) >= Number(durationMin) &&
     Number(capacity) >= 1;
 
-  const generateAll = async () => {
-    setGenerating(true);
-    try {
-      const res = await fetch("/api/v1/bookings/slots/generate", {
-        method: "POST",
-        credentials: "include",
-      });
-      if (!res.ok) throw new Error("generate_failed");
-      const result = (await res.json()) as { created: number };
-      toast.success(t("bookingSlots.toast.generated", { count: result.created }));
-      router.refresh();
-    } catch {
-      toast.error(t("bookingSlots.toast.generateError"));
-    } finally {
-      setGenerating(false);
-    }
-  };
-
   const handleBulkGenerate = async (event: React.SyntheticEvent) => {
     event.preventDefault();
     setGenerating(true);
@@ -111,7 +92,6 @@ export function SlotsListView({
       const result = (await res.json()) as { data: { length: number } };
       const count = result.data?.length ?? 0;
       toast.success(t("bookingSlots.toast.generated", { count }));
-      setShowGenerator(false);
       router.refresh();
     } catch {
       toast.error(t("bookingSlots.toast.generateError"));
@@ -126,12 +106,9 @@ export function SlotsListView({
     backHref: "/dashboard/bookings",
     addHref: "/dashboard/slots/add",
     listUrl: "/api/v1/bookings/slots/list",
-    headerAction: {
-      labelKey: "bookingSlots.actions.generate",
-      icon: "sparkles",
-      onClick: generateAll,
-      busy: generating,
-    },
+    // No automatic "generate all" — slots are generated only via the
+    // date-range form below, never automatically.
+    headerAction: undefined,
     permissions: {
       read: "appointments.read",
       write: "appointments.write",
@@ -232,22 +209,12 @@ export function SlotsListView({
 
   return (
     <div className="space-y-6">
-      {/* Date-range generator card */}
-      <section
-        className={`rounded-panel border border-surface-variant/50 bg-surface-secondary p-5 shadow-elevation-2 sm:p-6 ${showGenerator ? "" : "hidden"}`}
-      >
+      {/* Date-range generator card — always visible, including on mobile */}
+      <section className="rounded-panel border border-surface-variant/50 bg-surface-secondary p-5 shadow-elevation-2 sm:p-6">
         <div className="flex items-center justify-between gap-3 mb-4">
           <h2 className="text-dash-title font-bold tracking-tight text-content-primary">
             {t("bookingSlots.bulkGenerate.title")}
           </h2>
-          <button
-            type="button"
-            onClick={() => setShowGenerator(false)}
-            className="inline-flex min-h-9 items-center gap-1 rounded-control border border-border-interactive bg-surface-secondary px-2 text-[11px] font-bold text-accent transition-colors hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            <X className="size-3" aria-hidden="true" />
-            {t("common.cancel")}
-          </button>
         </div>
         <p className="max-w-2xl text-dash-body text-content-secondary mb-4">
           {t("bookingSlots.bulkGenerate.description")}
@@ -358,14 +325,6 @@ export function SlotsListView({
 
           <div className="flex items-center justify-between gap-3 pt-4">
             <button
-              type="button"
-              onClick={() => setShowGenerator(false)}
-              disabled={generating}
-              className="inline-flex min-h-11 items-center gap-2 rounded-pill border border-border-interactive bg-surface-secondary px-4 text-dash-body-sm font-bold text-accent transition hover:bg-surface-tertiary disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
-              {t("common.cancel")}
-            </button>
-            <button
               type="submit"
               disabled={generating || !formValid}
               className="inline-flex min-h-11 items-center gap-2 rounded-pill bg-accent px-5 py-2.5 text-dash-body-sm font-bold text-content-contrast shadow-elevation-1 transition hover:bg-accent-hover disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
@@ -378,20 +337,6 @@ export function SlotsListView({
           </div>
         </form>
       </section>
-
-      {/* Open generator button (when hidden) */}
-      {!showGenerator && (
-        <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={() => setShowGenerator(true)}
-            className="inline-flex min-h-11 items-center gap-2 rounded-pill border border-border-interactive bg-surface-secondary px-4 text-dash-body-sm font-bold text-accent transition hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            <CalendarDays className="size-4" aria-hidden="true" />
-            {t("bookingSlots.actions.generate")}
-          </button>
-        </div>
-      )}
 
       <AdminListView config={config} user={user} initialData={initialData} />
     </div>
