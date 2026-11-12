@@ -144,6 +144,51 @@ export const sharedAvailableSlotsQuerySchema = z
   })
   .strict();
 
+/** Range query for the public booking calendar's days with free capacity. */
+export const availableSlotDatesQuerySchema = z
+  .object({
+    from: slotDateSchema,
+    to: slotDateSchema,
+    groupId: z.uuid().optional(),
+    groupIds: z
+      .string()
+      .trim()
+      .min(1)
+      .transform((value) => [...new Set(value.split(",").map((id) => id.trim()).filter(Boolean))])
+      .pipe(z.array(z.uuid()).min(1).max(10))
+      .optional(),
+    quantity: z.coerce.number().int().min(1).max(100).default(1),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    if (value.to < value.from) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["to"],
+        message: "End date must be on or after start date.",
+      });
+      return;
+    }
+    const spanDays = Math.round(
+      (Date.parse(`${value.to}T00:00:00Z`) - Date.parse(`${value.from}T00:00:00Z`)) /
+        86_400_000,
+    );
+    if (spanDays > 90) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["to"],
+        message: "Availability range cannot exceed 90 days.",
+      });
+    }
+    if (value.groupId && value.groupIds) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["groupIds"],
+        message: "Choose either one group or multiple groups.",
+      });
+    }
+  });
+
 /** One order line: a service group + slot pair with seat count. */
 export const bookingItemSchema = z
   .object({
