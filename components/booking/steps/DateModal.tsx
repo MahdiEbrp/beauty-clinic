@@ -23,7 +23,7 @@ type DateModalProps = {
   onClose: () => void;
 };
 
-const WINDOW_DAYS = 180;
+const WINDOW_DAYS = 60;
 
 /** Themed per-group date & time picker bound to real slots. */
 export default function DateModal({ group, shared, current, cart, onAssign, onClose }: DateModalProps) {
