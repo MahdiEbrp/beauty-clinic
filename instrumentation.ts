@@ -1,24 +1,21 @@
 /**
  * Next.js instrumentation — runs once per server process at boot.
  *
- * Schedules three croner jobs:
+ * Schedules croner jobs:
  *
- * 1. Daily slot auto-generator — idempotent (only inserts missing
- *    (date, start_time) rows) and single-writer (PostgreSQL advisory xact
- *    lock), so multiple server instances can safely all register the same
- *    schedule.
- * 2. Bookings auto-complete — flips paid/waiting bookings to done once their
+ * 1. Bookings auto-complete — flips paid/waiting bookings to done once their
  *    appointment window has passed (every 15 minutes).
- * 3. Payment holds auto-expiry — cancels unpaid payment holds and releases
+ * 2. Payment holds auto-expiry — cancels unpaid payment holds and releases
  *    their pending bookings (every 15 minutes).
-* 4. Weekly disk cleanup — cleans unreserved past slots and expired logs
- * (Fridays at 6:00 UTC).
- * 5. Daily IndexNow sweep — re-announces the whole sitemap to Bing and the
- * other participating engines, covering any content change that did not go
- * through a targeted notification.
+ * 3. Weekly disk cleanup — cleans unreserved past slots and expired logs
+ *    (Fridays at 6:00 UTC).
+ * 4. Daily IndexNow sweep — re-announces the whole sitemap to Bing and the
+ *    other participating engines, covering any content change that did not go
+ *    through a targeted notification.
  *
- * Enable/disable via the SLOTS_CRON_ENABLED env var (default: enabled outside
- * dev so local servers don't fight over the shared dev database).
+ * Slot generation is intentionally NOT automatic — admins generate slots
+ * manually on /dashboard/slots by picking a date range. The daily slot
+ * auto-generator cron has been removed.
  */
 export async function register(): Promise<void> {
   if (process.env.NEXT_RUNTIME !== "nodejs") return;
@@ -62,39 +59,6 @@ export async function register(): Promise<void> {
   );
   logInfo("db.keep_warm_scheduled", {
     nextRun: keepWarmJob.nextRun()?.toISOString() ?? null,
-  });
-
-  const enabled = process.env.SLOTS_CRON_ENABLED
-    ? process.env.SLOTS_CRON_ENABLED !== "false"
-    : process.env.NODE_ENV !== "development";
-  if (!enabled) return;
-
-  const { ensureAutoSlots } = await import("@/lib/bookings/generator");
-  const { readGeneratorConfig } = await import("@/lib/bookings/generator");
-
-  // 05 every day at 00:05 in the clinic timezone (config read at fire time).
-  const slotJob = new Cron(
-    "5 0 * * *",
-    { timezone: "UTC", protect: true, name: "slot-auto-generator" },
-    async () => {
-      try {
-        const config = await readGeneratorConfig();
-        const result = await ensureAutoSlots();
-        logInfo("slots.generator_tick", {
-          timeZone: config.timeZone,
-          auto: config.auto,
-          created: result.created,
-        });
-      } catch (error) {
-        logError("slots.generator_tick_failed", {
-          error: error instanceof Error ? error.message : String(error),
-        });
-      }
-    },
-  );
-
-  logInfo("slots.generator_scheduled", {
-    nextRun: slotJob.nextRun()?.toISOString() ?? null,
   });
 
   // 15 minutes — marks paid/waiting bookings as done once slot_end passes.
