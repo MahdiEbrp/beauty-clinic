@@ -47,6 +47,7 @@ function makeRecord(overrides: Partial<Row> = {}): Row {
 beforeEach(() => {
   mockDb.reset();
   resetCacheForTests();
+  vi.clearAllMocks();
 });
 
 describe("working-hours slot patterns", () => {
@@ -99,7 +100,7 @@ describe("working-hours slot patterns", () => {
     expect(mockDb.data.slot_pattern_groups).toHaveLength(2);
   });
 
-  it("update with empty patterns clears the day and re-materializes it", async () => {
+  it("update with empty patterns clears the day without generating slots", async () => {
     mockDb.seed("working_hours", [makeRecord({ id: "wh", day: "Sunday" })]);
     mockDb.seed("slot_patterns", [
       { id: randomUUID(), day: "Sunday", start_time: "13:15:00", capacity: 1 },
@@ -108,8 +109,8 @@ describe("working-hours slot patterns", () => {
       patterns: [],
     });
     expect(mockDb.data.slot_patterns ?? []).toHaveLength(0);
-    // Clearing patterns still re-materializes the day (pattern → uniform).
-    expect(vi.mocked(ensureAutoSlots)).toHaveBeenCalledWith(true);
+    // Working-hours mutations must not restore the removed auto-generation.
+    expect(ensureAutoSlots).not.toHaveBeenCalled();
   });
 
   it("delete removes the day's patterns too", async () => {

@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import type { AdminRule } from "@/lib/services/rules-types";
 import { useAdminResourceActions } from "@/components/admin-list/use-admin-resource-actions";
 
-import type { DestructiveConfirm } from "./types";
+import type { DestructiveConfirm, RuleStatusFilter } from "./types";
 import type { RulesListState } from "./use-rules-list";
 
 export interface RulesActionsState {
@@ -26,7 +26,8 @@ export function useRulesActions(list: RulesListState): RulesActionsState {
   const actions = useAdminResourceActions<
     AdminRule,
     { isActive?: boolean },
-    DestructiveConfirm
+    DestructiveConfirm,
+    RuleStatusFilter
   >(
     {
       namespace: "dashboardRules",

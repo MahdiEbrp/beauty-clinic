@@ -1,4 +1,19 @@
 {
+  "imageUploader": {
+    "invalidType": "Please choose an image file.",
+    "tooLarge": "Image size must be 10 MB or less.",
+    "forbidden": "Your account cannot upload images.",
+    "failed": "Image upload failed. Please try again.",
+    "missingUrl": "The uploaded image URL was not returned.",
+    "formats": "PNG, JPG, WEBP, GIF · Max 10 MB",
+    "uploading": "Uploading...",
+    "choose": "Choose and upload image",
+    "remove": "Remove image",
+    "preview": "Selected image preview",
+    "saving": "Saving image",
+    "empty": "No image selected yet",
+    "urlLabel": "Or enter an image URL"
+  },
   "a11y": {
     "skipToContent": "Skip to main content"
   },

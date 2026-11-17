@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type SyntheticEvent } from "react";
 import { Check, Pencil, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -16,7 +16,7 @@ export function QuickPriceEditor({ service }: { service: AdminService }) {
   const [value, setValue] = useState(service.price === null ? "" : String(service.price));
   const [saving, setSaving] = useState(false);
 
-  const save = async (event: FormEvent<HTMLFormElement>) => {
+  const save = async (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     const trimmed = value.trim();
     const price = trimmed === "" ? null : Number(trimmed);
@@ -76,7 +76,7 @@ export function QuickPriceEditor({ service }: { service: AdminService }) {
   }
 
   return (
-    <form onSubmit={save} className="inline-flex items-center justify-center gap-1.5">
+    <form onSubmit={(event) => void save(event)} className="inline-flex items-center justify-center gap-1.5">
       <input
         autoFocus
         type="number"
