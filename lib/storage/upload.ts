@@ -1,6 +1,8 @@
 import fs from "node:fs/promises";
+import { createWriteStream } from "node:fs";
 import path from "node:path";
-import { Readable } from "node:stream";
+import { Readable, Transform } from "node:stream";
+import { pipeline } from "node:stream/promises";
 
 import { ApiError } from "@/lib/api/errors";
 import { ensureStorage, getStorageConfig } from "@/lib/storage/config";
@@ -46,24 +48,25 @@ export async function uploadFile(
 
   const tempDir = await fss.createTempDir(config.metaRoot);
   const stage = path.join(tempDir, name);
-  const parts: Buffer<ArrayBufferLike>[] = [];
   let written = 0;
   try {
     const nodeStream = Readable.fromWeb(stream as never);
-    for await (const chunk of nodeStream) {
-      const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
-      written += buf.length;
-      if (written > maxBytes) {
-        throw new ApiError(413, "PAYLOAD_TOO_LARGE", "The uploaded file exceeds the maximum size.");
-      }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- Buffer is compatible with Buffer<ArrayBufferLike>
-      parts.push(buf);
-    }
+    const sizeLimiter = new Transform({
+      transform(chunk: Buffer, _encoding, callback) {
+        written += chunk.length;
+        if (written > maxBytes) {
+          callback(new ApiError(413, "PAYLOAD_TOO_LARGE", "The uploaded file exceeds the maximum size."));
+          return;
+        }
+        callback(null, chunk);
+      },
+    });
+
+    await pipeline(nodeStream, sizeLimiter, createWriteStream(stage, { flags: "wx" }));
     if (written === 0) {
       throw new ApiError(400, "EMPTY_FILE", "The uploaded file is empty.");
     }
     await fss.mkdirRecursive(path.dirname(real));
-    await fss.writeFile(stage, Buffer.concat(parts, written));
     await fss.renameEntry(stage, real);
   } catch (error) {
     await fss.removeEntry(tempDir, true).catch(() => undefined);
