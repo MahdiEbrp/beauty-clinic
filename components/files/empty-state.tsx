@@ -6,10 +6,20 @@ import { useFiles } from "./files-context";
 
 export function FilesEmptyState() {
   const t = useTranslations();
-  const { entries, canWrite, setUploadOpen, setNewFolderOpen, setNewFileOpen } =
+  const { entries, visibleEntries, searchQuery, entryType, setSearchQuery, setEntryType, canWrite, setUploadOpen, setNewFolderOpen, setNewFileOpen } =
     useFiles();
 
-  if (entries.length > 0) return null;
+  if (entries.length > 0) {
+    if (visibleEntries.length > 0) return null;
+    return (
+      <div className="flex flex-col items-center justify-center px-6 py-14 text-center">
+        <p className="text-dash-body font-semibold text-content-secondary">{t("files.noFilterResults")}</p>
+        <button type="button" onClick={() => { setSearchQuery(""); setEntryType("all"); }} className="mt-3 rounded-pill border border-border-interactive px-4 py-2 text-dash-body-sm font-bold text-accent hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+          {t("files.clearFilters")}
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center py-14 text-center px-6">
