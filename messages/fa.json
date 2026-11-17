@@ -1530,7 +1530,18 @@
       "title": "آپلود فایل‌ها",
       "uploading": "در حال آپلود..."
     },
-    "uploadShort": "آپلود"
+    "uploadShort": "آپلود",
+    "filterSearchPlaceholder": "جستجو در نام فایل یا پوشه...",
+    "filterSearchLabel": "جستجوی فایل‌ها و پوشه‌ها",
+    "typeFilter": "نوع",
+    "filterTypes": {
+      "all": "همه",
+      "folders": "پوشه‌ها",
+      "files": "فایل‌ها"
+    },
+    "clearFilters": "پاک کردن فیلترها",
+    "noFilterResults": "موردی با فیلترهای انتخاب‌شده پیدا نشد.",
+    "filteredCount": "نمایش {shown} از {total} مورد"
   },
   "footer": {
     "developer": "برنامه نویس",
