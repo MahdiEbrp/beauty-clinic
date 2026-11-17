@@ -630,6 +630,13 @@
     "allGroups": "All groups",
     "allServices": "All services",
     "bulk": {
+"editGroups": "Edit groups for selected slots",
+      "groupsDescription": "Change the bookable groups for {count} selected slots.",
+      "groupsAllHint": "If no group is selected, the slots will be open to all groups.",
+      "clearGroups": "All groups",
+      "groupsSuccess": "Groups updated for {count} slots.",
+      "groupsPartial": "{succeeded} slots updated; {failed} failed.",
+      "groupsLoadError": "Could not load service groups.",
       "activate": "Activate",
       "apply": "Apply",
       "clear": "Clear",
