@@ -10,6 +10,7 @@ import {
   Trash2,
   Upload,
   X,
+  Search,
 } from "lucide-react";
 import { Breadcrumbs } from "./breadcrumbs";
 import { useFiles } from "./files-context";
@@ -21,6 +22,13 @@ export function FilesHeader() {
     canManage,
     busy,
     entries,
+    visibleEntries,
+    searchQuery,
+    setSearchQuery,
+    entryType,
+    setEntryType,
+    trashItems,
+    visibleTrashItems,
     view,
     setView,
     setUploadOpen,
@@ -112,6 +120,31 @@ export function FilesHeader() {
         </div>
       </div>
 
+      <div className="mt-3 grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
+        <label className="relative block min-w-0">
+          <Search className="pointer-events-none absolute inset-s-3 top-1/2 size-4 -translate-y-1/2 text-content-tertiary" aria-hidden="true" />
+          <input type="search" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder={t("files.filterSearchPlaceholder")} aria-label={t("files.filterSearchLabel")} className="h-11 w-full rounded-control border border-form-input-border bg-form-input-bg ps-10 pe-3 text-dash-body-sm text-accent outline-none transition-colors placeholder:text-content-tertiary hover:border-border-interactive focus-visible:border-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" />
+        </label>
+        {view === "browse" && (
+          <label className="flex min-h-11 items-center gap-2 rounded-control border border-form-input-border bg-form-input-bg px-3 text-dash-caption font-semibold text-content-secondary">
+            <span className="whitespace-nowrap">{t("files.typeFilter")}</span>
+            <select value={entryType} onChange={(event) => setEntryType(event.target.value as "all" | "folders" | "files")} className="min-w-24 bg-transparent text-dash-body-sm text-accent outline-none focus-visible:ring-2 focus-visible:ring-accent">
+              <option value="all">{t("files.filterTypes.all")}</option>
+              <option value="folders">{t("files.filterTypes.folders")}</option>
+              <option value="files">{t("files.filterTypes.files")}</option>
+            </select>
+          </label>
+        )}
+        {(searchQuery || (view === "browse" && entryType !== "all")) && (
+          <button type="button" onClick={() => { setSearchQuery(""); setEntryType("all"); }} className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-pill border border-border-primary bg-surface-tertiary px-3 text-dash-caption font-bold text-content-secondary hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:col-span-2 sm:justify-self-start">
+            <X className="size-3.5" aria-hidden="true" />{t("files.clearFilters")}
+          </button>
+        )}
+        <p className="text-dash-caption text-content-tertiary sm:col-span-2" aria-live="polite">
+          {view === "browse" ? t("files.filteredCount", { shown: visibleEntries.length, total: entries.length }) : t("files.filteredCount", { shown: visibleTrashItems.length, total: trashItems.length })}
+        </p>
+      </div>
+
       {anySelected && view === "browse" && (
         <div className="mt-3 flex flex-wrap items-center gap-2 rounded-control border border-accent/25 bg-accent/5 px-3 py-2">
           <span className="text-dash-caption font-bold text-accent">
@@ -163,7 +196,7 @@ export function FilesHeader() {
         </div>
       )}
 
-      {entries.length > 0 && view === "browse" && (
+      {false && entries.length > 0 && view === "browse" && (
         <p className="mt-3 flex items-center gap-2 text-dash-caption font-bold text-content-secondary">
           <span>{t("files.searchPlaceholder", { count: entries.length })}</span>
           {isRefreshing && (
