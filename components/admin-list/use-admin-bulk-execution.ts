@@ -26,6 +26,7 @@ interface BulkActionsState<C> {
 
 interface AdminBulkExecutionConfig<A extends string, C, S extends string> {
   namespace: string;
+  isAvailable?: (action: A) => boolean;
   isDangerous: (action: A) => boolean;
   makeConfirm: (action: A) => C;
   execute: (input: {
@@ -88,6 +89,7 @@ export function useAdminBulkExecution<
   };
 
   const runBulkAction = () => {
+    if (config.isAvailable && !config.isAvailable(bulkAction)) return;
     if (config.isDangerous(bulkAction)) {
       setConfirm(config.makeConfirm(bulkAction));
       return;
@@ -100,6 +102,8 @@ export function useAdminBulkExecution<
     setBulkResult,
     executeBulkAction,
     runBulkAction,
-    bulkDangerous: config.isDangerous(bulkAction),
+    bulkDangerous:
+      (!config.isAvailable || config.isAvailable(bulkAction)) &&
+      config.isDangerous(bulkAction),
   };
 }
