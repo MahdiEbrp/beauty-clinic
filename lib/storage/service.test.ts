@@ -20,6 +20,15 @@ function toWebStream(data: string | Buffer): ReadableStream<Uint8Array> {
   });
 }
 
+function toChunkedWebStream(chunks: Array<string | Buffer>): ReadableStream<Uint8Array> {
+  return new ReadableStream({
+    start(controller) {
+      for (const chunk of chunks) controller.enqueue(Buffer.from(chunk));
+      controller.close();
+    },
+  });
+}
+
 beforeEach(async () => {
   root = await fs.mkdtemp(path.join(os.tmpdir(), "fm-"));
   setStorageConfigForTests({ root, maxBytes: 1024 * 1024 });
@@ -94,6 +103,21 @@ describe("upload", () => {
     const target = await service.download("uploads/photo.jpg");
     expect(target.mime).toBe("image/jpeg");
     expect(target.size).toBe(9);
+  });
+
+  it("writes multi-chunk streams without changing their contents", async () => {
+    const chunks = ["first-", Buffer.from("second-"), "third"];
+    const expected = Buffer.concat(chunks.map((chunk) => Buffer.from(chunk)));
+    await service.uploadFile("", "chunked.txt", toChunkedWebStream(chunks), expected.length);
+
+    expect(await fs.readFile(path.join(root, "chunked.txt"))).toEqual(expected);
+  });
+
+  it("enforces the streamed size limit even when the declared size is smaller", async () => {
+    await expect(
+      service.uploadFile("", "oversized.bin", toChunkedWebStream(["a".repeat(600_000), "b".repeat(500_000)]), 1),
+    ).rejects.toThrow(ApiError);
+    expect(await service.listFolder("")).toEqual({ path: "", entries: [] });
   });
 
   it("rejects oversized uploads before writing", async () => {
