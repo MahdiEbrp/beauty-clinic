@@ -24,7 +24,7 @@ export function useRulesBulk(
       namespace: "dashboardRules",
       isDangerous: (action) => action === "delete",
       makeConfirm: (action) => ({ kind: "bulk", action }),
-      execute: async ({ action, scope, selectedIds, filters }) => {
+      execute: async ({ action, scope, ids, filters }) => {
         const response = await fetch("/api/v1/rules/bulk", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -32,7 +32,7 @@ export function useRulesBulk(
           body: JSON.stringify({
             action,
             scope,
-            ids: scope === "page" ? selectedIds : undefined,
+            ids: scope === "page" ? ids : undefined,
             filters: scope === "filtered" ? filters : undefined,
           }),
         });
