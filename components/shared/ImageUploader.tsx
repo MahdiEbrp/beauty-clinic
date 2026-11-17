@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ImagePlus, Loader2, Trash2, Upload } from "lucide-react";
+import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_BYTES } from "@/lib/images/constants";
 
 type ImageUploaderProps = {
   id: string;
@@ -13,7 +14,6 @@ type ImageUploaderProps = {
   placeholder?: string;
 };
 
-const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 
 export default function ImageUploader({
   id,
@@ -40,7 +40,7 @@ export default function ImageUploader({
   const chooseFile = async (file?: File) => {
     if (!file) return;
     setError("");
-    if (!["image/jpeg", "image/png", "image/webp", "image/gif"].includes(file.type)) {
+    if (!ALLOWED_IMAGE_TYPES.some((type) => type === file.type)) {
       setError(t("invalidType"));
       return;
     }
