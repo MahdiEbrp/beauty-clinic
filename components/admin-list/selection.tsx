@@ -37,7 +37,7 @@ export function AdminListSelectionBar<T extends { id: string }>() {
         {busyId === "bulk" && <Loader2 className="size-4 animate-spin" />}
         {t(`${config.namespace}.bulk.apply`)}
       </button>
-      {config.renderBulkSelection?.({ ids: selectedIds, scope: selectionScope, onComplete: () => { clearSelection(); void load({ search: debouncedSearch, status, page }); } })}
+      {config.renderBulkSelection?.({ ids: selectedIds, scope: selectionScope, filters: { search: debouncedSearch, status }, onComplete: () => { clearSelection(); void load({ search: debouncedSearch, status, page }); } })}
       <button
         type="button"
         onClick={clearSelection}
