@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { asTranslate } from "@/src/i18n/message-key";
 import type { BulkResult } from "./types";
 
-interface BulkListState<S extends string, A extends string> {
+export interface BulkListState<S extends string, A extends string> {
   load: (params: { search: string; status: S; page: number }) => Promise<void>;
   debouncedSearch: string;
   status: S;
@@ -18,7 +18,7 @@ interface BulkListState<S extends string, A extends string> {
   bulkAction: A;
 }
 
-interface BulkActionsState<C> {
+export interface BulkActionsState<C> {
   setBusyId: (value: string | null) => void;
   setConfirm: (value: C | null) => void;
   setSyncing: (id: string, syncing: boolean) => void;
