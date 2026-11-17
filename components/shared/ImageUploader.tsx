@@ -51,10 +51,8 @@ export default function ImageUploader({
     setLocalPreview(preview);
     setUploading(true);
     try {
-      const extension = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
-      const filename = `image-${crypto.randomUUID()}.${extension}`;
       const form = new FormData();
-      form.append("file", new File([file], filename, { type: file.type }));
+      form.append("file", file);
       const response = await fetch("/api/v1/admin/images/upload", {
         method: "POST",
         credentials: "include",
@@ -134,7 +132,7 @@ export default function ImageUploader({
           {uploading && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/45 text-white">
               <span className="inline-flex items-center gap-2 text-sm font-semibold">
-                <Loader2 className="size-4 animate-spin" /> در حال ذخیره تصویر
+                <Loader2 className="size-4 animate-spin" /> {fa ? "در حال ذخیره تصویر" : "Saving image"}
               </span>
             </div>
           )}
