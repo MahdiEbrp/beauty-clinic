@@ -23,7 +23,7 @@ export function useRulesBulk(
     {
       namespace: "dashboardRules",
       isDangerous: (action) => action === "delete",
-      makeConfirm: (action) => ({ kind: "bulk", action }),
+      makeConfirm: (action) => ({ kind: "bulk" as const, action }),
       execute: async ({ action, scope, ids, filters }) => {
         const response = await fetch("/api/v1/rules/bulk", {
           method: "POST",

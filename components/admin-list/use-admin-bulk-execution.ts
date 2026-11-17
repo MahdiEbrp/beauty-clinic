@@ -64,6 +64,7 @@ export function useAdminBulkExecution<
   const targetIds = selectionScope === "page" ? selectedIds : visibleIds;
 
   const executeBulkAction = async () => {
+    if (config.isAvailable && !config.isAvailable(bulkAction)) return;
     if (selectionScope === "page" && selectedIds.length === 0) return;
     setConfirm(null);
     setBusyId("bulk");
@@ -89,6 +90,7 @@ export function useAdminBulkExecution<
   };
 
   const runBulkAction = () => {
+    if (selectionScope === "page" && selectedIds.length === 0) return;
     if (config.isAvailable && !config.isAvailable(bulkAction)) return;
     if (config.isDangerous(bulkAction)) {
       setConfirm(config.makeConfirm(bulkAction));

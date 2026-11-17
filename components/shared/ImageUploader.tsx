@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { ImagePlus, Loader2, Trash2, Upload } from "lucide-react";
 
 type ImageUploaderProps = {
@@ -23,9 +23,11 @@ export default function ImageUploader({
   hint,
   placeholder,
 }: ImageUploaderProps) {
-  const locale = useLocale();
-  const fa = locale === "fa";
+  const t = useTranslations("imageUploader");
   const inputRef = useRef<HTMLInputElement>(null);
+  const uploadRef = useRef<AbortController | null>(null);
+
+  useEffect(() => () => uploadRef.current?.abort(), []);
   const [uploading, setUploading] = useState(false);
   const [localPreview, setLocalPreview] = useState("");
   const [error, setError] = useState("");
@@ -39,14 +41,17 @@ export default function ImageUploader({
     if (!file) return;
     setError("");
     if (!["image/jpeg", "image/png", "image/webp", "image/gif"].includes(file.type)) {
-      setError(fa ? "فرمت فایل باید تصویر باشد." : "Please choose an image file.");
+      setError(t("invalidType"));
       return;
     }
     if (file.size > MAX_IMAGE_BYTES) {
-      setError(fa ? "حجم تصویر باید کمتر از ۱۰ مگابایت باشد." : "Image size must be 10 MB or less.");
+      setError(t("tooLarge"));
       return;
     }
 
+    uploadRef.current?.abort();
+    const controller = new AbortController();
+    uploadRef.current = controller;
     const preview = URL.createObjectURL(file);
     setLocalPreview(preview);
     setUploading(true);
@@ -57,24 +62,35 @@ export default function ImageUploader({
         method: "POST",
         credentials: "include",
         body: form,
+        signal: controller.signal,
       });
       if (!response.ok) {
         const payload = (await response.json().catch(() => null)) as {
           error?: { code?: string };
         } | null;
         throw new Error(payload?.error?.code === "FORBIDDEN"
-          ? (fa ? "دسترسی آپلود تصویر برای حساب شما فعال نیست." : "Your account cannot upload images.")
-          : (fa ? "آپلود تصویر انجام نشد. دوباره تلاش کنید." : "Image upload failed. Please try again."));
+          ? t("forbidden")
+          : t("failed"));
       }
       const payload = (await response.json()) as { data?: { url?: string } };
-      if (!payload.data?.url) throw new Error(fa ? "آدرس تصویر دریافت نشد." : "The uploaded image URL was not returned.");
+      if (!payload.data?.url) throw new Error(t("missingUrl"));
+      if (controller.signal.aborted) return;
       onChange(payload.data.url);
       setLocalPreview("");
     } catch (uploadError) {
-      setError(uploadError instanceof Error ? uploadError.message : (fa ? "آپلود تصویر انجام نشد." : "Image upload failed."));
+      if (controller.signal.aborted) return;
+      setError(uploadError instanceof Error ? uploadError.message : t("failed"));
     } finally {
-      setUploading(false);
+      if (!controller.signal.aborted) setUploading(false);
     }
+  };
+
+  const changeValue = (next: string) => {
+    uploadRef.current?.abort();
+    setUploading(false);
+    setLocalPreview("");
+    setError("");
+    onChange(next);
   };
 
   const preview = localPreview || value.trim();
@@ -85,7 +101,7 @@ export default function ImageUploader({
         <label htmlFor={id} className="text-dash-body-sm font-semibold text-content-primary">
           {label}
         </label>
-        <span className="text-dash-caption text-content-tertiary">{fa ? "PNG، JPG، WEBP، GIF · حداکثر ۱۰ مگابایت" : "PNG, JPG, WEBP, GIF · Max 10 MB"}</span>
+        <span className="text-dash-caption text-content-tertiary">{t("formats")}</span>
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <input
@@ -104,23 +120,21 @@ export default function ImageUploader({
           type="button"
           disabled={uploading}
           onClick={() => inputRef.current?.click()}
-          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-control bg-accent px-4 text-dash-body-sm font-bold text-on-primary transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-control bg-accent px-4 text-dash-body-sm font-bold text-content-contrast transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           {uploading ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
-          {uploading ? (fa ? "در حال آپلود..." : "Uploading...") : (fa ? "انتخاب و آپلود تصویر" : "Choose and upload image")}
+          {uploading ? t("uploading") : t("choose")}
         </button>
         {(value || localPreview) && (
           <button
             type="button"
             onClick={() => {
-              onChange("");
-              setLocalPreview("");
-              setError("");
+              changeValue("");
             }}
-            className="inline-flex min-h-11 items-center gap-2 rounded-control border border-border-primary px-3 text-dash-body-sm font-semibold text-content-secondary hover:bg-surface-tertiary"
+            className="inline-flex min-h-11 items-center gap-2 rounded-control border border-border-primary px-3 text-dash-body-sm font-semibold text-content-secondary hover:bg-surface-tertiary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             <Trash2 className="size-4" />
-            {fa ? "حذف تصویر" : "Remove image"}
+            {t("remove")}
           </button>
         )}
       </div>
@@ -128,11 +142,11 @@ export default function ImageUploader({
       {error && <p role="alert" className="text-dash-caption text-error">{error}</p>}
       {preview ? (
         <div className="relative max-w-xl overflow-hidden rounded-card border border-border-primary bg-surface-tertiary/40">
-          <img src={preview} alt={fa ? "پیش‌نمایش تصویر انتخاب‌شده" : "Selected image preview"} className="max-h-64 w-full object-contain" />
+          <img src={preview} alt={t("preview")} className="max-h-64 w-full object-contain" />
           {uploading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/45 text-white">
+            <div className="absolute inset-0 flex items-center justify-center bg-accent-hover/80 text-content-contrast">
               <span className="inline-flex items-center gap-2 text-sm font-semibold">
-                <Loader2 className="size-4 animate-spin" /> {fa ? "در حال ذخیره تصویر" : "Saving image"}
+                <Loader2 className="size-4 animate-spin" /> {t("saving")}
               </span>
             </div>
           )}
@@ -140,19 +154,19 @@ export default function ImageUploader({
       ) : (
         <div className="flex min-h-28 max-w-xl items-center justify-center gap-2 rounded-card border border-dashed border-border-primary bg-surface-tertiary/30 text-dash-caption text-content-tertiary">
           <ImagePlus className="size-5" />
-          <span>{fa ? "هنوز تصویری انتخاب نشده است" : "No image selected yet"}</span>
+          <span>{t("empty")}</span>
         </div>
       )}
       <label htmlFor={`${id}-url`} className="text-dash-caption font-medium text-content-secondary">
-        {fa ? "یا آدرس تصویر را وارد کنید" : "Or enter an image URL"}
+        {t("urlLabel")}
       </label>
       <input
         id={`${id}-url`}
         dir="ltr"
         value={value}
-        onChange={(event) => onChange(event.target.value)}
+        onChange={(event) => changeValue(event.target.value)}
         placeholder={placeholder || "https://..."}
-        className="min-h-11 w-full rounded-control border border-border-primary bg-surface-primary px-3 text-dash-body-sm text-content-primary outline-none focus:border-border-interactive"
+        className="min-h-11 w-full rounded-control border border-border-primary bg-surface-primary px-3 text-dash-body-sm text-content-primary outline-none focus:border-border-interactive focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       />
     </div>
   );

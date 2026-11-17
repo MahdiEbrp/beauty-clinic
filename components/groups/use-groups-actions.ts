@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import type { AdminServiceGroup } from "@/lib/services/types";
 import { useAdminResourceActions } from "@/components/admin-list/use-admin-resource-actions";
-import type { DestructiveConfirm } from "./types";
+import type { DestructiveConfirm, StatusFilter } from "./types";
 import type { GroupsListState } from "./use-groups-list";
 
 export interface GroupsActionsState {
@@ -25,7 +25,8 @@ export function useGroupsActions(list: GroupsListState): GroupsActionsState {
   const actions = useAdminResourceActions<
     AdminServiceGroup,
     { isActive?: boolean },
-    DestructiveConfirm
+    DestructiveConfirm,
+    StatusFilter
   >(
     {
       namespace: "serviceGroups",

@@ -1,6 +1,7 @@
 "use client";
 
 import type { BulkResult } from "./types";
+import type { AdminBulkExecutionState } from "./use-admin-bulk-execution";
 import { useAdminBulkExecution } from "./use-admin-bulk-execution";
 
 interface BulkListState<S extends string, A extends string> {
@@ -33,7 +34,7 @@ interface AdminResourceBulkConfig<A extends string, C, S extends string> {
   }) => Promise<BulkResult>;
 }
 
-export type AdminResourceBulkState = import("./use-admin-bulk-execution").AdminBulkExecutionState;
+export type AdminResourceBulkState = AdminBulkExecutionState;
 
 export function useAdminResourceBulk<
   S extends string,
