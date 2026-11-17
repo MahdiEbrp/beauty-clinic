@@ -1,7 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Check, Image as ImageIcon, RefreshCw } from "lucide-react";
+import { Check, RefreshCw } from "lucide-react";
+import ImageUploader from "@/components/shared/ImageUploader";
 
 import GroupGlyph from "@/components/create-group/GroupGlyph";
 import {
@@ -10,7 +11,7 @@ import {
   ruleSwatchCheckClass,
 } from "@/data/rule-colors";
 
-import { Field, Panel, inputClass } from "../../create-group/ui";
+import { Panel } from "../../create-group/ui";
 
 export default function AppearanceStep({
   iconKey,
@@ -107,30 +108,14 @@ export default function AppearanceStep({
             {t("appearance.imageHint")}
           </p>
           <div className="mt-4">
-            <Field id="rule-image" label={t("appearance.imagePreview")}>
-              <input
-                id="rule-image"
-                dir="ltr"
-                value={imageUrl}
-                onChange={(event) => onImageUrlChange(event.target.value)}
-                placeholder={t("appearance.imagePlaceholder")}
-                className={inputClass(false)}
-              />
-            </Field>
-          </div>
-          <div className="relative mt-2 aspect-video w-full overflow-hidden rounded-control border border-surface-variant/60 bg-surface-tertiary/30 sm:aspect-auto sm:h-48 md:max-w-xl">
-            {imageUrl.trim() ? (
-              <img
-                src={imageUrl.trim()}
-                alt={t("appearance.imagePreview")}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex h-full min-h-24 items-center justify-center gap-2 text-dash-caption text-content-tertiary">
-                <ImageIcon className="size-5" aria-hidden="true" />
-                <span>{t("review.notSet")}</span>
-              </div>
-            )}
+            <ImageUploader
+              id="rule-image"
+              value={imageUrl}
+              onChange={onImageUrlChange}
+              label={t("appearance.imagePreview")}
+              hint={t("appearance.imageHint")}
+              placeholder={t("appearance.imagePlaceholder")}
+            />
           </div>
         </section>
       </div>

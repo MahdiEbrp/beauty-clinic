@@ -44,22 +44,21 @@ export async function testSmsProvider(
     const otpTemplate = await getSmsTemplateByKey("login-otp");
     const otpTemplateId = Number(otpTemplate?.externalTemplateId);
     const otpName = otpTemplate?.variables[0];
-    const useOtp =
+    const result =
       provider.kind === "sms_ir" &&
       Number.isInteger(otpTemplateId) &&
-      Boolean(otpName) &&
-      Boolean(adapter.sendVerify);
-    const result = useOtp
-      ? await adapter.sendVerify!({
-          recipients: [recipient],
-          templateId: otpTemplateId,
-          parameters: [{ name: otpName as string, value: input.message }],
-        })
-      : await adapter.send({
-          recipients: [recipient],
-          message: input.message,
-          sender: provider.sender ?? provider.credentials.lineNumber,
-        });
+      otpName &&
+      adapter.sendVerify
+        ? await adapter.sendVerify({
+            recipients: [recipient],
+            templateId: otpTemplateId,
+            parameters: [{ name: otpName, value: input.message }],
+          })
+        : await adapter.send({
+            recipients: [recipient],
+            message: input.message,
+            sender: provider.sender ?? provider.credentials.lineNumber,
+          });
     const responseTimeMs = Date.now() - startedAt;
     const accepted = result.accepted[0];
     await recordProviderCheck({

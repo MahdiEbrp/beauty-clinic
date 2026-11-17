@@ -70,7 +70,7 @@ function MobileCard({ entry }: { entry: EntryMeta }) {
 }
 
 export function FilesMobileCards() {
-  const { entries, isLoading } = useFiles();
+  const { visibleEntries, isLoading } = useFiles();
 
   return (
     <div className="grid gap-2.5 py-3 md:hidden">
@@ -78,7 +78,7 @@ export function FilesMobileCards() {
         ? Array.from({ length: 5 }).map((_, index) => (
             <EntryCardSkeleton key={index} />
           ))
-        : entries.map((entry) => <MobileCard key={entry.name} entry={entry} />)}
+        : visibleEntries.map((entry) => <MobileCard key={entry.name} entry={entry} />)}
     </div>
   );
 }

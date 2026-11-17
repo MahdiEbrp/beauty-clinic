@@ -10,7 +10,7 @@ export const GET = withSecurity(
     auth: "required",
     // خواندن گروه‌های فعال توسط مدیریت خدمات (`services.read`) و همچنین توسط
     // ویرایشگران ساعت کاری / رزرو نوبت (`appointments.write`) مجاز است.
-    anyPermissions: ["services.read", "appointments.write"],
+    anyPermissions: ["services.read", "appointments.write", "appointments.manage"],
     validate: { query: listServiceGroupsQuerySchema },
   },
   async (_request, ctx) => {

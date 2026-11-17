@@ -1,5 +1,5 @@
 import { jsonOk, withSecurity } from "@/lib/api/security";
-import { deleteSlots, findSlotIds, setSlotsActive } from "@/lib/bookings/slots-admin";
+import { deleteSlots, findSlotIds, setSlotsActive, setSlotsGroups } from "@/lib/bookings/slots-admin";
 import { bulkSlotsSchema } from "@/lib/validation/bookings";
 
 export const runtime = "nodejs";
@@ -23,6 +23,7 @@ export const POST = withSecurity(
     try {
       if (input.action === "activate") await setSlotsActive(ids, true);
       else if (input.action === "deactivate") await setSlotsActive(ids, false);
+      else if (input.action === "groups") await setSlotsGroups(ids, input.groupIds ?? []);
       else blocked = await deleteSlots(ids);
     } catch {
       blocked = ids;

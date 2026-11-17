@@ -3,7 +3,7 @@ import "server-only";
 import { and, desc, eq, ilike, inArray, notInArray, or, sql, type SQL } from "drizzle-orm";
 
 import { db } from "@/src/db";
-import { bookings, bookingSlots, bookingSlotGroups, serviceGroupsI18n } from "@/src/db/schema";
+import { bookings, bookingSlots, bookingSlotGroups, serviceGroups, serviceGroupsI18n } from "@/src/db/schema";
 import {
   computeSlotStatus,
   slotStatusCondition,
@@ -240,4 +240,28 @@ export async function listSlotsAdmin(query: {
     perPage: query.perPage,
     totalPages: Math.ceil(total / query.perPage),
   };
+}
+
+
+/** Replaces group restrictions for selected slots atomically. Empty groupIds means all groups. */
+export async function setSlotsGroups(ids: string[], groupIds: string[]): Promise<void> {
+  if (ids.length === 0) return;
+  const uniqueGroupIds = [...new Set(groupIds)];
+  await db.transaction(async (tx) => {
+    if (uniqueGroupIds.length > 0) {
+      const existing = await tx
+        .select({ id: serviceGroups.id })
+        .from(serviceGroups)
+        .where(inArray(serviceGroups.id, uniqueGroupIds));
+      if (existing.length !== uniqueGroupIds.length) {
+        throw new Error("INVALID_SERVICE_GROUP");
+      }
+    }
+    await tx.delete(bookingSlotGroups).where(inArray(bookingSlotGroups.slotId, ids));
+    if (uniqueGroupIds.length > 0) {
+      await tx.insert(bookingSlotGroups).values(
+        ids.flatMap((slotId) => uniqueGroupIds.map((groupId) => ({ slotId, groupId }))),
+      );
+    }
+  });
 }

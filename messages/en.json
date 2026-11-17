@@ -1,4 +1,19 @@
 {
+  "imageUploader": {
+    "invalidType": "Please choose an image file.",
+    "tooLarge": "Image size must be 10 MB or less.",
+    "forbidden": "Your account cannot upload images.",
+    "failed": "Image upload failed. Please try again.",
+    "missingUrl": "The uploaded image URL was not returned.",
+    "formats": "PNG, JPG, WEBP, GIF · Max 10 MB",
+    "uploading": "Uploading...",
+    "choose": "Choose and upload image",
+    "remove": "Remove image",
+    "preview": "Selected image preview",
+    "saving": "Saving image",
+    "empty": "No image selected yet",
+    "urlLabel": "Or enter an image URL"
+  },
   "a11y": {
     "skipToContent": "Skip to main content"
   },
@@ -630,6 +645,13 @@
     "allGroups": "All groups",
     "allServices": "All services",
     "bulk": {
+"editGroups": "Edit groups for selected slots",
+      "groupsDescription": "Change the bookable groups for {count} selected slots.",
+      "groupsAllHint": "If no group is selected, the slots will be open to all groups.",
+      "clearGroups": "All groups",
+      "groupsSuccess": "Groups updated for {count} slots.",
+      "groupsPartial": "{succeeded} slots updated; {failed} failed.",
+      "groupsLoadError": "Could not load service groups.",
       "activate": "Activate",
       "apply": "Apply",
       "clear": "Clear",
@@ -1530,7 +1552,18 @@
       "title": "Upload files",
       "uploading": "Uploading..."
     },
-    "uploadShort": "Upload"
+    "uploadShort": "Upload",
+    "filterSearchPlaceholder": "Search files and folders...",
+    "filterSearchLabel": "Search files and folders",
+    "typeFilter": "Type",
+    "filterTypes": {
+      "all": "All",
+      "folders": "Folders",
+      "files": "Files"
+    },
+    "clearFilters": "Clear filters",
+    "noFilterResults": "No items match the selected filters.",
+    "filteredCount": "Showing {shown} of {total} items"
   },
   "footer": {
     "developer": "Developer",
