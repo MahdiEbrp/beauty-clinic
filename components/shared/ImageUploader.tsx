@@ -38,7 +38,7 @@ export default function ImageUploader({
   const chooseFile = async (file?: File) => {
     if (!file) return;
     setError("");
-    if (!file.type.startsWith("image/")) {
+    if (!["image/jpeg", "image/png", "image/webp", "image/gif"].includes(file.type)) {
       setError(fa ? "فرمت فایل باید تصویر باشد." : "Please choose an image file.");
       return;
     }
@@ -92,7 +92,7 @@ export default function ImageUploader({
           ref={inputRef}
           id={id}
           type="file"
-          accept="image/*"
+          accept="image/jpeg,image/png,image/webp,image/gif"
           className="sr-only"
           disabled={uploading}
           onChange={(event) => {
