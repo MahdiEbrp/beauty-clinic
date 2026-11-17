@@ -1,26 +1,8 @@
 "use client";
 
 import type { BulkResult } from "./types";
-import type { AdminBulkExecutionState } from "./use-admin-bulk-execution";
+import type { BulkListState, BulkActionsState, AdminBulkExecutionState } from "./use-admin-bulk-execution";
 import { useAdminBulkExecution } from "./use-admin-bulk-execution";
-
-interface BulkListState<S extends string, A extends string> {
-  load: (params: { search: string; status: S; page: number }) => Promise<void>;
-  debouncedSearch: string;
-  status: S;
-  page: number;
-  visibleIds: string[];
-  selectedIds: string[];
-  selectionScope: "page" | "filtered";
-  clearSelection: () => void;
-  bulkAction: A;
-}
-
-interface BulkActionsState<C> {
-  setBusyId: (value: string | null) => void;
-  setConfirm: (value: C | null) => void;
-  setSyncing: (id: string, syncing: boolean) => void;
-}
 
 interface AdminResourceBulkConfig<A extends string, C, S extends string> {
   namespace: string;
