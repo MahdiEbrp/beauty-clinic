@@ -6,7 +6,7 @@ import { useFiles } from "./files-context";
 
 export function FilesEmptyState() {
   const t = useTranslations();
-  const { entries, visibleEntries, searchQuery, entryType, setSearchQuery, setEntryType, canWrite, setUploadOpen, setNewFolderOpen, setNewFileOpen } =
+  const { entries, visibleEntries, entryType, setSearchQuery, setEntryType, canWrite, setUploadOpen, setNewFolderOpen, setNewFileOpen } =
     useFiles();
 
   if (entries.length > 0) {
