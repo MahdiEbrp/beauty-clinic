@@ -630,6 +630,13 @@
     "allGroups": "All groups",
     "allServices": "All services",
     "bulk": {
+"editGroups": "Edit groups for selected slots",
+      "groupsDescription": "Change the bookable groups for {count} selected slots.",
+      "groupsAllHint": "If no group is selected, the slots will be open to all groups.",
+      "clearGroups": "All groups",
+      "groupsSuccess": "Groups updated for {count} slots.",
+      "groupsPartial": "{succeeded} slots updated; {failed} failed.",
+      "groupsLoadError": "Could not load service groups.",
       "activate": "Activate",
       "apply": "Apply",
       "clear": "Clear",
@@ -1530,7 +1537,18 @@
       "title": "Upload files",
       "uploading": "Uploading..."
     },
-    "uploadShort": "Upload"
+    "uploadShort": "Upload",
+    "filterSearchPlaceholder": "Search files and folders...",
+    "filterSearchLabel": "Search files and folders",
+    "typeFilter": "Type",
+    "filterTypes": {
+      "all": "All",
+      "folders": "Folders",
+      "files": "Files"
+    },
+    "clearFilters": "Clear filters",
+    "noFilterResults": "No items match the selected filters.",
+    "filteredCount": "Showing {shown} of {total} items"
   },
   "footer": {
     "developer": "Developer",

@@ -630,6 +630,13 @@
     "allGroups": "همه گروه‌ها",
     "allServices": "همه خدمات",
     "bulk": {
+"editGroups": "ویرایش گروه‌های نوبت‌های انتخاب‌شده",
+      "groupsDescription": "تغییر گروه‌های قابل رزرو برای {count} نوبت انتخاب‌شده.",
+      "groupsAllHint": "اگر هیچ گروهی انتخاب نشود، نوبت برای همه گروه‌ها باز خواهد بود.",
+      "clearGroups": "همه گروه‌ها",
+      "groupsSuccess": "گروه‌های {count} نوبت به‌روزرسانی شد.",
+      "groupsPartial": "{succeeded} نوبت به‌روزرسانی شد و {failed} مورد ناموفق بود.",
+      "groupsLoadError": "بارگذاری گروه‌های خدماتی ناموفق بود.",
       "activate": "فعال",
       "apply": "اعمال",
       "clear": "پاک‌کردن",
@@ -1530,7 +1537,18 @@
       "title": "آپلود فایل‌ها",
       "uploading": "در حال آپلود..."
     },
-    "uploadShort": "آپلود"
+    "uploadShort": "آپلود",
+    "filterSearchPlaceholder": "جستجو در نام فایل یا پوشه...",
+    "filterSearchLabel": "جستجوی فایل‌ها و پوشه‌ها",
+    "typeFilter": "نوع",
+    "filterTypes": {
+      "all": "همه",
+      "folders": "پوشه‌ها",
+      "files": "فایل‌ها"
+    },
+    "clearFilters": "پاک کردن فیلترها",
+    "noFilterResults": "موردی با فیلترهای انتخاب‌شده پیدا نشد.",
+    "filteredCount": "نمایش {shown} از {total} مورد"
   },
   "footer": {
     "developer": "برنامه نویس",

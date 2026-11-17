@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Field, Panel, inputClass } from "../../create-group/ui";
+import ImageUploader from "@/components/shared/ImageUploader";
 import { LangBadge } from "../../landing-admin/forms/fields";
 import type { Locale } from "../types";
 import type { FieldErrors } from "../types";
@@ -65,29 +66,13 @@ export default function IdentityStep({
               className={inputClass(Boolean(errors.url))}
             />
           </Field>
-          <Field id="social-image" label={t("identity.imageUrl")} error={errors.imageUrl} hint={t("identity.imageUrlHint")}>
-            <input
-              id="social-image"
-              dir="ltr"
-              value={imageUrl}
-              onChange={(event) => onImageUrlChange(event.target.value)}
-              placeholder="https://..."
-              className={inputClass(Boolean(errors.imageUrl))}
-            />
-          </Field>
-          {imageUrl.trim() && (
-            <div>
-              <p className="mb-2 text-dash-caption font-bold text-content-secondary">{t("identity.preview")}</p>
-              <div className="overflow-hidden rounded-card border border-border-primary bg-surface-tertiary/50">
-                <img
-                  src={imageUrl.trim()}
-                  alt=""
-                  loading="lazy"
-                  className="h-40 w-full object-cover"
-                />
-              </div>
-            </div>
-          )}
+          <ImageUploader
+            id="social-image"
+            value={imageUrl}
+            onChange={onImageUrlChange}
+            label={t("identity.imageUrl")}
+            hint={t("identity.imageUrlHint")}
+          />
         </div>
       </Panel>
     </div>

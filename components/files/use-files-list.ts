@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { AuthUser } from "@/lib/auth/dal";
 import {
   FILES_CACHE_TTL_MS,
@@ -20,7 +20,13 @@ export interface FilesListState extends FilesSelectionState {
   path: string;
   setPath: (value: string) => void;
   entries: EntryMeta[];
+  visibleEntries: EntryMeta[];
   trashItems: TrashItem[];
+  visibleTrashItems: TrashItem[];
+  searchQuery: string;
+  setSearchQuery: (value: string) => void;
+  entryType: "all" | "folders" | "files";
+  setEntryType: (value: "all" | "folders" | "files") => void;
   isLoading: boolean;
   isRefreshing: boolean;
   hasLoadFailed: boolean;
@@ -37,14 +43,36 @@ export function useFilesList(currentUser: AuthUser): FilesListState {
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [hasLoadFailed, setHasLoadFailed] = useState(false);
+  const [searchQuery, setSearchQueryRaw] = useState("");
+  const [entryType, setEntryTypeRaw] = useState<"all" | "folders" | "files">("all");
 
   const canWrite = currentUser.permissions.includes("files.write");
   const canManage = currentUser.permissions.includes("files.manage");
 
-  const selection = useFilesSelection(entries);
+  const visibleEntries = useMemo(() => {
+    const query = searchQuery.trim().toLocaleLowerCase();
+    return entries.filter((entry) => {
+      const matchesQuery = !query || entry.name.toLocaleLowerCase().includes(query);
+      const matchesType = entryType === "all" || (entryType === "folders" ? entry.isDir : !entry.isDir);
+      return matchesQuery && matchesType;
+    });
+  }, [entries, entryType, searchQuery]);
+  const visibleTrashItems = useMemo(() => {
+    const query = searchQuery.trim().toLocaleLowerCase();
+    return trashItems.filter((item) => !query || item.originalPath.toLocaleLowerCase().includes(query));
+  }, [searchQuery, trashItems]);
+  const selection = useFilesSelection(visibleEntries);
   const { clearSelection } = selection;
 
   const clearFns = useCallback(() => clearSelection(), [clearSelection]);
+  const setSearchQuery = useCallback((value: string) => {
+    clearFns();
+    setSearchQueryRaw(value);
+  }, [clearFns]);
+  const setEntryType = useCallback((value: "all" | "folders" | "files") => {
+    clearFns();
+    setEntryTypeRaw(value);
+  }, [clearFns]);
 
   // Tracks the folder a fetch was started for, so a slow response for an older
   // folder can never overwrite the listing of the folder the user moved on to.
@@ -163,7 +191,13 @@ export function useFilesList(currentUser: AuthUser): FilesListState {
     path,
     setPath: changePath,
     entries,
+    visibleEntries,
     trashItems,
+    visibleTrashItems,
+    searchQuery,
+    setSearchQuery,
+    entryType,
+    setEntryType,
     isLoading,
     isRefreshing,
     hasLoadFailed,

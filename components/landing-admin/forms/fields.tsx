@@ -5,6 +5,7 @@ import { ImageIcon } from "lucide-react";
 import type { Locale } from "@/lib/services/types";
 import { inputClass, Field, Panel } from "@/components/create-group/ui";
 import GroupGlyph from "@/components/create-group/GroupGlyph";
+import ImageUploader from "@/components/shared/ImageUploader";
 
 export function LangBadge({ lang }: { lang: Locale }) {
   const t = useTranslations("landingForm");
@@ -125,35 +126,13 @@ export function ImageUrlField({
   const t = useTranslations("landingForm");
   return (
     <Panel>
-      <Field
+      <ImageUploader
         id="landing-image"
+        value={value}
+        onChange={onChange}
         label={t("fields.imageUrl")}
         hint={t("fields.imageUrlHint")}
-      >
-        <input
-          id="landing-image"
-          dir="ltr"
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          placeholder="https://..."
-          className={inputClass(false)}
-        />
-      </Field>
-      {value && (
-        <div className="mt-4">
-          <p className="mb-2 text-dash-caption font-bold text-content-secondary">
-            {t("fields.preview")}
-          </p>
-          <div className="overflow-hidden rounded-card border border-border-primary bg-surface-tertiary/50">
-            <img
-              src={value}
-              alt=""
-              loading="lazy"
-              className="h-40 w-full object-cover"
-            />
-          </div>
-        </div>
-      )}
+      />
     </Panel>
   );
 }

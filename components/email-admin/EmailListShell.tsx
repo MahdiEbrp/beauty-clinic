@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminListShell } from "@/components/admin-list/AdminListShell";
 import { EmailListSkeleton } from "./EmailListStates";
 
 export function EmailListShell({
@@ -24,30 +25,17 @@ export function EmailListShell({
   pagination?: React.ReactNode;
 }) {
   return (
-    <section className="overflow-hidden rounded-panel border border-border-primary bg-surface-secondary shadow-elevation-2">
-      <div className="flex min-h-11 items-center justify-between gap-3 border-b border-border-primary bg-surface-secondary px-4 py-2.5 md:px-6">
-        <p className="text-dash-caption text-content-tertiary">
-          {total} {resultsLabel}
-        </p>
-        {loading && (
-          <span className="sr-only" role="status">
-            {loadingLabel}
-          </span>
-        )}
-      </div>
-      {loading ? (
-        <EmailListSkeleton />
-      ) : error ? (
-        error
-      ) : total === 0 ? (
-        empty
-      ) : (
-        <>
-          <div className="hidden overflow-x-auto md:block">{desktop}</div>
-          <div className="md:hidden">{mobile}</div>
-        </>
-      )}
-      {pagination}
-    </section>
+    <AdminListShell
+      total={total}
+      resultsLabel={resultsLabel}
+      loading={loading}
+      loadingLabel={loadingLabel}
+      loadingState={<EmailListSkeleton />}
+      error={error}
+      empty={empty}
+      desktop={desktop}
+      mobile={mobile}
+      pagination={pagination}
+    />
   );
 }
