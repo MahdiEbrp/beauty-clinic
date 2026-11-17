@@ -92,7 +92,7 @@ export interface AdminListConfig<T extends { id: string }> {
     busy?: boolean;
   };
   /** Optional domain-specific bulk editor rendered beside generic bulk actions. */
-  renderBulkSelection?: (ctx: { ids: string[]; scope: "page" | "filtered"; onComplete: () => void }) => ReactNode;
+  renderBulkSelection?: (ctx: { ids: string[]; scope: "page" | "filtered"; filters: { search: string; status: string }; onComplete: () => void }) => ReactNode;
   perPage?: number;
   /** Initial status filter for the list (defaults to "all"). */
   defaultStatus?: string;
