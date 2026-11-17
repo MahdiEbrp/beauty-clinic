@@ -6,7 +6,6 @@ import {
   Download,
   FilePlus,
   FolderPlus,
-  Loader2,
   Trash2,
   Upload,
   X,
@@ -40,7 +39,6 @@ export function FilesHeader() {
     downloadSelected,
     setCopyTargets,
     setConfirm,
-    isRefreshing,
   } = useFiles();
 
   const hasFiles = selectedEntries.some((entry) => !entry.isDir);
@@ -196,17 +194,7 @@ export function FilesHeader() {
         </div>
       )}
 
-      {false && entries.length > 0 && view === "browse" && (
-        <p className="mt-3 flex items-center gap-2 text-dash-caption font-bold text-content-secondary">
-          <span>{t("files.searchPlaceholder", { count: entries.length })}</span>
-          {isRefreshing && (
-            <>
-              <Loader2 className="size-3.5 animate-spin text-accent" aria-hidden="true" />
-              <span className="sr-only">{t("files.refreshing")}</span>
-            </>
-          )}
-        </p>
-      )}
+}
     </header>
   );
 }
