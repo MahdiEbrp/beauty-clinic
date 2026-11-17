@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useLocale } from "next-intl";
 import { ImagePlus, Loader2, Trash2, Upload } from "lucide-react";
 
 type ImageUploaderProps = {
@@ -22,6 +23,8 @@ export default function ImageUploader({
   hint,
   placeholder,
 }: ImageUploaderProps) {
+  const locale = useLocale();
+  const fa = locale === "fa";
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [localPreview, setLocalPreview] = useState("");
@@ -36,11 +39,11 @@ export default function ImageUploader({
     if (!file) return;
     setError("");
     if (!file.type.startsWith("image/")) {
-      setError("فرمت فایل باید تصویر باشد.");
+      setError(fa ? "فرمت فایل باید تصویر باشد." : "Please choose an image file.");
       return;
     }
     if (file.size > MAX_IMAGE_BYTES) {
-      setError("حجم تصویر باید کمتر از ۱۰ مگابایت باشد.");
+      setError(fa ? "حجم تصویر باید کمتر از ۱۰ مگابایت باشد." : "Image size must be 10 MB or less.");
       return;
     }
 
@@ -51,9 +54,8 @@ export default function ImageUploader({
       const extension = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
       const filename = `image-${crypto.randomUUID()}.${extension}`;
       const form = new FormData();
-      form.append("folder", "uploads/images");
       form.append("file", new File([file], filename, { type: file.type }));
-      const response = await fetch("/api/v1/files/upload", {
+      const response = await fetch("/api/v1/admin/images/upload", {
         method: "POST",
         credentials: "include",
         body: form,
@@ -63,13 +65,15 @@ export default function ImageUploader({
           error?: { code?: string };
         } | null;
         throw new Error(payload?.error?.code === "FORBIDDEN"
-          ? "دسترسی آپلود فایل برای حساب شما فعال نیست."
-          : "آپلود تصویر انجام نشد. دوباره تلاش کنید.");
+          ? (fa ? "دسترسی آپلود تصویر برای حساب شما فعال نیست." : "Your account cannot upload images.")
+          : (fa ? "آپلود تصویر انجام نشد. دوباره تلاش کنید." : "Image upload failed. Please try again."));
       }
-      onChange(`/uploads/images/${filename}`);
+      const payload = (await response.json()) as { data?: { url?: string } };
+      if (!payload.data?.url) throw new Error(fa ? "آدرس تصویر دریافت نشد." : "The uploaded image URL was not returned.");
+      onChange(payload.data.url);
       setLocalPreview("");
     } catch (uploadError) {
-      setError(uploadError instanceof Error ? uploadError.message : "آپلود تصویر انجام نشد.");
+      setError(uploadError instanceof Error ? uploadError.message : (fa ? "آپلود تصویر انجام نشد." : "Image upload failed."));
     } finally {
       setUploading(false);
     }
@@ -83,7 +87,7 @@ export default function ImageUploader({
         <label htmlFor={id} className="text-dash-body-sm font-semibold text-content-primary">
           {label}
         </label>
-        <span className="text-dash-caption text-content-tertiary">PNG، JPG، WEBP · حداکثر ۱۰ مگابایت</span>
+        <span className="text-dash-caption text-content-tertiary">{fa ? "PNG، JPG، WEBP، GIF · حداکثر ۱۰ مگابایت" : "PNG, JPG, WEBP, GIF · Max 10 MB"}</span>
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <input
@@ -105,7 +109,7 @@ export default function ImageUploader({
           className="inline-flex min-h-11 items-center justify-center gap-2 rounded-control bg-accent px-4 text-dash-body-sm font-bold text-on-primary transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {uploading ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
-          {uploading ? "در حال آپلود..." : "انتخاب و آپلود تصویر"}
+          {uploading ? (fa ? "در حال آپلود..." : "Uploading...") : (fa ? "انتخاب و آپلود تصویر" : "Choose and upload image")}
         </button>
         {value && (
           <button
@@ -118,7 +122,7 @@ export default function ImageUploader({
             className="inline-flex min-h-11 items-center gap-2 rounded-control border border-border-primary px-3 text-dash-body-sm font-semibold text-content-secondary hover:bg-surface-tertiary"
           >
             <Trash2 className="size-4" />
-            حذف تصویر
+            {fa ? "حذف تصویر" : "Remove image"}
           </button>
         )}
       </div>
@@ -126,7 +130,7 @@ export default function ImageUploader({
       {error && <p role="alert" className="text-dash-caption text-error">{error}</p>}
       {preview ? (
         <div className="relative max-w-xl overflow-hidden rounded-card border border-border-primary bg-surface-tertiary/40">
-          <img src={preview} alt="پیش‌نمایش تصویر انتخاب‌شده" className="max-h-64 w-full object-contain" />
+          <img src={preview} alt={fa ? "پیش‌نمایش تصویر انتخاب‌شده" : "Selected image preview"} className="max-h-64 w-full object-contain" />
           {uploading && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/45 text-white">
               <span className="inline-flex items-center gap-2 text-sm font-semibold">
@@ -138,11 +142,11 @@ export default function ImageUploader({
       ) : (
         <div className="flex min-h-28 max-w-xl items-center justify-center gap-2 rounded-card border border-dashed border-border-primary bg-surface-tertiary/30 text-dash-caption text-content-tertiary">
           <ImagePlus className="size-5" />
-          <span>هنوز تصویری انتخاب نشده است</span>
+          <span>{fa ? "هنوز تصویری انتخاب نشده است" : "No image selected yet"}</span>
         </div>
       )}
       <label htmlFor={`${id}-url`} className="text-dash-caption font-medium text-content-secondary">
-        یا آدرس تصویر را وارد کنید
+        {fa ? "یا آدرس تصویر را وارد کنید" : "Or enter an image URL"}
       </label>
       <input
         id={`${id}-url`}
