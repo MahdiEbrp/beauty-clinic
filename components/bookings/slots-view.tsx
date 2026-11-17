@@ -164,7 +164,7 @@ export function SlotsListView({
             }),
       description: t("bookingSlots.bulk.confirmDescription"),
     }),
-    renderBulkSelection: ({ ids, scope, onComplete }) => <SlotGroupsBulkEditor ids={ids} scope={scope} onComplete={onComplete} />,
+    renderBulkSelection: ({ ids, scope, filters, onComplete }) => <SlotGroupsBulkEditor ids={ids} scope={scope} filters={filters} onComplete={onComplete} />,
     bulkActions: [
       { key: "activate", labelKey: "bookingSlots.bulk.activate" },
       { key: "deactivate", labelKey: "bookingSlots.bulk.deactivate" },
@@ -345,7 +345,7 @@ export function SlotsListView({
 }
 
 
-function SlotGroupsBulkEditor({ ids, scope, onComplete }: { ids: string[]; scope: "page" | "filtered"; onComplete: () => void }) {
+function SlotGroupsBulkEditor({ ids, scope, filters, onComplete }: { ids: string[]; scope: "page" | "filtered"; filters: { search: string; status: string }; onComplete: () => void }) {
   const t = useTranslations();
   const [open, setOpen] = useState(false);
   const [groups, setGroups] = useState<Array<{ id: string; name: string }>>([]);
@@ -380,7 +380,7 @@ function SlotGroupsBulkEditor({ ids, scope, onComplete }: { ids: string[]; scope
           action: "groups",
           scope,
           ids: scope === "page" ? ids : undefined,
-          filters: scope === "filtered" ? { search: "", status: "all" } : undefined,
+          filters: scope === "filtered" ? filters : undefined,
           groupIds: selected,
         }),
       });
