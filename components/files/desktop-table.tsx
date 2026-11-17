@@ -96,7 +96,7 @@ function SelectAllCheckbox() {
     if (ref.current) ref.current.indeterminate = anySelected && !allSelected;
   }, [anySelected, allSelected]);
 
-  if (entries.length === 0) return null;
+  if (visibleEntries.length === 0) return null;
 
   return (
     <input
@@ -113,7 +113,7 @@ function SelectAllCheckbox() {
 
 export function FilesDesktopTable() {
   const t = useTranslations();
-  const { entries, isLoading, selectAll, clearSelection } = useFiles();
+  const { visibleEntries, isLoading, selectAll, clearSelection } = useFiles();
 
   return (
     <div
@@ -156,7 +156,7 @@ export function FilesDesktopTable() {
                   </td>
                 </tr>
               ))
-            : entries.map((entry) => <DesktopRow key={entry.name} entry={entry} />)}
+            : visibleEntries.map((entry) => <DesktopRow key={entry.name} entry={entry} />)}
         </tbody>
       </table>
     </div>
