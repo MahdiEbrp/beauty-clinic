@@ -1,11 +1,10 @@
 import { withSecurity, jsonOk } from "@/lib/api/security";
 import { ApiError } from "@/lib/api/errors";
 import { uploadFile } from "@/lib/storage/service";
+import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_BYTES } from "@/lib/images/constants";
 
 export const runtime = "nodejs";
 
-const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
-const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 
 export const POST = withSecurity(
   {
@@ -35,7 +34,7 @@ export const POST = withSecurity(
     if (file.size === 0 || file.size > MAX_IMAGE_BYTES) {
       throw new ApiError(413, "PAYLOAD_TOO_LARGE", "The image must be between 1 byte and 10 MB.");
     }
-    if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+    if (!ALLOWED_IMAGE_TYPES.some((type) => type === file.type)) {
       throw new ApiError(415, "UNSUPPORTED_MEDIA_TYPE", "Only JPG, PNG, WEBP and GIF images are supported.");
     }
     const header = new Uint8Array(await file.slice(0, 12).arrayBuffer());
