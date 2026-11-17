@@ -5,10 +5,10 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { asTranslate } from "@/src/i18n/message-key";
 
-type RefreshableList = {
-  load: (params: { search: string; status: string; page: number }) => Promise<void>;
+type RefreshableList<S extends string> = {
+  load: (params: { search: string; status: S; page: number }) => Promise<void>;
   debouncedSearch: string;
-  status: string;
+  status: S;
   page: number;
 };
 
@@ -34,9 +34,10 @@ export function useAdminResourceActions<
   T extends { id: string },
   P,
   C,
+  S extends string,
 >(
   config: AdminResourceActionsConfig<T, P>,
-  list: RefreshableList,
+  list: RefreshableList<S>,
 ): AdminResourceActionsState<T, P, C> {
   const t = asTranslate(useTranslations());
   const { load, debouncedSearch, status, page } = list;
