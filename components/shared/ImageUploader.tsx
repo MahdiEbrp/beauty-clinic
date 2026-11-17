@@ -14,7 +14,6 @@ type ImageUploaderProps = {
   placeholder?: string;
 };
 
-
 export default function ImageUploader({
   id,
   value,
@@ -108,7 +107,7 @@ export default function ImageUploader({
           ref={inputRef}
           id={id}
           type="file"
-          accept="image/jpeg,image/png,image/webp,image/gif"
+          accept={ALLOWED_IMAGE_TYPES.join(",")}
           className="sr-only"
           disabled={uploading}
           onChange={(event) => {
