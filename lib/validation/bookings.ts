@@ -369,21 +369,19 @@ export type BulkBookingsInput = z.infer<typeof bulkBookingsSchema>;
  */
 export const bulkSlotsSchema = z
   .object({
-    action: z.enum(["activate", "deactivate", "delete"]),
+    action: z.enum(["activate", "deactivate", "delete", "groups"]),
     scope: z.enum(["page", "filtered"]),
     ids: z.array(z.uuid()).max(100).optional(),
-    filters: listSlotsAdminQuerySchema
-      .pick({ search: true, status: true })
-      .optional(),
+    groupIds: z.array(z.uuid()).max(50).optional(),
+    filters: listSlotsAdminQuerySchema.pick({ search: true, status: true }).optional(),
   })
   .strict()
   .superRefine((value, ctx) => {
     if (value.scope === "page" && (!value.ids || value.ids.length === 0)) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["ids"],
-        message: "Select at least one slot.",
-      });
+      ctx.addIssue({ code: "custom", path: ["ids"], message: "Select at least one slot." });
+    }
+    if (value.action === "groups" && !value.groupIds) {
+      ctx.addIssue({ code: "custom", path: ["groupIds"], message: "Group selection is required." });
     }
   });
 
