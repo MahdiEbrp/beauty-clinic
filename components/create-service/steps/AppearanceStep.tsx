@@ -1,9 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Image as ImageIcon } from "lucide-react";
+import ImageUploader from "@/components/shared/ImageUploader";
 
-import { Field, Panel, inputClass } from "@/components/create-group/ui";
+import { Panel } from "@/components/create-group/ui";
 
 export default function AppearanceStep({
   imageUrl,
@@ -27,34 +27,14 @@ export default function AppearanceStep({
             {t("appearance.imageHint")}
           </p>
           <div className="mt-4">
-            <Field
+            <ImageUploader
               id="service-cover"
+              value={imageUrl}
+              onChange={onImageUrlChange}
               label={t("appearance.imagePreview")}
               hint={t("appearance.imageHint")}
-            >
-              <input
-                id="service-cover"
-                dir="ltr"
-                value={imageUrl}
-                onChange={(event) => onImageUrlChange(event.target.value)}
-                placeholder={t("appearance.imagePlaceholder")}
-                className={inputClass(false)}
-              />
-            </Field>
-          </div>
-          <div className="relative mt-2 aspect-video w-full overflow-hidden rounded-control border border-surface-variant/60 bg-surface-tertiary/30 sm:aspect-auto sm:h-48 md:max-w-xl">
-            {imageUrl.trim() ? (
-              <img
-                src={imageUrl.trim()}
-                alt={t("appearance.image")}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex h-full min-h-24 items-center justify-center gap-2 text-dash-caption text-content-tertiary">
-                <ImageIcon className="size-5" aria-hidden="true" />
-                <span>{t("review.notSet")}</span>
-              </div>
-            )}
+              placeholder={t("appearance.imagePlaceholder")}
+            />
           </div>
         </section>
       </div>
