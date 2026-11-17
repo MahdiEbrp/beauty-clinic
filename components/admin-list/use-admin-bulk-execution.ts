@@ -64,7 +64,7 @@ export function useAdminBulkExecution<
   const targetIds = selectionScope === "page" ? selectedIds : visibleIds;
 
   const executeBulkAction = async () => {
-    if (!targetIds.length) return;
+    if (selectionScope === "page" && selectedIds.length === 0) return;
     setConfirm(null);
     setBusyId("bulk");
     const pendingToast = toast.loading(t(`${config.namespace}.toast.syncing`));
