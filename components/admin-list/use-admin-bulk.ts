@@ -21,6 +21,8 @@ export function useAdminBulk<T extends { id: string }>(
   return useAdminBulkExecution(
     {
       namespace: config.namespace,
+      isAvailable: (action) =>
+        config.bulkActions.some((item) => item.key === action),
       isDangerous: (action) =>
         !!config.bulkActions.find((item) => item.key === action)?.dangerous,
       makeConfirm: (action) => ({ kind: "bulk", action }),
