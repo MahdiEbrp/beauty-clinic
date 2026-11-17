@@ -89,7 +89,7 @@ function DesktopRow({ entry }: { entry: EntryMeta }) {
 
 function SelectAllCheckbox() {
   const t = useTranslations();
-  const { entries, allSelected, anySelected, toggleSelectAll } = useFiles();
+  const { visibleEntries, allSelected, anySelected, toggleSelectAll } = useFiles();
   const ref = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
