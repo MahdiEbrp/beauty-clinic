@@ -1530,7 +1530,18 @@
       "title": "Upload files",
       "uploading": "Uploading..."
     },
-    "uploadShort": "Upload"
+    "uploadShort": "Upload",
+    "filterSearchPlaceholder": "Search files and folders...",
+    "filterSearchLabel": "Search files and folders",
+    "typeFilter": "Type",
+    "filterTypes": {
+      "all": "All",
+      "folders": "Folders",
+      "files": "Files"
+    },
+    "clearFilters": "Clear filters",
+    "noFilterResults": "No items match the selected filters.",
+    "filteredCount": "Showing {shown} of {total} items"
   },
   "footer": {
     "developer": "Developer",
