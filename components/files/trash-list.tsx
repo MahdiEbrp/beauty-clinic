@@ -9,6 +9,7 @@ export function TrashList() {
   const t = useTranslations();
   const {
     trashItems,
+    visibleTrashItems,
     isLoading,
     canManage,
     busy,
@@ -46,9 +47,13 @@ export function TrashList() {
     );
   }
 
+  if (visibleTrashItems.length === 0) {
+    return <p className="px-6 py-12 text-center text-dash-body-sm text-content-secondary">{t("files.noFilterResults")}</p>;
+  }
+
   return (
     <div className="grid gap-2.5 py-3">
-      {trashItems.map((item) => {
+      {visibleTrashItems.map((item) => {
         const isFolder = item.originalPath.endsWith("/") || !/\./.test(item.originalPath.split("/").pop() ?? "");
         return (
           <article
