@@ -21,6 +21,7 @@ const DEVELOPER_NAME = "Mahdi Ebrahim Pour";
 // Injected raw because the panel only honours the exact markup it issued — React's
 // JSX path rewrites the attribute casing and would append its own attributes.
 const ENAMAD_SNIPPET =
+  // eslint-disable-next-line no-secrets/no-secrets -- Public verification code in provider-issued HTML, not an authentication secret.
   "<a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=8012387&Code=tGf6kbvd1zly0cWZ1D0Kbs2oh0WstDuM'><img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=8012387&Code=tGf6kbvd1zly0cWZ1D0Kbs2oh0WstDuM' alt='' style='cursor:pointer' code='tGf6kbvd1zly0cWZ1D0Kbs2oh0WstDuM'></a>";
 
 function safeHtmlComment(value: string): string {

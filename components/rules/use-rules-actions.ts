@@ -22,7 +22,7 @@ export interface RulesActionsState {
 }
 
 export function useRulesActions(list: RulesListState): RulesActionsState {
-  const t = useTranslations();
+  const t = useTranslations("dashboardRules");
   const actions = useAdminResourceActions<
     AdminRule,
     { isActive?: boolean },
@@ -57,18 +57,18 @@ export function useRulesActions(list: RulesListState): RulesActionsState {
   const confirmTitle =
     actions.confirm?.kind === "row"
       ? actions.confirm.action === "deactivate"
-        ? t("dashboardRules.deactivateDialog.title", { name: ruleName(actions.confirm.rule) })
-        : t("dashboardRules.actions.deleteConfirm", { name: ruleName(actions.confirm.rule) })
+        ? t("deactivateDialog.title", { name: ruleName(actions.confirm.rule) })
+        : t("actions.deleteConfirm", { name: ruleName(actions.confirm.rule) })
       : actions.confirm
-        ? t(`dashboardRules.bulk.confirm.${actions.confirm.action}`)
+        ? t(`bulk.confirm.${actions.confirm.action}`)
         : "";
   const confirmDescription =
     actions.confirm?.kind === "row"
       ? actions.confirm.action === "deactivate"
-        ? t("dashboardRules.deactivateDialog.description")
-        : t("dashboardRules.bulk.confirmDescription")
+        ? t("deactivateDialog.description")
+        : t("bulk.confirmDescription")
       : actions.confirm
-        ? t("dashboardRules.bulk.confirmDescription")
+        ? t("bulk.confirmDescription")
         : "";
 
   return {

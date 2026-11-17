@@ -74,7 +74,7 @@ These scripts are taken directly from this repo's package.json — use them as-i
   "dev": "next dev",
   "build": "next build",
   "start": "next start",
-  "lint": "eslint --max-warnings=300",
+  "lint": "eslint --max-warnings=0",
   "lint:size": "node scripts/check-file-lengths.mjs",
   "typecheck": "tsc --noEmit",
   "test": "vitest run",

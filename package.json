@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint --max-warnings=300",
+    "lint": "eslint --max-warnings=0",
     "lint:size": "node scripts/check-file-lengths.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
