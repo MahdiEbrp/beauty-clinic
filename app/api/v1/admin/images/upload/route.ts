@@ -35,6 +35,14 @@ export const POST = withSecurity(
     if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
       throw new ApiError(415, "UNSUPPORTED_MEDIA_TYPE", "Only JPG, PNG, WEBP and GIF images are supported.");
     }
+    const header = new Uint8Array(await file.slice(0, 12).arrayBuffer());
+    const isPng = header.length >= 8 && [137, 80, 78, 71, 13, 10, 26, 10].every((byte, index) => header[index] === byte);
+    const isJpeg = header.length >= 3 && header[0] === 255 && header[1] === 216 && header[2] === 255;
+    const isGif = header.length >= 6 && String.fromCharCode(...header.slice(0, 6)).startsWith("GIF8");
+    const isWebp = header.length >= 12 && String.fromCharCode(...header.slice(0, 4)) === "RIFF" && String.fromCharCode(...header.slice(8, 12)) === "WEBP";
+    if (!(isPng || isJpeg || isGif || isWebp)) {
+      throw new ApiError(415, "UNSUPPORTED_MEDIA_TYPE", "The uploaded file is not a supported image.");
+    }
     if (file.size === 0 || file.size > MAX_IMAGE_BYTES) {
       throw new ApiError(413, "PAYLOAD_TOO_LARGE", "The image must be between 1 byte and 10 MB.");
     }
