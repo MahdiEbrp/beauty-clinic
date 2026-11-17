@@ -109,7 +109,7 @@ export default function ImageUploader({
           {uploading ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
           {uploading ? (fa ? "در حال آپلود..." : "Uploading...") : (fa ? "انتخاب و آپلود تصویر" : "Choose and upload image")}
         </button>
-        {value && (
+        {(value || localPreview) && (
           <button
             type="button"
             onClick={() => {
