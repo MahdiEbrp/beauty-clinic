@@ -101,14 +101,14 @@ export function SlotsListView({
       { key: "deactivate", labelKey: "bookingSlots.bulk.deactivate" },
       { key: "delete", labelKey: "bookingSlots.bulk.delete", dangerous: true },
     ],
-    executeBulk: async (action, ids, filters) => {
+    executeBulk: async (action, ids, filters, scope) => {
       const res = await fetch("/api/v1/bookings/slots/bulk", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
           action,
-          scope: ids.length > 0 ? ("page" as const) : ("filtered" as const),
+          scope,
           ids,
           filters: { search: filters.search, status: filters.status, groupId: filters.groupId, from: filters.from, to: filters.to },
         }),
