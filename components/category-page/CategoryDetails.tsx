@@ -44,7 +44,7 @@ export default async function CategoryDetails({
             key={service.id}
             className="overflow-hidden rounded-card border border-border-primary bg-surface-secondary shadow-elevation-1"
           >
-            <div className="grid gap-0 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+            <div className={`grid grid-cols-1 gap-0${service.coverImage ? " md:grid-cols-2" : ""}`}>
               {service.coverImage ? (
                 <div className="relative min-h-56 bg-surface-tertiary md:min-h-full">
                   <img
