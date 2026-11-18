@@ -83,21 +83,10 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {allScheduled ? (
-              <span className="inline-flex items-center gap-1.5 rounded-pill border border-success/30 bg-success/15 px-3 py-1 text-caption font-black text-success">
-                <Check className="size-3.5" strokeWidth={3} aria-hidden="true" />
-                {t("schedule.allScheduled")}
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 rounded-pill border border-copper/30 bg-copper/15 px-3 py-1 text-caption font-black text-copper-deep">
-                <AlertCircle className="size-3.5" aria-hidden="true" />
-                {t("schedule.progressScheduled", { n: scheduledCount, total: cart.length })}
-              </span>
-            )}
             <button
               type="button"
               onClick={openPicker}
-              className="inline-flex min-h-11 items-center gap-2 rounded-pill border border-copper bg-copper/10 px-4 text-caption font-bold text-copper-deep transition-colors hover:bg-copper hover:text-content-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="inline-flex min-h-12 items-center gap-2 rounded-pill border border-copper bg-copper/10 px-5 text-body-sm font-black text-copper-deep transition-colors hover:bg-copper hover:text-content-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               <CalendarDays className="size-4" aria-hidden="true" />
               {selectedSlot && cart[0] ? <SlotLabel line={{ ...cart[0], slot: selectedSlot }} /> : t("schedule.pickDateTime")}
