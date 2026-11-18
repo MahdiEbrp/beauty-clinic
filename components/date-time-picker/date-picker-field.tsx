@@ -48,6 +48,7 @@ const triggerClass = (filled: boolean, invalid?: boolean) =>
  * "YYYY-MM-DD" regardless of the displayed calendar.
  */
 export function DatePickerField({
+  id,
   value,
   onChange,
   locale,
@@ -55,6 +56,7 @@ export function DatePickerField({
   disabled,
   invalid,
 }: {
+  id?: string;
   value?: string;
   onChange: (next: string) => void;
   locale: DatePickerLocale;
@@ -80,6 +82,7 @@ export function DatePickerField({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
+          id={id}
           type="button"
           disabled={disabled}
           className={triggerClass(Boolean(selected), invalid)}

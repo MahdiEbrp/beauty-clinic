@@ -1,9 +1,10 @@
 "use client";
 
 import { useId } from "react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import * as SelectPrimitive from "@radix-ui/react-select";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, X } from "lucide-react";
+import { DatePickerField } from "@/components/date-time-picker/date-picker-field";
 
 interface ExtraFilterProps {
   type: "select" | "date";
@@ -22,11 +23,31 @@ export function AdminExtraFilter({
 }: ExtraFilterProps) {
   const id = useId();
   const locale = useLocale();
+  const t = useTranslations("dateTimePicker");
   return (
     <div className="inline-flex shrink-0 items-center gap-2 text-dash-caption font-bold text-accent">
       <label htmlFor={id}>{label}</label>
       {type === "date" ? (
-        <input id={id} type="date" value={value} onChange={(event) => onChange(event.target.value)} className={`${controlClass} max-w-40`} />
+        <div className="inline-flex min-w-0 items-center gap-1.5">
+          <div className="min-w-0">
+            <DatePickerField
+              id={id}
+              value={value}
+              onChange={onChange}
+              locale={locale === "fa" ? "fa" : "en"}
+            />
+          </div>
+          {value ? (
+            <button
+              type="button"
+              onClick={() => onChange("")}
+              aria-label={t("clearDate", { label })}
+              className="inline-flex size-11 shrink-0 items-center justify-center rounded-control border border-border-primary bg-surface-secondary text-content-secondary transition-colors hover:border-copper hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              <X className="size-3.5" aria-hidden="true" />
+            </button>
+          ) : null}
+        </div>
       ) : (
         <SelectPrimitive.Root value={value || ALL} onValueChange={(next) => onChange(next === ALL ? "" : next)} dir={locale === "fa" ? "rtl" : "ltr"}>
           <SelectPrimitive.Trigger id={id} className={`${controlClass} max-w-48 data-[state=open]:border-copper data-[state=open]:ring-1 data-[state=open]:ring-copper`}>
