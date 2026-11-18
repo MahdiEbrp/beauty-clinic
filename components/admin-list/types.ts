@@ -13,6 +13,9 @@ export type ListFilterParams = {
   search: string;
   status: string;
   page: number;
+  groupId?: string;
+  from?: string;
+  to?: string;
 };
 
 export interface Column<T> {
@@ -59,6 +62,7 @@ export type RowActionCtx<T> = {
 };
 
 export interface AdminListConfig<T extends { id: string }> {
+  extraFilters?: Array<{ key: "groupId" | "from" | "to"; type: "select" | "date"; labelKey: MessageKey; options?: Array<{ value: string; label: string }> }>;
     namespace: MessageNamespace;
   routeBase: string;
   backHref: string;
@@ -79,7 +83,7 @@ export interface AdminListConfig<T extends { id: string }> {
   executeBulk: (
     action: string,
     ids: string[],
-    filters: { search: string; status: string },
+    filters: { search: string; status: string; groupId?: string; from?: string; to?: string },
   ) => Promise<BulkResult>;
   itemUrl: (row: T) => string;
   deleteRow: (row: T) => Promise<void>;
@@ -92,7 +96,7 @@ export interface AdminListConfig<T extends { id: string }> {
     busy?: boolean;
   };
   /** Optional domain-specific bulk editor rendered beside generic bulk actions. */
-  renderBulkSelection?: (ctx: { ids: string[]; scope: "page" | "filtered"; filters: { search: string; status: string }; onComplete: () => void }) => ReactNode;
+  renderBulkSelection?: (ctx: { ids: string[]; scope: "page" | "filtered"; filters: { search: string; status: string; groupId?: string; from?: string; to?: string }; onComplete: () => void }) => ReactNode;
   perPage?: number;
   /** Initial status filter for the list (defaults to "all"). */
   defaultStatus?: string;
