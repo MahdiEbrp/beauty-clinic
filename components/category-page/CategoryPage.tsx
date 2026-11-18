@@ -4,6 +4,7 @@ import CategoryHeader from "./CategoryHeader";
 import CategoryJsonLd from "./CategoryJsonLd";
 import CategoryFaq, { type CategoryFaqItem } from "./CategoryFaq";
 import CategoryGallery from "./CategoryGallery";
+import CategoryDetails from "./CategoryDetails";
 import type { CategoryPageData } from "@/lib/services/category-page";
 
 type CategoryPageProps = {
@@ -73,6 +74,8 @@ export default async function CategoryPage({
           group={data.group}
           crumbs={crumbs}
         />
+
+        <CategoryDetails category={data.category} locale={locale} />
 
         {/* Treatment photos: cover image + before/after/gallery shots. */}
         <CategoryGallery category={data.category} />
