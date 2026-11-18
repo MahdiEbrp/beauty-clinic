@@ -212,7 +212,15 @@ export async function listSlotsAdmin(query: {
     .select()
     .from(bookingSlots)
     .where(where)
-    .orderBy(desc(bookingSlots.slotDate), bookingSlots.startTime)
+    .orderBy(
+      // Put upcoming slots first, nearest date/time at the top. Keep expired
+      // slots visible afterwards, with the most recently passed ones first.
+      sql`CASE WHEN (${bookingSlots.slotDate} + ${bookingSlots.endTime}) >= now() THEN 0 ELSE 1 END`,
+      sql`CASE WHEN (${bookingSlots.slotDate} + ${bookingSlots.endTime}) >= now() THEN ${bookingSlots.slotDate} END ASC`,
+      sql`CASE WHEN (${bookingSlots.slotDate} + ${bookingSlots.endTime}) >= now() THEN ${bookingSlots.startTime} END ASC`,
+      sql`CASE WHEN (${bookingSlots.slotDate} + ${bookingSlots.endTime}) < now() THEN ${bookingSlots.slotDate} END DESC`,
+      sql`CASE WHEN (${bookingSlots.slotDate} + ${bookingSlots.endTime}) < now() THEN ${bookingSlots.startTime} END DESC`,
+    )
     .limit(query.perPage)
     .offset(offset);
 
