@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, desc, eq, ilike, inArray, notInArray, or, sql, type SQL } from "drizzle-orm";
+import { and, eq, ilike, inArray, notInArray, or, sql, type SQL } from "drizzle-orm";
 
 import { db } from "@/src/db";
 import { bookings, bookingSlots, bookingSlotGroups, serviceGroups, serviceGroupsI18n } from "@/src/db/schema";
