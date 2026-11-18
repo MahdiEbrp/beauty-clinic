@@ -570,6 +570,7 @@
       "selected": "{count} انتخاب شده",
       "selectedFiltered": "{count} انتخاب شده (فیلترشده)"
     },
+    "filters": { "group": "گروه خدمات", "from": "از تاریخ", "to": "تا تاریخ" },
     "clearFilters": "پاک‌کردن فیلترها",
     "dialog": {
       "cancel": "انصراف",
