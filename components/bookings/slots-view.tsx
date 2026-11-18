@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/src/i18n/navigation";
 import type { AuthUser } from "@/lib/auth/dal";
@@ -23,8 +24,15 @@ export function SlotsListView({
 }) {
   const router = useRouter();
   const t = useTranslations();
+  const [groupOptions, setGroupOptions] = useState<Array<{ value: string; label: string }>>([]);
+  useEffect(() => { void fetch("/api/v1/service-groups?page=1&perPage=100&status=all", { credentials: "include" }).then((res) => res.ok ? res.json() : Promise.reject()).then((payload: { data: { items: Array<{ id: string; name: string }> } }) => setGroupOptions(payload.data.items.map((group) => ({ value: group.id, label: group.name })))).catch(() => setGroupOptions([])); }, []);
   const config: AdminListConfig<SlotAdminRow> = {
     namespace: "bookingSlots",
+    extraFilters: [
+      { key: "groupId", type: "select", labelKey: "bookingSlots.filters.group", options: groupOptions },
+      { key: "from", type: "date", labelKey: "bookingSlots.filters.from" },
+      { key: "to", type: "date", labelKey: "bookingSlots.filters.to" },
+    ],
     routeBase: "/dashboard/slots",
     backHref: "/dashboard/bookings",
     addHref: "/dashboard/slots/add",
@@ -102,7 +110,7 @@ export function SlotsListView({
           action,
           scope: ids.length > 0 ? ("page" as const) : ("filtered" as const),
           ids,
-          filters: { search: filters.search, status: filters.status },
+          filters: { search: filters.search, status: filters.status, groupId: filters.groupId, from: filters.from, to: filters.to },
         }),
       });
       if (!res.ok) throw new Error("bulk_failed");
