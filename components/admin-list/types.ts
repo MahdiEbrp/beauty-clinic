@@ -63,7 +63,7 @@ export type RowActionCtx<T> = {
 
 export interface AdminListConfig<T extends { id: string }> {
   extraFilters?: Array<{ key: "groupId" | "from" | "to"; type: "select" | "date"; labelKey: MessageKey; options?: Array<{ value: string; label: string }> }>;
-    namespace: MessageNamespace;
+  namespace: MessageNamespace;
   routeBase: string;
   backHref: string;
   /** Label for the header's back link (defaults to the bookings admin copy). */
@@ -84,6 +84,7 @@ export interface AdminListConfig<T extends { id: string }> {
     action: string,
     ids: string[],
     filters: { search: string; status: string; groupId?: string; from?: string; to?: string },
+    scope: "page" | "filtered",
   ) => Promise<BulkResult>;
   itemUrl: (row: T) => string;
   deleteRow: (row: T) => Promise<void>;
