@@ -16,7 +16,7 @@ export interface BulkListState<S extends string, A extends string> {
   selectionScope: "page" | "filtered";
   clearSelection: () => void;
   bulkAction: A;
-  filterValues: { groupId?: string; from?: string; to?: string };
+  filterValues?: { groupId?: string; from?: string; to?: string };
 }
 
 export interface BulkActionsState<C> {

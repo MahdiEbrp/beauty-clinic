@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAdminListContext } from "./context";
+import { AdminExtraFilter } from "./extra-filter";
 
 function FilterPill({
   label,
@@ -124,7 +125,17 @@ export function AdminListFilters<T extends { id: string }>() {
         {config.extraFilters?.map((filter) => {
           const value = filterValues[filter.key] ?? "";
           const update = (next: string) => { setFilterValue(filter.key, next); setPage(1); clearSelection(); };
-          return <label key={filter.key} className="inline-flex shrink-0 items-center gap-2 rounded-pill border border-border-interactive bg-surface-secondary px-3 py-1.5 text-dash-caption font-bold text-accent">{t(filter.labelKey)}{filter.type === "date" ? <input type="date" value={value} onChange={(event) => update(event.target.value)} className="max-w-36 bg-transparent text-dash-caption outline-none" /> : <select value={value} onChange={(event) => update(event.target.value)} className="max-w-40 bg-transparent text-dash-caption outline-none"><option value="">{t(`${config.namespace}.allGroups`)}</option>{(filter.options ?? []).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>}</label>;
+          return (
+            <AdminExtraFilter
+              key={filter.key}
+              type={filter.type}
+              label={t(filter.labelKey)}
+              value={value}
+              options={filter.options}
+              allLabel={t(`${config.namespace}.allGroups`)}
+              onChange={update}
+            />
+          );
         })}
         {hasActiveFilters && (
           <button

@@ -502,7 +502,6 @@
   "bookingAdmin": {
     "addNew": "Add New",
     "back": "Back to Bookings",
-    "filters": { "group": "Service group", "from": "From date", "to": "To date" },
     "clearFilters": "Clear filters",
     "counts": {
       "active": "{count} Active",
@@ -633,6 +632,7 @@
     }
   },
   "bookingSlots": {
+    "filters": { "group": "Service group", "from": "From date", "to": "To date" },
     "actions": {
       "activate": "Activate",
       "deactivate": "Deactivate",

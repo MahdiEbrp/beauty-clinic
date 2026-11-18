@@ -26,7 +26,7 @@ export function useAdminActions<T extends { id: string }>(
   list: AdminListState<T>,
 ): AdminActionsState<T> {
   const t = asTranslate(useTranslations());
-  const { load, debouncedSearch, status, page } = list;
+  const { load, debouncedSearch, status, page, filterValues } = list;
   const [busyId, setBusyId] = useState<string | null>(null);
   const [syncingIds, setSyncingIds] = useState<Set<string>>(new Set());
   const [confirm, setConfirm] = useState<DestructiveConfirm<T> | null>(null);
@@ -41,7 +41,7 @@ export function useAdminActions<T extends { id: string }>(
   };
   const isSyncing = (id: string) => syncingIds.has(id);
 
-  const refresh = () => load({ search: debouncedSearch, status, page });
+  const refresh = () => load({ search: debouncedSearch, status, page, ...filterValues });
   const execute = (
     target: T,
     operation: () => Promise<void>,

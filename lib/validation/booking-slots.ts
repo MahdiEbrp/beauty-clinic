@@ -185,18 +185,29 @@ export const availableSlotDatesQuerySchema = z
 /**
  * Paginated admin slot list (separate from the date-range calendar fetch).
  */
-export const listSlotsAdminQuerySchema = z
-  .object({
+const slotAdminFilterFields = z.object({
+  search: z.string().trim().max(100).optional(),
+  status: z.enum(["all", "active", "inactive", "expired"]).default("all"),
+  groupId: z.uuid().optional(),
+  from: slotDateSchema.optional(),
+  to: slotDateSchema.optional(),
+}).strict();
+
+function validateSlotDateRange(
+  value: { from?: string; to?: string },
+  ctx: z.RefinementCtx,
+) {
+  if (value.from && value.to && value.to < value.from) {
+    ctx.addIssue({ code: "custom", path: ["to"], message: "End date must be on or after start date." });
+  }
+}
+
+export const listSlotsAdminQuerySchema = slotAdminFilterFields
+  .extend({
     page: z.coerce.number().int().min(1).max(100000).default(1),
     perPage: z.coerce.number().int().min(1).max(100).default(20),
-    search: z.string().trim().max(100).optional(),
-    status: z.enum(["all", "active", "inactive", "expired"]).default("all"),
-    groupId: z.uuid().optional(),
-    from: slotDateSchema.optional(),
-    to: slotDateSchema.optional(),
   })
-  .strict()
-  .superRefine((value, ctx) => { if (value.from && value.to && value.to < value.from) ctx.addIssue({ code: "custom", path: ["to"], message: "End date must be on or after start date." }); });
+  .superRefine(validateSlotDateRange);
 
 export type ListSlotsAdminQuery = z.infer<typeof listSlotsAdminQuerySchema>;
 
@@ -210,7 +221,7 @@ export const bulkSlotsSchema = z
     scope: z.enum(["page", "filtered"]),
     ids: z.array(z.uuid()).max(100).optional(),
     groupIds: z.array(z.uuid()).max(50).optional(),
-    filters: listSlotsAdminQuerySchema.pick({ search: true, status: true, groupId: true, from: true, to: true }).optional(),
+    filters: slotAdminFilterFields.superRefine(validateSlotDateRange).optional(),
   })
   .strict()
   .superRefine((value, ctx) => {

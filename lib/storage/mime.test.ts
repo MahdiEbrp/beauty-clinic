@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { isPreviewable, isTextMime, mimeFromName } from "@/lib/storage/mime";
+import { isPreviewable, isSafeInlineImage, isTextMime, mimeFromName } from "@/lib/storage/mime";
 
 describe("mimeFromName", () => {
   it("maps known extensions (case-insensitively)", () => {
@@ -43,5 +43,15 @@ describe("isPreviewable", () => {
     expect(isPreviewable("text/plain")).toBe(false);
     expect(isPreviewable("application/zip")).toBe(false);
     expect(isPreviewable("video/mp4")).toBe(false);
+  });
+});
+
+describe("isSafeInlineImage", () => {
+  it.each(["image/png", "image/jpeg", "image/gif", "image/webp", "image/avif", "image/x-icon"])("allows %s inline", (mime) => {
+    expect(isSafeInlineImage(mime)).toBe(true);
+  });
+
+  it.each(["image/svg+xml", "image/unknown", "text/html", "text/javascript", "application/pdf", "application/octet-stream"])("keeps %s as an attachment", (mime) => {
+    expect(isSafeInlineImage(mime)).toBe(false);
   });
 });

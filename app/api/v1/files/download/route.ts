@@ -6,7 +6,7 @@ import { z } from "zod";
 
 import { withSecurity } from "@/lib/api/security";
 import { download } from "@/lib/storage/service";
-import { isPreviewable } from "@/lib/storage/mime";
+import { isSafeInlineImage } from "@/lib/storage/mime";
 import { pathSchema } from "@/lib/validation/files";
 
 export const runtime = "nodejs";
@@ -20,7 +20,7 @@ export const GET = withSecurity(
     const query = ctx.query ?? (() => { throw new Error("Query params are missing"); })();
     const target = await download(query.path);
     const encoded = encodeURIComponent(target.name).replace(/['()*]/g, (c) => `%${c.charCodeAt(0).toString(16)}`);
-    const disposition = isPreviewable(target.mime) ? "inline" : "attachment";
+    const disposition = isSafeInlineImage(target.mime) ? "inline" : "attachment";
 
     return new NextResponse(Readable.toWeb(fs.createReadStream(target.path)) as ReadableStream<Uint8Array>, {
       headers: {

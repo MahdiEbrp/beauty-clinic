@@ -36,6 +36,7 @@ function setup(scope: "page" | "filtered" = "page") {
     selectionScope: scope,
     clearSelection: vi.fn(),
     bulkAction: "activate",
+    filterValues: {} as { groupId?: string; from?: string; to?: string },
   };
   const actions = { setBusyId: vi.fn(), setConfirm: vi.fn(), setSyncing: vi.fn() };
   const render = () => renderHook(() => useAdminBulkExecution(config, list, actions));
@@ -67,6 +68,18 @@ describe("shared admin bulk execution", () => {
     const { result } = render();
     await act(() => result.current.executeBulkAction());
     expect(config.execute).toHaveBeenCalledWith(expect.objectContaining({ scope: "filtered", ids: [] }));
+  });
+
+  it("preserves group and date filters during filtered execution and refresh", async () => {
+    const { config, list, render } = setup("filtered");
+    list.filterValues = { groupId: "group", from: "2026-11-01", to: "2026-11-30" };
+    const { result } = render();
+    await act(() => result.current.executeBulkAction());
+    expect(config.execute).toHaveBeenCalledWith({
+      action: "activate", scope: "filtered", ids: ["visible"],
+      filters: { search: "laser", status: "inactive", ...list.filterValues },
+    });
+    expect(list.load).toHaveBeenCalledWith({ search: "laser", status: "inactive", page: 3, ...list.filterValues });
   });
 
   it("asks for confirmation before destructive operations", () => {
