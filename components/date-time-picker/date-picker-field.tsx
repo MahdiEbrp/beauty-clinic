@@ -44,7 +44,7 @@ const triggerClass = (filled: boolean, invalid?: boolean) =>
 
 /**
  * Localized single-date picker: Jalali by default in fa, Gregorian in en,
- * with an in-popover toggle between the two calendars. Emits canonical
+ * using the locale's calendar system. Emits canonical
  * "YYYY-MM-DD" regardless of the displayed calendar.
  */
 export function DatePickerField({
@@ -65,9 +65,8 @@ export function DatePickerField({
 }) {
   const t = useTranslations("dateTimePicker");
   const [open, setOpen] = React.useState(false);
-  const [kind, setKind] = React.useState<CalendarKind>(
-    locale === "fa" ? "jalali" : "gregorian",
-  );
+  // Keep the calendar system aligned with the active application locale.
+  const kind: CalendarKind = locale === "fa" ? "jalali" : "gregorian";
 
   const selected = value ? keyToDate(value) : undefined;
   const minDate = min ? keyToDate(min) : undefined;
@@ -91,39 +90,19 @@ export function DatePickerField({
           </span>
         </button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-auto p-0">
-        <div
-          role="tablist"
-          aria-label={t("calendarToggle")}
-          className="flex items-center gap-1 p-3 pb-0"
-        >
-          {(["jalali", "gregorian"] as const).map((option) => (
-            <button
-              key={option}
-              type="button"
-              role="tab"
-              aria-selected={kind === option}
-              onClick={() => setKind(option)}
-              className={`inline-flex h-9 flex-1 items-center justify-center rounded-pill border px-3 text-dash-caption font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
-                kind === option
-                  ? "border-accent bg-accent text-content-contrast"
-                  : "border-border-primary bg-surface-secondary text-content-secondary hover:bg-surface-tertiary"
-              }`}
-            >
-              {t(`calendar.${option}`)}
-            </button>
-          ))}
-        </div>
-        <div className="p-2">
-          <Calendar
-            kind={kind}
-            locale={locale}
-            selected={selected}
-            onSelect={handleSelect}
-            disabled={minDate ? { before: minDate } : undefined}
-            startMonth={minDate ?? new Date(2000, 0, 1)}
-          />
-        </div>
+      <PopoverContent
+        align="start"
+        dir={locale === "fa" ? "rtl" : "ltr"}
+        className="w-auto rounded-panel border border-border-primary bg-surface-primary p-2 text-content-primary shadow-elevation-3"
+      >
+        <Calendar
+          kind={kind}
+          locale={locale}
+          selected={selected}
+          onSelect={handleSelect}
+          disabled={minDate ? { before: minDate } : undefined}
+          startMonth={selected ?? minDate ?? new Date()}
+        />
       </PopoverContent>
     </Popover>
   );
