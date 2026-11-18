@@ -207,11 +207,11 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
       email: input.email,
     });
 
-    // Every service line in the order carries its own deposit so each line
-    // shows its own amount (no line shows a confusing 0). Checkout charges
-    // deposit × number of lines for the whole group.
+    // The fixed deposit is stored once per booking order. Put it on the
+    // first line and zero on the remaining lines so summing the order never
+    // multiplies the configured deposit by the number of selected services.
     const inserted: BookingSummary[] = [];
-    for (const line of planned) {
+    for (const [lineIndex, line] of planned.entries()) {
       const group = snapshots.get(line.groupId);
       if (!group) throw new ApiError(404, "GROUP_NOT_FOUND", "Group not found.");
       const [row] = await tx
@@ -229,7 +229,7 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
           slotId: line.slotId,
           slotStart: line.start,
           slotEnd: line.end,
-          totalAmount: String(deposit),
+          totalAmount: String(lineIndex === 0 ? deposit : 0),
           status: "pending",
           notes: input.notes ?? null,
           consultationRequired: input.consultationRequired ?? false,

@@ -218,6 +218,8 @@ export function Calendar({
   const shared = {
     mode: "single" as const,
     selected,
+    // Open on the selection without making it the navigation lower bound.
+    defaultMonth: selected,
     onSelect,
     disabled,
     startMonth,

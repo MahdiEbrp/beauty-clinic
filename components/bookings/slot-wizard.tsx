@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import { DatePickerField } from "@/components/date-time-picker/date-picker-field";
+import { DatePickerField, dateToKey } from "@/components/date-time-picker/date-picker-field";
 import { TimePickerField } from "@/components/date-time-picker/time-picker-field";
 import { useRouter } from "@/src/i18n/navigation";
 import type { CalendarKind } from "@/lib/bookings/dates";
@@ -180,7 +180,7 @@ export function SlotWizard({
               value={slotDate}
               onChange={setSlotDate}
               locale={locale === "fa" ? "fa" : "en"}
-              min={new Date().toISOString().slice(0, 10)}
+              min={dateToKey(new Date())}
             />
           </Field>
 

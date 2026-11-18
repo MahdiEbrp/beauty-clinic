@@ -44,10 +44,9 @@ export async function createBookingCheckout(input: PublicBookingCheckoutInput, e
   const provider = await getPaymentProviderForUse();
   const settings = await loadSystemSettingsMap();
   const deposit = toMoney(settings.get("booking.price"));
-  // Charge deposit × number of service lines in the group so the total
-  // matches what each booking line displays.
-  const lineCount = group.length;
-  const amount = deposit * lineCount;
+  // The configured deposit belongs to the booking order, not each
+  // selected service line. Charge it exactly once for the whole group.
+  const amount = deposit;
   const holdExpiresAt = expiresAt ?? new Date(Date.now() + PAYMENT_LIMITS.checkoutExpiryMinutes * 60_000);
   if (holdExpiresAt.getTime() <= Date.now()) throw new ApiError(409, "PAYMENT_EXPIRED", "The payment window has expired.");
   const callbackUrl = provider.callbackUrl ?? `${process.env.NEXT_PUBLIC_SITE_URL}/api/v1/payments/callback`;
