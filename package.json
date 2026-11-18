@@ -9,6 +9,7 @@
     "lint": "eslint --max-warnings=0",
     "lint:size": "node scripts/check-file-lengths.mjs",
     "typecheck": "tsc --noEmit",
+    "typecheck:build": "tsc --noEmit --project tsconfig.build.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "tailwind:upgrade": "npx @tailwindcss/upgrade --force",

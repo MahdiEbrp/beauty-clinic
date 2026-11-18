@@ -151,8 +151,18 @@ This project includes Drizzle Kit scripts. Common DB tasks:
 
 - Run tests once: `npm test`
 - Run tests in watch mode: `npm run test:watch`
-- Typecheck: `npm run typecheck`
+- Typecheck all source, tests, and tooling: `npm run typecheck`
+- Typecheck the production build scope: `npm run typecheck:build`
 - Lint: `npm run lint`
+
+Next.js uses `tsconfig.build.json`, which inherits the strict compiler settings
+from `tsconfig.json` but excludes unit tests, test helpers, and test/database
+migration tooling configs. Production type checking stays enabled without
+requiring Testing Library or Vitest in the deployment dependency install.
+The default `tsconfig.json` still includes tests: before merging, install all
+dependencies (including development dependencies) and run `npm run typecheck`,
+`npm run lint`, and `npm test`. A passing production build does not replace
+these checks.
 
 ## Deploy
 
