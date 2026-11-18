@@ -1412,6 +1412,7 @@
     },
     "calendarToggle": "Calendar type",
     "chooseDate": "Select date",
+    "clearDate": "Clear {label}",
     "hour": "Hour",
     "minute": "Minute",
     "today": "Today"

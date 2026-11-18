@@ -16,7 +16,7 @@ export default defineConfig({
       // Route and component tests cover the exported generateMetadata /
       // JSON-LD contracts, which are where SEO regressions actually live.
       "app/**/*.test.ts",
-      "components/**/*.test.ts",
+      "components/**/*.test.{ts,tsx}",
     ],
     env: {
       DATABASE_URL: "postgres://user:pass@localhost:5432/db",
