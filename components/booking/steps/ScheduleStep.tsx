@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { AlertCircle, ArrowRight, CalendarDays, Check } from "lucide-react";
+import { AlertCircle, ArrowRight, CalendarDays } from "lucide-react";
 import { findCartConflicts } from "@/lib/booking/scheduling";
 import { SlotLabel } from "../SlotLabel";
 import DateModal from "./DateModal";
@@ -28,11 +28,6 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
   const [sharedSlot, setSharedSlot] = useState<SlotOption | null>(null);
 
   const selectedSlot = sharedSlot ?? cart[0]?.slot ?? null;
-  const allScheduled =
-    cart.length > 0 &&
-    Boolean(selectedSlot) &&
-    cart.every((line) => line.slot?.id === selectedSlot?.id);
-  const scheduledCount = allScheduled ? cart.length : 0;
   const conflicts = findCartConflicts(cart);
 
   const primaryGroup = cart[0]?.group ?? null;
