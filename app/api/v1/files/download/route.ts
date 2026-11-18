@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { withSecurity } from "@/lib/api/security";
 import { download } from "@/lib/storage/service";
+import { isSafeInlineImage } from "@/lib/storage/mime";
 import { pathSchema } from "@/lib/validation/files";
 
 export const runtime = "nodejs";
@@ -19,12 +20,14 @@ export const GET = withSecurity(
     const query = ctx.query ?? (() => { throw new Error("Query params are missing"); })();
     const target = await download(query.path);
     const encoded = encodeURIComponent(target.name).replace(/['()*]/g, (c) => `%${c.charCodeAt(0).toString(16)}`);
+    const disposition = isSafeInlineImage(target.mime) ? "inline" : "attachment";
 
     return new NextResponse(Readable.toWeb(fs.createReadStream(target.path)) as ReadableStream<Uint8Array>, {
       headers: {
         "Content-Type": target.mime,
         "Content-Length": String(target.size),
-        "Content-Disposition": `attachment; filename*=UTF-8''${encoded}`,
+        "Content-Disposition": `${disposition}; filename*=UTF-8''${encoded}`,
+        "X-Content-Type-Options": "nosniff",
         "Cache-Control": "public, max-age=60, stale-while-revalidate=300",
       },
     });

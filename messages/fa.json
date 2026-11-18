@@ -632,6 +632,7 @@
     }
   },
   "bookingSlots": {
+    "filters": { "group": "گروه خدمات", "from": "از تاریخ", "to": "تا تاریخ" },
     "actions": {
       "activate": "فعال",
       "deactivate": "غیرفعال",

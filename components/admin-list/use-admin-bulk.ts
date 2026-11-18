@@ -26,8 +26,8 @@ export function useAdminBulk<T extends { id: string }>(
       isDangerous: (action) =>
         !!config.bulkActions.find((item) => item.key === action)?.dangerous,
       makeConfirm: (action) => ({ kind: "bulk" as const, action }),
-      execute: ({ action, ids, filters }) =>
-        config.executeBulk(action, ids, filters),
+      execute: ({ action, ids, filters, scope }) =>
+        config.executeBulk(action, ids, filters, scope),
     },
     list,
     actions,

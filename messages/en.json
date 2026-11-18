@@ -632,6 +632,7 @@
     }
   },
   "bookingSlots": {
+    "filters": { "group": "Service group", "from": "From date", "to": "To date" },
     "actions": {
       "activate": "Activate",
       "deactivate": "Deactivate",

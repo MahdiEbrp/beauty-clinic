@@ -80,3 +80,8 @@ export function isTextMime(mime: string): boolean {
 export function isPreviewable(mime: string): boolean {
   return mime.startsWith("image/") || mime === "application/pdf";
 }
+
+/** Only passive raster formats may be opened directly on the application origin. */
+export function isSafeInlineImage(mime: string): boolean {
+  return ["image/png", "image/jpeg", "image/gif", "image/webp", "image/avif", "image/x-icon"].includes(mime);
+}

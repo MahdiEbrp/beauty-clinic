@@ -101,14 +101,14 @@ export function PaymentProvidersListView({
         dangerous: true,
       },
     ],
-    executeBulk: async (action, ids, filters) => {
+    executeBulk: async (action, ids, filters, scope) => {
       const res = await fetch(`${PAYMENT_API_ROUTES.providers}/bulk`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
           action,
-          scope: ids.length > 0 ? ("page" as const) : ("filtered" as const),
+          scope,
           ids,
           filters: { search: filters.search, status: filters.status },
         }),

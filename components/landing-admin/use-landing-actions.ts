@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { toast } from "sonner";
 import { msgKey } from "@/src/i18n/message-key";
 import type { DestructiveConfirm } from "./types";
 import type { LandingListState } from "./use-landing-list";
 import { editPathFor, endpointFor, rowTitle } from "./config";
+import { runAdminRowAction } from "@/components/shared/run-admin-row-action";
 
 export interface LandingActionsState {
   busyId: string | null;
@@ -42,50 +42,50 @@ export function useLandingActions(list: LandingListState): LandingActionsState {
   const isSyncing = (id: string) => syncingIds.has(id);
 
   const refresh = () => load({ search: debouncedSearch, status, page });
+  const execute = (
+    id: string,
+    request: () => Promise<void>,
+    successKey: "success" | "deleted",
+  ) =>
+    runAdminRowAction({
+      id,
+      syncingMessage: t("landingAdmin.toast.syncing"),
+      successMessage: t(`landingAdmin.toast.${successKey}`),
+      errorMessage: t("landingAdmin.toast.error"),
+      operation: request,
+      refresh,
+      setBusyId,
+      setSyncing,
+      clearConfirm: () => setConfirm(null),
+    });
 
-  const runAction = async (id: string, patch: { isActive?: boolean }) => {
-    setConfirm(null);
-    setBusyId(id);
-    setSyncing(id, true);
-    const pendingToast = toast.loading(t("landingAdmin.toast.syncing"));
-    try {
-      const response = await fetch(`${endpointFor(collection)}/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(patch),
-      });
-      if (!response.ok) throw new Error("action_failed");
-      await refresh();
-      toast.success(t("landingAdmin.toast.success"), { id: pendingToast });
-    } catch {
-      toast.error(t("landingAdmin.toast.error"), { id: pendingToast });
-    } finally {
-      setSyncing(id, false);
-      setBusyId(null);
-    }
-  };
+  const runAction = (id: string, patch: { isActive?: boolean }) =>
+    execute(
+      id,
+      async () => {
+        const response = await fetch(`${endpointFor(collection)}/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(patch),
+        });
+        if (!response.ok) throw new Error("action_failed");
+      },
+      "success",
+    );
 
-  const deleteRow = async (id: string) => {
-    setConfirm(null);
-    setBusyId(id);
-    setSyncing(id, true);
-    const pendingToast = toast.loading(t("landingAdmin.toast.syncing"));
-    try {
-      const response = await fetch(`${endpointFor(collection)}/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-      if (!response.ok) throw new Error("delete_failed");
-      await refresh();
-      toast.success(t("landingAdmin.toast.deleted"), { id: pendingToast });
-    } catch {
-      toast.error(t("landingAdmin.toast.error"), { id: pendingToast });
-    } finally {
-      setSyncing(id, false);
-      setBusyId(null);
-    }
-  };
+  const deleteRow = (id: string) =>
+    execute(
+      id,
+      async () => {
+        const response = await fetch(`${endpointFor(collection)}/${id}`, {
+          method: "DELETE",
+          credentials: "include",
+        });
+        if (!response.ok) throw new Error("delete_failed");
+      },
+      "deleted",
+    );
 
   const editPath = (id: string) => editPathFor(collection, id);
 

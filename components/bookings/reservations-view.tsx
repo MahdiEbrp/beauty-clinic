@@ -82,14 +82,14 @@ export function ReservationsListView({
       { key: "refund", labelKey: "bookingReservations.bulk.refund" },
       { key: "delete", labelKey: "bookingReservations.bulk.delete", dangerous: true },
     ],
-    executeBulk: async (action, ids, filters) => {
+    executeBulk: async (action, ids, filters, scope) => {
       const res = await fetch("/api/v1/bookings/bulk", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
           action,
-          scope: ids.length > 0 ? ("page" as const) : ("filtered" as const),
+          scope,
           ids,
           filters: { search: filters.search, status: filters.status },
         }),

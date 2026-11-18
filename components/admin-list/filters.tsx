@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAdminListContext } from "./context";
+import { AdminExtraFilter } from "./extra-filter";
 
 function FilterPill({
   label,
@@ -51,6 +52,8 @@ export function AdminListFilters<T extends { id: string }>() {
     setSearch,
     status,
     setStatus,
+    filterValues,
+    setFilterValue,
     setPage,
     isLoading,
     setSelectedIds,
@@ -67,7 +70,7 @@ export function AdminListFilters<T extends { id: string }>() {
     clearSelection();
   };
 
-  const hasActiveFilters = status !== "all" || Boolean(search);
+  const hasActiveFilters = status !== "all" || Boolean(search) || Object.values(filterValues).some(Boolean);
   const statusLabel =
     status === "all"
       ? t(`${config.namespace}.statusAll`)
@@ -119,12 +122,28 @@ export function AdminListFilters<T extends { id: string }>() {
             </DropdownMenuItem>
           ))}
         </FilterPill>
+        {config.extraFilters?.map((filter) => {
+          const value = filterValues[filter.key] ?? "";
+          const update = (next: string) => { setFilterValue(filter.key, next); setPage(1); clearSelection(); };
+          return (
+            <AdminExtraFilter
+              key={filter.key}
+              type={filter.type}
+              label={t(filter.labelKey)}
+              value={value}
+              options={filter.options}
+              allLabel={t(`${config.namespace}.allGroups`)}
+              onChange={update}
+            />
+          );
+        })}
         {hasActiveFilters && (
           <button
             type="button"
             onClick={() => {
               setSearch("");
               setStatus("all");
+              for (const filter of config.extraFilters ?? []) setFilterValue(filter.key, "");
               setPage(1);
               clearSelection();
             }}

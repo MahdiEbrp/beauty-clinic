@@ -12,6 +12,8 @@ export interface AdminListState<T> {
   setSearch: (value: string) => void;
   status: string;
   setStatus: (value: string) => void;
+  filterValues: { groupId?: string; from?: string; to?: string };
+  setFilterValue: (key: "groupId" | "from" | "to", value: string) => void;
   page: number;
   setPage: (value: number | ((prev: number) => number)) => void;
   debouncedSearch: string;
@@ -48,6 +50,8 @@ export function useAdminList<T extends { id: string }>(
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [status, setStatus] = useState(config.defaultStatus ?? "all");
+  const [filterValues, setFilterValues] = useState<{ groupId?: string; from?: string; to?: string }>({});
+  const setFilterValue = (key: "groupId" | "from" | "to", value: string) => setFilterValues((current) => ({ ...current, [key]: value || undefined }));
   const [page, setPage] = useState(1);
   const [data, setData] = useState<ListResult<T>>(initialData);
   const [isLoading, setIsLoading] = useState(false);
@@ -111,6 +115,9 @@ export function useAdminList<T extends { id: string }>(
           status: params.status,
         });
         if (params.search) qs.set("search", params.search);
+        if (params.groupId) qs.set("groupId", params.groupId);
+        if (params.from) qs.set("from", params.from);
+        if (params.to) qs.set("to", params.to);
         const response = await fetch(`${config.listUrl}?${qs.toString()}`, {
           credentials: "include",
         });
@@ -136,8 +143,8 @@ export function useAdminList<T extends { id: string }>(
       firstRun.current = false;
       return;
     }
-    void load({ search: debouncedSearch, status, page });
-  }, [debouncedSearch, status, page, load]);
+    void load({ search: debouncedSearch, status, page, ...filterValues });
+  }, [debouncedSearch, status, page, filterValues, load]);
 
   const totalPages = data.totalPages;
   const from = data.total === 0 ? 0 : (page - 1) * data.perPage + 1;
@@ -151,6 +158,8 @@ export function useAdminList<T extends { id: string }>(
     setSearch,
     status,
     setStatus,
+    filterValues,
+    setFilterValue,
     page,
     setPage,
     debouncedSearch,

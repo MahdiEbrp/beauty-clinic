@@ -2,187 +2,102 @@
 
 ![license](https://img.shields.io/github/license/MahdiEbrp/beauty-clinic)
 
-A modern Next.js + TypeScript starter app for a beauty clinic website. This repository contains a frontend built with Next.js (App Router) and TypeScript, with styles and assets for a responsive clinic site.
-
-## Features
-
-- Next.js (App Router) with TypeScript
-- Server and client components where appropriate
-- Optimized fonts and images using Next.js built-in features
-- Responsive layout and basic styling
-
-> NOTE: This README is a project overview. Adjust the sections below to match any backend services, environment variables, or third-party integrations you add.
-
-## Table of contents
-
-- [Getting started](#getting-started)
-- [Prerequisites](#prerequisites)
-- [Available scripts](#available-scripts)
-- [Environment variables](#environment-variables)
-- [Project structure](#project-structure)
-- [Dependencies (high level)](#dependencies-high-level)
-- [Database commands](#database-commands)
-- [Tests & Linting](#tests--linting)
-- [Deploy](#deploy)
-- [Contributing](#contributing)
-- [License](#license)
-
-## Getting started
-
-Clone the repo and install dependencies:
-
-```bash
-# clone
-git clone https://github.com/MahdiEbrp/beauty-clinic.git
-cd beauty-clinic
-
-# install (choose one)
-npm install
-# or
-yarn
-# or
-pnpm install
-```
-
-Run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open http://localhost:3000 in your browser. Edit `app/page.tsx` (or other files under `app/`) — changes will auto-refresh.
+A Next.js application for managing a beauty clinic website and its administration workflows.
 
 ## Prerequisites
 
-- Node.js 18.x or newer is recommended (verify against the Next.js version used).
-- A package manager: npm, yarn, or pnpm.
+- Node.js 20.9 or newer (required by the Next.js 16 toolchain).
+- [Bun](https://bun.sh/) (the repository includes `bun.lock`).
+
+## Getting started
+
+Clone the repository and install dependencies:
+
+```bash
+git clone https://github.com/MahdiEbrp/beauty-clinic.git
+cd beauty-clinic
+bun install
+```
+
+Create a local environment file based on `.env.example` and fill in the values required by your environment. Never commit secrets.
+
+Start the development server:
+
+```bash
+bun dev
+```
+
+Open http://localhost:3000 in your browser.
 
 ## Available scripts
 
-These scripts are taken directly from this repo's package.json — use them as-is.
+The following commands match the scripts currently defined in `package.json`:
 
-```json
-{
-  "dev": "next dev",
-  "build": "next build",
-  "start": "next start",
-  "lint": "eslint --max-warnings=0",
-  "lint:size": "node scripts/check-file-lengths.mjs",
-  "typecheck": "tsc --noEmit",
-  "test": "vitest run",
-  "test:watch": "vitest",
-  "db:generate": "drizzle-kit generate",
-  "db:migrate": "drizzle-kit migrate",
-  "db:studio": "drizzle-kit studio",
-  "db:seed": "node --env-file=.env.local --import tsx ./src/db/seed.ts"
-}
-```
-
-- `dev` — Runs the app in development mode on localhost:3000.
-- `build` — Builds the application for production.
-- `start` — Starts the production server (run after `build`).
-- `lint` / `lint:size` — Runs ESLint checks (and a custom file-length check).
-- `typecheck` — Runs TypeScript type checking.
-- `test` / `test:watch` — Runs tests with Vitest.
-- `db:*` — Drizzle Kit helper scripts for generating, migrating, and opening the DB studio; `db:seed` runs a local seed script.
+| Command | Description |
+| --- | --- |
+| `bun dev` | Start the Next.js development server. |
+| `bun build` | Build the application with the Webpack builder. |
+| `bun start` | Start the production server after a build. |
+| `bun lint` | Run ESLint with warnings treated as errors. |
+| `bun lint:size` | Check source-file length limits. |
+| `bun typecheck` | Typecheck all source, tests, and tooling. |
+| `bun typecheck:build` | Typecheck the production build scope. |
+| `bun run test` | Run the Vitest suite once. |
+| `bun test:watch` | Run Vitest in watch mode. |
+| `bun tailwind:upgrade` | Run the Tailwind CSS upgrade tool. |
+| `bun db:generate` | Generate database migrations. |
+| `bun db:migrate` | Apply database migrations. |
+| `bun db:studio` | Open Drizzle Studio. |
+| `bun db:seed` | Run the database seed script using `.env.local`. |
+| `bun db:migrate-working-hours` | Run the working-hours migration script. |
 
 ## Environment variables
 
-If your project requires environment variables, create a `.env.local` file in the repository root and add variables there. Example:
-
-```
-NEXT_PUBLIC_API_URL=https://api.example.com
-```
-
-Do NOT commit secrets to the repository. For production, use your hosting provider's secrets management.
+Copy `.env.example` to `.env.local` and configure the values needed for your setup. Keep credentials and other secrets out of source control. In production, configure secrets through your hosting provider.
 
 ## Project structure
 
-A typical layout for this repo:
+- `app/` — Next.js App Router pages and API routes.
+- `components/` — shared UI and feature components.
+- `lib/` — application services and utilities.
+- `src/` — database, internationalization, and supporting application code.
+- `public/` — static assets.
+- `scripts/` — maintenance and database scripts.
+- `messages/` — localization messages.
 
-```
-/app                  # Next.js App Router pages and components
-/public               # Static assets (images, favicon)
-/styles               # Global and component styles (CSS/SCSS)
-/scripts              # repository scripts (lint:size)
-/src                  # source code (components, hooks, services)
-/src/db               # database seeds and schema helpers
-/next.config.js       # Next.js configuration
-/tsconfig.json        # TypeScript configuration
-/package.json
-/README.md
-/LICENSE
-```
-
-Adjust the structure section to reflect any additional folders you add.
-
-## Dependencies (high level)
-
-This project uses React + Next.js with TypeScript and several useful libraries (partial list):
-
-- next
-- react / react-dom
-- tailwindcss
-- drizzle-orm / drizzle-kit (database tooling)
-- zod (validation)
-- react-hook-form (forms)
-- vitest (tests)
-
-See package.json for the full dependency list and exact versions.
-
-## Database commands
-
-This project includes Drizzle Kit scripts. Common DB tasks:
-
-- Generate types/migrations: `npm run db:generate`
-- Run migrations: `npm run db:migrate`
-- Open DB studio: `npm run db:studio`
-- Seed local DB (reads `.env.local`): `npm run db:seed`
-
-## Tests & Linting
-
-- Run tests once: `npm test`
-- Run tests in watch mode: `npm run test:watch`
-- Typecheck all source, tests, and tooling: `npm run typecheck`
-- Typecheck the production build scope: `npm run typecheck:build`
-- Lint: `npm run lint`
-
-Next.js uses `tsconfig.build.json`, which inherits the strict compiler settings
-from `tsconfig.json` but excludes unit tests, test helpers, and test/database
-migration tooling configs. Production type checking stays enabled without
-requiring Testing Library or Vitest in the deployment dependency install.
-The default `tsconfig.json` still includes tests: before merging, install all
-dependencies (including development dependencies) and run `npm run typecheck`,
-`npm run lint`, and `npm test`. A passing production build does not replace
-these checks.
-
-## Deploy
-
-The easiest way to deploy is using Vercel. Connect this GitHub repository and deploy the default branch. For manual deployment on a server:
+## Tests and quality checks
 
 ```bash
-npm run build
-npm run start
+bun run test
+bun typecheck
+bun lint
+bun lint:size
 ```
 
-Check Next.js docs for other hosts and advanced configuration: https://nextjs.org/docs/app/building-your-application/deploying
+Next.js uses `tsconfig.build.json`, inheriting strict compiler settings from
+`tsconfig.json` but excluding unit tests, test helpers, and Vitest/Drizzle tooling
+configs. Production type checking stays enabled without requiring test-only
+packages in deployment. The full `bun typecheck` still includes tests and must
+run with development dependencies installed. A passing build does not replace
+the full typecheck, lint, or test suite.
+
+## Deployment
+
+Build and start the application with:
+
+```bash
+bun build
+bun start
+```
+
+The application can be deployed to a Node.js hosting environment that supports the Next.js production server. Configure the required environment variables in the hosting provider before deployment.
 
 ## Contributing
 
-Contributions are welcome.
-
-- Open an issue to discuss major changes.
-- Create a focused pull request with one change per PR.
-- Run linters and formatters before submitting.
+- Open an issue to discuss substantial changes.
+- Keep pull requests focused.
+- Run the relevant checks before submitting changes.
 
 ## License
 
-This repository is released under the MIT License — see [LICENSE](./LICENSE) for details.
+This repository is released under the MIT License. See [LICENSE](./LICENSE).

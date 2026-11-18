@@ -14,6 +14,8 @@ export type SlotFilters = {
   search?: string;
   status?: "all" | SlotStatus;
   groupId?: string;
+  from?: string;
+  to?: string;
 };
 
 function slotConditions(opts: SlotFilters): (SQL | undefined)[] {
@@ -22,6 +24,8 @@ function slotConditions(opts: SlotFilters): (SQL | undefined)[] {
     // Derived-status match (active/inactive/expired) as a raw SQL condition.
     conditions.push(sql.raw(slotStatusCondition(opts.status)));
   }
+  if (opts.from) conditions.push(sql`${bookingSlots.slotDate} >= ${opts.from}`);
+  if (opts.to) conditions.push(sql`${bookingSlots.slotDate} <= ${opts.to}`);
   if (opts.groupId) {
     const noLinks = sql`NOT EXISTS (
       SELECT 1 FROM ${bookingSlotGroups} bsg WHERE bsg.slot_id = ${bookingSlots.id}
@@ -192,6 +196,8 @@ export async function listSlotsAdmin(query: {
   search?: string;
   status?: "all" | SlotStatus;
   groupId?: string;
+  from?: string;
+  to?: string;
 }): Promise<SlotsListResult> {
   const offset = (query.page - 1) * query.perPage;
   const where = and(...slotConditions(query));
