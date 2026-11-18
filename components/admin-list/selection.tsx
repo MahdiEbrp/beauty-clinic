@@ -8,7 +8,7 @@ import { useAdminListContext } from "./context";
 export function AdminListSelectionBar<T extends { id: string }>() {
   const t = asTranslate(useTranslations());
   const ctx = useAdminListContext<T>();
-  const { config, data, selectionScope, selectedIds, bulkAction, setBulkAction, bulkDangerous, runBulkAction, clearSelection, busyId, load, debouncedSearch, status, page, canManage } = ctx;
+  const { config, data, selectionScope, selectedIds, bulkAction, setBulkAction, bulkDangerous, runBulkAction, clearSelection, busyId, load, debouncedSearch, status, filterValues, page, canManage } = ctx;
   if (selectedIds.length === 0) return null;
   return (
     <div className="flex min-h-14 flex-wrap items-center gap-3 border-b border-border-primary bg-accent-subtle/75 px-4 py-3 md:px-6">
@@ -37,7 +37,7 @@ export function AdminListSelectionBar<T extends { id: string }>() {
         {busyId === "bulk" && <Loader2 className="size-4 animate-spin" />}
         {t(`${config.namespace}.bulk.apply`)}
       </button>
-      {canManage ? config.renderBulkSelection?.({ ids: selectedIds, scope: selectionScope, filters: { search: debouncedSearch, status }, onComplete: () => { clearSelection(); void load({ search: debouncedSearch, status, page }); } }) : null}
+      {canManage ? config.renderBulkSelection?.({ ids: selectedIds, scope: selectionScope, filters: { search: debouncedSearch, status, ...filterValues }, onComplete: () => { clearSelection(); void load({ search: debouncedSearch, status, page, ...filterValues }); } }) : null}
       <button
         type="button"
         onClick={clearSelection}
