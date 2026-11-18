@@ -7,7 +7,7 @@ import { asTranslate } from "@/src/i18n/message-key";
 import type { BulkResult } from "./types";
 
 export interface BulkListState<S extends string, A extends string> {
-  load: (params: { search: string; status: S; page: number }) => Promise<void>;
+  load: (params: { search: string; status: S; page: number; groupId?: string; from?: string; to?: string }) => Promise<void>;
   debouncedSearch: string;
   status: S;
   page: number;
@@ -16,6 +16,7 @@ export interface BulkListState<S extends string, A extends string> {
   selectionScope: "page" | "filtered";
   clearSelection: () => void;
   bulkAction: A;
+  filterValues: { groupId?: string; from?: string; to?: string };
 }
 
 export interface BulkActionsState<C> {
@@ -33,7 +34,7 @@ interface AdminBulkExecutionConfig<A extends string, C, S extends string> {
     action: A;
     scope: "page" | "filtered";
     ids: string[];
-    filters: { search: string; status: S };
+    filters: { search: string; status: S; groupId?: string; from?: string; to?: string };
   }) => Promise<BulkResult>;
 }
 
@@ -57,7 +58,7 @@ export function useAdminBulkExecution<
   const t = asTranslate(useTranslations());
   const {
     load, debouncedSearch, status, page, visibleIds, selectedIds,
-    selectionScope, clearSelection, bulkAction,
+    selectionScope, clearSelection, bulkAction, filterValues,
   } = list;
   const { setBusyId, setConfirm, setSyncing } = actions;
   const [bulkResult, setBulkResult] = useState<BulkResult | null>(null);
@@ -75,11 +76,11 @@ export function useAdminBulkExecution<
         action: bulkAction,
         scope: selectionScope,
         ids: targetIds,
-        filters: { search: debouncedSearch, status },
+        filters: { search: debouncedSearch, status, ...filterValues },
       });
       setBulkResult(result.failures.length > 0 ? result : null);
       clearSelection();
-      await load({ search: debouncedSearch, status, page });
+      await load({ search: debouncedSearch, status, page, ...filterValues });
       toast.success(t(`${config.namespace}.toast.success`), { id: pendingToast });
     } catch {
       toast.error(t(`${config.namespace}.toast.error`), { id: pendingToast });

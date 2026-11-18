@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-export function SlotGroupsBulkEditor({ ids, scope, filters, onComplete }: { ids: string[]; scope: "page" | "filtered"; filters: { search: string; status: string }; onComplete: () => void }) {
+export function SlotGroupsBulkEditor({ ids, scope, filters, onComplete }: { ids: string[]; scope: "page" | "filtered"; filters: { search: string; status: string; groupId?: string; from?: string; to?: string }; onComplete: () => void }) {
   const t = useTranslations();
   const [open, setOpen] = useState(false);
   const [groups, setGroups] = useState<Array<{ id: string; name: string }>>([]);
