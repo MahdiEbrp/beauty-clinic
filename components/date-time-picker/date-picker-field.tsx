@@ -101,7 +101,7 @@ export function DatePickerField({
           selected={selected}
           onSelect={handleSelect}
           disabled={minDate ? { before: minDate } : undefined}
-          startMonth={selected ?? minDate ?? new Date()}
+          startMonth={minDate ?? new Date(2000, 0, 1)}
         />
       </PopoverContent>
     </Popover>
