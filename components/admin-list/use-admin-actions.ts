@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { asTranslate } from "@/src/i18n/message-key";
-import { toast } from "sonner";
 import type { AdminListConfig, DestructiveConfirm } from "./types";
 import type { AdminListState } from "./use-admin-list";
+import { runAdminRowAction } from "@/components/shared/run-admin-row-action";
 
 export interface AdminActionsState<T> {
   busyId: string | null;
@@ -42,43 +42,31 @@ export function useAdminActions<T extends { id: string }>(
   const isSyncing = (id: string) => syncingIds.has(id);
 
   const refresh = () => load({ search: debouncedSearch, status, page });
+  const execute = (
+    target: T,
+    operation: () => Promise<void>,
+    successKey: "success" | "deleted",
+  ) =>
+    runAdminRowAction({
+      id: target.id,
+      syncingMessage: t(`${config.namespace}.toast.syncing`),
+      successMessage: t(`${config.namespace}.toast.${successKey}`),
+      errorMessage: t(`${config.namespace}.toast.error`),
+      operation,
+      refresh,
+      setBusyId,
+      setSyncing,
+      clearConfirm: () => setConfirm(null),
+    });
 
-  const runAction = async (target: T, patch: Record<string, unknown>) => {
-    setConfirm(null);
-    setBusyId(target.id);
-    setSyncing(target.id, true);
-    const pendingToast = toast.loading(t(`${config.namespace}.toast.syncing`));
-    try {
-      await config.patchRow(target, patch);
-      await refresh();
-      toast.success(t(`${config.namespace}.toast.success`), { id: pendingToast });
-    } catch {
-      toast.error(t(`${config.namespace}.toast.error`), { id: pendingToast });
-    } finally {
-      setSyncing(target.id, false);
-      setBusyId(null);
-    }
-  };
+  const runAction = (target: T, patch: Record<string, unknown>) =>
+    execute(target, () => config.patchRow(target, patch), "success");
 
-  const deleteRow = async (row: T) => {
-    setConfirm(null);
-    setBusyId(row.id);
-    setSyncing(row.id, true);
-    const pendingToast = toast.loading(t(`${config.namespace}.toast.syncing`));
-    try {
-      await config.deleteRow(row);
-      await refresh();
-      toast.success(t(`${config.namespace}.toast.deleted`), { id: pendingToast });
-    } catch {
-      toast.error(t(`${config.namespace}.toast.error`), { id: pendingToast });
-    } finally {
-      setSyncing(row.id, false);
-      setBusyId(null);
-    }
-  };
+  const deleteRow = (row: T) =>
+    execute(row, () => config.deleteRow(row), "deleted");
 
-    const matchedBulk = confirm
-    ? config.bulkActions.find((a) => a.key === confirm.action) ?? null
+  const matchedBulk = confirm
+    ? config.bulkActions.find((action) => action.key === confirm.action) ?? null
     : null;
   const bulkActionLabel = matchedBulk ? t(matchedBulk.labelKey) : "";
 
