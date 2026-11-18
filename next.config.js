@@ -61,6 +61,11 @@ const noIndexSources = [
 ];
 
 const nextConfig = {
+  // Deployment may omit test-only dependencies. Check application code here;
+  // `npm run typecheck` still checks all source, tests, and tooling separately.
+  typescript: {
+    tsconfigPath: "tsconfig.build.json",
+  },
   poweredByHeader: false,
   // Liara's buildpack wants standalone output; set it so its injection is a
   // no-op and the plugin wrapper above is preserved.
