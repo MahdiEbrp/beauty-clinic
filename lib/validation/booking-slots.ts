@@ -192,8 +192,11 @@ export const listSlotsAdminQuerySchema = z
     search: z.string().trim().max(100).optional(),
     status: z.enum(["all", "active", "inactive", "expired"]).default("all"),
     groupId: z.uuid().optional(),
+    from: slotDateSchema.optional(),
+    to: slotDateSchema.optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((value, ctx) => { if (value.from && value.to && value.to < value.from) ctx.addIssue({ code: "custom", path: ["to"], message: "End date must be on or after start date." }); });
 
 export type ListSlotsAdminQuery = z.infer<typeof listSlotsAdminQuerySchema>;
 
@@ -207,7 +210,7 @@ export const bulkSlotsSchema = z
     scope: z.enum(["page", "filtered"]),
     ids: z.array(z.uuid()).max(100).optional(),
     groupIds: z.array(z.uuid()).max(50).optional(),
-    filters: listSlotsAdminQuerySchema.pick({ search: true, status: true }).optional(),
+    filters: listSlotsAdminQuerySchema.pick({ search: true, status: true, groupId: true, from: true, to: true }).optional(),
   })
   .strict()
   .superRefine((value, ctx) => {
