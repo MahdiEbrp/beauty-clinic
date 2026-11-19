@@ -6,6 +6,8 @@ import { localizedHref } from "@/lib/site";
 
 export const runtime = "nodejs";
 
+const PUBLIC_SITE_ORIGIN = "https://nafasbeautyclinic.ir";
+
 // ZarinPal redirects as GET ?Authority=...&Status=OK
 // Tabapay redirects as GET ?token=...&status=success&amount=...
 export async function GET(request: Request) {
@@ -14,7 +16,11 @@ export async function GET(request: Request) {
     searchParams.get("Authority") ??
     searchParams.get("authority") ??
     searchParams.get("token");
-  if (!authority) return NextResponse.redirect(new URL("/payment/failed?reason=missing_authority", request.url));
+  if (!authority) {
+    return NextResponse.redirect(
+      new URL("/payment/failed?reason=missing_authority", PUBLIC_SITE_ORIGIN)
+    );
+  }
   // Query status strings differ across providers and can be stale or oddly cased.
   // Never mark a payment failed from redirect parameters alone: the provider's
   // server-to-server verification response is the authoritative payment result.
@@ -29,9 +35,13 @@ export async function GET(request: Request) {
       });
     }
     const path = localizedHref(res.locale, res.verified ? "/payment/success" : "/payment/failed");
-    return NextResponse.redirect(new URL(`${path}?authority=${encodeURIComponent(authority)}`, request.url));
+    return NextResponse.redirect(
+      new URL(`${path}?authority=${encodeURIComponent(authority)}`, PUBLIC_SITE_ORIGIN)
+    );
   } catch {
-    return NextResponse.redirect(new URL(`/payment/failed?authority=${encodeURIComponent(authority)}`, request.url));
+    return NextResponse.redirect(
+      new URL(`/payment/failed?authority=${encodeURIComponent(authority)}`, PUBLIC_SITE_ORIGIN)
+    );
   }
 }
 
