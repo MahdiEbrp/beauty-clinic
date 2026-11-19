@@ -118,7 +118,6 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
         throw new ApiError(409, "SLOT_UNAVAILABLE", "This slot is no longer available.");
       }
       const slotStart = toLocalTimestamp(row.slotDate, row.startTime);
-      const slotEnd = toLocalTimestamp(row.slotDate, row.endTime);
       if (slotStart.getTime() <= now) {
         throw new ApiError(400, "PAST_SLOT", "This time slot has already passed.");
       }
