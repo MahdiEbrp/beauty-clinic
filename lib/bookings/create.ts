@@ -6,7 +6,7 @@ import { loadWorkingHours } from "@/lib/bookings/working-hours";
 import { db } from "@/src/db";
 import { bookings, bookingSlotGroups, bookingSlots } from "@/src/db/schema";
 import type { Locale } from "@/lib/services/types";
-import { isOpenAt } from "./availability";
+import { isOpenAtLocal } from "./availability";
 import { toMoney } from "./money";
 import { snapshotGroups } from "./snapshot";
 import { MAX_ADVANCE_DAYS } from "./errors";
@@ -128,7 +128,7 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
       if (slotStart.getTime() > now + MAX_ADVANCE_DAYS * 24 * 60 * 60 * 1000) {
         throw new ApiError(400, "TOO_FAR_AHEAD", "This date is too far in advance to book.");
       }
-      if (!isOpenAt(slotStart, slotEnd, openingHours)) {
+      if (!isOpenAtLocal(row.slotDate, row.startTime, row.endTime, openingHours)) {
         throw new ApiError(409, "BUSINESS_CLOSED", "The clinic is closed at the selected time.");
       }
       const groupIds = await slotGroupIds(tx, slotId);
