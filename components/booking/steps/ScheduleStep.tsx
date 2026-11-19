@@ -77,17 +77,7 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={openPicker}
-              className="inline-flex min-h-12 items-center gap-2 rounded-pill border border-copper bg-copper/10 px-5 text-body-sm font-black text-copper-deep transition-colors hover:bg-copper hover:text-content-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-            >
-              <CalendarDays className="size-4" aria-hidden="true" />
-              {selectedSlot && cart[0] ? <SlotLabel line={{ ...cart[0], slot: selectedSlot }} /> : t("schedule.pickDateTime")}
-              <span className="font-black underline">{selectedSlot ? t("schedule.editSlot") : t("schedule.pick")}</span>
-            </button>
-          </div>
+
         </div>
       </div>
 
@@ -166,7 +156,19 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
         />
       ) : null}
 
-      <div aria-hidden="true" className="h-16 sm:h-20" />
+      {/* Keep the date/time action at the bottom of step 2 for mobile users. */}
+      <div className="sticky bottom-0 z-20 -mx-3 border-t border-border-primary/80 bg-surface-primary/95 px-3 py-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur-sm sm:-mx-4 sm:px-4">
+        <button
+          type="button"
+          onClick={openPicker}
+          className="flex min-h-12 w-full items-center justify-center gap-2 rounded-pill border border-copper bg-copper/10 px-5 text-body-sm font-black text-copper-deep transition-colors hover:bg-copper hover:text-content-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          <CalendarDays className="size-4" aria-hidden="true" />
+          {selectedSlot && cart[0] ? <SlotLabel line={{ ...cart[0], slot: selectedSlot }} /> : t("schedule.pickDateTime")}
+          <span className="font-black underline">{selectedSlot ? t("schedule.editSlot") : t("schedule.pick")}</span>
+        </button>
+      </div>
+      <div aria-hidden="true" className="h-2 sm:h-3" />
     </div>
   );
 }

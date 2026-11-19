@@ -2,11 +2,9 @@ import { and, eq, gte, lte, ne, notInArray, sql } from "drizzle-orm";
 
 import { ApiError } from "@/lib/api/errors";
 import { loadSystemSettingsMap } from "@/lib/settings/loader";
-import { loadWorkingHours } from "@/lib/bookings/working-hours";
 import { db } from "@/src/db";
 import { bookings, bookingSlotGroups, bookingSlots } from "@/src/db/schema";
 import type { Locale } from "@/lib/services/types";
-import { isOpenAt } from "./availability";
 import { toMoney } from "./money";
 import { snapshotGroups } from "./snapshot";
 import { MAX_ADVANCE_DAYS } from "./errors";
@@ -85,7 +83,6 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
   const settings = await loadSystemSettingsMap();
   const deposit = toMoney(settings.get("booking.price"));
   const currency = (settings.get("booking.currency") as string) ?? "تومان";
-  const openingHours = await loadWorkingHours();
   const now = Date.now();
   const groupRef = generateGroupRef();
 
@@ -121,15 +118,11 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
         throw new ApiError(409, "SLOT_UNAVAILABLE", "This slot is no longer available.");
       }
       const slotStart = toLocalTimestamp(row.slotDate, row.startTime);
-      const slotEnd = toLocalTimestamp(row.slotDate, row.endTime);
       if (slotStart.getTime() <= now) {
         throw new ApiError(400, "PAST_SLOT", "This time slot has already passed.");
       }
       if (slotStart.getTime() > now + MAX_ADVANCE_DAYS * 24 * 60 * 60 * 1000) {
         throw new ApiError(400, "TOO_FAR_AHEAD", "This date is too far in advance to book.");
-      }
-      if (!isOpenAt(slotStart, slotEnd, openingHours)) {
-        throw new ApiError(409, "BUSINESS_CLOSED", "The clinic is closed at the selected time.");
       }
       const groupIds = await slotGroupIds(tx, slotId);
       slotRows.set(slotId, {
