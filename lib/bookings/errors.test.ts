@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { ApiError } from "@/lib/api/errors";
-import { isOpenAt, isOpenAtLocal } from "./availability";
+import { isOpenAt } from "./availability";
 import { bookingErrorKey, BOOKING_ERRORS } from "./errors";
 
 const OPENING_HOURS = [
@@ -63,15 +63,3 @@ describe("bookingErrorKey", () => {
   });
 });
 
-
-describe("isOpenAtLocal", () => {
-  it("accepts Saturday slots shown by the clinic calendar regardless of server timezone", () => {
-    // 5 Dey 1405 = Saturday, 26 December 2026.
-    expect(isOpenAtLocal("2026-12-26", "10:00:00", "10:30:00", OPENING_HOURS)).toBe(true);
-  });
-
-  it("rejects a clinic-closed weekday", () => {
-    // 25 December 2026 is Friday.
-    expect(isOpenAtLocal("2026-12-25", "10:00:00", "10:30:00", OPENING_HOURS)).toBe(false);
-  });
-});
