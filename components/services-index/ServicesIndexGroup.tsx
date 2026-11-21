@@ -51,11 +51,7 @@ export default async function ServicesIndexGroup({
         </div>
       </div>
 
-      {group.categories.length === 0 ? (
-        <p className="mt-4 rounded-panel border border-border-primary bg-surface-secondary/90 px-5 py-10 text-center text-caption text-content-tertiary">
-          {t("common.empty")}
-        </p>
-      ) : (
+      {group.categories.length > 0 ? (
         <ul className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {group.categories.map((category) => {
             const categoryIcon = iconForCatalog(category.icon);
@@ -99,7 +95,7 @@ export default async function ServicesIndexGroup({
             );
           })}
         </ul>
-      )}
+      ) : null}
 
       <div className="mt-4">
         <Link
