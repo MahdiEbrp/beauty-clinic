@@ -6,7 +6,7 @@ export const MESO_FATBURN_GROUP: SeedGroup = {
   slug: "meso-fatburn",
   icon: "body",
   image: IMG.bodyFiller,
-  displayOrder: 8,
+  displayOrder: 12,
   i18n: [
     {
       locale: "fa",
