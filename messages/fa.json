@@ -3460,6 +3460,7 @@
   "groupPage": {
     "categories": {
       "heading": "مرور دسته‌بندی‌ها",
+      "openGroup": "مشاهده خدمات",
       "count": "{count, plural, one {# دسته‌بندی} other {# دسته‌بندی}}",
       "serviceCount": "{count, plural, one {# خدمت} other {# خدمت}}"
     },
