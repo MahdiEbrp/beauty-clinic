@@ -22,19 +22,21 @@ export default function CategoryGallery({ category }: CategoryGalleryProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const isOpen = lightboxIndex !== null;
 
-  // Flatten every image attached to the category's services (cover + per-service).
-  const items: { key: string; imageUrl: string; caption: string | null; alt: string }[] =
-    category.services.flatMap((service, sIndex) => [
-      ...(service.coverImage
-        ? [{ key: `cover-${sIndex}`, imageUrl: service.coverImage, caption: null, alt: service.title }]
-        : []),
-      ...service.images.map((image, i) => ({
+  // The category image is its hero/gallery image. Service cover images are
+  // already rendered alongside their descriptions in CategoryDetails.
+  const items: { key: string; imageUrl: string; caption: string | null; alt: string }[] = [
+    ...(category.image
+      ? [{ key: "category-image", imageUrl: category.image, caption: null, alt: category.title }]
+      : []),
+    ...category.services.flatMap((service, sIndex) =>
+      service.images.map((image, i) => ({
         key: `${image.type}-${i}-${sIndex}`,
         imageUrl: image.imageUrl,
         caption: null,
-        alt: "",
+        alt: service.title,
       })),
-    ]);
+    ),
+  ];
 
   if (items.length === 0) return null;
 
