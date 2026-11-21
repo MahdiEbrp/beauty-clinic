@@ -3424,6 +3424,7 @@
     "heading": "Our Specialized Services",
     "meta": {
       "categoryFallbackDescription": "{group} — {count, plural, one {# category} other {# categories}}",
+      "groupFallbackDescription": "{group} — {count, plural, one {# service} other {# services}}",
       "description": "Complete range of specialized beauty and medical services at Nafas Clinic",
       "title": "Specialized Services | Nafas Beauty Clinic"
     },
