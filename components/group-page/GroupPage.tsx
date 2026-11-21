@@ -4,9 +4,12 @@ import GroupHeader from "./GroupHeader";
 import GroupCategories from "./GroupCategories";
 import GroupFeatured from "./GroupFeatured";
 import CategoryFaq from "@/components/category-page/CategoryFaq";
+import CategoryDetails from "@/components/category-page/CategoryDetails";
+import CategoryGallery from "@/components/category-page/CategoryGallery";
 import CategoryJsonLd, { type BreadcrumbItem } from "@/components/category-page/CategoryJsonLd";
 import FloatingBookingButton from "@/components/FloatingBookingButton";
 import type { GroupPageData } from "@/lib/services/group-page";
+import type { CategoryPageCategory } from "@/lib/services/category-page";
 
 type GroupPageProps = {
   data: GroupPageData;
@@ -25,19 +28,40 @@ export default async function GroupPage({ data, locale }: GroupPageProps) {
     href: pageUrl(locale, crumb.href),
   }));
 
+  const detailCategory: CategoryPageCategory = {
+    slug: data.group.slug,
+    icon: data.group.icon,
+    image: null,
+    title: data.group.title,
+    description: data.group.description,
+    seoTitle: data.group.seoTitle,
+    seoDescription: data.group.seoDescription,
+    updatedAt: data.group.updatedAt,
+    displayOrder: 0,
+    services: data.detailServices,
+  };
+
   return (
     <div className="min-h-screen bg-surface-primary text-content-primary">
       <CategoryJsonLd crumbs={absoluteCrumbs} />
       <div className="mx-auto max-w-6xl px-4 pb-24 pt-8 sm:px-6 lg:pb-16">
         <GroupHeader group={data.group} crumbs={crumbs} />
 
-        <GroupCategories groupSlug={data.group.slug} categories={data.categories} />
-
-        <GroupFeatured
-          groupSlug={data.group.slug}
-          services={data.featured}
-          currency={data.currency}
-        />
+        {data.hasSubcategories ? (
+          <>
+            <GroupCategories groupSlug={data.group.slug} categories={data.categories} />
+            <GroupFeatured
+              groupSlug={data.group.slug}
+              services={data.featured}
+              currency={data.currency}
+            />
+          </>
+        ) : (
+          <>
+            <CategoryDetails category={detailCategory} locale={locale} />
+            <CategoryGallery category={detailCategory} />
+          </>
+        )}
 
         <CategoryFaq faqs={data.faqs} />
       </div>
