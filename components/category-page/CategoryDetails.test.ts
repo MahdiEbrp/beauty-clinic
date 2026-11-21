@@ -24,7 +24,7 @@ function service(overrides: Partial<CategoryPageService> = {}): CategoryPageServ
 
 function category(services: CategoryPageService[]): CategoryPageCategory {
   return {
-    slug: "category", title: "Category", icon: null, description: null, seoTitle: null,
+    slug: "category", title: "Category", icon: null, image: null, description: null, seoTitle: null,
     seoDescription: null, updatedAt: new Date("2026-11-01"), displayOrder: 0, services,
   };
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { AlertCircle, AtSign, CreditCard, Phone, ShieldCheck, User } from "lucide-react";
 import { bookingErrorKey } from "@/lib/bookings/errors";
@@ -21,7 +22,28 @@ type SummaryStepProps = {
 
 type FieldErrors = { fullName?: string; phone?: string; email?: string; terms?: string };
 
-const PHONE_RE = /^0?9\d{9}$/;
+const PERSIAN_DIGITS = "۰۱۲۳۴۵۶۷۸۹";
+const ARABIC_DIGITS = "٠١٢٣٤٥٦٧٨٩";
+
+function isValidIranianMobile(value: string): boolean {
+  const digits = [...value]
+    .map((character) => {
+      const persian = PERSIAN_DIGITS.indexOf(character);
+      if (persian >= 0) return String(persian);
+      const arabic = ARABIC_DIGITS.indexOf(character);
+      return arabic >= 0 ? String(arabic) : character;
+    })
+    .join("")
+    .replace(/[\s().-]/g, "");
+
+  let normalized = digits;
+  if (normalized.startsWith("0098")) normalized = `+98${normalized.slice(4)}`;
+  else if (normalized.startsWith("98")) normalized = `+${normalized}`;
+  else if (normalized.startsWith("09")) normalized = `+98${normalized.slice(1)}`;
+  else if (normalized.startsWith("9")) normalized = `+98${normalized}`;
+
+  return /^\+989\d{9}$/.test(normalized);
+}
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /** Step 3 — customer details and terms. */
@@ -57,13 +79,16 @@ export default function SummaryStep({ cart, rules, onSubmit }: SummaryStepProps)
   const runValidation = (): boolean => {
     const next: FieldErrors = {};
     if (fullName.trim().length < 3) next.fullName = t("summary.errors.name");
-    if (!PHONE_RE.test(cleanPhone())) next.phone = t("summary.errors.phone");
+    if (!isValidIranianMobile(cleanPhone())) next.phone = t("summary.errors.phone");
     if (email.trim() && !EMAIL_RE.test(email.trim())) next.email = t("summary.errors.email");
     if (!terms) {
       next.terms = t("summary.errors.terms");
       setShowRules(true);
     }
     setErrors(next);
+    if (next.phone) {
+      toast.error(t("summary.errors.phone"));
+    }
     return Object.keys(next).length === 0;
   };
 

@@ -5,7 +5,7 @@ export const TATTOO_REMOVAL_GROUP: SeedGroup = {
   slug: "tattoo-removal-skin-brightening",
   icon: "laser",
   image: IMG.pigmentation,
-  displayOrder: 12,
+  displayOrder: 10,
   i18n: [
     {
       locale: "fa",

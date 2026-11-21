@@ -109,14 +109,6 @@ export default function ServicesMegaMenu({
                 {groups.map((group) => {
                   const Icon = iconForCatalog(group.icon);
 
-                  /*
-                   * Don't render empty groups.
-                   * This also prevents unnecessary blank areas in columns.
-                   */
-                  if (group.categories.length === 0) {
-                    return null;
-                  }
-
                   return (
                     <section
                       key={group.slug}

@@ -15,6 +15,7 @@ import {
 } from "@/src/db/schema";
 import { getContentVersion } from "./content-version";
 import type { Locale, PublicNavCatalog } from "./types";
+import { hasPublicSubcategories } from "./catalog-navigation";
 
 /**
  * Lightweight nav tree (group -> category -> service *names* only) powering
@@ -174,20 +175,22 @@ async function loadNavCatalog(locale: Locale): Promise<PublicNavCatalog> {
       icon: group.icon,
       title: group.title,
       updatedAt: group.updatedAt,
-      categories: Array.from(group.categoryMap.values())
-        .sort((a, b) => a.order - b.order)
-        .map((category) => ({
-          slug: category.slug,
-          title: category.title,
-          updatedAt: category.updatedAt,
-          services: category.services
+      categories: hasPublicSubcategories(group.slug)
+        ? Array.from(group.categoryMap.values())
             .sort((a, b) => a.order - b.order)
-            .map((service) => ({
-              slug: service.slug,
-              title: service.title,
-              updatedAt: service.updatedAt,
-            })),
-        })),
+            .map((category) => ({
+              slug: category.slug,
+              title: category.title,
+              updatedAt: category.updatedAt,
+              services: category.services
+                .sort((a, b) => a.order - b.order)
+                .map((service) => ({
+                  slug: service.slug,
+                  title: service.title,
+                  updatedAt: service.updatedAt,
+                })),
+            }))
+        : [],
     }));
 
   return { groups };

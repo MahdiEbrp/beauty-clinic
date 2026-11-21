@@ -6,7 +6,7 @@ export const ENZYME_GROUP: SeedGroup = {
   slug: "enzyme",
   icon: "facial",
   image: IMG.botox,
-  displayOrder: 4,
+  displayOrder: 6,
   i18n: [
     {
       locale: "fa",

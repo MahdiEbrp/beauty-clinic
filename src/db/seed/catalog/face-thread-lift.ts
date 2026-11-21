@@ -6,7 +6,7 @@ export const FACE_THREAD_LIFT_GROUP: SeedGroup = {
   slug: "face-thread-lift",
   icon: "peel",
   image: IMG.skinRejuvenation,
-  displayOrder: 13,
+  displayOrder: 11,
   i18n: [
     {
       locale: "fa",

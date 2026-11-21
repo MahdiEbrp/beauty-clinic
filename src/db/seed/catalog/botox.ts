@@ -6,7 +6,7 @@ export const BOTOX_GROUP: SeedGroup = {
   slug: "botox",
   icon: "gelBotox",
   image: IMG.botox,
-  displayOrder: 3,
+  displayOrder: 5,
   i18n: [
     {
       locale: "fa",
