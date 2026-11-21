@@ -103,7 +103,7 @@ export default async function ServicesIndexGroup({
           className="inline-flex min-h-11 items-center gap-1.5 rounded-pill border border-border-interactive px-4 text-caption font-semibold text-content-secondary no-underline transition-colors hover:border-accent hover:bg-accent hover:text-content-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           <Layers className="size-3.5" strokeWidth={2} aria-hidden="true" />
-          <span>{t("groupPage.categories.heading")}</span>
+          <span>{t(group.categories.length === 0 ? "groupPage.categories.openGroup" : "groupPage.categories.heading")}</span>
           <ChevronLeft className="size-3.5 rtl-mirror" strokeWidth={2} aria-hidden="true" />
         </Link>
       </div>
