@@ -1,29 +1,30 @@
 import type { SeedGroup } from "./types";
+import { svc, withSeo } from "./types";
 import { IMG } from "../images";
 
 export const HIFU_GROUP: SeedGroup = {
   slug: "hifu",
   icon: "hifu",
   image: IMG.hifu,
-  displayOrder: 11,
+  displayOrder: 9,
   i18n: [
     {
       locale: "fa",
       name: "هایفوتراپی",
       description:
-        "با هایفوتراپی، به سفت‌تر شدن پوست و بهبود فرم و کانتور صورت و بدن کمک کنید؛ با خدمتی متناسب با نیاز و ناحیه موردنظر شما.",
-      seoTitle: "هایفوتراپی | لیفت و سفتی پوست صورت و بدن",
+        "خدمات هایفوتراپی صورت و بدن؛ توضیحات و تصاویر هر خدمت پس از ورود به همین صفحه نمایش داده می‌شود.",
+      seoTitle: "هایفوتراپی | خدمات لیفت و سفتی پوست",
       seoDescription:
-        "هایفوتراپی صورت و بدن برای کمک به سفت‌تر شدن پوست و بهبود فرم و کانتور نواحی موردنظر، با رویکردی متناسب و طبیعی.",
+        "مشاهده خدمات هایفوتراپی صورت و بدن و اطلاعات هر خدمت. قیمت پس از ثبت در پنل مدیریت نمایش داده می‌شود.",
     },
     {
       locale: "en",
       name: "HIFU",
       description:
-        "Lift, tighten, and redefine your natural contours with personalized HIFU services for the face and body.",
-      seoTitle: "HIFU Service | Face & Body Skin Tightening",
+        "HIFU services for face and body, with treatment details and photos displayed on this page.",
+      seoTitle: "HIFU | Skin Lifting & Tightening Services",
       seoDescription:
-        "Discover personalized HIFU services for the face and the body, designed to support firmer-looking skin and more defined, natural-looking contours.",
+        "Explore HIFU services for face and body. Pricing can be added later from the admin dashboard.",
     },
   ],
   categories: [
@@ -36,25 +37,37 @@ export const HIFU_GROUP: SeedGroup = {
           locale: "fa",
           name: "خدمات هایفو",
           description:
-            "خدماتی هایفوتراپی برای لیفت، سفت‌شدن و بهبود فرم و کانتور صورت و بدن؛ متناسب با نیاز و ناحیه موردنظر شما.",
+            "خدمات هایفوتراپی؛ برای مشاهده توضیحات و تصاویر هر خدمت وارد جزئیات آن شوید.",
           seoTitle: "خدمات هایفوتراپی | لیفت و سفتی پوست",
           seoDescription:
-            "خدماتی هایفوتراپی صورت و بدن برای لیفت، سفت‌شدن و بهبود فرم و کانتور نواحی موردنظر، با رویکردی متناسب و طبیعی.",
+            "اطلاعات خدمات هایفوتراپی صورت و بدن.",
         },
         {
           locale: "en",
           name: "HIFU Services",
           description:
-            "HIFU services to lift, tighten and improve the shape and contour of the face and body, tailored to your needs and target area.",
-          seoTitle: "HIFU Services | Lift & Skin Tightening",
-          seoDescription:
-            "HIFU services for the face and the body to lift, tighten and enhance natural contours with a personalized, natural-looking approach.",
+            "HIFU treatments with individual service descriptions and photos.",
+          seoTitle: "HIFU Services | Skin Lifting & Tightening",
+          seoDescription: "Information about HIFU face and body services.",
         },
       ],
-      // Empty on purpose — Mahdi will provide HIFU pricing separately.
-      // Structure kept here so the group/category exists and services
-      // can be pushed in without touching anything else.
-      services: [],
+      services: [
+        withSeo(
+          svc("hifu-treatment", "هایفوتراپی", "HIFU Treatment", null, 0, "on_request"),
+          {
+            fa: {
+              shortDesc: "خدمات هایفوتراپی؛ برای اطلاع از جزئیات و هزینه با کلینیک تماس بگیرید.",
+              seoTitle: "هایفوتراپی | اطلاعات و مشاوره",
+              seoDescription: "معرفی خدمات هایفوتراپی؛ مبلغ خدمت پس از تعیین در پنل مدیریت قابل نمایش است.",
+            },
+            en: {
+              shortDesc: "HIFU treatment services. Contact the clinic for details and pricing.",
+              seoTitle: "HIFU Treatment | Information & Consultation",
+              seoDescription: "Information about HIFU treatment services. Pricing can be configured in the admin dashboard.",
+            },
+          },
+        ),
+      ],
     },
   ],
 };
