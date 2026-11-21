@@ -2,11 +2,6 @@ import type { SeedCategory, SeedGroup } from "./types";
 import { svc, withSeo } from "./types";
 import { IMG } from "../images";
 
-/**
- * "فیلر بدن" — split into the two treatment areas from the clinic's list
- * (hips / bikini). Each area offers the same three volume options (per cc,
- * 50cc, 100cc); slugs are suffixed with the area key to stay globally unique.
- */
 type BodyArea = {
   key: string;
   fa: string;
@@ -20,134 +15,118 @@ const BODY_AREAS: BodyArea[] = [
     key: "hip",
     fa: "فیلر باسن",
     en: "Hip Filler",
-    faDesc:
-      "فرم‌دهی و حجم‌دهی طبیعی باسن با فیلر؛ تناسب و کانتور بهتر متناسب با اندام شما.",
-    enDesc:
-      "Natural hip contouring and volumizing with filler for better balance, tailored to your body.",
+    faDesc: "فرم‌دهی و حجم‌دهی ناحیه باسن با فیلر، متناسب با نیاز مراجعه‌کننده.",
+    enDesc: "Body filler services for the hip area, tailored to the client's needs.",
   },
   {
     key: "bikini",
     fa: "فیلر بیکینی",
     en: "Bikini Filler",
-    faDesc:
-      "فرم‌دهی و حجم‌دهی ناحیه بیکینی با فیلر؛ رویکردی ظریف، ایمن و متناسب.",
-    enDesc:
-      "Bikini-area contouring and volumizing with filler — a refined, safe and personalized approach.",
+    faDesc: "خدمات فیلر ناحیه بیکینی، متناسب با نیاز مراجعه‌کننده.",
+    enDesc: "Filler services for the bikini area, tailored to the client's needs.",
   },
 ];
 
-type Volume = {
-  key: string;
-  fa: string;
-  en: string;
-  price: number;
-  priceType: "fixed" | "from";
-  faShort: string;
-  enShort: string;
-};
-
-const BODY_VOLUMES: Volume[] = [
+const BODY_VOLUMES = [
   {
     key: "per-cc",
     fa: "هر سی‌سی",
     en: "per cc",
     price: 390_000,
-    priceType: "from",
-    faShort: "فیلر بدن به ازای هر سی‌سی؛ مشاوره برای تعیین حجم مناسب.",
-    enShort: "Body filler per cc with consultation to determine the right volume.",
+    priceType: "from" as const,
+    faShort: "فیلر بدن به ازای هر سی‌سی؛ حجم نهایی در مشاوره مشخص می‌شود.",
+    enShort: "Body filler priced per cc; the final volume is determined during consultation.",
   },
   {
     key: "50cc",
     fa: "۵۰ سی‌سی",
     en: "50cc",
     price: 18_500_000,
-    priceType: "fixed",
-    faShort: "پک ۵۰ سی‌سی فیلر بدن؛ تعادل مناسب بین قیمت و حجم.",
-    enShort: "50cc body filler pack — a good balance between price and volume.",
+    priceType: "fixed" as const,
+    faShort: "پک ۵۰ سی‌سی فیلر بدن.",
+    enShort: "50cc body filler pack.",
   },
   {
     key: "100cc",
     fa: "۱۰۰ سی‌سی",
     en: "100cc",
     price: 34_900_000,
-    priceType: "fixed",
-    faShort: "پک ۱۰۰ سی‌سی فیلر بدن؛ اقتصادی‌ترین گزینه برای حجم‌دهی بالا.",
-    enShort: "100cc body filler pack — the most economical option for high volume.",
+    priceType: "fixed" as const,
+    faShort: "پک ۱۰۰ سی‌سی فیلر بدن.",
+    enShort: "100cc body filler pack.",
   },
 ];
 
-function buildCategory(area: BodyArea, displayOrder: number): SeedCategory {
-  return {
-    slug: `body-filler-${area.key}`,
-    icon: "bodyFiller",
-    displayOrder,
-    i18n: [
-      {
-        locale: "fa",
-        name: area.fa,
-        description: area.faDesc,
-        seoTitle: `${area.fa} | قیمت`,
-        seoDescription: area.faDesc,
-      },
-      {
-        locale: "en",
-        name: area.en,
-        description: area.enDesc,
-        seoTitle: `${area.en} | Price`,
-        seoDescription: area.enDesc,
-      },
-    ],
-    services: BODY_VOLUMES.map((volume, index) =>
+const BODY_FILLER_CATEGORY: SeedCategory = {
+  slug: "body-filler-services",
+  icon: "bodyFiller",
+  displayOrder: 0,
+  i18n: [
+    {
+      locale: "fa",
+      name: "خدمات فیلر بدن",
+      description: "خدمات فیلر بدن در نواحی مختلف، همراه با جزئیات و تصاویر قابل مدیریت.",
+      seoTitle: "فیلر بدن | خدمات و پکیج‌ها",
+      seoDescription: "خدمات و پکیج‌های فیلر بدن؛ جزئیات و تصاویر هر خدمت در صفحه همین گروه نمایش داده می‌شود.",
+    },
+    {
+      locale: "en",
+      name: "Body Filler Services",
+      description: "Body filler services for different areas, with editable details and photos.",
+      seoTitle: "Body Filler | Services & Packages",
+      seoDescription: "Explore body filler services and packages with details and photos displayed on this group page.",
+    },
+  ],
+  services: BODY_AREAS.flatMap((area, areaIndex) =>
+    BODY_VOLUMES.map((volume, volumeIndex) =>
       withSeo(
         svc(
           `body-filler-${area.key}-${volume.key}`,
           `${area.fa} ${volume.fa}`,
           `${area.en} ${volume.en}`,
           volume.price,
-          index,
+          areaIndex * BODY_VOLUMES.length + volumeIndex,
           volume.priceType,
         ),
         {
           fa: {
             shortDesc: `${volume.faShort} (${area.fa})`,
             seoTitle: `${area.fa} ${volume.fa} | قیمت`,
-            seoDescription: `قیمت ${area.fa} ${volume.fa}؛ ${area.faDesc}`,
+            seoDescription: `${volume.faShort} ${area.faDesc}`,
           },
           en: {
             shortDesc: `${volume.enShort} (${area.en})`,
             seoTitle: `${area.en} ${volume.en} | Price`,
-            seoDescription: `${area.en} ${volume.en} price. ${area.enDesc}`,
+            seoDescription: `${volume.enShort} ${area.enDesc}`,
           },
         },
       ),
     ),
-  };
-}
+  ),
+};
 
 export const BODY_FILLER_GROUP: SeedGroup = {
   slug: "body-filler",
   icon: "bodyFiller",
   image: IMG.bodyFiller,
-  displayOrder: 5,
+  displayOrder: 3,
   i18n: [
     {
       locale: "fa",
       name: "فیلر بدن",
       description:
-        "فرم طبیعی بدن خود را با روشی ظریف و متناسب با ویژگی‌های شما زیباتر کنید.\nبا هدف بهبود حجم، تناسب و فرم در نواحی منتخب، برای ایجاد ظاهری متعادل‌تر، هماهنگ‌تر و جذاب‌تر.",
-      seoTitle: "فیلر بدن | کانتورینگ طبیعی باسن و بیکینی",
-      seoDescription:
-        "با فیلر بدن، تناسب و کانتور باسن و ناحیه بیکینی را با رویکردی ظریف و متناسب با ویژگی‌های شما بهبود دهید. مشاوره و رزرو نوبت.",
+        "خدمات فیلر بدن در یک صفحه، بدون مرحله انتخاب زیرشاخه؛ توضیحات و تصاویر هر خدمت در همین صفحه نمایش داده می‌شود.",
+      seoTitle: "فیلر بدن | خدمات و پکیج‌های فیلر بدن",
+      seoDescription: "مشاهده خدمات و پکیج‌های فیلر بدن، توضیحات و تصاویر هر خدمت.",
     },
     {
       locale: "en",
       name: "Body Filler",
       description:
-        "Enhance your body's natural contours with a refined, personalized approach.\nDesigned to improve volume, balance and definition in selected areas for a more harmonious and confident silhouette.",
-      seoTitle: "Body Filler | Hips & Bikini Contouring",
-      seoDescription:
-        "Explore personalized body filler services for the hips and bikini area, designed to enhance shape and definition with a refined, natural-looking approach.",
+        "Explore body filler services on one page, with each treatment's details and photos shown together.",
+      seoTitle: "Body Filler | Services & Packages",
+      seoDescription: "Explore body filler services and packages, including descriptions and photos for each service.",
     },
   ],
-  categories: BODY_AREAS.map((area, index) => buildCategory(area, index)),
+  categories: [BODY_FILLER_CATEGORY],
 };
