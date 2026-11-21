@@ -100,7 +100,6 @@ export default function MobileDrawerContent({
             <AccordionContent className="pb-2 pt-1">
               {groups.map((group) => {
                 const Icon = iconForCatalog(group.icon);
-                if (group.categories.length === 0) return null;
 
                 return (
                   <div
