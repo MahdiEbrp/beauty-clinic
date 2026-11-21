@@ -28,7 +28,10 @@ describe("clinic service catalog structure", () => {
   });
 
   it("keeps the five Botox subcategories in the requested order", () => {
-    expect(group("botox").categories.map((category) => category.i18n[0].name)).toEqual([
+    const categories = [...group("botox").categories].sort(
+      (a, b) => a.displayOrder - b.displayOrder,
+    );
+    expect(categories.map((category) => category.i18n[0].name)).toEqual([
       "بوتاکس چشم گربه‌ای",
       "بوتاکس لبخند لثه‌ای",
       "بوتاکس فول فیس",
