@@ -13,7 +13,7 @@ export const BOTOX_CATEGORIES: SeedCategory[] = [
   {
     slug: "botox-full-face",
     icon: "syringe",
-    displayOrder: 0,
+    displayOrder: 2,
     i18n: [
       {
         locale: "fa",
@@ -56,7 +56,7 @@ export const BOTOX_CATEGORIES: SeedCategory[] = [
   {
     slug: "botox-cat-eye",
     icon: "syringe",
-    displayOrder: 1,
+    displayOrder: 0,
     i18n: [
       {
         locale: "fa",
@@ -99,7 +99,7 @@ export const BOTOX_CATEGORIES: SeedCategory[] = [
   {
     slug: "botox-gummy-smile",
     icon: "syringe",
-    displayOrder: 2,
+    displayOrder: 1,
     i18n: [
       {
         locale: "fa",
