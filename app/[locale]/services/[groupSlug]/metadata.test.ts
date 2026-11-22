@@ -56,6 +56,7 @@ function groupData(overrides: Record<string, unknown> = {}) {
     group: {
       slug: "face-filler",
       icon: null,
+      image: null,
       title: "فیلر صورت",
       description: "توضیح گروه",
       seoTitle: null,
@@ -64,6 +65,8 @@ function groupData(overrides: Record<string, unknown> = {}) {
       ...overrides,
     },
     categories: [{ slug: "c1", title: "c1", serviceCount: 3 }],
+    hasSubcategories: true,
+    detailServices: [],
     featured: [],
     faqs: [],
   };

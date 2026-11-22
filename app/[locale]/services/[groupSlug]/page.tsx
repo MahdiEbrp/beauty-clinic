@@ -34,10 +34,15 @@ export async function generateMetadata({
   const description =
     data.group.seoDescription ??
     data.group.description ??
-    tGroup("meta.categoryFallbackDescription", {
-      group: data.group.title,
-      count: data.categories.length,
-    });
+    (data.hasSubcategories
+      ? tGroup("meta.categoryFallbackDescription", {
+          group: data.group.title,
+          count: data.categories.length,
+        })
+      : tGroup("meta.groupFallbackDescription", {
+          group: data.group.title,
+          count: data.detailServices.length,
+        }));
 
   return {
     title,

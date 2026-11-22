@@ -55,6 +55,7 @@ export type CategoryPageService = {
 export type CategoryPageCategory = {
   slug: string;
   icon: string | null;
+  image: string | null;
   title: string;
   description: string | null;
   seoTitle: string | null;
@@ -85,6 +86,7 @@ function toCategory(category: PublicTreeCategory): CategoryPageCategory {
   return {
     slug: category.slug,
     icon: category.icon,
+    image: category.image,
     title: category.title,
     description: category.description,
     seoTitle: category.seoTitle,

@@ -1,39 +1,62 @@
-import type { SeedGroup } from "./types";
+import type { SeedCategory, SeedGroup } from "./types";
 import { LASER_FACE_AREAS_CATEGORY } from "./laser-hair-face-areas";
 import { LASER_OTHER_BODY_CATEGORY } from "./laser-hair-body";
 import { LASER_PACKAGES_CATEGORY } from "./laser-hair-packages";
 import { LASER_PERSONAL_KIT_CATEGORY } from "./laser-hair-personal-kit";
 import { IMG } from "../images";
 
+const LASER_HAIR_SERVICES: SeedCategory = {
+  slug: "laser-hair-removal-services",
+  icon: "laser",
+  displayOrder: 0,
+  i18n: [
+    {
+      locale: "fa",
+      name: "خدمات لیزر موهای زائد",
+      description: "پکیج‌ها و خدمات نواحی صورت و بدن در یک صفحه، بدون زیرشاخه.",
+      seoTitle: "لیزر موهای زائد | خدمات و پکیج‌ها",
+      seoDescription: "مشاهده تمام خدمات و پکیج‌های لیزر موهای زائد صورت و بدن در یک صفحه.",
+    },
+    {
+      locale: "en",
+      name: "Laser Hair Removal Services",
+      description: "Packages and face and body treatments presented together on one page.",
+      seoTitle: "Laser Hair Removal | Services & Packages",
+      seoDescription: "Explore all face and body laser hair removal services and packages in one place.",
+    },
+  ],
+  services: [
+    ...LASER_PACKAGES_CATEGORY.services,
+    ...LASER_FACE_AREAS_CATEGORY.services,
+    ...LASER_OTHER_BODY_CATEGORY.services,
+    ...LASER_PERSONAL_KIT_CATEGORY.services,
+  ].map((service, index) => ({ ...service, displayOrder: index })),
+};
+
 export const LASER_HAIR_REMOVAL_GROUP: SeedGroup = {
   slug: "laser-hair-removal",
   icon: "laser",
   image: IMG.laserHairRemoval,
-  displayOrder: 10,
+  displayOrder: 8,
   i18n: [
     {
       locale: "fa",
-      name: "لیزر مو زائد",
+      name: "لیزر موهای زائد",
       description:
-        "با لیزر موهای زائد، پوستی صاف‌تر و یکدست‌تر داشته باشید؛ با پکیج‌هایی متناسب با نیاز و نواحی موردنظر شما.",
-      seoTitle: "لیزر مو زائد | صورت و بدن",
+        "تمام خدمات و پکیج‌های لیزر موهای زائد در یک صفحه؛ با توضیحات و تصاویر قابل مدیریت برای هر خدمت.",
+      seoTitle: "لیزر موهای زائد | صورت و بدن",
       seoDescription:
-        "لیزر موهای زائد برای صورت و بدن با پکیج‌های متنوع و امکان انتخاب نواحی دلخواه؛ از صورت و زیربغل تا پاها و فول‌بادی.",
+        "مشاهده پکیج‌ها و خدمات لیزر موهای زائد صورت و بدن همراه با جزئیات و تصاویر هر خدمت.",
     },
     {
       locale: "en",
       name: "Laser Hair Removal",
       description:
-        "Smooth, confident skin with personalized laser hair removal services tailored to your needs and target areas.",
-      seoTitle: "Laser Hair Removal | Face & Body Services",
+        "All laser hair removal services and packages on one page, with editable details and photos for each service.",
+      seoTitle: "Laser Hair Removal | Face & Body",
       seoDescription:
-        "Achieve smoother-looking skin with personalized laser hair removal for the face and body. Explore individual areas, packages, and full-body services.",
+        "Explore face and body laser hair removal packages and services with individual details and photos.",
     },
   ],
-  categories: [
-    LASER_PACKAGES_CATEGORY,
-    LASER_FACE_AREAS_CATEGORY,
-    LASER_OTHER_BODY_CATEGORY,
-    LASER_PERSONAL_KIT_CATEGORY,
-  ],
+  categories: [LASER_HAIR_SERVICES],
 };

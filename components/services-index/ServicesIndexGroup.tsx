@@ -51,11 +51,7 @@ export default async function ServicesIndexGroup({
         </div>
       </div>
 
-      {group.categories.length === 0 ? (
-        <p className="mt-4 rounded-panel border border-border-primary bg-surface-secondary/90 px-5 py-10 text-center text-caption text-content-tertiary">
-          {t("common.empty")}
-        </p>
-      ) : (
+      {group.categories.length > 0 ? (
         <ul className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {group.categories.map((category) => {
             const categoryIcon = iconForCatalog(category.icon);
@@ -99,7 +95,7 @@ export default async function ServicesIndexGroup({
             );
           })}
         </ul>
-      )}
+      ) : null}
 
       <div className="mt-4">
         <Link
@@ -107,7 +103,7 @@ export default async function ServicesIndexGroup({
           className="inline-flex min-h-11 items-center gap-1.5 rounded-pill border border-border-interactive px-4 text-caption font-semibold text-content-secondary no-underline transition-colors hover:border-accent hover:bg-accent hover:text-content-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           <Layers className="size-3.5" strokeWidth={2} aria-hidden="true" />
-          <span>{t("groupPage.categories.heading")}</span>
+          <span>{t(group.categories.length === 0 ? "groupPage.categories.openGroup" : "groupPage.categories.heading")}</span>
           <ChevronLeft className="size-3.5 rtl-mirror" strokeWidth={2} aria-hidden="true" />
         </Link>
       </div>

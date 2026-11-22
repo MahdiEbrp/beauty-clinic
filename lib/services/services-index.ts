@@ -2,6 +2,7 @@ import "server-only";
 
 import { getClinicData } from "@/data/clinic";
 import { getPublicServiceTree } from "./public-services";
+import { hasPublicSubcategories } from "./catalog-navigation";
 import type {
   Locale,
   PublicServiceTree,
@@ -56,7 +57,9 @@ function toGroup(group: PublicTreeGroup): ServicesIndexGroup {
     icon: group.icon,
     title: group.title,
     description: group.description,
-    categories: group.categories.map(toCategory),
+    categories: hasPublicSubcategories(group.slug)
+      ? group.categories.map(toCategory)
+      : [],
   };
 }
 

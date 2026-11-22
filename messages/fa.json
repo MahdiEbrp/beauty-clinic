@@ -3424,6 +3424,7 @@
     "heading": "خدمات تخصصی ما",
     "meta": {
       "categoryFallbackDescription": "{group} — {count, plural, one {# دسته‌بندی} other {# دسته‌بندی}}",
+      "groupFallbackDescription": "{group} — {count, plural, one {# خدمت} other {# خدمت}}",
       "description": "مجموعه کامل خدمات تخصصی زیبایی کلینیک نفس",
       "title": "خدمات تخصصی | کلینیک زیبایی نفس"
     },
@@ -3460,6 +3461,7 @@
   "groupPage": {
     "categories": {
       "heading": "مرور دسته‌بندی‌ها",
+      "openGroup": "مشاهده خدمات",
       "count": "{count, plural, one {# دسته‌بندی} other {# دسته‌بندی}}",
       "serviceCount": "{count, plural, one {# خدمت} other {# خدمت}}"
     },

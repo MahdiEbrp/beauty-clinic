@@ -44,6 +44,17 @@ export default function GroupHeader({ group, crumbs }: GroupHeaderProps) {
             {group.description}
           </p>
         ) : null}
+        {group.image ? (
+          <div className="relative mt-2 aspect-video w-full max-w-4xl overflow-hidden rounded-panel border border-border-primary bg-surface-secondary">
+            <img
+              src={group.image}
+              alt={group.title}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover"
+            />
+          </div>
+        ) : null}
       </div>
     </header>
   );

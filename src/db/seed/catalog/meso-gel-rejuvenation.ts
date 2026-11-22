@@ -1,31 +1,42 @@
-import type { SeedGroup } from "./types";
+import type { SeedCategory, SeedGroup } from "./types";
 import { MESOTHERAPY_CATEGORY } from "./meso-rejuvenation-services";
+import { HAIR_MESOTHERAPY_CATEGORY } from "./meso-hair-services";
+import { SKIN_TREATMENT_SERVICES_CATEGORY } from "./skin-treatment-services";
 import { IMG } from "../images";
+
+const COMBINED_SKIN_HAIR_CATEGORY: SeedCategory = {
+  ...MESOTHERAPY_CATEGORY,
+  services: [
+    ...MESOTHERAPY_CATEGORY.services,
+    ...HAIR_MESOTHERAPY_CATEGORY.services,
+    ...SKIN_TREATMENT_SERVICES_CATEGORY.services,
+  ].map((service, index) => ({ ...service, displayOrder: index })),
+};
 
 export const MESO_GEL_REJUVENATION_GROUP: SeedGroup = {
   slug: "meso-gel-rejuvenation",
   icon: "rejuvenation",
   image: IMG.mesotherapy,
-  displayOrder: 6,
+  displayOrder: 7,
   i18n: [
     {
       locale: "fa",
-      name: "مزو ژل و جوانساز و آبرسان",
+      name: "مزوژل، جوانساز، آبرسان و درمان‌های پوست و مو",
       description:
-        "با خدماتی تخصصی مزوتراپی، مزوژل و جوانسازی، به بهبود آبرسانی، کیفیت، شادابی و انعطاف‌پذیری پوست کمک کنید و ظاهری تازه‌تر و درخشان‌تر داشته باشید.",
-      seoTitle: "مزو ژل و جوانساز | مزوتراپی و جوانسازی پوست",
+        "خدمات مزوتراپی، مزوژل، جوانسازی، آبرسانی و درمان‌های پوست و مو در یک صفحه؛ همراه با جزئیات هر خدمت.",
+      seoTitle: "مزوژل، جوانساز و درمان پوست و مو | خدمات کلینیک",
       seoDescription:
-        "خدمات مزوتراپی، مزوژل، جالپرو، پروفایلو و جوانسازها برای بهبود آبرسانی، کیفیت، شادابی و جوان‌تر شدن ظاهر پوست.",
+        "مشاهده خدمات مزوژل، جوانسازی، آبرسانی، مزوتراپی پوست و مو و درمان‌های پوستی همراه با جزئیات هر خدمت.",
     },
     {
       locale: "en",
-      name: "Mesogel, Rejuvenation & Hydration",
+      name: "Mesogel, Rejuvenation, Hydration, Skin & Hair Treatments",
       description:
-        "Refresh, hydrate, and revitalize your skin with personalized mesogel and rejuvenation services designed to improve skin quality, elasticity, radiance, and overall vitality.",
-      seoTitle: "Mesogel & Rejuvenation | Advanced Skin Treatments",
+        "Mesotherapy, mesogel, rejuvenation, hydration, skin and hair treatments presented together on one page with service details.",
+      seoTitle: "Mesogel, Rejuvenation, Skin & Hair Treatments",
       seoDescription:
-        "Discover personalized mesotherapy, mesogel, Jalupro and Profhilo services designed to refresh, hydrate and revitalize your skin.",
+        "Explore mesogel, rejuvenation, hydration, skin mesotherapy, hair treatments and skin services with individual details.",
     },
   ],
-  categories: [MESOTHERAPY_CATEGORY],
+  categories: [COMBINED_SKIN_HAIR_CATEGORY],
 };
