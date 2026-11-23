@@ -70,13 +70,13 @@ export default function Contact({ onOpenBooking, clinic, landing }: ContactProps
                 </div>
                 <div>
                   <h3 className="mb-2 text-body-lg font-bold text-accent">
-                    {locale === "fa" ? "شماره تماس" : "Phone"}
+                    {t("homepageContact.phoneLabel")}
                   </h3>
                   <a
                     href={`tel:${telephoneHref}`}
                     dir="ltr"
                     className="inline-flex min-h-11 items-center font-bold text-content-secondary underline-offset-4 transition-colors hover:text-accent hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                    aria-label={`${locale === "fa" ? "تماس با شماره" : "Call"} ${telephone}`}
+                    aria-label={t("homepageContact.callPhone", { phone: telephone })}
                   >
                     {telephone}
                   </a>
