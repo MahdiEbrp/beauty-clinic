@@ -1,6 +1,6 @@
 import type { SeedGroup } from "./types";
 import { UPPER_FACE_BRANDS } from "./filler-brands";
-import { buildFillerAreaCategories } from "./filler-area-builder";
+import { buildFillerBrandCategory } from "./filler-area-builder";
 import { IMG } from "../images";
 
 export const SENSITIVE_FILLER_GROUP: SeedGroup = {
@@ -24,38 +24,19 @@ export const SENSITIVE_FILLER_GROUP: SeedGroup = {
       seoDescription: "Explore filler services for sensitive facial areas with editable details and photos.",
     },
   ],
-  categories: buildFillerAreaCategories(
-    [
+  categories: [
+    buildFillerBrandCategory(
       {
-        key: "under-eye",
-        faName: "زیر چشم",
-        enName: "Under-eye",
-        faDescription: "خدمات فیلر زیر چشم با امکان مشاهده جزئیات و تصاویر هر خدمت.",
-        enDescription: "Under-eye filler services, with individual treatment details and photos.",
+        slug: "sensitive-filler-brands",
+        faName: "فیلر زیرچشم - شقیقه - بینی - پیشانی",
+        enName: "Under-eye, Temple, Nose and Forehead Filler",
+        faDescription:
+          "برندهای فیلر قابل استفاده برای زیرچشم، شقیقه، بینی و پیشانی؛ هر برند و قیمت آن فقط یک‌بار در فهرست قیمت نمایش داده می‌شود.",
+        enDescription:
+          "Filler brands for under-eyes, temples, nose and forehead. Each brand and its price are listed only once.",
       },
-      {
-        key: "forehead",
-        faName: "پیشانی",
-        enName: "Forehead",
-        faDescription: "خدمات فیلر پیشانی با امکان مشاهده جزئیات و تصاویر هر خدمت.",
-        enDescription: "Forehead filler services, with individual treatment details and photos.",
-      },
-      {
-        key: "temple",
-        faName: "شقیقه",
-        enName: "Temples",
-        faDescription: "خدمات فیلر شقیقه با امکان مشاهده جزئیات و تصاویر هر خدمت.",
-        enDescription: "Temple filler services, with individual treatment details and photos.",
-      },
-      {
-        key: "nose",
-        faName: "بینی",
-        enName: "Nose",
-        faDescription: "خدمات فیلر بینی با امکان مشاهده جزئیات و تصاویر هر خدمت.",
-        enDescription: "Nose filler services, with individual treatment details and photos.",
-      },
-    ],
-    UPPER_FACE_BRANDS,
-    "sensitive-filler",
-  ),
+      UPPER_FACE_BRANDS,
+      "sensitive-filler",
+    ),
+  ],
 };

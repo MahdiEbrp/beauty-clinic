@@ -11,12 +11,9 @@
 // inserts (the DB currently holds no categories or services).
 //
 // NOTES:
-// - Duplicate brand names across injection-area categories get area-suffixed
-//   slugs so they don't collide on the global-unique `services.slug` index:
-//     innovance-lip-chin-cheek     vs  innovance-undereye-nose-temple
-//     fillerge-lip-chin-cheek      vs  fillerge-undereye-nose-temple
-//     neuramis-lip-chin-cheek      vs  neuramis-undereye-nose-temple
-// - "کاربردی" spelling used per Mahdi's text list.
+// - Filler price-list categories contain one row per brand. Do not duplicate
+//   the same brand into multiple anatomical-area categories on the price page.
+//// - "کاربردی" spelling used per Mahdi's text list.
 // - tattoo-removal (Q-Switch) and hifu have no pricing yet -> on_request.
 // - "نمی‌دونم چه خدماتی نیاز دارم" is intentionally NOT a group — it is a UI
 //   entry point / CTA, not a billable service category.
