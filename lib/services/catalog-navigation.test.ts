@@ -2,14 +2,10 @@ import { describe, expect, it } from "vitest";
 import { hasPublicSubcategories } from "./catalog-navigation";
 
 describe("public service group navigation", () => {
-  it.each(["face-filler", "sensitive-filler", "botox"])(
-    "shows subcategories for %s",
-    (slug) => {
-      expect(hasPublicSubcategories(slug)).toBe(true);
-    },
-  );
-
   it.each([
+    "face-filler",
+    "sensitive-filler",
+    "botox",
     "body-filler",
     "full-face-filler",
     "enzyme",
