@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { MapPin, MessageCircle, Navigation, Map, CalendarPlus } from "lucide-react";
+import { MapPin, MessageCircle, Navigation, Map, CalendarPlus, Phone } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import type { ClinicData } from "@/data/clinic";
 import type { PublicLanding } from "@/lib/landing";
@@ -27,6 +27,8 @@ export default function Contact({ onOpenBooking, clinic, landing }: ContactProps
   const socials = clinic?.social ?? [];
   const address = clinic?.address;
   const maps = clinic?.maps;
+  const telephone = clinic?.telephone;
+  const telephoneHref = telephone?.replace(/[^\d+]/g, "");
 
   const lat = maps?.coords.lat;
   const lng = maps?.coords.lng;
@@ -60,6 +62,27 @@ export default function Contact({ onOpenBooking, clinic, landing }: ContactProps
                 </p>
               </div>
             </div>
+
+            {telephone && telephoneHref && (
+              <div className="mb-8 flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-control border border-border-primary bg-surface-primary text-copper">
+                  <Phone className="h-6 w-6" strokeWidth={2} aria-hidden="true" />
+                </div>
+                <div>
+                  <h3 className="mb-2 text-body-lg font-bold text-accent">
+                    {locale === "fa" ? "شماره تماس" : "Phone"}
+                  </h3>
+                  <a
+                    href={`tel:${telephoneHref}`}
+                    dir="ltr"
+                    className="inline-flex min-h-11 items-center font-bold text-content-secondary underline-offset-4 transition-colors hover:text-accent hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    aria-label={`${locale === "fa" ? "تماس با شماره" : "Call"} ${telephone}`}
+                  >
+                    {telephone}
+                  </a>
+                </div>
+              </div>
+            )}
 
             {socials.length > 0 && (
               <div className="mb-8 flex items-start gap-4">
