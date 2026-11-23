@@ -1,5 +1,6 @@
 import type { SeedGroup } from "./types";
-import { FACE_FILLER_AREA_CATEGORIES } from "./filler-areas";
+import { LOWER_FACE_BRANDS } from "./filler-brands";
+import { buildFillerBrandCategory } from "./filler-area-builder";
 import { IMG } from "../images";
 
 export const FACE_FILLER_GROUP: SeedGroup = {
@@ -27,5 +28,19 @@ export const FACE_FILLER_GROUP: SeedGroup = {
         "Enhance your natural beauty with expert face filler services. Restore volume, soften lines, and define lips, cheeks, or chin for a refreshed, balanced look.",
     },
   ],
-  categories: FACE_FILLER_AREA_CATEGORIES,
+  categories: [
+    buildFillerBrandCategory(
+      {
+        slug: "face-filler-brands",
+        faName: "فیلر لب و صورت",
+        enName: "Lip and Face Filler",
+        faDescription:
+          "برندهای فیلر قابل استفاده برای لب و صورت؛ هر برند و قیمت آن فقط یک‌بار در فهرست قیمت نمایش داده می‌شود.",
+        enDescription:
+          "Filler brands available for lips and face. Each brand and its price are listed only once.",
+      },
+      LOWER_FACE_BRANDS,
+      "face-filler",
+    ),
+  ],
 };
