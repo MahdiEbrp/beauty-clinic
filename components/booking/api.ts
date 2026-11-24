@@ -4,6 +4,7 @@ import type {
   CreatedBookingGroup,
   SelectedGroup,
   SlotOption,
+  SharedSlotQuery,
 } from "@/components/booking/types";
 
 export class BookingError extends Error {
@@ -39,10 +40,12 @@ async function handle<T>(fetchPromise: Promise<Response>): Promise<T> {
 export function fetchAvailableSlots(
   date: string,
   groupId?: string,
-  shared?: { groupIds: string[]; quantity: number },
+  shared?: SharedSlotQuery,
 ): Promise<SlotOption[]> {
   const params = new URLSearchParams({ date });
-  if (shared) {
+  if (shared?.items) {
+    params.set("items", JSON.stringify(shared.items));
+  } else if (shared) {
     params.set("groupIds", shared.groupIds.join(","));
     params.set("quantity", String(shared.quantity));
   } else if (groupId) {
@@ -56,10 +59,12 @@ export function fetchAvailableDates(
   from: string,
   to: string,
   groupId?: string,
-  shared?: { groupIds: string[]; quantity: number },
+  shared?: SharedSlotQuery,
 ): Promise<string[]> {
   const params = new URLSearchParams({ from, to });
-  if (shared) {
+  if (shared?.items) {
+    params.set("items", JSON.stringify(shared.items));
+  } else if (shared) {
     params.set("groupIds", shared.groupIds.join(","));
     params.set("quantity", String(shared.quantity));
   } else if (groupId) {
@@ -81,6 +86,7 @@ export function createBookingGroup(payload: {
   isPregnant: boolean;
   /** Acceptance of the clinic booking rules. */
   termsAccepted: boolean;
+  sequential?: boolean;
   items: { groupId: string; slotId: string; quantity: number }[];
 }): Promise<CreatedBookingGroup> {
   return handle<CreatedBookingGroup>(

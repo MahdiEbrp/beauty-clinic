@@ -1,3 +1,4 @@
+import type { ServiceSlotRequest, SlotAssignment } from "@/lib/booking/consecutive-slots";
 import type { PublicTreeGroup } from "@/lib/services/types";
 
 /**
@@ -11,8 +12,13 @@ export type SelectedGroup = PublicTreeGroup & {
   groupIndex: number;
 };
 
+/** Legacy shared query fields remain supported for older callers. */
+export type SharedSlotQuery = { groupIds: string[]; quantity: number; items?: ServiceSlotRequest[] };
+
 /** Shape returned by `GET /api/public/slots`. */
 export type SlotOption = {
+  /** Exact per-unit allocations for a consecutive appointment. */
+  assignments?: SlotAssignment<SlotOption>[];
   id: string;
   groupIds: string[];
   slotDate: string;

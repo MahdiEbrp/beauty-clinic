@@ -77,9 +77,19 @@ export const createBookingGroupSchema = z
     isPregnant: z.boolean().default(false),
     /** Public orders must accept the clinic booking rules before creation. */
     termsAccepted: z.literal(true),
-    items: z.array(bookingItemSchema).min(1).max(10),
+    sequential: z.boolean().optional(),
+    items: z.array(bookingItemSchema).min(1).max(100),
   })
-  .strict();
+  .strict()
+  .superRefine((data, ctx) => {
+    if (!data.sequential && data.items.length > 10) {
+      ctx.addIssue({ code: "custom", path: ["items"], message: "At most 10 grouped items are allowed." });
+    }
+    if (data.sequential && (data.items.some((item) => item.quantity !== 1) ||
+      new Set(data.items.map((item) => item.slotId)).size !== data.items.length)) {
+      ctx.addIssue({ code: "custom", path: ["items"], message: "Each service needs its own distinct slot." });
+    }
+  });
 
 export const payBookingGroupSchema = z
   .object({

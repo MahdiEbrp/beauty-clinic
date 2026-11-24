@@ -1,3 +1,4 @@
+import { consecutiveOptions, type ServiceSlotRequest } from "@/lib/booking/consecutive-slots";
 import { and, gte, inArray, lte, notInArray, or, sql } from "drizzle-orm";
 
 import { db } from "@/src/db";
@@ -196,3 +197,22 @@ export async function availableSlotDates(
   return [...dates].sort();
 }
 
+
+/** Every valid start for an ordered run of services, using the same records
+ * and capacity accounting as the legacy slot/calendar feeds. */
+export async function availableConsecutiveSlots(
+  slotDate: string,
+  items: ServiceSlotRequest[],
+) {
+  const rows = await listSlots({ from: slotDate, to: slotDate });
+  return consecutiveOptions(rows, items);
+}
+
+export async function availableConsecutiveDates(
+  from: string,
+  to: string,
+  items: ServiceSlotRequest[],
+): Promise<string[]> {
+  const rows = await listSlots({ from, to });
+  return [...new Set(consecutiveOptions(rows, items).map((slot) => slot.slotDate))];
+}

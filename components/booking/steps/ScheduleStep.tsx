@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { AlertCircle, ArrowRight, CalendarDays } from "lucide-react";
+import { assignConsecutiveCart, cartSequenceItems } from "@/lib/booking/cart-sequence";
 import { findCartConflicts } from "@/lib/booking/scheduling";
 import { SlotLabel } from "../SlotLabel";
 import DateModal from "./DateModal";
@@ -14,20 +15,12 @@ type ScheduleStepProps = {
   onBack: () => void;
 };
 
-/**
- * Step 2 — ONE shared date & time picker applied to ALL selected services.
- *
- * The customer chooses a single date+slot once; every cart line receives the
- * same slot. `findCartConflicts` intentionally skips pairs whose slot ids are
- * identical, so a shared slot creates no false self-conflicts and the cart is
- * considered fully scheduled as soon as one slot is chosen.
- */
+/** Step 2 — choose one start, then allocate one adjacent slot per service. */
 export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleStepProps) {
   const t = useTranslations("booking");
   const [modalOpen, setModalOpen] = useState(false);
-  const [sharedSlot, setSharedSlot] = useState<SlotOption | null>(null);
 
-  const selectedSlot = sharedSlot ?? cart[0]?.slot ?? null;
+  const selectedSlot = cartSequenceItems(cart) ? cart[0]?.slot ?? null : null;
   const conflicts = findCartConflicts(cart);
 
   const primaryGroup = cart[0]?.group ?? null;
@@ -37,10 +30,11 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
     setModalOpen(true);
   };
 
-  // One slot for every line: assign the chosen slot to all cart lines at once.
+  // The server supplies all consecutive allocations for the chosen start.
   const assignToAll = (_groupId: string, slot: SlotOption) => {
-    setSharedSlot(slot);
-    cart.forEach((line) => onAssignSlot(line.group.id, slot));
+    const assigned = assignConsecutiveCart(cart, slot);
+    if (!assigned) return;
+    assigned.forEach((line) => onAssignSlot(line.group.id, line.slot));
     setModalOpen(false);
   };
 
@@ -117,6 +111,7 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
                     {line.group.description ? (
                       <p className="mt-0.5 max-w-lg truncate text-caption leading-tight text-content-tertiary">{line.group.description}</p>
                     ) : null}
+                    {selectedSlot && line.slot ? <p className="mt-1 text-caption text-copper"><SlotLabel line={line} /></p> : null}
                   </div>
 
                 </div>
@@ -136,7 +131,7 @@ export default function ScheduleStep({ cart, onAssignSlot, onBack }: ScheduleSte
                     <p className="truncate border-t border-border-primary/40 pt-2 text-caption text-content-tertiary">{line.group.description}</p>
                   ) : null}
 
-
+                  {selectedSlot && line.slot ? <p className="text-caption text-copper"><SlotLabel line={line} /></p> : null}
                 </div>
               </div>
             );

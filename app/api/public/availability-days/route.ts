@@ -1,3 +1,6 @@
+import { z } from "zod";
+import { availableConsecutiveDates } from "@/lib/bookings/slot-queries";
+import { consecutiveDatesQuerySchema } from "@/lib/validation/booking-sequence";
 import { jsonOk, withSecurity } from "@/lib/api/security";
 import { clientIp } from "@/lib/api/request";
 import { availableSlotDates } from "@/lib/bookings/slots";
@@ -20,12 +23,14 @@ export const GET = withSecurity(
       windowMs: 60 * 1000,
       key: (request) => `booking:availability-days:${clientIp(request) ?? "unknown"}`,
     },
-    validate: { query: availableSlotDatesQuerySchema },
+    validate: { query: z.union([consecutiveDatesQuerySchema, availableSlotDatesQuerySchema]) },
   },
   async (_request, ctx) => {
     const query = ctx.query ?? (() => { throw new Error("Query params are missing"); })();
 
-    const dates = await availableSlotDates(
+    const dates = "items" in query
+      ? await availableConsecutiveDates(query.from, query.to, query.items)
+      : await availableSlotDates(
       query.from,
       query.to,
       query.groupId,

@@ -3,6 +3,7 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
+import { cartSequenceItems } from "@/lib/booking/cart-sequence";
 import { findCartConflicts } from "@/lib/booking/scheduling";
 import type { PublicServiceTree } from "@/lib/services/types";
 import type { PublicRule } from "@/lib/services/rules-types";
@@ -126,7 +127,7 @@ function VerifiedWizard(props: BookingWizardProps) {
 
 
 
-  const allScheduled = cart.length > 0 && cart.every((line) => line.slot);
+  const allScheduled = cartSequenceItems(cart) !== null;
   const conflicts = useMemo(() => findCartConflicts(cart), [cart]);
   const readyToNext = allScheduled && conflicts.length === 0;
   const healthBlocked = health.pregnant || health.illness;
@@ -150,6 +151,8 @@ function VerifiedWizard(props: BookingWizardProps) {
   const submitBooking = useCallback(
     async (data: ContactInfo): Promise<void> => {
       setContact(data);
+      const items = cartSequenceItems(cart);
+      if (!items) throw new Error("A consecutive slot selection is required.");
       const created = group ?? await createBookingGroup({
         fullName: data.fullName,
         phone: data.phone,
@@ -159,11 +162,8 @@ function VerifiedWizard(props: BookingWizardProps) {
         hasAllergies: false,
         isPregnant: false,
         termsAccepted: data.agreeToTerms,
-        items: cart.map((line) => ({
-          groupId: line.group.id,
-          slotId: line.slot?.id ?? "",
-          quantity: line.quantity,
-        })),
+        sequential: true,
+        items,
       });
       setGroup(created);
       checkoutKey.current ??= crypto.randomUUID();
