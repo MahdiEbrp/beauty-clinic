@@ -1,8 +1,4 @@
 {
-  "homepageContact": {
-    "phoneLabel": "شماره تماس",
-    "callPhone": "تماس با شماره {phone}"
-  },
   "imageUploader": {
     "invalidType": "فرمت فایل باید تصویر باشد.",
     "tooLarge": "حجم تصویر باید کمتر از ۱۰ مگابایت باشد.",

@@ -8,39 +8,23 @@ function group(slug: string) {
 }
 
 describe("clinic service catalog structure", () => {
-  it("lists each face-filler brand exactly once in the clinic price-list category", () => {
-    const categories = group("face-filler").categories;
-    expect(categories).toHaveLength(1);
-    expect(categories[0]?.i18n[0]?.name).toBe("فیلر لب و صورت");
-    const services = categories[0]?.services ?? [];
-    expect(services).toHaveLength(15);
-    expect(new Set(services.map((service) => service.slug)).size).toBe(15);
-    expect(services.map((service) => service.i18n[0]?.title)).toEqual([
-      "ژوویدرم",
-      "الانسه",
-      "استایلیج",
-      "ریلن",
-      "پرفکتا",
-      "رووفیل پلاس",
-      "اینووسنس",
-      "فیورج",
-      "دی می",
-      "درم آرکان",
-      "اپی تی کیو",
-      "زیشل",
-      "دنبی",
-      "رووفیل",
-      "اودری",
+  it("creates the five requested face-filler subcategories", () => {
+    expect(group("face-filler").categories.map((category) => category.i18n[0].name)).toEqual([
+      "ناحیه لب",
+      "ناحیه گونه",
+      "ناحیه چانه",
+      "ناحیه زاویه فک",
+      "ناحیه خط خنده",
     ]);
   });
 
-  it("lists each sensitive-area filler brand exactly once", () => {
-    const categories = group("sensitive-filler").categories;
-    expect(categories).toHaveLength(1);
-    expect(categories[0]?.i18n[0]?.name).toBe("فیلر زیرچشم - شقیقه - بینی - پیشانی");
-    const services = categories[0]?.services ?? [];
-    expect(services).toHaveLength(3);
-    expect(new Set(services.map((service) => service.slug)).size).toBe(3);
+  it("creates the four requested sensitive-filler subcategories", () => {
+    expect(group("sensitive-filler").categories.map((category) => category.i18n[0].name)).toEqual([
+      "زیر چشم",
+      "پیشانی",
+      "شقیقه",
+      "بینی",
+    ]);
   });
 
   it("keeps the five Botox subcategories in the requested order", () => {

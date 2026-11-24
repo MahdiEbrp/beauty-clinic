@@ -1,8 +1,4 @@
 {
-  "homepageContact": {
-    "phoneLabel": "Phone",
-    "callPhone": "Call {phone}"
-  },
   "imageUploader": {
     "invalidType": "Please choose an image file.",
     "tooLarge": "Image size must be 10 MB or less.",

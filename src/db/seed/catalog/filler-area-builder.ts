@@ -1,8 +1,8 @@
 import type { FillerBrand } from "./filler-brands";
 import type { SeedCategory } from "./types";
 
-export type FillerBrandCategoryDefinition = {
-  slug: string;
+export type FillerAreaDefinition = {
+  key: string;
   faName: string;
   enName: string;
   faDescription: string;
@@ -10,58 +10,57 @@ export type FillerBrandCategoryDefinition = {
 };
 
 /**
- * Builds a single price-list category with one service per brand.
- *
- * Anatomical areas belong in the category description/detail content; they
- * must not be expanded into separate copies of the same brand in the public
- * price list. This keeps each clinic price visible exactly once.
+ * Builds one public category per anatomical area. Prices continue to come
+ * from the clinic's existing brand price list; each area receives its own
+ * uniquely-slugged service records so descriptions and images can be edited
+ * independently in the dashboard.
  */
-export function buildFillerBrandCategory(
-  category: FillerBrandCategoryDefinition,
+export function buildFillerAreaCategories(
+  areas: readonly FillerAreaDefinition[],
   brands: readonly FillerBrand[],
   slugPrefix: string,
-): SeedCategory {
-  return {
-    slug: category.slug,
+): SeedCategory[] {
+  return areas.map((area, categoryIndex) => ({
+    slug: `${slugPrefix}-${area.key}`,
     icon: "syringe",
-    displayOrder: 0,
+    displayOrder: categoryIndex,
     i18n: [
       {
         locale: "fa",
-        name: category.faName,
-        description: category.faDescription,
-        seoTitle: `${category.faName} | قیمت و خدمات فیلر`,
-        seoDescription: category.faDescription,
+        name: area.faName,
+        description: area.faDescription,
+        seoTitle: `${area.faName} | خدمات فیلر`,
+        seoDescription: area.faDescription,
       },
       {
         locale: "en",
-        name: category.enName,
-        description: category.enDescription,
-        seoTitle: `${category.enName} | Filler Prices and Services`,
-        seoDescription: category.enDescription,
+        name: area.enName,
+        description: area.enDescription,
+        seoTitle: `${area.enName} | Filler Services`,
+        seoDescription: area.enDescription,
       },
     ],
     services: brands.map((brand, serviceIndex) => ({
-      slug: `${slugPrefix}-${brand.slug}`,
+      slug: `${slugPrefix}-${brand.slug}-${area.key}`,
       price: brand.price,
       priceType: "fixed",
       displayOrder: serviceIndex,
       i18n: [
         {
           locale: "fa",
-          title: brand.fa,
-          shortDesc: `فیلر با برند ${brand.fa}.`,
-          seoTitle: `قیمت فیلر ${brand.fa}`,
-          seoDescription: `اطلاعات و قیمت فیلر با برند ${brand.fa}.`,
+          title: `${brand.fa} - ${area.faName}`,
+          shortDesc: `خدمات فیلر ${area.faName} با برند ${brand.fa}.`,
+          seoTitle: `${brand.fa} برای ${area.faName} | قیمت فیلر`,
+          seoDescription: `اطلاعات و قیمت فیلر ${area.faName} با برند ${brand.fa}.`,
         },
         {
           locale: "en",
-          title: brand.en,
-          shortDesc: `${brand.en} filler service.`,
-          seoTitle: `${brand.en} Filler Price`,
-          seoDescription: `Information and pricing for ${brand.en} filler.`,
+          title: `${brand.en} - ${area.enName}`,
+          shortDesc: `${brand.en} filler service for the ${area.enName.toLowerCase()}.`,
+          seoTitle: `${brand.en} Filler for ${area.enName} | Price`,
+          seoDescription: `Information and pricing for ${brand.en} filler in the ${area.enName.toLowerCase()}.`,
         },
       ],
     })),
-  };
+  }));
 }
