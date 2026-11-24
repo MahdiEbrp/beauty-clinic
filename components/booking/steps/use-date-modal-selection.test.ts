@@ -39,11 +39,11 @@ describe("extracted date-modal selection", () => {
     expect(result.current.canConfirm).toBe(false);
   });
 
-  it("uses aggregate group IDs and seat count for a shared appointment", async () => {
+  it("requests ordered per-service quantities for a consecutive appointment", async () => {
     const sharedOptions = { ...options, shared: true };
     const { result } = renderHook(() => useDateModalSelection(sharedOptions));
     await waitFor(() => expect(result.current.availabilityChecked).toBe(true));
-    expect(fetchAvailableDates).toHaveBeenCalledWith("2026-11-17", "2027-01-15", undefined, { groupIds: ["group"], quantity: 2 });
+    expect(fetchAvailableDates).toHaveBeenCalledWith("2026-11-17", "2027-01-15", undefined, { groupIds: ["group"], quantity: 2, items: [{ groupId: "group", quantity: 2 }] });
   });
 
   it("keeps date/time selection transitions and prefetching after extraction", async () => {

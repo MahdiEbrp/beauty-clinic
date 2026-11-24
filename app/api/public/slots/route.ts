@@ -4,6 +4,8 @@ import { jsonOk, withSecurity } from "@/lib/api/security";
 import { clientIp } from "@/lib/api/request";
 import { availableSlots, availableSlotsForGroups } from "@/lib/bookings/slots";
 import { availableSlotsQuerySchema, sharedAvailableSlotsQuerySchema } from "@/lib/validation/bookings";
+import { availableConsecutiveSlots } from "@/lib/bookings/slot-queries";
+import { consecutiveSlotsQuerySchema } from "@/lib/validation/booking-sequence";
 export const runtime = "nodejs";
 
 /**
@@ -21,11 +23,13 @@ export const GET = withSecurity(
       windowMs: 60 * 1000,
       key: (request) => `slots:availability:${clientIp(request) ?? "unknown"}`,
     },
-    validate: { query: z.union([availableSlotsQuerySchema, sharedAvailableSlotsQuerySchema]) },
+    validate: { query: z.union([consecutiveSlotsQuerySchema, availableSlotsQuerySchema, sharedAvailableSlotsQuerySchema]) },
   },
   async (_request, ctx) => {
     const query = ctx.query ?? (() => { throw new Error("Query params are missing"); })();
-    const slots = "groupIds" in query
+    const slots = "items" in query
+      ? await availableConsecutiveSlots(query.date, query.items)
+      : "groupIds" in query
       ? await availableSlotsForGroups(query.date, query.groupIds, query.quantity)
       : await availableSlots(query.date, query.groupId);
     return jsonOk(slots);

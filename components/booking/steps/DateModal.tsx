@@ -46,8 +46,8 @@ export default function DateModal({ group, shared, current, cart, onAssign, onCl
             </span>
             <div className="min-w-0">
               <h3 className="text-body font-black text-accent">{t("schedule.dateModalTitle")}</h3>
-              <p className="truncate text-caption text-content-secondary">
-                {shared ? t("schedule.forAllServices") : group.title}
+              <p className="text-caption text-content-secondary">
+                {shared ? t("schedule.consecutiveServices") : group.title}
               </p>
             </div>
           </div>

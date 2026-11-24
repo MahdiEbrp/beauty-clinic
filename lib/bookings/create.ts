@@ -1,14 +1,13 @@
-import { and, eq, gte, lte, ne, notInArray, sql } from "drizzle-orm";
+import { and, eq, gt, lt, notInArray } from "drizzle-orm";
 
 import { ApiError } from "@/lib/api/errors";
 import { loadSystemSettingsMap } from "@/lib/settings/loader";
 import { db } from "@/src/db";
-import { bookings, bookingSlotGroups, bookingSlots } from "@/src/db/schema";
+import { bookings } from "@/src/db/schema";
 import type { Locale } from "@/lib/services/types";
 import { toMoney } from "./money";
 import { snapshotGroups } from "./snapshot";
-import { MAX_ADVANCE_DAYS } from "./errors";
-import { computeSlotStatus } from "./slot-status";
+import { loadLockedSlots } from "./locked-slots";
 import { ensureCustomerUser } from "@/lib/users/customers";
 
 export { toMoney } from "./money";
@@ -17,17 +16,6 @@ export function toLocalTimestamp(date: string, time: string): Date {
   return new Date(`${date}T${time}`);
 }
 
-
-type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
-
-/** Linked group ids for a slot ("empty = every group"). */
-async function slotGroupIds(tx: Tx, slotId: string): Promise<string[]> {
-  const rows = await tx
-    .select({ groupId: bookingSlotGroups.groupId })
-    .from(bookingSlotGroups)
-    .where(eq(bookingSlotGroups.slotId, slotId));
-  return rows.map((r) => r.groupId);
-}
 
 export type BookingSummary = typeof bookings.$inferSelect;
 
@@ -48,6 +36,8 @@ export type BookingGroupInput = {
   isPregnant?: boolean;
   /** Acceptance of the clinic booking rules (required for public orders). */
   termsAccepted?: boolean;
+  /** Unit lines must occupy adjacent slots in request order. */
+  sequential?: boolean;
   items: BookingItemInput[];
 };
 
@@ -83,6 +73,7 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
   const settings = await loadSystemSettingsMap();
   const deposit = toMoney(settings.get("booking.price"));
   const currency = (settings.get("booking.currency") as string) ?? "تومان";
+  if (input.items.length === 0) throw new ApiError(400, "SLOT_UNAVAILABLE", "Select services first.");
   const now = Date.now();
   const groupRef = generateGroupRef();
 
@@ -94,45 +85,20 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
   const slotIds = [...perSlot.keys()].sort(); // deterministic lock order (no deadlock)
 
   const snapshots = await snapshotGroups(
-    input.items.map((i) => i.groupId),
+    [...new Set(input.items.map((i) => i.groupId))],
     input.locale,
   );
 
   return db.transaction(async (tx) => {
-    const slotRows = new Map<
-      string,
-      { date: string; start: string; end: string; capacity: number; groupIds: string[] }
-    >();
-
-    // Phase 1 — lock every slot, then validate it under the lock.
-    for (const slotId of slotIds) {
-      const [row] = await tx
-        .select()
-        .from(bookingSlots)
-        .where(eq(bookingSlots.id, slotId))
-        .limit(1)
-        .for("update");
-
-      if (!row) throw new ApiError(404, "SLOT_NOT_FOUND", "Slot not found.");
-      if (computeSlotStatus(row.isActive, row.slotDate, row.endTime) !== "active") {
-        throw new ApiError(409, "SLOT_UNAVAILABLE", "This slot is no longer available.");
-      }
-      const slotStart = toLocalTimestamp(row.slotDate, row.startTime);
-      if (slotStart.getTime() <= now) {
-        throw new ApiError(400, "PAST_SLOT", "This time slot has already passed.");
-      }
-      if (slotStart.getTime() > now + MAX_ADVANCE_DAYS * 24 * 60 * 60 * 1000) {
-        throw new ApiError(400, "TOO_FAR_AHEAD", "This date is too far in advance to book.");
-      }
-      const groupIds = await slotGroupIds(tx, slotId);
-      slotRows.set(slotId, {
-        date: row.slotDate,
-        start: row.startTime,
-        end: row.endTime,
-        capacity: row.capacity,
-        groupIds,
-      });
-    }
+    const slotRows = await loadLockedSlots(tx, slotIds, now);
+    const starts = [...slotRows.values()].map((slot) => toLocalTimestamp(slot.date, slot.start).getTime());
+    const ends = [...slotRows.values()].map((slot) => toLocalTimestamp(slot.date, slot.end).getTime());
+    const customerBookings = await tx.select({ start: bookings.slotStart, end: bookings.slotEnd })
+      .from(bookings).where(and(
+        eq(bookings.phone, input.phone), notInArray(bookings.status, ["done", "refunded"]),
+        lt(bookings.slotStart, new Date(Math.max(...ends))),
+        gt(bookings.slotEnd, new Date(Math.min(...starts))),
+      ));
 
     // Phase 2 — seat counting + customer-overlap checks under the locks.
     const allocated = new Map<string, number>(); // seats this order adds per slot
@@ -151,11 +117,7 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
       const end = toLocalTimestamp(slot.date, slot.end);
 
       const totalRequested = (allocated.get(item.slotId) ?? 0) + item.quantity;
-      const [used] = await tx
-        .select({ seats: sql<number>`coalesce(sum(${bookings.quantity}), 0)::int` })
-        .from(bookings)
-        .where(and(eq(bookings.slotId, item.slotId), notInArray(bookings.status, ["done", "refunded"])));
-      if (Number(used?.seats ?? 0) + totalRequested > slot.capacity) {
+      if (slot.used + totalRequested > slot.capacity) {
         throw new ApiError(409, "SLOT_FULL", "This time slot has just been taken.");
       }
 
@@ -163,21 +125,8 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
         throw new ApiError(409, "GROUP_UNAVAILABLE", "This slot does not offer the selected group.");
       }
 
-      // Same customer, overlapping time, outside this new group → conflict.
-      const [conflict] = await tx
-        .select({ id: bookings.id })
-        .from(bookings)
-        .where(
-          and(
-            eq(bookings.phone, input.phone),
-            notInArray(bookings.status, ["done", "refunded"]),
-            ne(bookings.groupRef, groupRef),
-            lte(bookings.slotStart, end),
-            gte(bookings.slotEnd, start),
-          ),
-        )
-        .limit(1);
-      if (conflict) {
+      // Half-open intervals allow a new service to begin exactly when another ends.
+      if (customerBookings.some((row) => row.start && row.end && overlap(start, end, row.start, row.end))) {
         throw new ApiError(409, "CUSTOMER_CONFLICT", "You already have a booking at this time.");
       }
 
@@ -192,6 +141,21 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
       planned.push({ ...item, start, end });
     }
 
+    // All times above were re-read under row locks: a stale/tampered plan
+    // cannot create gaps, repeated slots or multiple services in one slot.
+    if (input.sequential) {
+      const seen = new Set<string>();
+      for (const [index, line] of planned.entries()) {
+        const previous = planned[index - 1];
+        if (line.quantity !== 1 || seen.has(line.slotId) ||
+          (previous && (previous.end.getTime() !== line.start.getTime() ||
+            previous.start.toDateString() !== line.start.toDateString()))) {
+          throw new ApiError(409, "SLOT_UNAVAILABLE", "Select consecutive slots for all services.");
+        }
+        seen.add(line.slotId);
+      }
+    }
+
     // Phase 3 — link/auto-provision the customer, then insert the group rows
     // (still inside the locked transaction, so a failed order leaves no user).
     const customerId = await ensureCustomerUser(tx, {
@@ -203,13 +167,10 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
     // The fixed deposit is stored once per booking order. Put it on the
     // first line and zero on the remaining lines so summing the order never
     // multiplies the configured deposit by the number of selected services.
-    const inserted: BookingSummary[] = [];
-    for (const [lineIndex, line] of planned.entries()) {
+    const values = planned.map((line, lineIndex) => {
       const group = snapshots.get(line.groupId);
       if (!group) throw new ApiError(404, "GROUP_NOT_FOUND", "Group not found.");
-      const [row] = await tx
-        .insert(bookings)
-        .values({
+      return {
           groupRef,
           customerId,
           fullName: input.fullName,
@@ -223,16 +184,15 @@ export async function createBookingGroup(input: BookingGroupInput): Promise<{
           slotStart: line.start,
           slotEnd: line.end,
           totalAmount: String(lineIndex === 0 ? deposit : 0),
-          status: "pending",
+          status: "pending" as const,
           notes: input.notes ?? null,
           consultationRequired: input.consultationRequired ?? false,
           hasAllergies: input.hasAllergies ?? false,
           isPregnant: input.isPregnant ?? false,
           termsAcceptedAt: input.termsAccepted ? new Date() : null,
-        })
-        .returning();
-      inserted.push(row);
-    }
+      };
+    });
+    const inserted = await tx.insert(bookings).values(values).returning();
 
     return { groupRef, items: inserted, deposit };
   });

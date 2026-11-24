@@ -1,5 +1,5 @@
 import { fetchAvailableSlots } from "@/components/booking/api";
-import type { SlotOption } from "@/components/booking/types";
+import type { SharedSlotQuery, SlotOption } from "@/components/booking/types";
 
 /**
  * Zero-latency slot feed (rule: "never stare at a loader").
@@ -20,9 +20,9 @@ type CacheEntry = {
 const TTL_MS = 45 * 1000;
 const cache = new Map<string, CacheEntry>();
 
-type SharedSlotQuery = { groupIds: string[]; quantity: number };
 
 function key(date: string, groupId?: string, shared?: SharedSlotQuery): string {
+  if (shared?.items) return `${date}::consecutive:${JSON.stringify(shared.items)}`;
   if (shared) return `${date}::shared:${[...shared.groupIds].sort().join(",")}:${shared.quantity}`;
   return groupId ? `${date}::${groupId}` : date;
 }

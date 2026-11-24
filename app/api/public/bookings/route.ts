@@ -23,7 +23,7 @@ export const POST = withSecurity(
   },
   async (_request, ctx) => {
     const body = ctx.body ?? (() => { throw new Error("Validation body is missing"); })();
-    const group = await createBookingGroup(body);
+    const group = await createBookingGroup({ ...body, sequential: true });
     return jsonOk(group, 201);
   },
 );

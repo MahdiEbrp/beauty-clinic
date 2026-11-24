@@ -243,6 +243,7 @@
       "historyNote": "Manage or cancel from “My bookings”."
     },
     "schedule": {
+      "consecutiveServices": "Choose a start time; each service uses the next consecutive slot.",
       "available": "Available",
       "allScheduled": "All scheduled",
       "backToGroups": "Back to Groups",

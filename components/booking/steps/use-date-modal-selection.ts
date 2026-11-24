@@ -25,6 +25,7 @@ export function useDateModalSelection({ group, shared, current, cart }: DateModa
   const jalali = locale === "fa";
   const sharedQuery = useMemo(() => shared ? {
     groupIds: [...new Set(cart.map((line) => line.group.id))].sort(),
+    items: cart.map((line) => ({ groupId: line.group.id, quantity: line.quantity })),
     quantity: cart.reduce((total, line) => total + line.quantity, 0),
   } : undefined, [cart, shared]);
   const availabilityGroupId = shared ? undefined : group.id;
@@ -178,14 +179,16 @@ export function useDateModalSelection({ group, shared, current, cart }: DateModa
   // Load the chosen day's real slots (stale-while-revalidate via cache).
   useEffect(() => {
     if (!pickerDateKey) return;
+    let active = true;
     const result = getSlots(pickerDateKey, availabilityGroupId, sharedQuery);
     /* eslint-disable react-hooks/set-state-in-effect -- sync snapshot + async revalidate from the cache */
     setSlots(result);
     void result.fresh.then(
-      () => setSlots(getSlots(pickerDateKey, availabilityGroupId, sharedQuery)),
-      () => setSlots(result), // fallback to cached data on refresh failure (rate limit, etc.)
+      () => { if (active) setSlots(getSlots(pickerDateKey, availabilityGroupId, sharedQuery)); },
+      () => { if (active) setSlots(result); }, // fallback to cached data on refresh failure (rate limit, etc.)
     );
     /* eslint-enable react-hooks/set-state-in-effect */
+    return () => { active = false; };
   }, [pickerDateKey, availabilityGroupId, sharedQuery]);
 
   const clearDay = () => {
@@ -202,8 +205,8 @@ export function useDateModalSelection({ group, shared, current, cart }: DateModa
   };
 
   const disabledTitles = new Map<string, string>();
-  // In shared mode every cart line intentionally receives the same slot, so
-  // same-slot overlap hints would wrongly mark every candidate as "taken".
+  // The consecutive picker replaces the entire old plan. Old cart allocations
+  // must not disable candidate starts in the replacement plan.
   if (!shared) {
     slots?.data?.forEach((slot) => {
       const conflict = lockedBy(slot);
@@ -211,7 +214,9 @@ export function useDateModalSelection({ group, shared, current, cart }: DateModa
     });
   }
 
-  const canConfirm = pickerSlot !== null;
+  // Revalidate saved/current selections against the newest full sequence.
+  const confirmedSlot = slots?.data?.find((slot) => slot.id === pickerSlot?.id) ?? null;
+  const canConfirm = confirmedSlot !== null;
   const loading = pickerDateKey !== null && slots?.data === null;
 
   const onYearChange = (year: number) => {
@@ -234,7 +239,7 @@ export function useDateModalSelection({ group, shared, current, cart }: DateModa
 
   return {
     locale, jalali, availabilityChecked, availableDates, availableDateKeys,
-    pickerYear, pickerMonth, pickerDay, pickerSlot, pickerDateKey,
+    pickerYear, pickerMonth, pickerDay, pickerSlot: confirmedSlot, pickerDateKey,
     years, months, days, slots, loading, canConfirm, disabledTitles,
     onYearChange, onMonthChange, onDayChange, setPickerSlot,
   };
