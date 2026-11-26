@@ -4,8 +4,7 @@ import { getTranslations } from "next-intl/server";
 
 import { ReservationWizard } from "@/components/bookings/reservation-wizard";
 import { requirePermission } from "@/lib/auth/dal";
-import { getBooking } from "@/lib/bookings/service";
-import { toReservationAdmin } from "@/lib/bookings/admin-types";
+import { getBookingGroupById } from "@/lib/bookings/service";
 import { getClinicData } from "@/data/clinic";
 import type { Locale } from "@/lib/services/types";
 import { pageUrl } from "@/lib/site";
@@ -42,7 +41,7 @@ export default async function EditReservationPage({
   const clinic = await getClinicData(locale as Locale);
   let reservation = null;
   try {
-    reservation = toReservationAdmin(await getBooking(id));
+    reservation = await getBookingGroupById(id);
   } catch {
     notFound();
   }

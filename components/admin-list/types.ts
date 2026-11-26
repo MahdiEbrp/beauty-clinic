@@ -96,6 +96,17 @@ export interface AdminListConfig<T extends { id: string }> {
     onClick: () => void | Promise<void>;
     busy?: boolean;
   };
+  /** Optional export button rendered in the header for users with read permission. */
+  exportAction?: {
+    labelKey: MessageKey;
+    onExport: (filters: {
+      search: string;
+      status: string;
+      groupId?: string;
+      from?: string;
+      to?: string;
+    }) => void | Promise<void>;
+  };
   /** Optional domain-specific bulk editor rendered beside generic bulk actions. */
   renderBulkSelection?: (ctx: { ids: string[]; scope: "page" | "filtered"; filters: { search: string; status: string; groupId?: string; from?: string; to?: string }; onComplete: () => void }) => ReactNode;
   perPage?: number;

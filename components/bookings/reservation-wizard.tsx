@@ -39,9 +39,17 @@ export function ReservationWizard({
   const [email, setEmail] = useState(reservation?.email ?? "");
   const [status, setStatus] = useState<BookingStatus>(reservation?.status ?? "pending");
 
-  const [groupIds, setGroupIds] = useState<string[]>(
-    reservation?.groupId ? [reservation.groupId] : [],
-  );
+  const initialGroupIds = [
+    ...new Set(
+      (reservation?.items ?? [])
+        .map((item) => item.groupId)
+        .filter((id): id is string => Boolean(id)),
+    ),
+  ];
+  if (initialGroupIds.length === 0 && reservation?.groupId) {
+    initialGroupIds.push(reservation.groupId);
+  }
+  const [groupIds, setGroupIds] = useState<string[]>(initialGroupIds);
   const [slotDate, setSlotDate] = useState("");
   const [slotIds, setSlotIds] = useState<string[]>([]);
 
@@ -49,12 +57,14 @@ export function ReservationWizard({
 
   const customerValid =
     fullName.trim().length >= 2 && /^[0-9+][0-9\s()-]{6,19}$/.test(phone.trim());
-  // Require at least one group and at least one slot (one slot per service ideally).
+  // Require at least one group and at least one slot when creating; edits update customer & status only.
   const canContinue =
     step === 0
       ? groupIds.length > 0
       : step === 1
-        ? customerValid && Boolean(slotDate) && slotIds.length > 0
+        ? mode === "edit"
+          ? customerValid
+          : customerValid && Boolean(slotDate) && slotIds.length > 0
         : true;
 
   const submit = async () => {
@@ -111,7 +121,9 @@ export function ReservationWizard({
   };
 
   const selectedGroups = groups.filter((item) => groupIds.includes(item.id));
-  const groupTitle = selectedGroups.map((g) => g.name).join(", ") ?? reservation?.groupTitle ?? "—";
+  const sep = locale === "fa" ? "، " : ", ";
+  const groupTitle =
+    selectedGroups.map((g) => g.name).join(sep) || reservation?.groupTitle || "—";
 
   // Build review labels: pair groups with slots in order.
   const slotLabels = slotIds.map((id) => slots.find((s) => s.id === id)?.label ?? "—");

@@ -634,6 +634,30 @@
       "error": "خطایی رخ داد",
       "success": "رزرو به‌روزرسانی شد",
       "syncing": "در حال همگام‌سازی..."
+    },
+    "export": "خروجی اکسل",
+    "exportToast": {
+      "exporting": "در حال تهیه فایل اکسل...",
+      "success": "فایل اکسل با موفقیت دانلود شد",
+      "error": "دریافت خروجی اکسل ناموفق بود. دوباره تلاش کنید."
+    },
+    "excel": {
+      "sheetName": "رزروها",
+      "columns": {
+        "groupRef": "کد سفارش",
+        "fullName": "نام مشتری",
+        "phone": "تلفن",
+        "email": "ایمیل",
+        "services": "خدمات",
+        "itemsCount": "تعداد خدمات",
+        "slotDate": "تاریخ و ساعت نوبت",
+        "amount": "مبلغ (تومان)",
+        "currency": "واحد پول",
+        "status": "وضعیت",
+        "paymentReference": "کد پیگیری پرداخت",
+        "notes": "یادداشت",
+        "createdAt": "تاریخ ثبت"
+      }
     }
   },
   "bookingSlots": {
@@ -5657,7 +5681,8 @@
       "menu": "عملیات",
       "deleteConfirm": "حذف این سفارش؟",
       "deleteConfirmDescription": "سفارش برای همیشه حذف می‌شود."
-    }
+    },
+    "export": "خروجی اکسل"
   },
   "paymentAdmin": {
     "heading": "پرداخت",
@@ -6098,7 +6123,7 @@
   },
   "myReservations": {
     "actions": {
-      "cancel": "لغو این خدمت",
+      "cancel": "لغو این سفارش",
       "menu": "عملیات"
     },
     "add": "رزرو نوبت",
@@ -6114,14 +6139,14 @@
       "selectedFiltered": "{count} انتخاب شده (فیلترشده)"
     },
     "cancelConfirm": {
-      "description": "خدمت {group} از سفارش {groupRef} لغو می‌شود. بقیه سفارش شما سر جایش می‌ماند و بیعانه پرداخت‌شده به شما بازگردانده می‌شود.",
-      "title": "این خدمت لغو شود؟"
+      "description": "سفارش {groupRef} ({group}) به‌طور کامل لغو می‌شود و در صورت پرداخت بیعانه، مبلغ به شما بازگردانده خواهد شد.",
+      "title": "این سفارش لغو شود؟"
     },
     "cancelUntil": "لغو تا {date}",
     "clearFilters": "پاک‌کردن فیلترها",
     "dialog": {
       "cancel": "انصراف",
-      "confirm": "لغو خدمت"
+      "confirm": "لغو سفارش"
     },
     "empty": "هنوز رزروی ثبت نکرده‌اید.",
     "emptySearch": "هیچ رزروی با جستجوی شما مطابقت ندارد.",

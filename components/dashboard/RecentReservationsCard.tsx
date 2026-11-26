@@ -1,10 +1,11 @@
 "use client";
 
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { ArrowLeft, CalendarDays, Clock } from "lucide-react";
 
 import { Link } from "@/src/i18n/navigation";
 import { formatPrice } from "@/components/admin-list/helpers";
+import { formatOrderSummary } from "@/components/bookings/reservation-render";
 import type { ReservationAdmin } from "@/lib/bookings/admin-types";
 import { StatusPill } from "@/components/bookings/status-pill";
 
@@ -15,6 +16,7 @@ export function RecentReservationsCard({
 }) {
   const t = useTranslations();
   const format = useFormatter();
+  const locale = useLocale() === "en" ? "en" : "fa";
 
   return (
     <section className="bg-surface-secondary border border-border-primary rounded-panel shadow-elevation-2 p-8 sm:p-10">
@@ -56,15 +58,11 @@ export function RecentReservationsCard({
                   {row.fullName}
                 </p>
                 <p className="truncate text-dash-body-sm text-content-secondary">
-                  {row.groupTitle}
+                  {formatOrderSummary(row, locale)}
                 </p>
               </div>
               <div className="flex flex-wrap items-center justify-between gap-3 sm:justify-end">
-                <span
-                  className={
-                    "inline-flex items-center gap-1.5 text-dash-caption text-content-tertiary"
-                  }
-                >
+                <span className="inline-flex items-center gap-1.5 text-dash-caption text-content-tertiary">
                   {row.slotStart ? (
                     <>
                       <Clock className="size-3.5" aria-hidden="true" />
