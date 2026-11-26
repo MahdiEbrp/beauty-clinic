@@ -1,14 +1,15 @@
 import "server-only";
 
-import { and, desc, eq, or, sql, type SQL } from "drizzle-orm";
+import { and, desc, eq, inArray, or, sql, type SQL } from "drizzle-orm";
 
 import { ApiError } from "@/lib/api/errors";
 import { db } from "@/src/db";
 import { bookings, users, type BookingStatus } from "@/src/db/schema";
 
-import { toReservationAdmin, type MyReservationAdmin } from "./admin-types";
+import type { MyReservationAdmin } from "./admin-types";
 import type { BookingSummary } from "./create";
-import { cancelBookingRows, loadMinCancelHours } from "./groups";
+import { aggregateBookingGroup } from "./grouping";
+import { cancelBookingRows, earliestSlotStart, loadMinCancelHours } from "./groups";
 
 /** Statuses the customer can still cancel; finished rows are locked. */
 const CANCELLABLE_STATUSES: readonly BookingStatus[] = ["pending", "paid", "waiting"];
@@ -73,33 +74,34 @@ function ownerScope(owner: BookingOwner): SQL {
 }
 
 /**
- * Cancellation deadline for one line: its own slot start minus the clinic's
- * window. A line without a slot has no fixed deadline.
+ * Cancellation deadline for an order: its earliest slot start minus the
+ * clinic's window. An order without a slot has no fixed deadline.
  */
 function cancelDeadline(slotStart: Date | null, minCancelHours: number): Date | null {
   if (!slotStart || minCancelHours <= 0) return null;
   return new Date(slotStart.getTime() - minCancelHours * 60 * 60 * 1000);
 }
 
-function toMyReservation(row: BookingSummary, minCancelHours: number): MyReservationAdmin {
-  const deadline = cancelDeadline(row.slotStart, minCancelHours);
+function toMyReservation(
+  rows: readonly BookingSummary[],
+  minCancelHours: number,
+  preferredStatus?: BookingStatus,
+): MyReservationAdmin {
+  const aggregated = aggregateBookingGroup(rows, preferredStatus);
+  const deadline = cancelDeadline(earliestSlotStart(rows), minCancelHours);
   const cancellable =
-    CANCELLABLE_STATUSES.includes(row.status) &&
+    CANCELLABLE_STATUSES.includes(aggregated.status) &&
     (deadline === null || deadline.getTime() > Date.now());
   return {
-    ...toReservationAdmin(row),
-    groupRef: row.groupRef,
+    ...aggregated,
     canCancel: cancellable,
     cancelUntil: deadline ? deadline.toISOString() : null,
   };
 }
 
 /**
- * The caller's own reservations, newest first. Each row is one service line of
- * an order, and each carries its own cancel deadline.
- *
- * Three sequential queries (owner, count, page of rows) — the per-line deadline
- * comes from the row's own slot, so no page ever fans out into per-row queries.
+ * The caller's own reservations, newest first, grouped by `groupRef` so each
+ * booking order renders as a single row with the combined services and deposit.
  */
 export async function listMyBookings(
   owner: BookingOwner,
@@ -119,23 +121,66 @@ export async function listMyBookings(
   const where = and(...conditions);
 
   const [countRow] = await db
-    .select({ count: sql<number>`count(*)::int` })
+    .select({ count: sql<number>`count(distinct ${bookings.groupRef})::int` })
     .from(bookings)
     .where(where);
   const total = Number(countRow?.count ?? 0);
 
-  const items = await db
-    .select()
+  if (total === 0) {
+    return {
+      items: [],
+      total: 0,
+      page: query.page,
+      perPage: query.perPage,
+      totalPages: 0,
+    };
+  }
+
+  const pageRefs = await db
+    .select({ groupRef: bookings.groupRef })
     .from(bookings)
     .where(where)
-    .orderBy(desc(bookings.createdAt))
+    .groupBy(bookings.groupRef)
+    .orderBy(desc(sql`max(${bookings.createdAt})`), desc(bookings.groupRef))
     .limit(query.perPage)
     .offset((query.page - 1) * query.perPage);
 
+  const refs = pageRefs.map((row) => row.groupRef);
+  if (refs.length === 0) {
+    return {
+      items: [],
+      total,
+      page: query.page,
+      perPage: query.perPage,
+      totalPages: Math.ceil(total / query.perPage),
+    };
+  }
+
+  const rows = await db
+    .select()
+    .from(bookings)
+    .where(and(ownerScope(owner), inArray(bookings.groupRef, refs)));
+
   const minCancelHours = await loadMinCancelHours();
+  const preferredStatus = query.status !== "all" ? query.status : undefined;
+
+  const byRef = new Map<string, BookingSummary[]>();
+  for (const row of rows) {
+    const list = byRef.get(row.groupRef);
+    if (list) list.push(row);
+    else byRef.set(row.groupRef, [row]);
+  }
+
+  const items: MyReservationAdmin[] = [];
+  for (const ref of refs) {
+    const groupRows = byRef.get(ref);
+    if (groupRows && groupRows.length > 0) {
+      items.push(toMyReservation(groupRows, minCancelHours, preferredStatus));
+    }
+  }
 
   return {
-    items: items.map((row) => toMyReservation(row, minCancelHours)),
+    items,
     total,
     page: query.page,
     perPage: query.perPage,
@@ -144,9 +189,9 @@ export async function listMyBookings(
 }
 
 /**
- * Cancels ONE service line of the caller's own order. Ownership is checked
- * before anything else; a foreign id is reported as missing so booking ids of
- * other customers can't be probed.
+ * Cancels the caller's entire booking order (`groupRef`) identified by any
+ * member booking id. Ownership is checked before anything else; a foreign id
+ * is reported as missing so booking ids of other customers can't be probed.
  */
 export async function cancelMyBooking(
   owner: BookingOwner,
@@ -157,7 +202,10 @@ export async function cancelMyBooking(
     throw new ApiError(404, "BOOKING_NOT_FOUND", "Booking not found.");
   }
 
-  // A single row: the shared policy helper enforces the window against this
-  // line's own slot start.
-  return cancelBookingRows([target]);
+  const groupRows = await db
+    .select()
+    .from(bookings)
+    .where(and(ownerScope(owner), eq(bookings.groupRef, target.groupRef)));
+
+  return cancelBookingRows(groupRows);
 }

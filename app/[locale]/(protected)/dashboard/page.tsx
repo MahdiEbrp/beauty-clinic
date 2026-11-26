@@ -4,7 +4,6 @@ import { pageUrl } from "@/lib/site";
 import { requireAuth, getActiveSessions } from "@/lib/auth/dal";
 import { hasPermission } from "@/lib/auth/rbac";
 import { listRecentBookings } from "@/lib/bookings/service";
-import { mapReservations } from "@/lib/bookings/admin-types";
 import DashboardContent from "@/components/DashboardContent";
 
 export async function generateMetadata({
@@ -46,7 +45,7 @@ export default async function DashboardPage() {
       user={session.user}
       sessions={activeSessions}
       currentSessionId={session.sessionId}
-      recentReservations={mapReservations(recentBookings)}
+      recentReservations={recentBookings}
     />
   );
 }

@@ -4,7 +4,6 @@ import { getTranslations } from "next-intl/server";
 import { ReservationsListView } from "@/components/bookings/reservations-view";
 import { requirePermission } from "@/lib/auth/dal";
 import { listBookings } from "@/lib/bookings/service";
-import { mapReservations } from "@/lib/bookings/admin-types";
 import type { ListResult } from "@/components/admin-list/types";
 import type { ReservationAdmin } from "@/lib/bookings/admin-types";
 import { pageUrl } from "@/lib/site";
@@ -37,7 +36,7 @@ export default async function ManageReservationsPage() {
   const session = await requirePermission("appointments.read");
   const result = await listBookings({ page: 1, perPage: 10, status: "all" });
   const initialData: ListResult<ReservationAdmin> = {
-    items: mapReservations(result.items),
+    items: result.items,
     total: result.total,
     perPage: result.perPage,
     totalPages: result.totalPages,

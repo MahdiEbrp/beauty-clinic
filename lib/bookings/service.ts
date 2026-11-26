@@ -1,10 +1,16 @@
-import { and, desc, eq, inArray, or, sql, type SQL } from "drizzle-orm";
+import { and, desc, eq, inArray, ne, sql } from "drizzle-orm";
 
 import { ApiError } from "@/lib/api/errors";
 import { db } from "@/src/db";
 import { bookings, bookingStatusEnum, type BookingStatus } from "@/src/db/schema";
 
+import type { ReservationAdmin } from "./admin-types";
 import type { BookingSummary } from "./create";
+import {
+  aggregateBookingGroup,
+  bookingSearchFilter,
+  groupBookingRowsInOrder,
+} from "./grouping";
 
 export {
   toMoney,
@@ -26,44 +32,62 @@ export async function listBookings(query: {
   search?: string;
   status?: "all" | BookingStatus;
   slotId?: string;
-}) {
+}): Promise<{
+  items: ReservationAdmin[];
+  total: number;
+  page: number;
+  perPage: number;
+  totalPages: number;
+}> {
   const offset = (query.page - 1) * query.perPage;
-  const conditions: SQL[] = [];
-
-  if (query.slotId) conditions.push(eq(bookings.slotId, query.slotId));
-  if (query.status && query.status !== "all") {
-    conditions.push(eq(bookings.status, query.status));
-  }
-  if (query.search?.trim()) {
-    const term = `%${query.search.trim()}%`;
-    conditions.push(
-      or(
-        sql`${bookings.fullName} ILIKE ${term}`,
-        sql`${bookings.phone} ILIKE ${term}`,
-        sql`${bookings.groupTitle} ILIKE ${term}`,
-        sql`${bookings.email} ILIKE ${term}`,
-      ) as SQL,
-    );
-  }
-
-  const where = conditions.length ? and(...conditions) : undefined;
+  const where = bookingSearchFilter(query);
 
   const [countRow] = await db
-    .select({ count: sql<number>`count(*)::int` })
+    .select({ count: sql<number>`count(distinct ${bookings.groupRef})::int` })
     .from(bookings)
     .where(where);
   const total = Number(countRow?.count ?? 0);
 
-  const items = await db
-    .select()
+  if (total === 0) {
+    return {
+      items: [],
+      total: 0,
+      page: query.page,
+      perPage: query.perPage,
+      totalPages: 0,
+    };
+  }
+
+  const pageRefs = await db
+    .select({ groupRef: bookings.groupRef })
     .from(bookings)
     .where(where)
-    .orderBy(desc(bookings.createdAt))
+    .groupBy(bookings.groupRef)
+    .orderBy(desc(sql`max(${bookings.createdAt})`), desc(bookings.groupRef))
     .limit(query.perPage)
     .offset(offset);
 
+  const refs = pageRefs.map((row) => row.groupRef);
+  if (refs.length === 0) {
+    return {
+      items: [],
+      total,
+      page: query.page,
+      perPage: query.perPage,
+      totalPages: Math.ceil(total / query.perPage),
+    };
+  }
+
+  const rows = await db
+    .select()
+    .from(bookings)
+    .where(inArray(bookings.groupRef, refs));
+
+  const preferredStatus =
+    query.status && query.status !== "all" ? query.status : undefined;
+
   return {
-    items,
+    items: groupBookingRowsInOrder(refs, rows, preferredStatus),
     total,
     page: query.page,
     perPage: query.perPage,
@@ -77,26 +101,54 @@ export async function getBooking(id: string): Promise<BookingSummary> {
   return row;
 }
 
-/** Most recent reservations for the dashboard home card (newest first). */
-export async function listRecentBookings(limit = 10): Promise<BookingSummary[]> {
-  return db
+/** Loads the complete grouped order (`groupRef`) addressed by any member id. */
+export async function getBookingGroupById(id: string): Promise<ReservationAdmin> {
+  const member = await getBooking(id);
+  const rows = await db
     .select()
     .from(bookings)
-    .orderBy(desc(bookings.createdAt))
+    .where(eq(bookings.groupRef, member.groupRef));
+  return aggregateBookingGroup(rows);
+}
+
+/** Most recent grouped reservations for the dashboard home card (newest first). */
+export async function listRecentBookings(limit = 10): Promise<ReservationAdmin[]> {
+  const pageRefs = await db
+    .select({ groupRef: bookings.groupRef })
+    .from(bookings)
+    .groupBy(bookings.groupRef)
+    .orderBy(desc(sql`max(${bookings.createdAt})`), desc(bookings.groupRef))
     .limit(limit);
+
+  const refs = pageRefs.map((row) => row.groupRef);
+  if (refs.length === 0) return [];
+
+  const rows = await db
+    .select()
+    .from(bookings)
+    .where(inArray(bookings.groupRef, refs));
+
+  return groupBookingRowsInOrder(refs, rows);
 }
 
 export async function updateBookingStatus(id: string, status: BookingStatus): Promise<BookingSummary> {
-  const [row] = await db
+  const [current] = await db.select().from(bookings).where(eq(bookings.id, id)).limit(1);
+  if (!current) throw new ApiError(404, "BOOKING_NOT_FOUND", "Booking not found.");
+
+  const statusWhere =
+    status === "refunded" || current.status === "refunded"
+      ? eq(bookings.groupRef, current.groupRef)
+      : and(eq(bookings.groupRef, current.groupRef), ne(bookings.status, "refunded"));
+
+  const updated = await db
     .update(bookings)
     .set({ status, updatedAt: new Date() })
-    .where(eq(bookings.id, id))
+    .where(statusWhere)
     .returning();
-  if (!row) throw new ApiError(404, "BOOKING_NOT_FOUND", "Booking not found.");
-  return row;
+  return updated.find((row) => row.id === id) ?? updated[0] ?? current;
 }
 
-/** Admin edit of an existing reservation (customer fields + optional status). */
+/** Admin edit of an existing reservation order (updates all lines sharing `groupRef`). */
 export async function updateBookingDetails(
   id: string,
   patch: {
@@ -110,34 +162,75 @@ export async function updateBookingDetails(
   const [current] = await db.select().from(bookings).where(eq(bookings.id, id)).limit(1);
   if (!current) throw new ApiError(404, "BOOKING_NOT_FOUND", "Booking not found.");
 
-  const set: Record<string, unknown> = { updatedAt: new Date() };
-  if (patch.fullName !== undefined) set.fullName = patch.fullName;
-  if (patch.phone !== undefined) set.phone = patch.phone;
-  if (patch.email !== undefined) set.email = patch.email ?? null;
-  if (patch.notes !== undefined) set.notes = patch.notes ?? null;
-  if (patch.status !== undefined) set.status = patch.status;
+  const groupRows = await db
+    .select()
+    .from(bookings)
+    .where(eq(bookings.groupRef, current.groupRef));
+
+  const existingRef = groupRows.find((row) => Boolean(row.paymentReference))?.paymentReference;
+  const contactSet: Record<string, unknown> = { updatedAt: new Date() };
+  if (patch.fullName !== undefined) contactSet.fullName = patch.fullName;
+  if (patch.phone !== undefined) contactSet.phone = patch.phone;
+  if (patch.email !== undefined) contactSet.email = patch.email ?? null;
+  if (patch.notes !== undefined) contactSet.notes = patch.notes ?? null;
+
+  if (patch.status === undefined) {
+    const updated = await db
+      .update(bookings)
+      .set(contactSet)
+      .where(eq(bookings.groupRef, current.groupRef))
+      .returning();
+    return updated.find((row) => row.id === id) ?? updated[0] ?? current;
+  }
+
+  const targetIds =
+    patch.status === "refunded" || current.status === "refunded"
+      ? groupRows.map((row) => row.id)
+      : groupRows.filter((row) => row.status !== "refunded").map((row) => row.id);
+
   // Recording a payment (paid/waiting) without a reference issues one so the
   // payment is traceable even when the admin records it manually.
-  if (
-    (patch.status === "paid" || patch.status === "waiting") &&
-    !current.paymentReference
-  ) {
-    set.paymentReference = crypto.randomUUID();
+  const issuedRef =
+    (patch.status === "paid" || patch.status === "waiting") && !existingRef
+      ? crypto.randomUUID()
+      : undefined;
+
+  if (targetIds.length === groupRows.length) {
+    const set: Record<string, unknown> = { ...contactSet, status: patch.status };
+    if (issuedRef) set.paymentReference = issuedRef;
+    const updated = await db
+      .update(bookings)
+      .set(set)
+      .where(eq(bookings.groupRef, current.groupRef))
+      .returning();
+    return updated.find((row) => row.id === id) ?? updated[0] ?? current;
   }
-  const [row] = await db.update(bookings).set(set).where(eq(bookings.id, id)).returning();
-  if (!row) throw new ApiError(404, "BOOKING_NOT_FOUND", "Booking not found.");
-  return row;
+
+  // Legacy partially-refunded group: sync contact fields on all rows, status on active lines.
+  if (Object.keys(contactSet).length > 1) {
+    await db
+      .update(bookings)
+      .set(contactSet)
+      .where(eq(bookings.groupRef, current.groupRef));
+  }
+  const statusSet: Record<string, unknown> = { status: patch.status, updatedAt: new Date() };
+  if (issuedRef) statusSet.paymentReference = issuedRef;
+  const updated =
+    targetIds.length > 0
+      ? await db.update(bookings).set(statusSet).where(inArray(bookings.id, targetIds)).returning()
+      : [];
+  return updated.find((row) => row.id === id) ?? updated[0] ?? current;
 }
 
-/** Admin hard-delete of a booking. */
+/** Admin hard-delete of a booking order (removes all lines sharing `groupRef`). */
 export async function deleteBooking(id: string): Promise<void> {
   const [exists] = await db
-    .select({ id: bookings.id })
+    .select({ id: bookings.id, groupRef: bookings.groupRef })
     .from(bookings)
     .where(eq(bookings.id, id))
     .limit(1);
   if (!exists) throw new ApiError(404, "BOOKING_NOT_FOUND", "Booking not found.");
-  await db.delete(bookings).where(eq(bookings.id, id));
+  await db.delete(bookings).where(eq(bookings.groupRef, exists.groupRef));
 }
 
 /**

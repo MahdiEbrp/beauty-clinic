@@ -6,6 +6,7 @@ import type { AdminListConfig, ListFilterParams, ListResult } from "./types";
 
 export interface AdminListState<T> {
   currentUser: AuthUser;
+  canRead: boolean;
   canManage: boolean;
   canWrite: boolean;
   search: string;
@@ -62,6 +63,8 @@ export function useAdminList<T extends { id: string }>(
   const [selectionMode, setSelectionMode] = useState(false);
   const firstRun = useRef(true);
 
+  const canRead =
+    !config.permissions.read || currentUser.permissions.includes(config.permissions.read);
   const canManage = currentUser.permissions.includes(config.permissions.manage);
   const canWrite = currentUser.permissions.includes(config.permissions.write);
 
@@ -152,6 +155,7 @@ export function useAdminList<T extends { id: string }>(
 
   return {
     currentUser,
+    canRead,
     canManage,
     canWrite,
     search,

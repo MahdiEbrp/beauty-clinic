@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/src/i18n/navigation";
 import { msgKey } from "@/src/i18n/message-key";
 import type { AuthUser } from "@/lib/auth/dal";
@@ -12,6 +12,7 @@ import type {
 } from "@/components/admin-list/types";
 import { AdminListView } from "@/components/admin-list/list-view";
 import type { ReservationAdmin } from "@/lib/bookings/admin-types";
+import { downloadBookingsExcel } from "./export-bookings";
 import { ReservationMobileCard, reservationColumns } from "./reservation-render";
 
 /**
@@ -27,6 +28,7 @@ export function CancellationsListView({
   initialData: ListResult<ReservationAdmin>;
 }) {
   const router = useRouter();
+  const locale = useLocale() === "en" ? "en" : "fa";
   const t = useTranslations();
 
   const config: AdminListConfig<ReservationAdmin> = {
@@ -40,6 +42,18 @@ export function CancellationsListView({
       read: "appointments.read",
       write: "appointments.write",
       manage: "appointments.manage",
+    },
+    exportAction: {
+      labelKey: "bookingCancellations.export",
+      onExport: (filters) =>
+        downloadBookingsExcel(
+          { search: filters.search, status: filters.status, locale },
+          {
+            exporting: t("bookingReservations.exportToast.exporting"),
+            success: t("bookingReservations.exportToast.success"),
+            error: t("bookingReservations.exportToast.error"),
+          },
+        ),
     },
     statusOptions: [
       { value: "all", labelKey: "bookingCancellations.statusAll" },

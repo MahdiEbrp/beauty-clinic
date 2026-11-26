@@ -1,16 +1,52 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { asTranslate } from "@/src/i18n/message-key";
-import { ArrowLeft, Loader2, Plus, RefreshCw, Sparkles } from "lucide-react";
+import {
+  ArrowLeft,
+  FileSpreadsheet,
+  Loader2,
+  Plus,
+  RefreshCw,
+  Sparkles,
+} from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
 import { useAdminListContext } from "./context";
 
 export function AdminListHeader<T extends { id: string }>() {
   const t = asTranslate(useTranslations());
-    const ctx = useAdminListContext<T>();
-  const { data, canWrite, canManage, config, selectionMode, toggleSelectionMode } = ctx;
+  const ctx = useAdminListContext<T>();
+  const {
+    data,
+    canRead,
+    canWrite,
+    canManage,
+    config,
+    selectionMode,
+    toggleSelectionMode,
+    search,
+    status,
+    filterValues,
+  } = ctx;
+  const [exporting, setExporting] = useState(false);
   const action = config.headerAction;
+  const exportAction = config.exportAction;
+
+  const handleExport = async () => {
+    if (!exportAction || exporting) return;
+    setExporting(true);
+    try {
+      await exportAction.onExport({
+        search: search.trim(),
+        status,
+        ...filterValues,
+      });
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <div className="space-y-3">
       <Link
@@ -20,7 +56,7 @@ export function AdminListHeader<T extends { id: string }>() {
         <ArrowLeft className="size-4 rtl-mirror" aria-hidden="true" />
         <span>{t(config.backLabelKey ?? "bookingAdmin.back")}</span>
       </Link>
-      <header className="flex items-center justify-between gap-3 rounded-panel border border-border-primary bg-surface-secondary px-4 py-3 shadow-elevation-2 sm:px-6 sm:py-4">
+      <header className="flex flex-wrap items-center justify-between gap-3 rounded-panel border border-border-primary bg-surface-secondary px-4 py-3 shadow-elevation-2 sm:px-6 sm:py-4">
         <div className="flex min-w-0 items-baseline gap-2.5">
           <h1 className="truncate text-dash-title font-bold tracking-tight text-accent">
             {t(`${config.namespace}.heading`)}
@@ -29,7 +65,22 @@ export function AdminListHeader<T extends { id: string }>() {
             {data.total} {t(`${config.namespace}.resultsLabel`, { count: data.total })}
           </span>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2">
+          {canRead && exportAction && (
+            <button
+              type="button"
+              onClick={() => void handleExport()}
+              disabled={exporting}
+              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-pill border border-border-interactive bg-surface-tertiary px-4 py-2 text-dash-body-sm font-bold text-accent transition hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-50"
+            >
+              {exporting ? (
+                <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+              ) : (
+                <FileSpreadsheet className="size-4 text-copper" aria-hidden="true" />
+              )}
+              <span>{t(exportAction.labelKey)}</span>
+            </button>
+          )}
           {canManage && action && (
             <button
               type="button"
@@ -60,7 +111,7 @@ export function AdminListHeader<T extends { id: string }>() {
             <button
               type="button"
               onClick={toggleSelectionMode}
-              className={`shrink-0 rounded-pill border px-4 py-2 text-dash-body-sm font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${selectionMode ? "border-accent bg-accent text-content-contrast" : "border-border-interactive bg-surface-tertiary text-accent hover:bg-surface-tertiary/60"}`}
+              className={`min-h-11 shrink-0 rounded-pill border px-4 py-2 text-dash-body-sm font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${selectionMode ? "border-accent bg-accent text-content-contrast" : "border-border-interactive bg-surface-tertiary text-accent hover:bg-surface-tertiary/60"}`}
             >
               {t("bookingAdmin.select")}
             </button>

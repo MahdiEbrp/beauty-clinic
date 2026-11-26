@@ -17,8 +17,8 @@ export type BookingsPerformance = {
 export async function getBookingsPerformance(): Promise<BookingsPerformance> {
   const [bookingRow] = await db
     .select({
-      total: sql<number>`count(*)::int`,
-      active: sql<number>`count(*) filter (where ${bookings.status} in ('pending','paid','waiting'))::int`,
+      total: sql<number>`count(distinct ${bookings.groupRef})::int`,
+      active: sql<number>`count(distinct ${bookings.groupRef}) filter (where ${bookings.status} in ('pending','paid','waiting'))::int`,
     })
     .from(bookings);
 

@@ -141,6 +141,18 @@ export const listBookingsQuerySchema = z
 
 export type ListBookingsQuery = z.infer<typeof listBookingsQuerySchema>;
 
+export const exportBookingsQuerySchema = z
+  .object({
+    search: z.string().trim().max(100).optional(),
+    status: z.enum(["all", ...bookingStatusSchema.options]).default("all"),
+    slotId: z.uuid().optional(),
+    locale: z.enum(["fa", "en"]).default("fa"),
+    tz: z.string().trim().max(64).optional(),
+  })
+  .strict();
+
+export type ExportBookingsQuery = z.infer<typeof exportBookingsQuerySchema>;
+
 /**
  * Query params for the signed-in customer's own reservations list: the admin
  * list filters without the staff-only `slotId` scope.
